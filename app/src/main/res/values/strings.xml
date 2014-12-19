@@ -1,5 +1,7 @@
 <resources>
+    <!-- the name with that the application is displayed on the device -->
     <string name="app_name">FUNF-Sensor</string>
+    <!-- the default pipeline defines which data is uploaded to a defined host -->
      <string name="default_pipeline">
         {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
          "name":"default",

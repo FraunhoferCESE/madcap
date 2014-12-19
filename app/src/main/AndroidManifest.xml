@@ -38,6 +38,9 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
 
+    <!--
+        The used actions are defined here.
+    -->
     <application android:allowBackup="true" android:label="@string/app_name"
         android:icon="@drawable/ic_launcher" android:theme="@style/AppTheme">
         <intent-filter>
@@ -47,6 +50,7 @@
             <action android:name="android.intent.action.ACTION_SCREEN_ON" />
             <action android:name="android.intent.action.USER_PRESENT" />
         </intent-filter>
+        <!-- The main java class is defined here -->
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

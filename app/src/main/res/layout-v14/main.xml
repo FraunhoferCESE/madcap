@@ -3,11 +3,33 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <TextView android:text="We collect your personal data to fight crime in the U.S. We use the data to create statics about bad neighborhoods and places, where you should not use your phone. An example of the benefit of this application could be that we notify you when you take out your device on a place with much crime."
+    <!-- add a header to the main page-->
+    <RelativeLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:background="#000"
+        android:gravity="center" >
+
+        <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="FUNF Sensor by Fraunhofer CESE"
+        android:textColor="#FFF"
+        android:textSize="25sp" />
+
+    </RelativeLayout>
+
+
+
+<TextView android:text="We collect your personal data to fight crime in the U.S. We use the data to create statics about bad neighborhoods and places, where you should not use your phone. An example of the benefit of this application could be that we notify you when you take out your device on a place with much crime."
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"/>
+        android:layout_margin="5dp"
+        android:textColor="#000"/>
     <ToggleButton
         android:id="@+id/togglebutton"
         android:gravity="center"
@@ -21,12 +43,14 @@
         android:text="Save Data to SD Card"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"/>
+        android:layout_margin="5dp"
+        android:onClick="onSaveToSDClicked"/>
     <Button android:id="@+id/archiveButtonRemote"
         android:text="Save Data to remote database"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"/>
+        android:layout_margin="5dp"
+        android:onClick="onSaveToRemoteClicked"/>
 
     <TextView android:text="This application is developed by the Fraunhofer CESE. For any questions visit http://fc-md.umd.edu or contact Lucas Layman"
         android:gravity="center"
@@ -34,5 +58,4 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"/>
 
-
-</LinearLayout>
+    </LinearLayout>
