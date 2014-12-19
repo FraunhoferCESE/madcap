@@ -13,4 +13,6 @@ import android.widget.TextView;
 /**
  * Created by MLang on 19.12.2014.
  */
-public class MainActivity extends Activity{}
+public class MainActivity extends Activity{
+    //all the event listeners have to be defined here
+}

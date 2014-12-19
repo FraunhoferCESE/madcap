@@ -1,6 +1,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.mlang.funf_sensor">
-
+    <!--
+        The permissions for the app are defined here.
+        New permissions for the GPS and the phone's orientation have to be added. They probably have
+        to be implemented as new probes.
+        With the GPS we want to check how fast the phone is moving to see if the user is standing,
+        walking, cycling or driving with a car or public transportation.
+        If the user is moving fast we want to figure out if he is in a car(driver or not) or in
+        public transportation.
+        With the orientation we can figure out if the user has got his device in his pocket, in his
+        hand or on a table.
+        For the orientation there is an android application called "Gravity Scan". Maybe we can look
+        at its source code.
+        Beside that we want to access to the security controls like lookout security. We want to
+        access on its logfile or try to implement an event listener for it to see if the user is
+        using the application's recommendations or is ignoring them.
+    -->
     <uses-permission android:name="android.permission.BATTERY_STATS"/>
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
