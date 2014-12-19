@@ -3,10 +3,12 @@
     <string name="app_name">FUNF-Sensor</string>
     <!-- the default pipeline defines which data is uploaded to a defined host -->
      <string name="default_pipeline">
+         <!-- a schedule has to be added in here -->
         {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
          "name":"default",
          "version":1,
          "data":[
+         <!-- the data that is uploaded -->
             "edu.mit.media.funf.probe.builtin.WifiProbe",
             "edu.mit.media.funf.probe.builtin.LocationProbe"
          ]
