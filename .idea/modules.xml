@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/21.0.3.iml" filepath="$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/21.0.3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/21.0.3.iml" filepath="$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.android.support/support-v4/21.0.3/21.0.3.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/src/androidTest/androidTest.iml" filepath="$PROJECT_DIR$/app/src/androidTest/androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/build/generated/source/buildConfig/buildConfig.iml" filepath="$PROJECT_DIR$/app/build/generated/source/buildConfig/buildConfig.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/build/intermediates/manifests/full/debug/debug.iml" filepath="$PROJECT_DIR$/app/build/intermediates/manifests/full/debug/debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/build/intermediates/manifests/test/debug/debug.iml" filepath="$PROJECT_DIR$/app/build/intermediates/manifests/test/debug/debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../funf-sensor2/funf-sensor2.iml" filepath="$PROJECT_DIR$/../funf-sensor2/funf-sensor2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/src/main/main.iml" filepath="$PROJECT_DIR$/app/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/build/generated/source/r/r.iml" filepath="$PROJECT_DIR$/app/build/generated/source/r/r.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/build/generated/source/buildConfig/test/test.iml" filepath="$PROJECT_DIR$/app/build/generated/source/buildConfig/test/test.iml" />
+    </modules>
+  </component>
+</project>
+
