@@ -1,23 +1,23 @@
 package com.example.mlang.funf_sensor;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
 import android.view.View;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.ToggleButton;
+
+import edu.mit.media.funf.FunfManager;
+import edu.mit.media.funf.pipeline.BasicPipeline;
+import edu.mit.media.funf.probe.Probe.DataListener;
 
 /**
  * Created by MLang on 19.12.2014.
  */
-public class MainActivity extends Activity{
+public class MainActivity extends Activity implements DataListener{
     //all the event listeners have to be defined here
+
+    public static final String PIPELINE_NAME = "default";
+    private FunfManager funfManager;
+    private BasicPipeline pipeline;
 
     //onCreate is the rendering of the main page
     public void onCreate(Bundle savedInstanceState) {
@@ -31,7 +31,8 @@ public class MainActivity extends Activity{
         boolean on = ((ToggleButton) view).isChecked();
 
         if (on) {
-            // collect data
+            funfManager.enablePipeline(PIPELINE_NAME);
+            pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
         } else {
             // don't collect data
         }
