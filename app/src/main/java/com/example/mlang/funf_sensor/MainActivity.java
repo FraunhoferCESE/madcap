@@ -24,7 +24,16 @@ import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.json.IJsonObject;
 import edu.mit.media.funf.pipeline.BasicPipeline;
 import edu.mit.media.funf.probe.Probe.DataListener;
+import edu.mit.media.funf.probe.builtin.AccelerometerFeaturesProbe;
+import edu.mit.media.funf.probe.builtin.BluetoothProbe;
+import edu.mit.media.funf.probe.builtin.CallLogProbe;
+import edu.mit.media.funf.probe.builtin.GravitySensorProbe;
+import edu.mit.media.funf.probe.builtin.GyroscopeSensorProbe;
+import edu.mit.media.funf.probe.builtin.OrientationSensorProbe;
+import edu.mit.media.funf.probe.builtin.RotationVectorSensorProbe;
+import edu.mit.media.funf.probe.builtin.RunningApplicationsProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
+import edu.mit.media.funf.probe.builtin.SmsProbe;
 import edu.mit.media.funf.probe.builtin.WifiProbe;
 import edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe;
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
@@ -38,9 +47,21 @@ public class MainActivity extends Activity implements DataListener{
     public static final String PIPELINE_NAME = "default";
     private FunfManager funfManager;
     private BasicPipeline pipeline;
-    private WifiProbe wifiProbe;
-    private AccelerometerSensorProbe accelerometerProbe;
+
+    //probes
+    private AccelerometerFeaturesProbe accelerometerFeaturesProbe;
+    private AccelerometerSensorProbe accelerometerSensorProbe;
+    //private BluetoothProbe bluetoothProbe;
+    private CallLogProbe callLogProbe;
+    private GravitySensorProbe gravitySensorProbe;
+    private GyroscopeSensorProbe gyroscopeSensorProbe;
     //private SimpleLocationProbe locationProbe;
+    private OrientationSensorProbe orientationSensorProbe;
+    //private RotationVectorSensorProbe rotationVectorSensorProbe;
+    private RunningApplicationsProbe runningApplicationsProbe;
+    private SmsProbe smsProbe;
+    private WifiProbe wifiProbe;
+
     private CheckBox enabledCheckbox;
     private Button archiveButton, scanNowButton;
     private TextView dataCountView;
@@ -49,15 +70,34 @@ public class MainActivity extends Activity implements DataListener{
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             funfManager = ((FunfManager.LocalBinder)service).getManager();
-
             Gson gson = funfManager.getGson();
-            wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
-            accelerometerProbe = gson.fromJson(new JsonObject(), AccelerometerSensorProbe.class);
+            accelerometerFeaturesProbe = gson.fromJson(new JsonObject(), AccelerometerFeaturesProbe.class);
+            accelerometerSensorProbe = gson.fromJson(new JsonObject(), AccelerometerSensorProbe.class);
+            //bluetoothProbe = gson.fromJson(new JsonObject(), BluetoothProbe.class);
+            callLogProbe = gson.fromJson(new JsonObject(), CallLogProbe.class);
+            gravitySensorProbe = gson.fromJson(new JsonObject(), GravitySensorProbe.class);
+            gyroscopeSensorProbe = gson.fromJson(new JsonObject(), GyroscopeSensorProbe.class);
             //locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
+            orientationSensorProbe = gson.fromJson(new JsonObject(), OrientationSensorProbe.class);
+            //rotationVectorSensorProbe = gson.fromJson(new JsonObject(), RotationVectorSensorProbe.class);
+            runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
+            smsProbe = gson.fromJson(new JsonObject(), SmsProbe.class);
+            wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
+
             pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
+
+            accelerometerFeaturesProbe.registerPassiveListener(MainActivity.this);
+            accelerometerSensorProbe.registerPassiveListener(MainActivity.this);
+            //bluetoothProbe.registerPassiveListener(MainActivity.this);
+            callLogProbe.registerPassiveListener(MainActivity.this);
+            gravitySensorProbe.registerPassiveListener(MainActivity.this);
+            gyroscopeSensorProbe.registerPassiveListener(MainActivity.this);
+            //locationProbe.registerPassiveListener(this);
+            orientationSensorProbe.registerPassiveListener(MainActivity.this);
+            //rotationVectorSensorProbe.registerPassiveListener(MainActivity.this);
+            runningApplicationsProbe.registerPassiveListener(MainActivity.this);
+            smsProbe.registerPassiveListener(MainActivity.this);
             wifiProbe.registerPassiveListener(MainActivity.this);
-            accelerometerProbe.registerPassiveListener(MainActivity.this);
-            //locationProbe.registerPassiveListener(MainActivity.this);
 
             // This checkbox enables or disables the pipeline
             enabledCheckbox.setChecked(pipeline.isEnabled());
@@ -133,10 +173,19 @@ public class MainActivity extends Activity implements DataListener{
             @Override
             public void onClick(View v) {
                 if (pipeline.isEnabled()) {
-                    // Manually register the pipeline
-                    wifiProbe.registerListener(pipeline);
-                    accelerometerProbe.registerListener(pipeline);
+                    // Manually register the pipeline for each probe
+                    accelerometerFeaturesProbe.registerListener(pipeline);
+                    accelerometerSensorProbe.registerListener(pipeline);
+                    //bluetoothProbe.registerListener(pipeline);
+                    callLogProbe.registerListener(pipeline);
+                    gravitySensorProbe.registerListener(pipeline);
+                    gyroscopeSensorProbe.registerListener(pipeline);
                     //locationProbe.registerListener(pipeline);
+                    orientationSensorProbe.registerListener(pipeline);
+                    //rotationVectorSensorProbe.registerListener(pipeline);
+                    runningApplicationsProbe.registerListener(pipeline);
+                    smsProbe.registerListener(pipeline);
+                    wifiProbe.registerListener(pipeline);
                 } else {
                     Toast.makeText(getBaseContext(), "Pipeline is not enabled.", Toast.LENGTH_SHORT).show();
                 }
@@ -156,10 +205,18 @@ public class MainActivity extends Activity implements DataListener{
     public void onDataCompleted(IJsonObject probeConfig, JsonElement checkpoint) {
         updateScanCount();
         // Re-register to keep listening after probe completes.
-        wifiProbe.registerPassiveListener(this);
-        accelerometerProbe.registerPassiveListener(this);
+        accelerometerFeaturesProbe.registerPassiveListener(this);
+        accelerometerSensorProbe.registerPassiveListener(this);
+        //bluetoothProbe.registerPassiveListener(this);
+        callLogProbe.registerPassiveListener(this);
+        gravitySensorProbe.registerPassiveListener(this);
+        gyroscopeSensorProbe.registerPassiveListener(this);
         //locationProbe.registerPassiveListener(this);
-
+        orientationSensorProbe.registerPassiveListener(this);
+        //rotationVectorSensorProbe.registerPassiveListener(this);
+        runningApplicationsProbe.registerPassiveListener(this);
+        smsProbe.registerPassiveListener(this);
+        wifiProbe.registerPassiveListener(this);
     }
 
     private static final String TOTAL_COUNT_SQL = "select count(*) from " + NameValueDatabaseHelper.DATA_TABLE.name;

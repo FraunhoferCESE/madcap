@@ -9,9 +9,18 @@
          "version":1,
          "data":[
          <!-- the data that is uploaded -->
-            "edu.mit.media.funf.probe.builtin.WifiProbe",
-            "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe"
+            "edu.mit.media.funf.probe.builtin.AccelerometerFeaturesProbe",
+            "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
+            <!--"edu.mit.media.funf.probe.builtin.BluetoothProbe",-->
+            "edu.mit.media.funf.probe.builtin.CallLogProbe",
+            "edu.mit.media.funf.probe.builtin.GravitySensorProbe",
+            "edu.mit.media.funf.probe.builtin.GyroscopeSensorProbe",
             <!--"edu.mit.media.funf.probe.builtin.LocationProbe"-->
+            "edu.mit.media.funf.probe.builtin.OrientationSensorProbe",
+            <!--"edu.mit.media.funf.probe.builtin.RotationVectorSensorProbe",-->
+            "edu.mit.media.funf.probe.builtin.RunningApplicationsProbe",
+            "edu.mit.media.funf.probe.builtin.SmsProbe",
+            "edu.mit.media.funf.probe.builtin.WifiProbe"
          ]
         }
     </string>
