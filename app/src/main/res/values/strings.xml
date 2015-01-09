@@ -10,8 +10,10 @@
          "data":[
          <!-- the data that is uploaded -->
             "edu.mit.media.funf.probe.builtin.WifiProbe",
-            "edu.mit.media.funf.probe.builtin.LocationProbe"
+            "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe"
+            <!--"edu.mit.media.funf.probe.builtin.LocationProbe"-->
          ]
         }
     </string>
+    <string name="checkBoxText">PIPELINING ACTIVATED</string>
 </resources>

@@ -1,0 +1,15 @@
+using the application:
+- pipelining has to be activated to scan and save data
+
+mounting the sdcard file
+- download and install imdisk virtual disk
+- go to the .android/avd folder that's in the same package as the AndroidStudioProjects folder
+- select your android virtual device
+- right click on sdcard.img and mouse as ImDisk Virtual Disk
+
+installing .apk files to the virtual device
+- copy your .apk file to the platform-tools folder of your sdk (you can find out your android sdk
+    path if you click File -> Project Structure in Android Studio)
+- run the android virtual device with Android Studio
+- switch into the platform-tools directory with your command line and install the .apk file
+    (Windows: abd install "<application name>.apk"
