@@ -20,3 +20,11 @@ installing .apk files to the virtual device
 
 other things
 - if you close the emulator directly after clicking save to sd card, the db file will be broken
+
+creating log file using the logcat logger
+- open your cmd
+- switch to your adb
+-windows:
+    - abd.exe logcat > filename.txt
+- linux:
+    - adb logcat| tee filename.txt
