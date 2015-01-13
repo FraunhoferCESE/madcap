@@ -1,0 +1,21 @@
+.db data structure
+
+AccelerometerFeaturProbe: diffFrameSecs, numFrameSamples, timestamp, x{absoluteCentralMoment, maxDeviation, mean, psdAcrossFrequencyBands, standardDeviation}
+    y{absoluteCentralMoment, maxDeviation, mean, psdAcrossFrequencyBands, standardDeviation}, z{absoluteCentralMoment, maxDeviation, mean, psdAcrossFrequencyBands, standardDeviation}
+AccelerometerSensorProbe: accuracy, timestamp, x, y, z
+BluetoothProbe: appearance, class, device{mAdress, mRemoteBrsf, mValueNREC, mValueWBS}, name, RSSI (reaction time), timestamp
+CallLogProbe: id, date, duration, name, number, numberlabel, numbertype, timestamp
+OrientationProbe: acurracy, azimuth, pitch, roll, timestamp
+RunningApplicationsProbe: duration, taskInfo{baseIntent{mAction{mCategories,mComponent, mPackage}, mFlags, mWindowMode}, id, persistentId, stackId}, timestamp
+SimpleLocationProbe: mAccuracy, mAltitude, mBearing, mElapsedRealtimeNanos, mExtras{networkLocationType, nlpVersion, noGPSLocation{mAccuracy, mBearing, mElapsedRealtimeNanos, 
+    mExteas{coarseLocation{mAccuracy, mAltitude, mBearing, mElapsedRealtimeNanos, mHasAccuracy, mHasAltitude, mHasBearing, mHasSpeed, mlsFromMockProvider, mLatitude,
+    mLongitude, mProvider, mSpeed, mTime}, networkLocationType, nlpVersion, travelState}, mHasAccuracy, mHasAltitude, mHasBearing, mHasSpeed, mlsFromMockProvider,
+    mLatitude, mLongitude, mProvider, mSpeed, mTime}, travelState}, mHasAccuracy, mHasAltitude, mHasBearing, mHasSpeed, mlsFromMockProvider, mLatitude, mLongitude,
+    mProvider, mSpeed, mTime, timestamp
+SmsProbe: address, body, date, locked, person, protocol, read, reply_path_present, status, subject, thread_id, timestamp, type
+WifiProbe: BSSID, SSID, capabilities, distanceCm, distanceSdCm, frequency, level, timestamp, tsf, wifiSsid{octets{buf,count}}}
+
+no data received yet:
+- GravitySensorProbe
+- GyroscopeSensorProbe
+- RotationVectorSensorProbe
