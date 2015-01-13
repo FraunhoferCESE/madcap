@@ -51,13 +51,13 @@ public class MainActivity extends Activity implements DataListener{
     //probes
     private AccelerometerFeaturesProbe accelerometerFeaturesProbe;
     private AccelerometerSensorProbe accelerometerSensorProbe;
-    //private BluetoothProbe bluetoothProbe;
+    private BluetoothProbe bluetoothProbe;
     private CallLogProbe callLogProbe;
     private GravitySensorProbe gravitySensorProbe;
     private GyroscopeSensorProbe gyroscopeSensorProbe;
-    //private SimpleLocationProbe locationProbe;
+    private SimpleLocationProbe locationProbe;
     private OrientationSensorProbe orientationSensorProbe;
-    //private RotationVectorSensorProbe rotationVectorSensorProbe;
+    private RotationVectorSensorProbe rotationVectorSensorProbe;
     private RunningApplicationsProbe runningApplicationsProbe;
     private SmsProbe smsProbe;
     private WifiProbe wifiProbe;
@@ -73,13 +73,13 @@ public class MainActivity extends Activity implements DataListener{
             Gson gson = funfManager.getGson();
             accelerometerFeaturesProbe = gson.fromJson(new JsonObject(), AccelerometerFeaturesProbe.class);
             accelerometerSensorProbe = gson.fromJson(new JsonObject(), AccelerometerSensorProbe.class);
-            //bluetoothProbe = gson.fromJson(new JsonObject(), BluetoothProbe.class);
+            bluetoothProbe = gson.fromJson(new JsonObject(), BluetoothProbe.class);
             callLogProbe = gson.fromJson(new JsonObject(), CallLogProbe.class);
             gravitySensorProbe = gson.fromJson(new JsonObject(), GravitySensorProbe.class);
             gyroscopeSensorProbe = gson.fromJson(new JsonObject(), GyroscopeSensorProbe.class);
-            //locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
+            locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
             orientationSensorProbe = gson.fromJson(new JsonObject(), OrientationSensorProbe.class);
-            //rotationVectorSensorProbe = gson.fromJson(new JsonObject(), RotationVectorSensorProbe.class);
+            rotationVectorSensorProbe = gson.fromJson(new JsonObject(), RotationVectorSensorProbe.class);
             runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
             smsProbe = gson.fromJson(new JsonObject(), SmsProbe.class);
             wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
@@ -88,13 +88,13 @@ public class MainActivity extends Activity implements DataListener{
 
             accelerometerFeaturesProbe.registerPassiveListener(MainActivity.this);
             accelerometerSensorProbe.registerPassiveListener(MainActivity.this);
-            //bluetoothProbe.registerPassiveListener(MainActivity.this);
+            bluetoothProbe.registerPassiveListener(MainActivity.this);
             callLogProbe.registerPassiveListener(MainActivity.this);
             gravitySensorProbe.registerPassiveListener(MainActivity.this);
             gyroscopeSensorProbe.registerPassiveListener(MainActivity.this);
-            //locationProbe.registerPassiveListener(this);
+            locationProbe.registerPassiveListener(MainActivity.this);
             orientationSensorProbe.registerPassiveListener(MainActivity.this);
-            //rotationVectorSensorProbe.registerPassiveListener(MainActivity.this);
+            rotationVectorSensorProbe.registerPassiveListener(MainActivity.this);
             runningApplicationsProbe.registerPassiveListener(MainActivity.this);
             smsProbe.registerPassiveListener(MainActivity.this);
             wifiProbe.registerPassiveListener(MainActivity.this);
@@ -176,13 +176,13 @@ public class MainActivity extends Activity implements DataListener{
                     // Manually register the pipeline for each probe
                     accelerometerFeaturesProbe.registerListener(pipeline);
                     accelerometerSensorProbe.registerListener(pipeline);
-                    //bluetoothProbe.registerListener(pipeline);
+                    bluetoothProbe.registerListener(pipeline);
                     callLogProbe.registerListener(pipeline);
                     gravitySensorProbe.registerListener(pipeline);
                     gyroscopeSensorProbe.registerListener(pipeline);
-                    //locationProbe.registerListener(pipeline);
+                    locationProbe.registerListener(pipeline);
                     orientationSensorProbe.registerListener(pipeline);
-                    //rotationVectorSensorProbe.registerListener(pipeline);
+                    rotationVectorSensorProbe.registerListener(pipeline);
                     runningApplicationsProbe.registerListener(pipeline);
                     smsProbe.registerListener(pipeline);
                     wifiProbe.registerListener(pipeline);
@@ -207,13 +207,13 @@ public class MainActivity extends Activity implements DataListener{
         // Re-register to keep listening after probe completes.
         accelerometerFeaturesProbe.registerPassiveListener(this);
         accelerometerSensorProbe.registerPassiveListener(this);
-        //bluetoothProbe.registerPassiveListener(this);
+        bluetoothProbe.registerPassiveListener(this);
         callLogProbe.registerPassiveListener(this);
         gravitySensorProbe.registerPassiveListener(this);
         gyroscopeSensorProbe.registerPassiveListener(this);
-        //locationProbe.registerPassiveListener(this);
+        locationProbe.registerPassiveListener(this);
         orientationSensorProbe.registerPassiveListener(this);
-        //rotationVectorSensorProbe.registerPassiveListener(this);
+        rotationVectorSensorProbe.registerPassiveListener(this);
         runningApplicationsProbe.registerPassiveListener(this);
         smsProbe.registerPassiveListener(this);
         wifiProbe.registerPassiveListener(this);
