@@ -4,7 +4,7 @@
     <!-- the default pipeline defines which data is uploaded to a defined host -->
      <string name="default_pipeline">
          <!-- a schedule has to be added in here -->
-        {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
+         {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
          "name":"default",
          "version":1,
          "archive": {
@@ -42,11 +42,21 @@
                               "goodEnoughAccuracy": 80,
                              "maxWaitTime": 60
                             },
-            {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
-                         "@schedule": {"interval": 600},
-                         "goodEnoughAccuracy": 80,
-                         "maxWaitTime": 60
-                        },
+            {"@type": "edu.mit.media.funf.probe.builtin.HardwareInfoProbe",
+                             "@schedule": {"interval": 600, "duration": 10},
+                              "goodEnoughAccuracy": 80,
+                             "maxWaitTime": 60
+                            },
+             {"@type": "edu.mit.media.funf.probe.builtin.LightSensorProbe",
+                             "@schedule": {"interval": 600},
+                             "goodEnoughAccuracy": 80,
+                             "maxWaitTime": 60
+                            },
+             {"@type": "edu.mit.media.funf.probe.builtin.MagneticFieldSensorProbe",
+                                 "@schedule": {"interval": 600},
+                                 "goodEnoughAccuracy": 80,
+                                 "maxWaitTime": 60
+                                },
              {"@type": "edu.mit.media.funf.probe.builtin.OrientationSensorProbe",
                              "@schedule": {"interval": 600},
                              "goodEnoughAccuracy": 80,
@@ -62,10 +72,30 @@
                              "goodEnoughAccuracy": 80,
                              "maxWaitTime": 60
                             },
-             {"@type": "edu.mit.media.funf.probe.builtin.SmsProbe",
-                                 "@schedule": {"interval": 600},
-                                 "goodEnoughAccuracy": 80,
-                                 "maxWaitTime": 60
+            {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe",
+                             "@schedule": {"interval": 600},
+                             "goodEnoughAccuracy": 80,
+                             "maxWaitTime": 60
+                            },
+            {"@type": "edu.mit.media.funf.probe.builtin.ServicesProbe",
+                             "@schedule": {"interval": 600},
+                             "goodEnoughAccuracy": 80,
+                             "maxWaitTime": 60
+                            },
+            {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
+                         "@schedule": {"interval": 600},
+                         "goodEnoughAccuracy": 80,
+                         "maxWaitTime": 60
+                        },
+            {"@type": "edu.mit.media.funf.probe.builtin.SmsProbe",
+                                "@schedule": {"interval": 600},
+                                "goodEnoughAccuracy": 80,
+                                "maxWaitTime": 60
+                                },
+            {"@type": "edu.mit.media.funf.probe.builtin.TemperatureSensorProbe",
+                                "@schedule": {"interval": 600},
+                                "goodEnoughAccuracy": 80,
+                                "maxWaitTime": 60
                                 },
             {"@type": "edu.mit.media.funf.probe.builtin.WifiProbe",
                                  "@schedule": {"interval": 600},
