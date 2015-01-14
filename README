@@ -33,21 +33,25 @@ get the different probes and the number of datasets with the sqlite browser
 - open your .db file
 - Execute SQL:
     SELECT name AS Probe, COUNT(name) as 'Number of datasets' from data GROUP BY name;
+- for merged database files you have to replace name with probe
 
 .db data structure
-
 - AccelerometerFeaturProbe: diffFrameSecs, numFrameSamples, timestamp, x{absoluteCentralMoment, maxDeviation, mean, psdAcrossFrequencyBands, standardDeviation}
     y{absoluteCentralMoment, maxDeviation, mean, psdAcrossFrequencyBands, standardDeviation}, z{absoluteCentralMoment, maxDeviation, mean, psdAcrossFrequencyBands, standardDeviation}
 - AccelerometerSensorProbe: accuracy, timestamp, x, y, z
 - BluetoothProbe: appearance, class, device{mAdress, mRemoteBrsf, mValueNREC, mValueWBS}, name, RSSI (reaction time), timestamp
 - CallLogProbe: id, date, duration, name, number, numberlabel, numbertype, timestamp
-- OrientationProbe: acurracy, azimuth, pitch, roll, timestamp
+- HardwareInfoProbe: androidId, bluetoothMac, brand, model, timestamp, wifiMac
+- LightSensorProbe: accuracy, lux, timestamp
+- OrientationProbe: accuracy, azimuth, pitch, roll, timestamp
 - RunningApplicationsProbe: duration, taskInfo{baseIntent{mAction{mCategories,mComponent, mPackage}, mFlags, mWindowMode}, id, persistentId, stackId}, timestamp
+- ServiceProbe: activeSince, clientCount, clientLabel, crashCount, flags, foreground, lastActivityTime, pid, process, restarting, service{mClass, mPackage}, started, timestamp, uid
 - SimpleLocationProbe: mAccuracy, mAltitude, mBearing, mElapsedRealtimeNanos, mExtras{networkLocationType, nlpVersion, noGPSLocation{mAccuracy, mBearing, mElapsedRealtimeNanos,
-    mExteas{coarseLocation{mAccuracy, mAltitude, mBearing, mElapsedRealtimeNanos, mHasAccuracy, mHasAltitude, mHasBearing, mHasSpeed, mlsFromMockProvider, mLatitude,
+    mExtras{coarseLocation{mAccuracy, mAltitude, mBearing, mElapsedRealtimeNanos, mHasAccuracy, mHasAltitude, mHasBearing, mHasSpeed, mlsFromMockProvider, mLatitude,
     mLongitude, mProvider, mSpeed, mTime}, networkLocationType, nlpVersion, travelState}, mHasAccuracy, mHasAltitude, mHasBearing, mHasSpeed, mlsFromMockProvider,
     mLatitude, mLongitude, mProvider, mSpeed, mTime}, travelState}, mHasAccuracy, mHasAltitude, mHasBearing, mHasSpeed, mlsFromMockProvider, mLatitude, mLongitude,
     mProvider, mSpeed, mTime, timestamp
+- ScreenProbe: screenOn, timestamp
 - SmsProbe: address, body, date, locked, person, protocol, read, reply_path_present, status, subject, thread_id, timestamp, type
 - WifiProbe: BSSID, SSID, capabilities, distanceCm, distanceSdCm, frequency, level, timestamp, tsf, wifiSsid{octets{buf,count}}}
 
@@ -55,3 +59,5 @@ no data received yet:
 - GravitySensorProbe
 - GyroscopeSensorProbe
 - RotationVectorSensorProbe
+- TemperatureSensorProbe
+reason: sensors are not available on the tablet
