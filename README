@@ -43,6 +43,7 @@ get the different probes and the number of datasets with the sqlite browser
 - CallLogProbe: id, date, duration, name, number, numberlabel, numbertype, timestamp
 - HardwareInfoProbe: androidId, bluetoothMac, brand, model, timestamp, wifiMac
 - LightSensorProbe: accuracy, lux, timestamp
+- MagneticFieldProbe: accuracy, timestamp, x, y, y
 - OrientationProbe: accuracy, azimuth, pitch, roll, timestamp
 - RunningApplicationsProbe: duration, taskInfo{baseIntent{mAction{mCategories,mComponent, mPackage}, mFlags, mWindowMode}, id, persistentId, stackId}, timestamp
 - ServiceProbe: activeSince, clientCount, clientLabel, crashCount, flags, foreground, lastActivityTime, pid, process, restarting, service{mClass, mPackage}, started, timestamp, uid
