@@ -1,6 +1,7 @@
 package com.example.mlang.funf_sensor;
 
 import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -9,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -16,6 +18,7 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+//import com.example.mlang.funf_sensor.Probe.Security.SecurityProbe;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -64,6 +67,9 @@ public class MainActivity extends Activity implements DataListener {
     private FunfManager funfManager;
     private BasicPipeline pipeline;
 
+    private TextView txtView;
+    private String TAG = this.getClass().getSimpleName();
+
     //probes
     private AccelerometerFeaturesProbe accelerometerFeaturesProbe;
     private AccelerometerSensorProbe accelerometerSensorProbe;
@@ -80,6 +86,7 @@ public class MainActivity extends Activity implements DataListener {
     private ImageMediaProbe imageMediaProbe;
     private LightSensorProbe lightSensorProbe;
     private LinearAccelerationSensorProbe linearAccelerationSensorProbe;
+    //private NotificationProbe notificationProbe;
     private MagneticFieldSensorProbe magneticFieldSensorProbe;
     private ProximitySensorProbe proximitySensorProbe;
     private SimpleLocationProbe locationProbe;
@@ -98,9 +105,26 @@ public class MainActivity extends Activity implements DataListener {
     private Button archiveButton, scanNowButton;
     private TextView dataCountView;
     private Handler handler;
+
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
+
+            //---------------------------------------------------------------------------------------
+            //final PackageManager pm = getPackageManager();
+//get a list of installed apps.
+            /*List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+            for (ApplicationInfo packageInfo : packages) {
+                Log.wtf(TAG, "Installed package :" + packageInfo.packageName);
+                Log.wtf(TAG, "Source dir : " + packageInfo.sourceDir);
+                Log.wtf(TAG, "Class name: " + packageInfo.className);
+                Log.wtf(TAG, "Application label: " + pm.getApplicationLabel(packageInfo).toString());
+                Log.wtf(TAG, "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName));
+            }*/
+// the getLaunchIntentForPackage returns an intent that you can use with startActivity()
+            //--------------------------------------------------------------------------------------
+
             funfManager = ((FunfManager.LocalBinder) service).getManager();
             Gson gson = funfManager.getGson();
             accelerometerFeaturesProbe = gson.fromJson(new JsonObject(), AccelerometerFeaturesProbe.class);
@@ -120,6 +144,7 @@ public class MainActivity extends Activity implements DataListener {
             linearAccelerationSensorProbe = gson.fromJson(new JsonObject(), LinearAccelerationSensorProbe.class);
             locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
             magneticFieldSensorProbe = gson.fromJson(new JsonObject(), MagneticFieldSensorProbe.class);
+            //notificationProbe = gson.fromJson(new JsonObject(), NotificationProbe.class);
             orientationSensorProbe = gson.fromJson(new JsonObject(), OrientationSensorProbe.class);
             proximitySensorProbe = gson.fromJson(new JsonObject(), ProximitySensorProbe.class);
             rotationVectorSensorProbe = gson.fromJson(new JsonObject(), RotationVectorSensorProbe.class);
@@ -151,12 +176,13 @@ public class MainActivity extends Activity implements DataListener {
             linearAccelerationSensorProbe.registerPassiveListener(MainActivity.this);
             locationProbe.registerPassiveListener(MainActivity.this);
             magneticFieldSensorProbe.registerPassiveListener(MainActivity.this);
+            //notificationProbe.registerPassiveListener(MainActivity.this);
             orientationSensorProbe.registerPassiveListener(MainActivity.this);
             proximitySensorProbe.registerPassiveListener(MainActivity.this);
             rotationVectorSensorProbe.registerPassiveListener(MainActivity.this);
             runningApplicationsProbe.registerPassiveListener(MainActivity.this);
-            servicesProbe.registerPassiveListener(MainActivity.this);
             screenProbe.registerPassiveListener(MainActivity.this);
+            servicesProbe.registerPassiveListener(MainActivity.this);
             smsProbe.registerPassiveListener(MainActivity.this);
             telephonyProbe.registerPassiveListener(MainActivity.this);
             temperatureSensorProbe.registerPassiveListener(MainActivity.this);
@@ -255,6 +281,7 @@ public class MainActivity extends Activity implements DataListener {
                     linearAccelerationSensorProbe.registerListener(pipeline);
                     locationProbe.registerListener(pipeline);
                     magneticFieldSensorProbe.registerListener(pipeline);
+                    //notificationProbe.registerListener(pipeline);
                     orientationSensorProbe.registerListener(pipeline);
                     proximitySensorProbe.registerListener(pipeline);
                     rotationVectorSensorProbe.registerListener(pipeline);
@@ -302,11 +329,13 @@ public class MainActivity extends Activity implements DataListener {
         linearAccelerationSensorProbe.registerPassiveListener(this);
         locationProbe.registerPassiveListener(this);
         magneticFieldSensorProbe.registerPassiveListener(this);
+        //notificationProbe.registerPassiveListener(this);
         orientationSensorProbe.registerPassiveListener(this);
         proximitySensorProbe.registerPassiveListener(this);
         rotationVectorSensorProbe.registerPassiveListener(this);
         runningApplicationsProbe.registerPassiveListener(this);
         screenProbe.registerPassiveListener(this);
+        //securityProbe.registerPassiveListener(this);
         servicesProbe.registerPassiveListener(this);
         smsProbe.registerPassiveListener(this);
         telephonyProbe.registerPassiveListener(this);
@@ -330,5 +359,41 @@ public class MainActivity extends Activity implements DataListener {
                 dataCountView.setText("Data Count: " + count);
             }
         });
+    }
+
+    /**
+     * When the button to send a broadcast is clicked certain
+     * extras are set to store the broadcast as a funf db
+     * this broadcast is getting send then
+     * @param view
+     */
+    public void broadcastIntent(View view)
+    {
+        //Intent intent = new Intent();
+        //intent.setAction("com.example.SendBroadcast");
+        //intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        Intent i = new Intent("com.example.SendBroadcast");
+        i.putExtra("notification_event", "selfTriggered");
+        i.putExtra("notification_trigger", "Button");
+        i.putExtra("notification_message", "Intent caught.");
+        i.putExtra("timestamp", System.currentTimeMillis());
+        sendBroadcast(i);
+    }
+
+    /**
+     * A new notification is created in the statusbar.
+     * Here you can enter the title, its text and its ticker.
+     * The set icon will appear in the statusbar.
+     * @param view
+     */
+    public void createNotification(View view) {
+        NotificationManager nManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder ncomp = new NotificationCompat.Builder(this);
+        ncomp.setContentTitle("My Notification");
+        ncomp.setContentText("Notification Listener Service Example");
+        ncomp.setTicker("Notification Listener Service Example");
+        ncomp.setSmallIcon(R.drawable.ic_launcher);
+        ncomp.setAutoCancel(true);
+        nManager.notify((int)System.currentTimeMillis(),ncomp.build());
     }
 }

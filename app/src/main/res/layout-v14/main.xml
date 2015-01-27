@@ -45,6 +45,21 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"/>
+    <Button android:id="@+id/broadcastIntent"
+        android:text="Send Broadcast"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:onClick="broadcastIntent"
+        android:layout_margin="5dp"/>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Create Notification"
+        android:id="@+id/btnCreateNotify"
+        android:onClick="createNotification"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"/>
     <TextView android:id="@+id/dataCountText"
         android:text="None"
         android:gravity="center"
