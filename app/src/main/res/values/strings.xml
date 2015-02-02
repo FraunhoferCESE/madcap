@@ -140,7 +140,7 @@
                           "goodEnoughAccuracy": 40,
                          "maxWaitTime": 20
                             },-->
-            {"@type": ".SimpleLocationProbe",
+            {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
                          "@schedule": {"interval": 100},
                          "goodEnoughAccuracy": 80,
                          "maxWaitTime": 60

@@ -321,7 +321,7 @@ public class MainActivity extends Activity implements DataListener {
 
     @Override
     public void onDataCompleted(IJsonObject probeConfig, JsonElement checkpoint) {
-        updateScanCount();
+        //updateScanCount();
         // Re-register to keep listening after probe completes.
         //accelerometerFeaturesProbe.registerPassiveListener(this);
         accelerometerSensorProbe.registerPassiveListener(this);
