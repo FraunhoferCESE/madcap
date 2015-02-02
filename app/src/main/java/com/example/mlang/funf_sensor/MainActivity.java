@@ -44,6 +44,7 @@ import edu.mit.media.funf.probe.builtin.HardwareInfoProbe;
 import edu.mit.media.funf.probe.builtin.ImageMediaProbe;
 import edu.mit.media.funf.probe.builtin.LightSensorProbe;
 import edu.mit.media.funf.probe.builtin.LinearAccelerationSensorProbe;
+import edu.mit.media.funf.probe.builtin.LocationProbe;
 import edu.mit.media.funf.probe.builtin.MagneticFieldSensorProbe;
 import edu.mit.media.funf.probe.builtin.OrientationSensorProbe;
 import edu.mit.media.funf.probe.builtin.ProcessStatisticsProbe;
@@ -90,6 +91,7 @@ public class MainActivity extends Activity implements DataListener {
     private ImageMediaProbe imageMediaProbe;
     private LightSensorProbe lightSensorProbe;
     private LinearAccelerationSensorProbe linearAccelerationSensorProbe;
+    private LocationProbe fullLocationProbe;
     //private NotificationProbe notificationProbe;
     private MagneticFieldSensorProbe magneticFieldSensorProbe;
     private OrientationSensorProbe orientationSensorProbe;
@@ -148,6 +150,7 @@ public class MainActivity extends Activity implements DataListener {
             //imageMediaProbe = gson.fromJson(new JsonObject(), ImageMediaProbe.class);
             //lightSensorProbe = gson.fromJson(new JsonObject(), LightSensorProbe.class);
             //linearAccelerationSensorProbe = gson.fromJson(new JsonObject(), LinearAccelerationSensorProbe.class);
+            fullLocationProbe = gson.fromJson(new JsonObject(), LocationProbe.class);
             locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
             //magneticFieldSensorProbe = gson.fromJson(new JsonObject(), MagneticFieldSensorProbe.class);
             //notificationProbe = gson.fromJson(new JsonObject(), NotificationProbe.class);
@@ -182,6 +185,7 @@ public class MainActivity extends Activity implements DataListener {
             //imageMediaProbe.registerPassiveListener(MainActivity.this);
             //lightSensorProbe.registerPassiveListener(MainActivity.this);
             //linearAccelerationSensorProbe.registerPassiveListener(MainActivity.this);
+            fullLocationProbe.registerPassiveListener(MainActivity.this);
             locationProbe.registerPassiveListener(MainActivity.this);
             //magneticFieldSensorProbe.registerPassiveListener(MainActivity.this);
             //notificationProbe.registerPassiveListener(MainActivity.this);
@@ -289,6 +293,7 @@ public class MainActivity extends Activity implements DataListener {
                     //imageMediaProbe.registerListener(pipeline);
                     //lightSensorProbe.registerListener(pipeline);
                     //linearAccelerationSensorProbe.registerListener(pipeline);
+                    fullLocationProbe.registerListener(pipeline);
                     locationProbe.registerListener(pipeline);
                     //magneticFieldSensorProbe.registerListener(pipeline);
                     //notificationProbe.registerListener(pipeline);
@@ -339,6 +344,7 @@ public class MainActivity extends Activity implements DataListener {
         //imageMediaProbe.registerPassiveListener(this);
         //lightSensorProbe.registerPassiveListener(this);
         //linearAccelerationSensorProbe.registerPassiveListener(this);
+        fullLocationProbe.registerPassiveListener(this);
         locationProbe.registerPassiveListener(this);
         //magneticFieldSensorProbe.registerPassiveListener(this);
         //notificationProbe.registerPassiveListener(this);
@@ -361,18 +367,17 @@ public class MainActivity extends Activity implements DataListener {
 
     private void updateScanCount() {
         // Query the pipeline db for the count of rows in the data table
-        //SQLiteDatabase db = SQLiteDatabase.
-                //pipeline.getDb();
-        //Cursor mCursor = db.rawQuery(TOTAL_COUNT_SQL, null);
-        //mCursor.moveToFirst();
-        //final int count = mCursor.getInt(0);
+        SQLiteDatabase db = pipeline.getDb();
+        Cursor mCursor = db.rawQuery(TOTAL_COUNT_SQL, null);
+        mCursor.moveToFirst();
+        final int count = mCursor.getInt(0);
         // Update interface on main thread
-        //runOnUiThread(new Runnable() {
-            //@Override
-            //public void run() {
-            //    dataCountView.setText("Data Count: " + count);
-            //}
-        //});
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dataCountView.setText("Data Count: " + count);
+            }
+        });
     }
 
     /**
