@@ -367,17 +367,17 @@ public class MainActivity extends Activity implements DataListener {
 
     private void updateScanCount() {
         // Query the pipeline db for the count of rows in the data table
-        SQLiteDatabase db = pipeline.getDb();
-        Cursor mCursor = db.rawQuery(TOTAL_COUNT_SQL, null);
-        mCursor.moveToFirst();
-        final int count = mCursor.getInt(0);
+        //SQLiteDatabase db = pipeline.getDb();
+        //Cursor mCursor = db.rawQuery(TOTAL_COUNT_SQL, null);
+        //mCursor.moveToFirst();
+        //final int count = mCursor.getInt(0);
         // Update interface on main thread
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                dataCountView.setText("Data Count: " + count);
-            }
-        });
+        //runOnUiThread(new Runnable() {
+            //@Override
+            //public void run() {
+                //dataCountView.setText("Data Count: " + count);
+            //}
+        //});
     }
 
     /**

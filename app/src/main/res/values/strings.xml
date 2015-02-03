@@ -8,11 +8,11 @@
          "name":"default",
          "version":1,
          "archive": {
-                "@schedule": {"interval": 120}
+                "@schedule": {"interval": 100}
          },
          "upload": {
             "url": \"http://192.168.0.69:9000/data\",
-            "@schedule": {"interval": 600}
+            "@schedule": {"interval": 100}
          },
          "data":[
          <!-- the data that is uploaded -->
@@ -27,128 +27,128 @@
                           "goodEnoughAccuracy": 40,
                          "maxWaitTime": 20
                         },-->
-            {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
-                         "@schedule": {"interval": 15, "duration": 0}
-                        },
-            <!--{"@type": "edu.mit.media.funf.probe.builtin.ActivityProbe",
+         <!--{"@type": "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
+                      "@schedule": {"interval": 15, "duration": 0}
+                     },
+         {"@type": "edu.mit.media.funf.probe.builtin.ActivityProbe",
+                      "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                     },
+         {"@type": "edu.mit.media.funf.probe.builtin.AndroidInfoProbe",
+                      "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                     },
+         {"@type": "edu.mit.media.funf.probe.builtin.AudioFeaturesProbe",
+                      "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                     },
+         {"@type": "edu.mit.media.funf.probe.builtin.AudioMediaProbe",
+                      "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                     },
+          {"@type": "edu.mit.media.funf.probe.builtin.BluetoothProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.BrowserSearchesProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.CallLogProbe",
                          "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                        },
-            {"@type": "edu.mit.media.funf.probe.builtin.AndroidInfoProbe",
-                         "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                        },
-            {"@type": "edu.mit.media.funf.probe.builtin.AudioFeaturesProbe",
-                         "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                        },
-            {"@type": "edu.mit.media.funf.probe.builtin.AudioMediaProbe",
-                         "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                        },
-             {"@type": "edu.mit.media.funf.probe.builtin.BluetoothProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.BrowserSearchesProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.CallLogProbe",
-                            "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                        },
-            {"@type": "edu.mit.media.funf.probe.builtin.ContactProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.GravitySensorProbe",
-                         "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                        },
-             {"@type": "edu.mit.media.funf.probe.builtin.GyroscopeSensorProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.HardwareInfoProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.ImageMediaProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-             {"@type": "edu.mit.media.funf.probe.builtin.LightSensorProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.LinearAccelerationSensorProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-             {"@type": "edu.mit.media.funf.probe.builtin.MagneticFieldSensorProbe",
-                                 "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                                },
-             {"@type": "edu.mit.media.funf.probe.builtin.OrientationSensorProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.ProcessStatisticsProbe",
-                         "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                        },
-            {"@type": "edu.mit.media.funf.probe.builtin.ProximitySensorProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.RotationVectorSensorProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.RunningApplicationsProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },
-            {"@type": "edu.mit.media.funf.probe.builtin.ServicesProbe",
-                             "@schedule": {"interval": 60, "duration": 10},
-                          "goodEnoughAccuracy": 40,
-                         "maxWaitTime": 20
-                            },-->
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                     },
+         {"@type": "edu.mit.media.funf.probe.builtin.ContactProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.GravitySensorProbe",
+                      "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                     },
+          {"@type": "edu.mit.media.funf.probe.builtin.GyroscopeSensorProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.HardwareInfoProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.ImageMediaProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+          {"@type": "edu.mit.media.funf.probe.builtin.LightSensorProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.LinearAccelerationSensorProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+          {"@type": "edu.mit.media.funf.probe.builtin.MagneticFieldSensorProbe",
+                              "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                             },
+          {"@type": "edu.mit.media.funf.probe.builtin.OrientationSensorProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.ProcessStatisticsProbe",
+                      "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                     },
+         {"@type": "edu.mit.media.funf.probe.builtin.ProximitySensorProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.RotationVectorSensorProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.RunningApplicationsProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.ServicesProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },-->
          {"@type": "edu.mit.media.funf.probe.builtin.LocationProbe",
-                         "@schedule": {"interval": 100},
-                         "goodEnoughAccuracy": 80,
-                         "maxWaitTime": 60
+                         "@schedule": {"interval": 20},
+                         "goodEnoughAccuracy": 10,
+                         "maxWaitTime": 5
                         },
             {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
-                         "@schedule": {"interval": 100},
-                         "goodEnoughAccuracy": 80,
-                         "maxWaitTime": 60
+                         "@schedule": {"interval": 20},
+                         "goodEnoughAccuracy": 10,
+                         "maxWaitTime": 5
                         }<!--,
             {"@type": "edu.mit.media.funf.probe.builtin.SmsProbe",
                                 "@schedule": {"interval": 60, "duration": 10},
