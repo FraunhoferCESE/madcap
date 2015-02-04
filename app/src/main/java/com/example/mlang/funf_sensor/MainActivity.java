@@ -90,6 +90,7 @@ public class MainActivity extends Activity implements DataListener {
     private BrowserSearchesProbe browserSearchesProbe;
     private CallLogProbe callLogProbe;
     private ContactProbe contactProbe;
+    private ForegroundProbe foregroundProbe;
     private GravitySensorProbe gravitySensorProbe;
     private GyroscopeSensorProbe gyroscopeSensorProbe;
     private HardwareInfoProbe hardwareInfoProbe;
@@ -155,6 +156,7 @@ public class MainActivity extends Activity implements DataListener {
             //lightSensorProbe = gson.fromJson(new JsonObject(), LightSensorProbe.class);
             //linearAccelerationSensorProbe = gson.fromJson(new JsonObject(), LinearAccelerationSensorProbe.class);
             //fullLocationProbe = gson.fromJson(new JsonObject(), LocationProbe.class);
+            foregroundProbe = gson.fromJson(new JsonObject(), ForegroundProbe.class);
             locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
             //magneticFieldSensorProbe = gson.fromJson(new JsonObject(), MagneticFieldSensorProbe.class);
             notificationProbe = gson.fromJson(new JsonObject(), NotificationProbe.class);
@@ -210,9 +212,11 @@ public class MainActivity extends Activity implements DataListener {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("org.fraunhofer.funf.NotificationReceivedBroadcast"));
         notificationProbe.registerPassiveListener(pipeline);
         locationProbe.registerPassiveListener(pipeline);
+        foregroundProbe.registerPassiveListener(pipeline);
     }
 
     private void unregisterListeners() {
+        foregroundProbe.unregisterListener(pipeline);
         locationProbe.unregisterListener((pipeline));
         notificationProbe.unregisterListener(pipeline);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
