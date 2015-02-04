@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -153,7 +155,7 @@ public class MainActivity extends Activity implements DataListener {
             //lightSensorProbe = gson.fromJson(new JsonObject(), LightSensorProbe.class);
             //linearAccelerationSensorProbe = gson.fromJson(new JsonObject(), LinearAccelerationSensorProbe.class);
             //fullLocationProbe = gson.fromJson(new JsonObject(), LocationProbe.class);
-            //locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
+            locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
             //magneticFieldSensorProbe = gson.fromJson(new JsonObject(), MagneticFieldSensorProbe.class);
             notificationProbe = gson.fromJson(new JsonObject(), NotificationProbe.class);
             //orientationSensorProbe = gson.fromJson(new JsonObject(), OrientationSensorProbe.class);
@@ -207,9 +209,11 @@ public class MainActivity extends Activity implements DataListener {
     private void registerListeners() {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("org.fraunhofer.funf.NotificationReceivedBroadcast"));
         notificationProbe.registerPassiveListener(pipeline);
+        locationProbe.registerPassiveListener(pipeline);
     }
 
     private void unregisterListeners() {
+        locationProbe.unregisterListener((pipeline));
         notificationProbe.unregisterListener(pipeline);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
     }
@@ -337,17 +341,17 @@ public class MainActivity extends Activity implements DataListener {
 
     private void updateScanCount() {
         // Query the pipeline db for the count of rows in the data table
-        //SQLiteDatabase db = pipeline.getDb();
-        //Cursor mCursor = db.rawQuery(TOTAL_COUNT_SQL, null);
-        //mCursor.moveToFirst();
-        //final int count = mCursor.getInt(0);
+        SQLiteDatabase db = pipeline.getDb();
+        Cursor mCursor = db.rawQuery(TOTAL_COUNT_SQL, null);
+        mCursor.moveToFirst();
+        final int count = mCursor.getInt(0);
         // Update interface on main thread
-        //runOnUiThread(new Runnable() {
-            //@Override
-            //public void run() {
-                //dataCountView.setText("Data Count: " + count);
-            //}
-        //});
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dataCountView.setText("Data Count: " + count);
+            }
+        });
     }
 
     /**
@@ -379,9 +383,12 @@ public class MainActivity extends Activity implements DataListener {
         Log.i("NotificationService","Creating notification");
         NotificationManager nManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder ncomp = new NotificationCompat.Builder(this);
-        ncomp.setContentTitle("My Notification");
-        ncomp.setContentText("Notification Listener Service Example");
-        ncomp.setTicker("Notification Listener Service Example");
+        //Title
+        ncomp.setContentTitle("Funf-Sensor");
+        //Description
+        //ncomp.setContentText("ContentText");
+        //Text that appears in statusbar
+        ncomp.setTicker("Create notification was clicked.");
         ncomp.setSmallIcon(R.drawable.ic_launcher);
         ncomp.setAutoCancel(true);
         nManager.notify((int)System.currentTimeMillis(),ncomp.build());

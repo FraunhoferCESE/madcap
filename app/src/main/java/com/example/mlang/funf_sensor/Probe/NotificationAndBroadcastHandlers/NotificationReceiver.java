@@ -3,17 +3,17 @@ package com.example.mlang.funf_sensor.Probe.NotificationAndBroadcastHandlers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.widget.Toast;
 
 /**
  * Created by MLang on 22.01.2015.
  */
-public class NotificationReceiver extends BroadcastReceiver {
+public class NotificationReceiver extends android.content.BroadcastReceiver {
     /*
     When a broadcast with an intent defined in the AndroidManifest is received here,
     we make it being displayed on the device.
      */
-    //private NotificationProbe notificationProbe;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -22,6 +22,8 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         Toast.makeText(context, message,
                 Toast.LENGTH_LONG).show();
+
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 
         //notificationProbe.sendData(intent);
 
