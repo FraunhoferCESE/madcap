@@ -2,15 +2,18 @@ package com.example.mlang.funf_sensor;
 
 import android.app.Activity;
 import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -37,7 +40,6 @@ import edu.mit.media.funf.probe.builtin.BluetoothProbe;
 import edu.mit.media.funf.probe.builtin.BrowserSearchesProbe;
 import edu.mit.media.funf.probe.builtin.CallLogProbe;
 import edu.mit.media.funf.probe.builtin.ContactProbe;
-import edu.mit.media.funf.probe.builtin.ContentProviderProbe;
 import edu.mit.media.funf.probe.builtin.GravitySensorProbe;
 import edu.mit.media.funf.probe.builtin.GyroscopeSensorProbe;
 import edu.mit.media.funf.probe.builtin.HardwareInfoProbe;
@@ -67,12 +69,13 @@ import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 public class MainActivity extends Activity implements DataListener {
     //all the event listeners have to be defined here
 
+    private static final String TAG = "MainActivity";
+
     public static final String PIPELINE_NAME = "default";
     private FunfManager funfManager;
     private BasicPipeline pipeline;
 
     private TextView txtView;
-    private String TAG = this.getClass().getSimpleName();
 
     //probes
     private AccelerometerFeaturesProbe accelerometerFeaturesProbe;
@@ -92,7 +95,7 @@ public class MainActivity extends Activity implements DataListener {
     private LightSensorProbe lightSensorProbe;
     private LinearAccelerationSensorProbe linearAccelerationSensorProbe;
     private LocationProbe fullLocationProbe;
-    //private NotificationProbe notificationProbe;
+    private NotificationProbe notificationProbe;
     private MagneticFieldSensorProbe magneticFieldSensorProbe;
     private OrientationSensorProbe orientationSensorProbe;
     private ProcessStatisticsProbe processStatisticsProbe;
@@ -116,7 +119,6 @@ public class MainActivity extends Activity implements DataListener {
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-
             //---------------------------------------------------------------------------------------
             //final PackageManager pm = getPackageManager();
 //get a list of installed apps.
@@ -135,7 +137,7 @@ public class MainActivity extends Activity implements DataListener {
             funfManager = ((FunfManager.LocalBinder) service).getManager();
             Gson gson = funfManager.getGson();
             //accelerometerFeaturesProbe = gson.fromJson(new JsonObject(), AccelerometerFeaturesProbe.class);
-            accelerometerSensorProbe = gson.fromJson(new JsonObject(), AccelerometerSensorProbe.class);
+            //accelerometerSensorProbe = gson.fromJson(new JsonObject(), AccelerometerSensorProbe.class);
             //activityProbe = gson.fromJson(new JsonObject(), ActivityProbe.class);
             //androidInfoProbe = gson.fromJson(new JsonObject(), AndroidInfoProbe.class);
             //audioFeaturesProbe = gson.fromJson(new JsonObject(), AudioFeaturesProbe.class);
@@ -150,10 +152,10 @@ public class MainActivity extends Activity implements DataListener {
             //imageMediaProbe = gson.fromJson(new JsonObject(), ImageMediaProbe.class);
             //lightSensorProbe = gson.fromJson(new JsonObject(), LightSensorProbe.class);
             //linearAccelerationSensorProbe = gson.fromJson(new JsonObject(), LinearAccelerationSensorProbe.class);
-            fullLocationProbe = gson.fromJson(new JsonObject(), LocationProbe.class);
-            locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
+            //fullLocationProbe = gson.fromJson(new JsonObject(), LocationProbe.class);
+            //locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
             //magneticFieldSensorProbe = gson.fromJson(new JsonObject(), MagneticFieldSensorProbe.class);
-            //notificationProbe = gson.fromJson(new JsonObject(), NotificationProbe.class);
+            notificationProbe = gson.fromJson(new JsonObject(), NotificationProbe.class);
             //orientationSensorProbe = gson.fromJson(new JsonObject(), OrientationSensorProbe.class);
             //processStatisticsProbe = gson.fromJson(new JsonObject(), ProcessStatisticsProbe.class);
             //proximitySensorProbe = gson.fromJson(new JsonObject(), ProximitySensorProbe.class);
@@ -168,41 +170,11 @@ public class MainActivity extends Activity implements DataListener {
             //wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
 
             pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
-
-            //accelerometerFeaturesProbe.registerPassiveListener(MainActivity.this);
-            accelerometerSensorProbe.registerPassiveListener(MainActivity.this);
-            //activityProbe.registerPassiveListener(MainActivity.this);
-            //androidInfoProbe.registerPassiveListener(MainActivity.this);
-            //audioFeaturesProbe.registerPassiveListener(MainActivity.this);
-            //audioMediaProbe.registerPassiveListener(MainActivity.this);
-            //bluetoothProbe.registerPassiveListener(MainActivity.this);
-            //browserSearchesProbe.registerPassiveListener(MainActivity.this);
-            //callLogProbe.registerPassiveListener(MainActivity.this);
-            //contactProbe.registerPassiveListener(MainActivity.this);
-            //gravitySensorProbe.registerPassiveListener(MainActivity.this);
-            //gyroscopeSensorProbe.registerPassiveListener(MainActivity.this);
-            //hardwareInfoProbe.registerPassiveListener(MainActivity.this);
-            //imageMediaProbe.registerPassiveListener(MainActivity.this);
-            //lightSensorProbe.registerPassiveListener(MainActivity.this);
-            //linearAccelerationSensorProbe.registerPassiveListener(MainActivity.this);
-            fullLocationProbe.registerPassiveListener(MainActivity.this);
-            locationProbe.registerPassiveListener(MainActivity.this);
-            //magneticFieldSensorProbe.registerPassiveListener(MainActivity.this);
-            //notificationProbe.registerPassiveListener(MainActivity.this);
-            //orientationSensorProbe.registerPassiveListener(MainActivity.this);
-            //processStatisticsProbe.registerPassiveListener(MainActivity.this);
-            //proximitySensorProbe.registerPassiveListener(MainActivity.this);
-            //rotationVectorSensorProbe.registerPassiveListener(MainActivity.this);
-            //runningApplicationsProbe.registerPassiveListener(MainActivity.this);
-            //screenProbe.registerPassiveListener(MainActivity.this);
-            //servicesProbe.registerPassiveListener(MainActivity.this);
-            //smsProbe.registerPassiveListener(MainActivity.this);
-            //telephonyProbe.registerPassiveListener(MainActivity.this);
-            //temperatureSensorProbe.registerPassiveListener(MainActivity.this);
-            //videoMediaProbe.registerPassiveListener(MainActivity.this);
-            //wifiProbe.registerPassiveListener(MainActivity.this);
+            funfManager.enablePipeline(PIPELINE_NAME);
+            registerListeners();
 
             // This checkbox enables or disables the pipeline
+
             enabledCheckbox.setChecked(pipeline.isEnabled());
             enabledCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
@@ -210,9 +182,10 @@ public class MainActivity extends Activity implements DataListener {
                     if (funfManager != null) {
                         if (isChecked) {
                             funfManager.enablePipeline(PIPELINE_NAME);
-                            pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
+                            registerListeners();
                         } else {
                             funfManager.disablePipeline(PIPELINE_NAME);
+                            unregisterListeners();
                         }
                     }
                 }
@@ -230,6 +203,16 @@ public class MainActivity extends Activity implements DataListener {
             funfManager = null;
         }
     };
+
+    private void registerListeners() {
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("org.fraunhofer.funf.NotificationReceivedBroadcast"));
+        notificationProbe.registerPassiveListener(pipeline);
+    }
+
+    private void unregisterListeners() {
+        notificationProbe.unregisterListener(pipeline);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+    }
 
     //onCreate is the rendering of the main page
     public void onCreate(Bundle savedInstanceState) {
@@ -251,8 +234,11 @@ public class MainActivity extends Activity implements DataListener {
         archiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG,"Archive requested");
                 if (pipeline.isEnabled()) {
+                    Log.d(TAG,"Archiving started");
                     pipeline.onRun(BasicPipeline.ACTION_ARCHIVE, null);
+                    Log.d(TAG,"Archiving finished");
 
                     // Wait 1 second for archive to finish, then refresh the UI
                     // (Note: this is kind of a hack since archiving is seamless and there are no messages when it occurs)
@@ -276,47 +262,31 @@ public class MainActivity extends Activity implements DataListener {
             @Override
             public void onClick(View v) {
                 if (pipeline.isEnabled()) {
-                    // Manually register the pipeline for each probe
-                    //accelerometerFeaturesProbe.registerListener(pipeline);
-                    accelerometerSensorProbe.registerListener(pipeline);
-                    //activityProbe.registerListener(pipeline);
-                    //androidInfoProbe.registerListener(pipeline);
-                    //audioFeaturesProbe.registerListener(pipeline);
-                    //audioMediaProbe.registerListener(pipeline);
-                    //bluetoothProbe.registerListener(pipeline);
-                    //browserSearchesProbe.registerListener(pipeline);
-                    //callLogProbe.registerListener(pipeline);
-                    //contactProbe.registerListener(pipeline);
-                    //gravitySensorProbe.registerListener(pipeline);
-                    //gyroscopeSensorProbe.registerListener(pipeline);
-                    //hardwareInfoProbe.registerListener(pipeline);
-                    //imageMediaProbe.registerListener(pipeline);
-                    //lightSensorProbe.registerListener(pipeline);
-                    //linearAccelerationSensorProbe.registerListener(pipeline);
-                    fullLocationProbe.registerListener(pipeline);
-                    locationProbe.registerListener(pipeline);
-                    //magneticFieldSensorProbe.registerListener(pipeline);
-                    //notificationProbe.registerListener(pipeline);
-                    //orientationSensorProbe.registerListener(pipeline);
-                    //processStatisticsProbe.registerListener(pipeline);
-                    //proximitySensorProbe.registerListener(pipeline);
-                    //rotationVectorSensorProbe.registerListener(pipeline);
-                    //runningApplicationsProbe.registerListener(pipeline);
-                    //screenProbe.registerListener(pipeline);
-                    //servicesProbe.registerListener(pipeline);
-                    //smsProbe.registerListener(pipeline);
-                    //telephonyProbe.registerListener(pipeline);
-                    //temperatureSensorProbe.registerListener(pipeline);
-                    //videoMediaProbe.registerListener(pipeline);
-                    //wifiProbe.registerListener(pipeline);
+                    //unregisterListeners();
                 } else {
                     Toast.makeText(getBaseContext(), "Pipeline is not enabled.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
+
+
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
+    }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.i("NotificationService","Calling probe");
+            notificationProbe.sendData(intent.getExtras());
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterListeners();
     }
 
     @Override
@@ -329,7 +299,7 @@ public class MainActivity extends Activity implements DataListener {
         //updateScanCount();
         // Re-register to keep listening after probe completes.
         //accelerometerFeaturesProbe.registerPassiveListener(this);
-        accelerometerSensorProbe.registerPassiveListener(this);
+//        accelerometerSensorProbe.registerPassiveListener(this);
         //activityProbe.registerPassiveListener(this);
         //androidInfoProbe.registerPassiveListener(this);
         //audioFeaturesProbe.registerPassiveListener(this);
@@ -344,8 +314,8 @@ public class MainActivity extends Activity implements DataListener {
         //imageMediaProbe.registerPassiveListener(this);
         //lightSensorProbe.registerPassiveListener(this);
         //linearAccelerationSensorProbe.registerPassiveListener(this);
-        fullLocationProbe.registerPassiveListener(this);
-        locationProbe.registerPassiveListener(this);
+//        fullLocationProbe.registerPassiveListener(this);
+//        locationProbe.registerPassiveListener(this);
         //magneticFieldSensorProbe.registerPassiveListener(this);
         //notificationProbe.registerPassiveListener(this);
         //orientationSensorProbe.registerPassiveListener(this);
@@ -391,7 +361,7 @@ public class MainActivity extends Activity implements DataListener {
         //Intent intent = new Intent();
         //intent.setAction("com.example.SendBroadcast");
         //intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        Intent i = new Intent("com.example.SendBroadcast");
+        Intent i = new Intent("org.fraunhofer.funf.NotificationReceivedBroadcast");
         i.putExtra("notification_event", "selfTriggered");
         i.putExtra("notification_trigger", "Button");
         i.putExtra("notification_message", "Intent caught.");
@@ -406,6 +376,7 @@ public class MainActivity extends Activity implements DataListener {
      * @param view
      */
     public void createNotification(View view) {
+        Log.i("NotificationService","Creating notification");
         NotificationManager nManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder ncomp = new NotificationCompat.Builder(this);
         ncomp.setContentTitle("My Notification");

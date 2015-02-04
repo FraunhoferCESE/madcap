@@ -1,6 +1,7 @@
 <resources>
     <!-- the name with that the application is displayed on the device -->
     <string name="app_name">FUNF-Sensor</string>
+    <string name="notification_service_name">FUNF-sensor notification service</string>
     <!-- the default pipeline defines which data is uploaded to a defined host -->
      <string name="default_pipeline">
          <!-- a schedule has to be added in here -->
@@ -11,7 +12,7 @@
                 "@schedule": {"interval": 100}
          },
          "upload": {
-            "url": \"http://192.168.0.69:9000/data\",
+            "url": \"http://127.0.0.1:9000/data\",
             "@schedule": {"interval": 100}
          },
          "data":[

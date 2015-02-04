@@ -44,8 +44,8 @@
     <uses-permission android:name="android.permission.VIBRATE"/>
 
     <uses-sdk
-        android:minSdkVersion="19"
-        android:targetSdkVersion="19" />
+        android:minSdkVersion="21"
+        android:targetSdkVersion="21" />
 
     <!--
         The used actions are defined here.
@@ -64,11 +64,13 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+
+        <!--
         <receiver android:name=".Probe.NotificationAndBroadcastHandlers.NotificationReceiver" >
             <intent-filter>
                 <action android:name="com.example.SendBroadcast" />
                 <action android:name="com.eample.mlang.funf_sensor.Probe.Security.NotificationProbe" />
-                <!--<action android:name="android.service.notification.NotificationListenerService" />-->
+                <action android:name="android.service.notification.NotificationListenerService" />
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
                 <action android:name="com.avast.android.mobilesecurity" />
                 <action android:name="com.cleanmaster.security" />
@@ -82,15 +84,17 @@
                 <action android:name="android.intent.action.SEND" />
             </intent-filter>
         </receiver>
+        -->
         <!-- The main java class is defined here -->
         <activity android:name=".MainActivity">
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
-    </activity>
-        <service android:name=".Probe.NotificationAndBroadcastHandlers.NotificationService"
-            android:label="@string/app_name"
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service android:name=".NotificationService"
+            android:label="@string/notification_service_name"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />

@@ -1,15 +1,13 @@
-package com.example.mlang.funf_sensor.Probe.NotificationAndBroadcastHandlers;
+package com.example.mlang.funf_sensor;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Build;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-
-import com.example.mlang.funf_sensor.Probe.NotificationAndBroadcastHandlers.NotificationProbe;
-import com.example.mlang.funf_sensor.Probe.NotificationAndBroadcastHandlers.NotificationReceiver;
 
 /**
  * Created by MLang on 22.01.2015.
@@ -17,24 +15,31 @@ import com.example.mlang.funf_sensor.Probe.NotificationAndBroadcastHandlers.Noti
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
 public class NotificationService extends NotificationListenerService {
 
-    private String TAG = this.getClass().getSimpleName();
-    private NotificationReceiver receiver;
-    private NotificationProbe probe = new NotificationProbe();
+    private Context context;
+
+    public static final String ACTION = "org.fraunhofer.funf.NotificationReceivedBroadcast";
+
+    private static final String TAG = "NotificationService";
+
 
     @Override
     public void onCreate() {
         super.onCreate();
-        receiver = new NotificationReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.example.SendBroadcast");
-        registerReceiver(receiver, filter);
+        context = getApplicationContext();
+        Log.d(TAG, "Starting notification service");
+//        receiver = new NotificationReceiver();
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction("com.example.SendBroadcast");
+//        registerReceiver(receiver, filter);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(receiver);
-    }
+    //    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        unregisterReceiver(receiver);
+//    }
+
+
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
@@ -43,16 +48,14 @@ public class NotificationService extends NotificationListenerService {
         This is working already. We can get its data that we want to use for the storage.
         This is done as an intent here. Now we have to make FUNF storing this data in the database.
          */
-        //super.onNotificationPosted(sbn);
-        Log.i(TAG, "**********  onNotificationPosted");
-        Log.i(TAG, "ID :" + sbn.getId() + " " + sbn.getNotification().tickerText + " " + sbn.getPackageName());
-        Intent i = new Intent("com.example.SendBroadcast");
+//        Log.i(TAG, "ID :" + sbn.getId() + " " + sbn.getNotification().tickerText + " " + sbn.getPackageName());
+
+        Intent i = new Intent(ACTION);
         i.putExtra("notification_event", "onNotificationPosted :" + sbn.getPackageName() + "n");
         i.putExtra("notification_trigger", sbn.getPackageName());
         i.putExtra("notification_message", sbn.getNotification().tickerText);
         i.putExtra("timestamp", System.currentTimeMillis());
-        //probe.sendData(i);
-        sendBroadcast(i);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(i);
     }
 
     @Override
@@ -62,14 +65,13 @@ public class NotificationService extends NotificationListenerService {
         This is working already. We can get its data that we want to use for the storage.
         This is done as an intent here. Now we have to make FUNF storing this data in the database.
          */
-        Log.i(TAG, "********** onNotificationRemoved");
-        Log.i(TAG, "ID :" + sbn.getId() + " " + sbn.getNotification().tickerText + " " + sbn.getPackageName());
-        Intent i = new Intent("com.example.SendBroadcast");
+//        Log.i(TAG, "ID :" + sbn.getId() + " " + sbn.getNotification().tickerText + " " + sbn.getPackageName());
+
+        Intent i = new Intent(ACTION);
         i.putExtra("notification_event", "onNotificationRemoved :" + sbn.getPackageName() + "n");
         i.putExtra("notification_trigger", sbn.getPackageName());
         i.putExtra("notification_message", sbn.getNotification().tickerText);
         i.putExtra("timestamp", System.currentTimeMillis());
-        //probe.sendData(i);
-        sendBroadcast(i);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(i);
     }
 }
