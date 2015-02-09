@@ -96,18 +96,18 @@
             </intent-filter>
         </receiver>-->
         <!-- The main java class is defined here -->
-        <receiver android:name=".Probe.MySMSListener">
+        <!--<receiver android:name=".Probe.SMSProbe.MySMSListener">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_RECEIVED" />
                 <action android:name="android.provider.Telephony.SMS_DELIVER" />
                 <action android:name="android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED" />
             </intent-filter>
-        </receiver>
-        <receiver android:name=".Probe.MyPhoneStateReceiver">
+        </receiver>-->
+        <!--<receiver android:name=".Probe.CallStateProbe.MyPhoneStateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

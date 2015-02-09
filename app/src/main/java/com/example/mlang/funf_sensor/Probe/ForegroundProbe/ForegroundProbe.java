@@ -1,4 +1,4 @@
-package com.example.mlang.funf_sensor;
+package com.example.mlang.funf_sensor.Probe.ForegroundProbe;
 
 import android.app.ActivityManager;
 import android.content.Context;

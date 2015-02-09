@@ -17,7 +17,7 @@
          },
          "data":[
          <!-- the data that is uploaded -->
-         {"@type": "com.example.mlang.funf_sensor.ForegroundProbe",
+         {"@type": "com.example.mlang.funf_sensor.Probe.ForegroundProbe.ForegroundProbe",
                              "@schedule": {"interval": 10},
                              "goodEnoughAccuracy": 5,
                              "maxWaitTime": 2

@@ -16,8 +16,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.AbsoluteSizeSpan;
@@ -30,12 +28,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 //import com.example.mlang.funf_sensor.Probe.Security.SecurityProbe;
+import com.example.mlang.funf_sensor.Probe.CallStateProbe.CallStateProbe;
+import com.example.mlang.funf_sensor.Probe.ForegroundProbe.ForegroundProbe;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.Constants;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.GPSCallback;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.GPSManager;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.Settings;
-import com.example.mlang.funf_sensor.Probe.MyPhoneStateListener;
 import com.example.mlang.funf_sensor.Probe.NotificationAndBroadcastHandlers.NotificationProbe;
+import com.example.mlang.funf_sensor.Probe.SMSProbe.SMSProbe;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -130,6 +130,9 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
     private VideoMediaProbe videoMediaProbe;
     private WifiProbe wifiProbe;
 
+    private SMSProbe sMSProbe;
+    private CallStateProbe callStateProbe;
+
     private CheckBox enabledCheckbox;
     private Button archiveButton, scanNowButton;
     private TextView dataCountView;
@@ -196,6 +199,9 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             //temperatureSensorProbe = gson.fromJson(new JsonObject(), TemperatureSensorProbe.class);
             //videoMediaProbe = gson.fromJson(new JsonObject(), VideoMediaProbe.class);
             //wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
+
+            sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
+            callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
 
 
             pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
