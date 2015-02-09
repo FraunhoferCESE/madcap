@@ -3,11 +3,18 @@ package com.example.mlang.funf_sensor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
+
+//import static com.example.mlang.funf_sensor.MainActivity.setSpeedText;
 
 /**
  * Created by MLang on 04.02.2015.
  */
 public class SpeedActionListener implements LocationListener {
+
+    private final String Speed = null;
+    double mySpeed, maxSpeed;
     /**
      * Called when the location has changed.
      * <p/>
@@ -17,7 +24,16 @@ public class SpeedActionListener implements LocationListener {
      */
     @Override
     public void onLocationChanged(Location location) {
+        Log.i(Speed, "working2 ");
+        if(location!=null) {
+            if(location.hasSpeed()){
 
+                mySpeed = location.getSpeed();
+                //setSpeedText("\nCurrent speed: " + mySpeed + " km/h, Max speed: " +
+                //        maxSpeed + " km/h");
+            }
+        }
+        Log.i(Speed, "working3 ");
     }
 
     /**

@@ -9,11 +9,11 @@
          "name":"default",
          "version":1,
          "archive": {
-                "@schedule": {"interval": 100}
+                "@schedule": {"interval": 300}
          },
          "upload": {
             "url": \"http://127.0.0.1:9000/data\",
-            "@schedule": {"interval": 100}
+            "@schedule": {"interval": 600}
          },
          "data":[
          <!-- the data that is uploaded -->
@@ -21,12 +21,17 @@
                              "@schedule": {"interval": 10},
                              "goodEnoughAccuracy": 5,
                              "maxWaitTime": 2
-                            },
+                            },<!--
+         {"@type": "com.example.mlang.funf_sensor.SpeedProbe",
+                             "@schedule": {"interval": 10},
+                             "goodEnoughAccuracy": 5,
+                             "maxWaitTime": 2
+                            },-->
          <!--{"@type": "com.example.mlang.funf_sensor.Probe.Security.NotificationProbe",
                              "@schedule": {"interval": 600},
                              "goodEnoughAccuracy": 80,
                              "maxWaitTime": 60
-                            }-->
+                            },-->
          <!-- Funf probes
          {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerFeaturesProbe",
                          "@schedule": {"interval": 60, "duration": 10},
@@ -130,12 +135,12 @@
                           "@schedule": {"interval": 60, "duration": 10},
                        "goodEnoughAccuracy": 40,
                       "maxWaitTime": 20
-                         },
+                         },-->
          {"@type": "edu.mit.media.funf.probe.builtin.RunningApplicationsProbe",
-                          "@schedule": {"interval": 60, "duration": 10},
+                          "@schedule": {"interval": 10, "duration": 10},
                        "goodEnoughAccuracy": 40,
                       "maxWaitTime": 20
-                         },
+                         }<!--
          {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe",
                           "@schedule": {"interval": 60, "duration": 10},
                        "goodEnoughAccuracy": 40,
@@ -150,14 +155,14 @@
                          "@schedule": {"interval": 20},
                          "goodEnoughAccuracy": 10,
                          "maxWaitTime": 5
-                        },-->
+                        },
          {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
                       "@schedule": {"interval": 20},
                        "useNetwork" : false,
                         "useGps" : true,
                       "goodEnoughAccuracy": 10,
                       "maxWaitTime": 5
-                     }<!--
+                     }
          {"@type": "edu.mit.media.funf.probe.builtin.SmsProbe",
                              "@schedule": {"interval": 60, "duration": 10},
                        "goodEnoughAccuracy": 40,
@@ -340,4 +345,5 @@
         }
     </string>-->
     <string name="checkBoxText">PIPELINING ACTIVATED</string>
+    <string name="info">Waiting for GPS...</string>
 </resources>
