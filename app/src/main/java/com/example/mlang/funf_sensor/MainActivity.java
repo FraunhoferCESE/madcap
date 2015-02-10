@@ -53,6 +53,7 @@ import edu.mit.media.funf.probe.builtin.ActivityProbe;
 import edu.mit.media.funf.probe.builtin.AndroidInfoProbe;
 import edu.mit.media.funf.probe.builtin.AudioFeaturesProbe;
 import edu.mit.media.funf.probe.builtin.AudioMediaProbe;
+import edu.mit.media.funf.probe.builtin.BatteryProbe;
 import edu.mit.media.funf.probe.builtin.BluetoothProbe;
 import edu.mit.media.funf.probe.builtin.BrowserSearchesProbe;
 import edu.mit.media.funf.probe.builtin.CallLogProbe;
@@ -101,6 +102,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
     private AndroidInfoProbe androidInfoProbe;
     private AudioFeaturesProbe audioFeaturesProbe;
     private AudioMediaProbe audioMediaProbe;
+    private BatteryProbe batteryProbe;
     private BluetoothProbe bluetoothProbe;
     private BrowserSearchesProbe browserSearchesProbe;
     private CallLogProbe callLogProbe;
@@ -171,6 +173,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
             sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
+            batteryProbe = gson.fromJson(new JsonObject(), BatteryProbe.class);
 
 
             //accelerometerFeaturesProbe = gson.fromJson(new JsonObject(), AccelerometerFeaturesProbe.class);
@@ -245,11 +248,12 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
     private void registerListeners() {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("org.fraunhofer.funf.NotificationReceivedBroadcast"));
         accelerometerSensorProbe.registerPassiveListener(pipeline);
+        batteryProbe.registerPassiveListener(pipeline);
         foregroundProbe.registerPassiveListener(pipeline);
         locationProbe.registerPassiveListener(pipeline);
         screenProbe.registerPassiveListener(pipeline);
         sMSProbe.registerPassiveListener(pipeline);
-        telephonyProbe.registerPassiveListener(pipeline);
+        callStateProbe.registerPassiveListener(pipeline);
         //notificationProbe.registerPassiveListener(pipeline);
         //locationProbe.registerPassiveListener(pipeline);
         //runningApplicationsProbe.registerPassiveListener(pipeline);
@@ -258,11 +262,12 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
 
     private void unregisterListeners() {
         accelerometerSensorProbe.unregisterListener(pipeline);
+        batteryProbe.unregisterListener(pipeline);
         foregroundProbe.unregisterListener(pipeline);
         locationProbe.unregisterListener(pipeline);
         screenProbe.unregisterListener(pipeline);
         sMSProbe.unregisterListener(pipeline);
-        telephonyProbe.unregisterListener(pipeline);
+        callStateProbe.unregisterListener(pipeline);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
         //locationProbe.unregisterListener((pipeline));
