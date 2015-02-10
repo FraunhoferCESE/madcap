@@ -18,18 +18,39 @@ public class SMSSendProbe extends Probe.Base implements Probe.PassiveProbe{
 
     ContentResolver contentResolver;
 
-    private static final String TAG = "SMS sent.";
+    private static final String TAG = "SMSSendProbe";
 
-    private ContentObserver myObserver = new ContentObserver(new Handler()) {
+    private ContentObserver smsOutgoingObserver = new ContentObserver(new Handler()) {
 
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public void onChange(boolean selfChange) {
-            this.onChange(selfChange, null);
             Intent i = new Intent();
             i.putExtra("Action", "SMS sent");
             Log.d(TAG, "SMS was sent with this device.");
             sendData(i);
+        }
+
+        @Override
+        public boolean deliverSelfNotifications() {
+            return false;
+        }
+    };
+
+    private ContentObserver mmsOutgoingObserver = new ContentObserver(new Handler()) {
+
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+        @Override
+        public void onChange(boolean selfChange) {
+            Intent i = new Intent();
+            i.putExtra("Action", "MMS sent");
+            Log.d(TAG, "MMS was sent with this device.");
+            sendData(i);
+        }
+
+        @Override
+        public boolean deliverSelfNotifications() {
+            return false;
         }
     };
 
@@ -37,13 +58,15 @@ public class SMSSendProbe extends Probe.Base implements Probe.PassiveProbe{
     protected void onStart() {
         super.onStart();
         contentResolver = getContext().getContentResolver();
-        contentResolver.registerContentObserver(Uri.parse("content://sms"), true, myObserver);
+        contentResolver.registerContentObserver(Uri.parse("content://sms"), true, smsOutgoingObserver);
+        contentResolver.registerContentObserver(Uri.parse("content://mms"), true, mmsOutgoingObserver);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        contentResolver.unregisterContentObserver(myObserver);
+        contentResolver.unregisterContentObserver(smsOutgoingObserver);
+        contentResolver.unregisterContentObserver(mmsOutgoingObserver);
     }
 
     public void sendData(Intent intent) {

@@ -9,43 +9,33 @@
          "name":"default",
          "version":1,
          "archive": {
-                "@schedule": {"interval": 300}
+                "@schedule": {"interval": 60}
          },
+         <!--
          "upload": {
             "url": \"http://127.0.0.1:9000/data\",
             "@schedule": {"interval": 600}
-         },
+         },-->
          "data":[
          <!-- the data that is uploaded -->
          {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
-                      "@schedule": {"interval": 15, "duration": 0}
+                      "@schedule": {"interval": 15, "duration": 1}
                      },
-         {"@type": "edu.mit.media.funf.probe.builtin.BatteryProbe",
-                      "@schedule": {"interval": 15, "duration": 0}
-                     },
+         {"@type": "edu.mit.media.funf.probe.builtin.BatteryProbe"},
          {"@type": "com.example.mlang.funf_sensor.Probe.CallStateProbe.CallStateProbe"
                      },
          {"@type": "com.example.mlang.funf_sensor.Probe.ForegroundProbe.ForegroundProbe",
                              "@schedule": {"interval": 10},
-                             "goodEnoughAccuracy": 5,
-                             "maxWaitTime": 2
                             },
-         {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe",
-                          "@schedule": {"interval": 60, "duration": 10},
-                       "goodEnoughAccuracy": 40,
-                      "maxWaitTime": 20
-                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe"},
          {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
-                      "@schedule": {"interval": 20},
-                       "useNetwork" : false,
-                        "useGps" : true,
-                      "goodEnoughAccuracy": 10,
-                      "maxWaitTime": 5
+                      "@schedule": {"interval": 60},
+                      "goodEnoughAccuracy": 50,
+                      "maxWaitTime": 15
                      },
-         {"@type": "com.example.mlang.funf_sensor.Probe.SMSProbe.SMSProbe"
-                     },
-         {"@type": "com.example.mlang.funf_sensor.Probe.SMSProbe.SMSSendProbe"
-                     }<!--
+         {"@type": "com.example.mlang.funf_sensor.Probe.SMSProbe.SMSProbe"},
+         {"@type": "com.example.mlang.funf_sensor.Probe.SMSProbe.SMSSendProbe"}
+         <!--
          {"@type": "com.example.mlang.funf_sensor.SpeedProbe",
                              "@schedule": {"interval": 10},
                              "goodEnoughAccuracy": 5,

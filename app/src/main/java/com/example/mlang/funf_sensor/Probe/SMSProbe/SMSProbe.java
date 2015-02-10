@@ -25,18 +25,11 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         @TargetApi(Build.VERSION_CODES.KITKAT)
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (Telephony.Sms.Intents.SMS_DELIVER_ACTION.equals(intent.getAction())) {
-                for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                    String messageBody = smsMessage.getMessageBody();
-                    Log.d(TAG, "SMS delivered.");
-                    intent.putExtra("SMS Action", "SMS delivered");
-                }
-            }
-            else if (Telephony.Sms.Intents.SMS_EMERGENCY_CB_RECEIVED_ACTION.equals(intent.getAction())) {
+            if (Telephony.Sms.Intents.SMS_EMERGENCY_CB_RECEIVED_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
                     String messageBody = smsMessage.getMessageBody();
                     Log.d(TAG, "SMS emergency received.");
-                    intent.putExtra("SMS Action", "SMS emergencey received");
+                    intent.putExtra("SMS Action", "SMS emergency received");
                 }
             }
             else if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
@@ -63,7 +56,6 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         super.onStart();
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
-        filter.addAction("android.provider.Telephony.SMS_DELIVER");
         filter.addAction("android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED");
         filter.addAction("android.provider.Telephony.WAP_PUSH_RECEIVED");
         getContext().registerReceiver(receiver, filter);
