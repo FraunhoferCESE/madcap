@@ -7,6 +7,7 @@ import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.util.Log;
 
 import edu.mit.media.funf.probe.Probe;
 
@@ -14,6 +15,10 @@ import edu.mit.media.funf.probe.Probe;
  * Created by MLang on 10.02.2015.
  */
 public class SMSSendProbe extends Probe.Base implements Probe.PassiveProbe{
+
+    ContentResolver contentResolver;
+
+    private static final String TAG = "SMS sent.";
 
     private ContentObserver myObserver = new ContentObserver(new Handler()) {
 
@@ -23,6 +28,7 @@ public class SMSSendProbe extends Probe.Base implements Probe.PassiveProbe{
             this.onChange(selfChange, null);
             Intent i = new Intent();
             i.putExtra("Action", "SMS sent");
+            Log.d(TAG, "SMS was sent with this device.");
             sendData(i);
         }
     };
@@ -30,14 +36,13 @@ public class SMSSendProbe extends Probe.Base implements Probe.PassiveProbe{
     @Override
     protected void onStart() {
         super.onStart();
-        ContentResolver contentResolver = getContext().getContentResolver();
+        contentResolver = getContext().getContentResolver();
         contentResolver.registerContentObserver(Uri.parse("content://sms"), true, myObserver);
     }
 
     @Override
     protected void onStop() {
-        super.onStart();
-        ContentResolver contentResolver = getContext().getContentResolver();
+        super.onStop();
         contentResolver.unregisterContentObserver(myObserver);
     }
 
