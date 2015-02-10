@@ -36,6 +36,7 @@ import com.example.mlang.funf_sensor.Probe.GPSProbe.GPSManager;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.Settings;
 import com.example.mlang.funf_sensor.Probe.NotificationAndBroadcastHandlers.NotificationProbe;
 import com.example.mlang.funf_sensor.Probe.SMSProbe.SMSProbe;
+import com.example.mlang.funf_sensor.Probe.SMSProbe.SMSSendProbe;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -134,6 +135,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
 
     private SMSProbe sMSProbe;
     private CallStateProbe callStateProbe;
+    private SMSSendProbe smsSendProbe;
 
     private CheckBox enabledCheckbox;
     private Button archiveButton, scanNowButton;
@@ -172,6 +174,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
             screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
             sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
+            smsSendProbe = gson.fromJson(new JsonObject(), SMSSendProbe.class);
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
             batteryProbe = gson.fromJson(new JsonObject(), BatteryProbe.class);
 
@@ -253,6 +256,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         locationProbe.registerPassiveListener(pipeline);
         screenProbe.registerPassiveListener(pipeline);
         sMSProbe.registerPassiveListener(pipeline);
+        smsSendProbe.registerPassiveListener(pipeline);
         callStateProbe.registerPassiveListener(pipeline);
         //notificationProbe.registerPassiveListener(pipeline);
         //locationProbe.registerPassiveListener(pipeline);
@@ -267,6 +271,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         locationProbe.unregisterListener(pipeline);
         screenProbe.unregisterListener(pipeline);
         sMSProbe.unregisterListener(pipeline);
+        smsSendProbe.unregisterListener(pipeline);
         callStateProbe.unregisterListener(pipeline);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
