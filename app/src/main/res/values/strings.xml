@@ -17,11 +17,26 @@
          },
          "data":[
          <!-- the data that is uploaded -->
+         {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
+                      "@schedule": {"interval": 15, "duration": 0}
+                     },
          {"@type": "com.example.mlang.funf_sensor.Probe.ForegroundProbe.ForegroundProbe",
                              "@schedule": {"interval": 10},
                              "goodEnoughAccuracy": 5,
                              "maxWaitTime": 2
-                            },<!--
+                            },
+         {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe",
+                          "@schedule": {"interval": 60, "duration": 10},
+                       "goodEnoughAccuracy": 40,
+                      "maxWaitTime": 20
+                         },
+         {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
+                      "@schedule": {"interval": 20},
+                       "useNetwork" : false,
+                        "useGps" : true,
+                      "goodEnoughAccuracy": 10,
+                      "maxWaitTime": 5
+                     }<!--
          {"@type": "com.example.mlang.funf_sensor.SpeedProbe",
                              "@schedule": {"interval": 10},
                              "goodEnoughAccuracy": 5,
@@ -38,9 +53,6 @@
                           "goodEnoughAccuracy": 40,
                          "maxWaitTime": 20
                         },
-         {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
-                      "@schedule": {"interval": 15, "duration": 0}
-                     },
          {"@type": "edu.mit.media.funf.probe.builtin.ActivityProbe",
                       "@schedule": {"interval": 60, "duration": 10},
                        "goodEnoughAccuracy": 40,
@@ -135,17 +147,12 @@
                           "@schedule": {"interval": 60, "duration": 10},
                        "goodEnoughAccuracy": 40,
                       "maxWaitTime": 20
-                         },-->
+                         },
          {"@type": "edu.mit.media.funf.probe.builtin.RunningApplicationsProbe",
                           "@schedule": {"interval": 10, "duration": 10},
                        "goodEnoughAccuracy": 40,
                       "maxWaitTime": 20
-                         }<!--
-         {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe",
-                          "@schedule": {"interval": 60, "duration": 10},
-                       "goodEnoughAccuracy": 40,
-                      "maxWaitTime": 20
-                         },
+                         }
          {"@type": "edu.mit.media.funf.probe.builtin.ServicesProbe",
                           "@schedule": {"interval": 60, "duration": 10},
                        "goodEnoughAccuracy": 40,
@@ -155,14 +162,7 @@
                          "@schedule": {"interval": 20},
                          "goodEnoughAccuracy": 10,
                          "maxWaitTime": 5
-                        },
-         {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
-                      "@schedule": {"interval": 20},
-                       "useNetwork" : false,
-                        "useGps" : true,
-                      "goodEnoughAccuracy": 10,
-                      "maxWaitTime": 5
-                     }
+                        }
          {"@type": "edu.mit.media.funf.probe.builtin.SmsProbe",
                              "@schedule": {"interval": 60, "duration": 10},
                        "goodEnoughAccuracy": 40,

@@ -165,8 +165,15 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             //--------------------------------------------------------------------------------------
             funfManager = ((FunfManager.LocalBinder) service).getManager();
             Gson gson = funfManager.getGson();
+            accelerometerSensorProbe = gson.fromJson(new JsonObject(), AccelerometerSensorProbe.class);
+            foregroundProbe = gson.fromJson(new JsonObject(), ForegroundProbe.class);
+            locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
+            screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
+            sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
+            callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
+
+
             //accelerometerFeaturesProbe = gson.fromJson(new JsonObject(), AccelerometerFeaturesProbe.class);
-            //accelerometerSensorProbe = gson.fromJson(new JsonObject(), AccelerometerSensorProbe.class);
             //activityProbe = gson.fromJson(new JsonObject(), ActivityProbe.class);
             //androidInfoProbe = gson.fromJson(new JsonObject(), AndroidInfoProbe.class);
             //audioFeaturesProbe = gson.fromJson(new JsonObject(), AudioFeaturesProbe.class);
@@ -182,16 +189,13 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             //lightSensorProbe = gson.fromJson(new JsonObject(), LightSensorProbe.class);
             //linearAccelerationSensorProbe = gson.fromJson(new JsonObject(), LinearAccelerationSensorProbe.class);
             //fullLocationProbe = gson.fromJson(new JsonObject(), LocationProbe.class);
-            foregroundProbe = gson.fromJson(new JsonObject(), ForegroundProbe.class);
-            //locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
             //magneticFieldSensorProbe = gson.fromJson(new JsonObject(), MagneticFieldSensorProbe.class);
-            notificationProbe = gson.fromJson(new JsonObject(), NotificationProbe.class);
+            //notificationProbe = gson.fromJson(new JsonObject(), NotificationProbe.class);
             //orientationSensorProbe = gson.fromJson(new JsonObject(), OrientationSensorProbe.class);
             //processStatisticsProbe = gson.fromJson(new JsonObject(), ProcessStatisticsProbe.class);
             //proximitySensorProbe = gson.fromJson(new JsonObject(), ProximitySensorProbe.class);
             //rotationVectorSensorProbe = gson.fromJson(new JsonObject(), RotationVectorSensorProbe.class);
-            runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
-            //screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
+            //runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
             //servicesProbe = gson.fromJson(new JsonObject(), ServicesProbe.class);
             //smsProbe = gson.fromJson(new JsonObject(), SmsProbe.class);
             //speedProbe = gson.fromJson(new JsonObject(), SpeedProbe.class);
@@ -200,8 +204,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             //videoMediaProbe = gson.fromJson(new JsonObject(), VideoMediaProbe.class);
             //wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
 
-            sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
-            callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
+
 
 
             pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
@@ -241,20 +244,31 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
 
     private void registerListeners() {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("org.fraunhofer.funf.NotificationReceivedBroadcast"));
-        notificationProbe.registerPassiveListener(pipeline);
-        //locationProbe.registerPassiveListener(pipeline);
+        accelerometerSensorProbe.registerPassiveListener(pipeline);
         foregroundProbe.registerPassiveListener(pipeline);
-        runningApplicationsProbe.registerPassiveListener(pipeline);
+        locationProbe.registerPassiveListener(pipeline);
+        screenProbe.registerPassiveListener(pipeline);
+        sMSProbe.registerPassiveListener(pipeline);
+        telephonyProbe.registerPassiveListener(pipeline);
+        //notificationProbe.registerPassiveListener(pipeline);
+        //locationProbe.registerPassiveListener(pipeline);
+        //runningApplicationsProbe.registerPassiveListener(pipeline);
         //speedProbe.registerPassiveListener(pipeline);
     }
 
     private void unregisterListeners() {
+        accelerometerSensorProbe.unregisterListener(pipeline);
         foregroundProbe.unregisterListener(pipeline);
-        //locationProbe.unregisterListener((pipeline));
-        notificationProbe.unregisterListener(pipeline);
-        runningApplicationsProbe.unregisterListener(pipeline);
-        //speedProbe.unregisterListener(pipeline);
+        locationProbe.unregisterListener(pipeline);
+        screenProbe.unregisterListener(pipeline);
+        sMSProbe.unregisterListener(pipeline);
+        telephonyProbe.unregisterListener(pipeline);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+
+        //locationProbe.unregisterListener((pipeline));
+        //notificationProbe.unregisterListener(pipeline);
+        //runningApplicationsProbe.unregisterListener(pipeline);
+        //speedProbe.unregisterListener(pipeline);
     }
 
     //onCreate is the rendering of the main page

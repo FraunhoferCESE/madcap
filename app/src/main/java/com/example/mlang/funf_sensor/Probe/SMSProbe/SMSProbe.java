@@ -61,9 +61,11 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
     @Override
     protected void onStart() {
         super.onStart();
-        getContext().registerReceiver(receiver, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
-        getContext().registerReceiver(receiver, new IntentFilter("android.provider.Telephony.SMS_DELIVER"));
-        getContext().registerReceiver(receiver, new IntentFilter("android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED"));
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        filter.addAction("android.provider.Telephony.SMS_DELIVER");
+        filter.addAction("android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED");
+        getContext().registerReceiver(receiver, filter);
     }
 
     @Override

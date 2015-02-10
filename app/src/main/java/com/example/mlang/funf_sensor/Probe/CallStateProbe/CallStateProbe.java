@@ -61,18 +61,21 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
                     phoneRinging = false;
                     Intent intent = new Intent();
                     intent.putExtra("CALL STATE", "IDLE");
+                    sendData(intent);
                     break;
                 case TelephonyManager.CALL_STATE_OFFHOOK:
                     Log.d("PhoneStateListener", "Call state : OFFHOOK");
                     phoneRinging = false;
                     Intent intent2 = new Intent();
                     intent2.putExtra("CALL STATE", "OFFHOOK");
+                    sendData(intent2);
                     break;
                 case TelephonyManager.CALL_STATE_RINGING:
                     Log.d("PhoneStateListener", "Call state : RINGING");
                     phoneRinging = true;
                     Intent intent3 = new Intent();
                     intent3.putExtra("CALL STATE", "RINGING");
+                    sendData(intent3);
                     break;
             }
         }
