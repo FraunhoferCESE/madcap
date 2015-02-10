@@ -23,6 +23,8 @@
          {"@type": "edu.mit.media.funf.probe.builtin.BatteryProbe",
                       "@schedule": {"interval": 15, "duration": 0}
                      },
+         {"@type": "com.example.mlang.funf_sensor.Probe.CallStateProbe.CallStateProbe",
+                     },
          {"@type": "com.example.mlang.funf_sensor.Probe.ForegroundProbe.ForegroundProbe",
                              "@schedule": {"interval": 10},
                              "goodEnoughAccuracy": 5,
@@ -39,6 +41,8 @@
                         "useGps" : true,
                       "goodEnoughAccuracy": 10,
                       "maxWaitTime": 5
+                     },
+         {"@type": "com.example.mlang.funf_sensor.Probe.SMSProbe.SMSProbe",
                      }<!--
          {"@type": "com.example.mlang.funf_sensor.SpeedProbe",
                              "@schedule": {"interval": 10},

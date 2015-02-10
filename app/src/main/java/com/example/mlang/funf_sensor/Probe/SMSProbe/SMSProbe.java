@@ -28,33 +28,33 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
             if (Telephony.Sms.Intents.SMS_DELIVER_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
                     String messageBody = smsMessage.getMessageBody();
-                    Log.d("SMSListener", "SMS delivered.");
+                    Log.d(TAG, "SMS delivered.");
                     intent.putExtra("SMS Action", "SMS delivered");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
             }
             else if (Telephony.Sms.Intents.SMS_EMERGENCY_CB_RECEIVED_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
                     String messageBody = smsMessage.getMessageBody();
-                    Log.d("SMSListener", "SMS emergency received.");
+                    Log.d(TAG, "SMS emergency received.");
                     intent.putExtra("SMS Action", "SMS emergencey received");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
             }
             else if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
                     String messageBody = smsMessage.getMessageBody();
-                    Log.d("SMSListener", "SMS received.");
+                    Log.d(TAG, "SMS received.");
                     intent.putExtra("SMS Action", "SMS received");
-                    LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
                 }
+            }
+            else if(Telephony.Mms.Intents.CONTENT_CHANGED_ACTION.equals(intent.getAction())) {
+                Log.d(TAG, "MMS content changed.");
+                intent.putExtra("MMS Action", "MMS content changed.");
             }
             sendData(intent);
         }
     };
 
     public void sendData(Intent intent) {
-        Log.i(TAG, "sendData() called. data = " + getGson().toJsonTree(intent).getAsJsonObject().toString());
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
     }
 
@@ -65,6 +65,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
         filter.addAction("android.provider.Telephony.SMS_DELIVER");
         filter.addAction("android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED");
+        filter.addAction("android.provider.Telephony.WAP_PUSH_RECEIVED");
         getContext().registerReceiver(receiver, filter);
     }
 
