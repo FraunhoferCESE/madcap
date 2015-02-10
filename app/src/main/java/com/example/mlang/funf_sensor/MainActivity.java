@@ -27,14 +27,12 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//import com.example.mlang.funf_sensor.Probe.Security.SecurityProbe;
 import com.example.mlang.funf_sensor.Probe.CallStateProbe.CallStateProbe;
 import com.example.mlang.funf_sensor.Probe.ForegroundProbe.ForegroundProbe;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.Constants;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.GPSCallback;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.GPSManager;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.Settings;
-import com.example.mlang.funf_sensor.Probe.NotificationAndBroadcastHandlers.NotificationProbe;
 import com.example.mlang.funf_sensor.Probe.SMSProbe.SMSProbe;
 import com.example.mlang.funf_sensor.Probe.SMSProbe.SMSSendProbe;
 import com.google.gson.Gson;
@@ -48,39 +46,13 @@ import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.json.IJsonObject;
 import edu.mit.media.funf.pipeline.BasicPipeline;
 import edu.mit.media.funf.probe.Probe.DataListener;
-import edu.mit.media.funf.probe.builtin.AccelerometerFeaturesProbe;
 import edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe;
-import edu.mit.media.funf.probe.builtin.ActivityProbe;
-import edu.mit.media.funf.probe.builtin.AndroidInfoProbe;
-import edu.mit.media.funf.probe.builtin.AudioFeaturesProbe;
-import edu.mit.media.funf.probe.builtin.AudioMediaProbe;
 import edu.mit.media.funf.probe.builtin.BatteryProbe;
-import edu.mit.media.funf.probe.builtin.BluetoothProbe;
-import edu.mit.media.funf.probe.builtin.BrowserSearchesProbe;
-import edu.mit.media.funf.probe.builtin.CallLogProbe;
-import edu.mit.media.funf.probe.builtin.ContactProbe;
-import edu.mit.media.funf.probe.builtin.GravitySensorProbe;
-import edu.mit.media.funf.probe.builtin.GyroscopeSensorProbe;
-import edu.mit.media.funf.probe.builtin.HardwareInfoProbe;
-import edu.mit.media.funf.probe.builtin.ImageMediaProbe;
-import edu.mit.media.funf.probe.builtin.LightSensorProbe;
-import edu.mit.media.funf.probe.builtin.LinearAccelerationSensorProbe;
-import edu.mit.media.funf.probe.builtin.LocationProbe;
-import edu.mit.media.funf.probe.builtin.MagneticFieldSensorProbe;
-import edu.mit.media.funf.probe.builtin.OrientationSensorProbe;
-import edu.mit.media.funf.probe.builtin.ProcessStatisticsProbe;
-import edu.mit.media.funf.probe.builtin.ProximitySensorProbe;
-import edu.mit.media.funf.probe.builtin.RotationVectorSensorProbe;
-import edu.mit.media.funf.probe.builtin.RunningApplicationsProbe;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
-import edu.mit.media.funf.probe.builtin.ServicesProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
-import edu.mit.media.funf.probe.builtin.SmsProbe;
-import edu.mit.media.funf.probe.builtin.TelephonyProbe;
-import edu.mit.media.funf.probe.builtin.TemperatureSensorProbe;
-import edu.mit.media.funf.probe.builtin.VideoMediaProbe;
-import edu.mit.media.funf.probe.builtin.WifiProbe;
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
+
+//import com.example.mlang.funf_sensor.Probe.Security.SecurityProbe;
 
 /**
  * Created by MLang on 19.12.2014.
@@ -97,41 +69,11 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
     private TextView txtView;
 
     //probes
-    private AccelerometerFeaturesProbe accelerometerFeaturesProbe;
     private AccelerometerSensorProbe accelerometerSensorProbe;
-    private ActivityProbe activityProbe;
-    private AndroidInfoProbe androidInfoProbe;
-    private AudioFeaturesProbe audioFeaturesProbe;
-    private AudioMediaProbe audioMediaProbe;
     private BatteryProbe batteryProbe;
-    private BluetoothProbe bluetoothProbe;
-    private BrowserSearchesProbe browserSearchesProbe;
-    private CallLogProbe callLogProbe;
-    private ContactProbe contactProbe;
     private ForegroundProbe foregroundProbe;
-    private GravitySensorProbe gravitySensorProbe;
-    private GyroscopeSensorProbe gyroscopeSensorProbe;
-    private HardwareInfoProbe hardwareInfoProbe;
-    private ImageMediaProbe imageMediaProbe;
-    private LightSensorProbe lightSensorProbe;
-    private LinearAccelerationSensorProbe linearAccelerationSensorProbe;
-    private LocationProbe fullLocationProbe;
-    private NotificationProbe notificationProbe;
-    private MagneticFieldSensorProbe magneticFieldSensorProbe;
-    private OrientationSensorProbe orientationSensorProbe;
-    private ProcessStatisticsProbe processStatisticsProbe;
-    private ProximitySensorProbe proximitySensorProbe;
-    private RotationVectorSensorProbe rotationVectorSensorProbe;
-    private RunningApplicationsProbe runningApplicationsProbe;
     private ScreenProbe screenProbe;
-    private ServicesProbe servicesProbe;
     private SimpleLocationProbe locationProbe;
-    private SmsProbe smsProbe;
-    private SpeedProbe speedProbe;
-    private TelephonyProbe telephonyProbe;
-    private TemperatureSensorProbe temperatureSensorProbe;
-    private VideoMediaProbe videoMediaProbe;
-    private WifiProbe wifiProbe;
 
     private SMSProbe sMSProbe;
     private CallStateProbe callStateProbe;
@@ -169,6 +111,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             //--------------------------------------------------------------------------------------
             funfManager = ((FunfManager.LocalBinder) service).getManager();
             Gson gson = funfManager.getGson();
+
             accelerometerSensorProbe = gson.fromJson(new JsonObject(), AccelerometerSensorProbe.class);
             foregroundProbe = gson.fromJson(new JsonObject(), ForegroundProbe.class);
             locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
@@ -177,41 +120,6 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             smsSendProbe = gson.fromJson(new JsonObject(), SMSSendProbe.class);
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
             batteryProbe = gson.fromJson(new JsonObject(), BatteryProbe.class);
-
-
-            //accelerometerFeaturesProbe = gson.fromJson(new JsonObject(), AccelerometerFeaturesProbe.class);
-            //activityProbe = gson.fromJson(new JsonObject(), ActivityProbe.class);
-            //androidInfoProbe = gson.fromJson(new JsonObject(), AndroidInfoProbe.class);
-            //audioFeaturesProbe = gson.fromJson(new JsonObject(), AudioFeaturesProbe.class);
-            //audioMediaProbe = gson.fromJson(new JsonObject(), AudioMediaProbe.class);
-            //bluetoothProbe = gson.fromJson(new JsonObject(), BluetoothProbe.class);
-            //browserSearchesProbe = gson.fromJson(new JsonObject(), BrowserSearchesProbe.class);
-            //callLogProbe = gson.fromJson(new JsonObject(), CallLogProbe.class);
-            //contactProbe = gson.fromJson(new JsonObject(), ContactProbe.class);
-            //gravitySensorProbe = gson.fromJson(new JsonObject(), GravitySensorProbe.class);
-            //gyroscopeSensorProbe = gson.fromJson(new JsonObject(), GyroscopeSensorProbe.class);
-            //hardwareInfoProbe = gson.fromJson(new JsonObject(), HardwareInfoProbe.class);
-            //imageMediaProbe = gson.fromJson(new JsonObject(), ImageMediaProbe.class);
-            //lightSensorProbe = gson.fromJson(new JsonObject(), LightSensorProbe.class);
-            //linearAccelerationSensorProbe = gson.fromJson(new JsonObject(), LinearAccelerationSensorProbe.class);
-            //fullLocationProbe = gson.fromJson(new JsonObject(), LocationProbe.class);
-            //magneticFieldSensorProbe = gson.fromJson(new JsonObject(), MagneticFieldSensorProbe.class);
-            //notificationProbe = gson.fromJson(new JsonObject(), NotificationProbe.class);
-            //orientationSensorProbe = gson.fromJson(new JsonObject(), OrientationSensorProbe.class);
-            //processStatisticsProbe = gson.fromJson(new JsonObject(), ProcessStatisticsProbe.class);
-            //proximitySensorProbe = gson.fromJson(new JsonObject(), ProximitySensorProbe.class);
-            //rotationVectorSensorProbe = gson.fromJson(new JsonObject(), RotationVectorSensorProbe.class);
-            //runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
-            //servicesProbe = gson.fromJson(new JsonObject(), ServicesProbe.class);
-            //smsProbe = gson.fromJson(new JsonObject(), SmsProbe.class);
-            //speedProbe = gson.fromJson(new JsonObject(), SpeedProbe.class);
-            //telephonyProbe = gson.fromJson(new JsonObject(), TelephonyProbe.class);
-            //temperatureSensorProbe = gson.fromJson(new JsonObject(), TemperatureSensorProbe.class);
-            //videoMediaProbe = gson.fromJson(new JsonObject(), VideoMediaProbe.class);
-            //wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
-
-
-
 
             pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
             funfManager.enablePipeline(PIPELINE_NAME);
@@ -258,9 +166,8 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         sMSProbe.registerPassiveListener(pipeline);
         smsSendProbe.registerPassiveListener(pipeline);
         callStateProbe.registerPassiveListener(pipeline);
+
         //notificationProbe.registerPassiveListener(pipeline);
-        //locationProbe.registerPassiveListener(pipeline);
-        //runningApplicationsProbe.registerPassiveListener(pipeline);
         //speedProbe.registerPassiveListener(pipeline);
     }
 
@@ -276,8 +183,6 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
         //locationProbe.unregisterListener((pipeline));
-        //notificationProbe.unregisterListener(pipeline);
-        //runningApplicationsProbe.unregisterListener(pipeline);
         //speedProbe.unregisterListener(pipeline);
     }
 
@@ -309,11 +214,11 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         archiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG,"Archive requested");
+                Log.d(TAG, "Archive requested");
                 if (pipeline.isEnabled()) {
-                    Log.d(TAG,"Archiving started");
+                    Log.d(TAG, "Archiving started");
                     pipeline.onRun(BasicPipeline.ACTION_ARCHIVE, null);
-                    Log.d(TAG,"Archiving finished");
+                    Log.d(TAG, "Archiving finished");
 
                     // Wait 1 second for archive to finish, then refresh the UI
                     // (Note: this is kind of a hack since archiving is seamless and there are no messages when it occurs)
@@ -345,7 +250,6 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         });
 
 
-
         // Bind to the service, to create the connection with FunfManager
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
     }
@@ -353,8 +257,8 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.i("NotificationService","Calling probe");
-            notificationProbe.sendData(intent.getExtras());
+            Log.i("NotificationService", "Calling probe");
+//            notificationProbe.sendData(intent.getExtras());
         }
     };
 
@@ -432,10 +336,10 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
      * When the button to send a broadcast is clicked certain
      * extras are set to store the broadcast as a funf db
      * this broadcast is getting send then
+     *
      * @param view
      */
-    public void broadcastIntent(View view)
-    {
+    public void broadcastIntent(View view) {
         //Intent intent = new Intent();
         //intent.setAction("com.example.SendBroadcast");
         //intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
@@ -451,10 +355,11 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
      * A new notification is created in the statusbar.
      * Here you can enter the title, its text and its ticker.
      * The set icon will appear in the statusbar.
+     *
      * @param view
      */
     public void createNotification(View view) {
-        Log.i("NotificationService","Creating notification");
+        Log.i("NotificationService", "Creating notification");
         NotificationManager nManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder ncomp = new NotificationCompat.Builder(this);
         //Title
@@ -465,36 +370,37 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         ncomp.setTicker("Create notification was clicked.");
         ncomp.setSmallIcon(R.drawable.ic_launcher);
         ncomp.setAutoCancel(true);
-        nManager.notify((int)System.currentTimeMillis(),ncomp.build());
+        nManager.notify((int) System.currentTimeMillis(), ncomp.build());
     }
 
     @Override
-    public void onGPSUpdate(Location location)
-    {
+    public void onGPSUpdate(Location location) {
         location.getLatitude();
         location.getLongitude();
         speed = location.getSpeed();
 
-        String speedString = "" + roundDecimal(convertSpeed(speed),2);
+        String speedString = "" + roundDecimal(convertSpeed(speed), 2);
         String unitString = measurementUnitString(measurement_index);
 
-        setSpeedText(R.id.info_message,speedString + " " + unitString);
+        setSpeedText(R.id.info_message, speedString + " " + unitString);
     }
 
-    private String measurementUnitString(int unitIndex){
+    private String measurementUnitString(int unitIndex) {
         String string = "";
 
-        switch(unitIndex)
-        {
-            case Constants.INDEX_KM:                string = "km/h";        break;
-            case Constants.INDEX_MILES:     string = "mi/h";        break;
+        switch (unitIndex) {
+            case Constants.INDEX_KM:
+                string = "km/h";
+                break;
+            case Constants.INDEX_MILES:
+                string = "mi/h";
+                break;
         }
 
         return string;
     }
 
-    private double roundDecimal(double value, final int decimalPlace)
-    {
+    private double roundDecimal(double value, final int decimalPlace) {
         BigDecimal bd = new BigDecimal(value);
 
         bd = bd.setScale(decimalPlace, RoundingMode.HALF_UP);
@@ -503,20 +409,19 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         return value;
     }
 
-    private void setSpeedText(int textid,String text)
-    {
+    private void setSpeedText(int textid, String text) {
         Spannable span = new SpannableString(text);
         int firstPos = text.indexOf(32);
 
-        span.setSpan(sizeSpanLarge, 0, firstPos,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        span.setSpan(sizeSpanSmall, firstPos + 1, text.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        span.setSpan(sizeSpanLarge, 0, firstPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        span.setSpan(sizeSpanSmall, firstPos + 1, text.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        TextView tv = ((TextView)findViewById(textid));
+        TextView tv = ((TextView) findViewById(textid));
 
         tv.setText(span);
     }
 
-    private double convertSpeed(double speed){
+    private double convertSpeed(double speed) {
         return ((speed * Constants.HOUR_MULTIPLIER) * Constants.UNIT_MULTIPLIERS[measurement_index]);
     }
 }
