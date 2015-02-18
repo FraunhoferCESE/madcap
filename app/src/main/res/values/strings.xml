@@ -33,7 +33,10 @@
                       "goodEnoughAccuracy": 50,
                       "maxWaitTime": 15
                      },
-         {"@type": "com.example.mlang.funf_sensor.Probe.SMSProbe.SMSProbe"}
+         {"@type": "com.example.mlang.funf_sensor.Probe.SMSProbe.SMSProbe"},
+         {"@type": "edu.mit.media.funf.probe.builtin.Probe.RunningApplicationsProbe",
+                    "pollInterval": 10
+                    }
          <!--
          {"@type": "com.example.mlang.funf_sensor.SpeedProbe",
                              "@schedule": {"interval": 10},
