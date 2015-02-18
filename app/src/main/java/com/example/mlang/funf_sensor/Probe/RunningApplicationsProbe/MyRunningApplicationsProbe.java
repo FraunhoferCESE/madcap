@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -23,19 +24,23 @@ public class MyRunningApplicationsProbe extends Probe.Base {
         if(!am.isUserAMonkey()) {
             List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = am.getRunningAppProcesses();
             Log.i("MyRunningApplicationsProbe.class", "MyRunningApplicationsProbe started.");
-            Intent intent = new Intent();
+            JsonObject allApps = new JsonObject();
             int i = 1;
             for(ActivityManager.RunningAppProcessInfo info : runningAppProcessInfoList){
-                intent.putExtra("pcs"+i, info.processName);
-                intent.putExtra("pkgs"+i, info.pkgList);
-                intent.putExtra("imp"+i, info.importance);
-                intent.putExtra("imprc+i", info.importanceReasonCode);
-                if(info.importanceReasonComponent != null){
-                    intent.putExtra("impcom"+i, info.importanceReasonComponent);
+                JsonObject currentApp = new JsonObject();
+                currentApp.addProperty("pcs", info.processName);
+                int k = 1;
+                for(String pkg : info.pkgList){
+                    currentApp.addProperty("pkg" + k++, pkg);
                 }
-                i++;
+                currentApp.addProperty("imp", info.importance);
+                currentApp.addProperty("imprc", info.importanceReasonCode);
+                if(info.importanceReasonComponent != null){
+                    currentApp.addProperty("impcom" + i, info.importanceReasonComponent.toString());
+                }
+                allApps.add("app"+ i++,currentApp);
             }
-            sendData(gson.toJsonTree(intent).getAsJsonObject());
+            sendData(gson.toJsonTree(allApps).getAsJsonObject());
         }
         stop();
     }
