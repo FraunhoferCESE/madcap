@@ -78,7 +78,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
     private SMSProbe sMSProbe;
     private CallStateProbe callStateProbe;
 
-    private RunningApplicationsProbe runningApplicationsProbe;
+//    private RunningApplicationsProbe runningApplicationsProbe;
 
     private CheckBox enabledCheckbox;
     private Button archiveButton, scanNowButton;
@@ -120,7 +120,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
             batteryProbe = gson.fromJson(new JsonObject(), BatteryProbe.class);
-            runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
+//            runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
 
             pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
             funfManager.enablePipeline(PIPELINE_NAME);
@@ -166,7 +166,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         screenProbe.registerPassiveListener(pipeline);
         sMSProbe.registerPassiveListener(pipeline);
         callStateProbe.registerPassiveListener(pipeline);
-        runningApplicationsProbe.registerPassiveListener(pipeline);
+//        runningApplicationsProbe.registerPassiveListener(pipeline);
 
         //notificationProbe.registerPassiveListener(pipeline);
         //speedProbe.registerPassiveListener(pipeline);
@@ -180,9 +180,9 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         screenProbe.unregisterListener(pipeline);
         sMSProbe.unregisterListener(pipeline);
         callStateProbe.unregisterListener(pipeline);
-        runningApplicationsProbe.unregisterListener(pipeline);
+//        runningApplicationsProbe.unregisterListener(pipeline);
 
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+//        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
 
         //locationProbe.unregisterListener((pipeline));
         //speedProbe.unregisterListener(pipeline);
