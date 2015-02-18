@@ -48,7 +48,6 @@ import edu.mit.media.funf.pipeline.BasicPipeline;
 import edu.mit.media.funf.probe.Probe.DataListener;
 import edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe;
 import edu.mit.media.funf.probe.builtin.BatteryProbe;
-import edu.mit.media.funf.probe.builtin.RunningApplicationsProbe;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
 import edu.mit.media.funf.storage.NameValueDatabaseHelper;
@@ -67,8 +66,6 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
     private FunfManager funfManager;
     private BasicPipeline pipeline;
 
-    private TextView txtView;
-
     //probes
     private AccelerometerSensorProbe accelerometerSensorProbe;
     private BatteryProbe batteryProbe;
@@ -86,6 +83,8 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
     private Button archiveButton, scanNowButton;
     private TextView dataCountView;
     private Handler handler;
+
+    private String applicationPackageName = "com.example.mlang.funf_sensor";
 
     //-------------------------------------------//
     private GPSManager gpsManager = null;
@@ -124,6 +123,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
             batteryProbe = gson.fromJson(new JsonObject(), BatteryProbe.class);
 //            runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
+
 
             pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
             funfManager.enablePipeline(PIPELINE_NAME);
@@ -378,6 +378,20 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         ncomp.setSmallIcon(R.drawable.ic_launcher);
         ncomp.setAutoCancel(true);
         nManager.notify((int) System.currentTimeMillis(), ncomp.build());
+    }
+
+    public void changeNotificationSettings(View view) {
+        Intent i = new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS");
+        startActivity(i);
+        String enabledListeners = android.provider.Settings.Secure.getString(getBaseContext().getContentResolver(),
+                "enabled_notification_listeners");
+        TextView tv = ((TextView) findViewById(R.id.checkNotificationsAllowed));
+        if(enabledListeners.contains(applicationPackageName)){
+            tv.setText("Notifications are enabled. Click here to change.");
+        }
+        else{
+            tv.setText("Notifications are disabled. Click here to change.");
+        }
     }
 
     @Override

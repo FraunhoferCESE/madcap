@@ -60,6 +60,15 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"/>
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Change Notification settings"
+        android:id="@+id/checkNotificationsAllowed"
+        android:onClick="changeNotificationSettings"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"/>
     <TextView android:id="@+id/dataCountText"
         android:text="None"
         android:gravity="center"
