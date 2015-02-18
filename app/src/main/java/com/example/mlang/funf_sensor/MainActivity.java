@@ -33,6 +33,7 @@ import com.example.mlang.funf_sensor.Probe.GPSProbe.Constants;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.GPSCallback;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.GPSManager;
 import com.example.mlang.funf_sensor.Probe.GPSProbe.Settings;
+import com.example.mlang.funf_sensor.Probe.RunningApplicationsProbe.MyRunningApplicationsProbe;
 import com.example.mlang.funf_sensor.Probe.SMSProbe.SMSProbe;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
@@ -72,6 +73,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
     private AccelerometerSensorProbe accelerometerSensorProbe;
     private BatteryProbe batteryProbe;
     private ForegroundProbe foregroundProbe;
+    private MyRunningApplicationsProbe myRunningApplicationsProbe;
     private ScreenProbe screenProbe;
     private SimpleLocationProbe locationProbe;
 
@@ -116,6 +118,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
             accelerometerSensorProbe = gson.fromJson(new JsonObject(), AccelerometerSensorProbe.class);
             foregroundProbe = gson.fromJson(new JsonObject(), ForegroundProbe.class);
             locationProbe = gson.fromJson(new JsonObject(), SimpleLocationProbe.class);
+            myRunningApplicationsProbe = gson.fromJson(new JsonObject(), MyRunningApplicationsProbe.class);
             screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
             sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
@@ -163,6 +166,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         batteryProbe.registerPassiveListener(pipeline);
         foregroundProbe.registerPassiveListener(pipeline);
         locationProbe.registerPassiveListener(pipeline);
+        myRunningApplicationsProbe.registerPassiveListener(pipeline);
         screenProbe.registerPassiveListener(pipeline);
         sMSProbe.registerPassiveListener(pipeline);
         callStateProbe.registerPassiveListener(pipeline);
@@ -177,6 +181,7 @@ public class MainActivity extends Activity implements DataListener, GPSCallback 
         batteryProbe.unregisterListener(pipeline);
         foregroundProbe.unregisterListener(pipeline);
         locationProbe.unregisterListener(pipeline);
+        myRunningApplicationsProbe.unregisterListener(pipeline);
         screenProbe.unregisterListener(pipeline);
         sMSProbe.unregisterListener(pipeline);
         callStateProbe.unregisterListener(pipeline);
