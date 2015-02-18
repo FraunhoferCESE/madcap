@@ -24,14 +24,16 @@ public class MyRunningApplicationsProbe extends Probe.Base {
             List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = am.getRunningAppProcesses();
             Log.i("MyRunningApplicationsProbe.class", "MyRunningApplicationsProbe started.");
             Intent intent = new Intent();
+            int i = 1;
             for(ActivityManager.RunningAppProcessInfo info : runningAppProcessInfoList){
-                intent.putExtra("pcs", info.processName);
-                intent.putExtra("pkgs", info.pkgList);
-                intent.putExtra("imp", info.importance);
-                intent.putExtra("imprc", info.importanceReasonCode);
+                intent.putExtra("pcs"+i, info.processName);
+                intent.putExtra("pkgs"+i, info.pkgList);
+                intent.putExtra("imp"+i, info.importance);
+                intent.putExtra("imprc+i", info.importanceReasonCode);
                 if(info.importanceReasonComponent != null){
-                    intent.putExtra("impcom", info.importanceReasonComponent);
+                    intent.putExtra("impcom"+i, info.importanceReasonComponent);
                 }
+                i++;
             }
             sendData(gson.toJsonTree(intent).getAsJsonObject());
         }
