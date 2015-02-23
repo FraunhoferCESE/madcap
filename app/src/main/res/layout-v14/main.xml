@@ -1,56 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
-    <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:background="#000"
-        android:gravity="center" >
+    android:layout_height="fill_parent"
+    android:layout_alignParentTop="true"
+    >
 
-        <TextView
+    <TextView
+        android:id="@+id/header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:text="FUNF Sensor by Fraunhofer CESE"
+        android:text="Mobile Device Sensor by Fraunhofer CESE"
         android:textColor="#FFF"
+        android:background="#000"
         android:textSize="25sp" />
 
-    </RelativeLayout>
-
-
-
-<TextView android:text="We collect your personal data to fight crime in the U.S. We use the data to create statics about bad neighborhoods and places, where you should not use your phone. An example of the benefit of this application could be that we notify you when you take out your device on a place with much crime."
-        android:gravity="center"
+    <TextView
+        android:id="@+id/intro"
+        android:layout_below="@id/header"
+        android:text="This app collects data to study mobile device cybersecurity.  Our goal is to use this data to help users be more secure when using mobile devices.\n\nThe app collects information such as which other apps are running, the device's GPS location, and when a call is received.\n\nThis app DOES NOT sensitive content, such as your contact list, the content of SMS messages, or your browsing history."
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:textColor="#000"/>
+        android:textColor="#000" />
+
+    <View
+        android:layout_below="@id/intro"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_margin="5dp"
+        android:background="@color/primary_material_dark" />
+
     <CheckBox
         android:id="@+id/checkBox"
-        android:gravity="center"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_below="@id/intro"
         android:text="@string/checkBoxText"
-        android:layout_margin="5dp"/>
+        android:layout_marginTop="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <!--
     <Button android:id="@+id/scanNowButton"
         android:text="Scan Now"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
-    <Button android:id="@+id/archiveButtonSD"
+        -->
+    <Button
+        android:id="@+id/archiveButtonSD"
+        android:layout_below="@id/checkBox"
         android:text="Save Data to SD Card"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"/>
+        android:layout_margin="5dp" />
+    <!--
     <Button android:id="@+id/broadcastIntent"
         android:text="Send Broadcast"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:onClick="broadcastIntent"
         android:layout_margin="5dp"/>
+
     <Button
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -69,11 +78,15 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"/>
-    <TextView android:id="@+id/dataCountText"
+        -->
+    <TextView
+        android:id="@+id/dataCountText"
+        android:layout_below="@id/archiveButtonSD"
         android:text="None"
         android:gravity="center"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
+    <!--
     <TextView
         android:id="@+id/info_message"
         android:layout_width="fill_parent"
@@ -81,10 +94,15 @@
         android:gravity="center_vertical|center_horizontal"
         android:textSize="30dip"
         android:text="@string/info"/>
-    <TextView android:text="This application was developed by the Fraunhofer CESE. For any questions visit http://fc-md.umd.edu or contact Lucas Layman"
+        -->
+    <TextView
+        android:id="@+id/footnote"
+        android:text="This application uses the Funf Open Sensing Framework licensed under the GNU Lesser GPL.\n\n This application was developed by the Fraunhofer CESE. For any questions, visit http://www.fc-md.umd.edu or email llayman@fc-md.umd.edu."
+        android:textSize="10dp"
+        android:layout_alignParentBottom="true"
         android:gravity="center"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"/>
-
-    </LinearLayout>
+        android:autoLink="all"
+        android:layout_margin="5dp" />
+</RelativeLayout>

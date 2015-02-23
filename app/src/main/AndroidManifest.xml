@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.mlang.funf_sensor">
+    package="org.fraunhofer.cese.funf_sensor">
     <!--
         The permissions for the app are defined here.
         New permissions for the GPS and the phone's orientation have to be added. They probably have

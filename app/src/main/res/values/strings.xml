@@ -9,7 +9,7 @@
          "name":"default",
          "version":1,
          "archive": {
-                "@schedule": {"interval": 60}
+                "@schedule": {"interval": 600}
          },
          <!--
          "upload": {
@@ -23,9 +23,9 @@
                       "@schedule": {"interval": 15, "duration": 1}
                      },
          {"@type": "edu.mit.media.funf.probe.builtin.BatteryProbe"},
-         {"@type": "com.example.mlang.funf_sensor.Probe.CallStateProbe.CallStateProbe"},
-         {"@type": "com.example.mlang.funf_sensor.Probe.ForegroundProbe.ForegroundProbe",
-                             "@schedule": {"interval": 10}
+         {"@type": "org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe.CallStateProbe"},
+         {"@type": "org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe.ForegroundProbe",
+                             "@schedule": {"interval": 15}
                             },
          {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe"},
          {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
@@ -33,17 +33,17 @@
                       "goodEnoughAccuracy": 50,
                       "maxWaitTime": 15
                      },
-         {"@type": "com.example.mlang.funf_sensor.Probe.SMSProbe.SMSProbe"},
-         {"@type": "com.example.mlang.funf_sensor.Probe.RunningApplicationsProbe.MyRunningApplicationsProbe",
-                             "@schedule": {"interval": 10}
+         {"@type": "org.fraunhofer.cese.funf_sensor.Probe.SMSProbe.SMSProbe"},
+         {"@type": "org.fraunhofer.cese.funf_sensor.Probe.RunningApplicationsProbe.MyRunningApplicationsProbe",
+                             "@schedule": {"interval": 15}
                              }
          <!--
-         {"@type": "com.example.mlang.funf_sensor.SpeedProbe",
+         {"@type": "org.fraunhofer.cese.funf_sensor.SpeedProbe",
                              "@schedule": {"interval": 10},
                              "goodEnoughAccuracy": 5,
                              "maxWaitTime": 2
                             },-->
-         <!--{"@type": "com.example.mlang.funf_sensor.Probe.Security.NotificationProbe",
+         <!--{"@type": "org.fraunhofer.cese.funf_sensor.Probe.Security.NotificationProbe",
                              "@schedule": {"interval": 600},
                              "goodEnoughAccuracy": 80,
                              "maxWaitTime": 60
@@ -51,6 +51,5 @@
          ]
         }
     </string>
-    <string name="checkBoxText">PIPELINING ACTIVATED</string>
-    <string name="info">Waiting for GPS...</string>
+    <string name="checkBoxText">Collect Data?</string>
 </resources>
