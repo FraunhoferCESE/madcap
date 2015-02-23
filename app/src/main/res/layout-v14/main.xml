@@ -3,18 +3,36 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:layout_alignParentTop="true"
-    >
+    android:layout_alignParentTop="true">
 
-    <TextView
+    <LinearLayout
         android:id="@+id/header"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="Mobile Device Sensor by Fraunhofer CESE"
-        android:textColor="#FFF"
-        android:background="#000"
-        android:textSize="25sp" />
+        android:background="#000">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:src="@mipmap/ic_launcher"
+            android:background="#000" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="5dp"
+            android:text="Mobile Device Sensor by Fraunhofer CESE"
+            android:textColor="#FFF"
+            android:background="#000"
+            android:textSize="25sp"
+            android:layout_toLeftOf="@id/icon" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/intro"
@@ -24,6 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:textColor="#000" />
+
 
     <View
         android:layout_below="@id/intro"
