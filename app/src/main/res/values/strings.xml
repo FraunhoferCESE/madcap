@@ -20,7 +20,7 @@
          "data":[
          <!-- the data that is uploaded -->
          {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
-                      "@schedule": {"interval": 15, "duration": 1}
+                      "@schedule": {"interval": 5, "duration": 1}
                      },
          {"@type": "edu.mit.media.funf.probe.builtin.BatteryProbe"},
          {"@type": "org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe.CallStateProbe"},
@@ -30,7 +30,7 @@
          {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe"},
          {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
                       "@schedule": {"interval": 60},
-                      "goodEnoughAccuracy": 50,
+                      "goodEnoughAccuracy": 100,
                       "maxWaitTime": 15
                      },
          {"@type": "org.fraunhofer.cese.funf_sensor.Probe.SMSProbe.SMSProbe"},
