@@ -1,3 +1,55 @@
 <resources>
+    <!-- the name with that the application is displayed on the device -->
     <string name="app_name">FUNF-Sensor</string>
+    <string name="notification_service_name">FUNF-sensor notification service</string>
+    <!-- the default pipeline defines which data is uploaded to a defined host -->
+     <string name="default_pipeline">
+         <!-- a schedule has to be added in here -->
+         {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
+         "name":"default",
+         "version":1,
+         "archive": {
+                "@schedule": {"interval": 600}
+         },
+         <!--
+         "upload": {
+            "url": \"http://127.0.0.1:9000/data\",
+            "@schedule": {"interval": 600}
+         },
+         -->
+         "data":[
+         <!-- the data that is uploaded -->
+         {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
+                      "@schedule": {"interval": 5, "duration": 1}
+                     },
+         {"@type": "edu.mit.media.funf.probe.builtin.BatteryProbe"},
+         {"@type": "org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe.CallStateProbe"},
+         {"@type": "org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe.ForegroundProbe",
+                             "@schedule": {"interval": 15}
+                            },
+         {"@type": "edu.mit.media.funf.probe.builtin.ScreenProbe"},
+         {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
+                      "@schedule": {"interval": 60},
+                      "goodEnoughAccuracy": 100,
+                      "maxWaitTime": 15
+                     },
+         {"@type": "org.fraunhofer.cese.funf_sensor.Probe.SMSProbe.SMSProbe"},
+         {"@type": "org.fraunhofer.cese.funf_sensor.Probe.RunningApplicationsProbe.MyRunningApplicationsProbe",
+                             "@schedule": {"interval": 15}
+                             }
+         <!--
+         {"@type": "org.fraunhofer.cese.funf_sensor.SpeedProbe",
+                             "@schedule": {"interval": 10},
+                             "goodEnoughAccuracy": 5,
+                             "maxWaitTime": 2
+                            },-->
+         <!--{"@type": "org.fraunhofer.cese.funf_sensor.Probe.Security.NotificationProbe",
+                             "@schedule": {"interval": 600},
+                             "goodEnoughAccuracy": 80,
+                             "maxWaitTime": 60
+                            },-->
+         ]
+        }
+    </string>
+    <string name="checkBoxText">Collect Data?</string>
 </resources>

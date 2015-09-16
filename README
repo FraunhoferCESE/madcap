@@ -25,7 +25,7 @@ creating log file using the logcat logger
 - open your cmd
 - switch to your adb
 -windows:
-    - abd.exe logcat > filename.txt
+    - adb.exe logcat > filename.txt
 - linux:
     - adb logcat| tee filename.txt
 
@@ -39,21 +39,30 @@ get the different probes and the number of datasets with the sqlite browser
 - AccelerometerFeaturProbe: diffFrameSecs, numFrameSamples, timestamp, x{absoluteCentralMoment, maxDeviation, mean, psdAcrossFrequencyBands, standardDeviation}
     y{absoluteCentralMoment, maxDeviation, mean, psdAcrossFrequencyBands, standardDeviation}, z{absoluteCentralMoment, maxDeviation, mean, psdAcrossFrequencyBands, standardDeviation}
 - AccelerometerSensorProbe: accuracy, timestamp, x, y, z
+
+- AndroidInfoProbe: buildNumber, firmwareVersion, sdk, timestamp
+- AudioFeaturesProbe: diffSecs, l1Norm, l2Norm, linfNorm, mfccs, psdAcrossFrequencyBands, timestamp
+- AudioMediaProbe: display_name, id, size, album, album_id, artist_id, composer, date_added, date_modified, duration, is_alarm, is_notification, is_ringtone, mime_type, timestamp, title, track, year
 - BluetoothProbe: appearance, class, device{mAdress, mRemoteBrsf, mValueNREC, mValueWBS}, name, RSSI (reaction time), timestamp
+- BrowserSearchesProbe: id, date, search, timestamp
 - CallLogProbe: id, date, duration, name, number, numberlabel, numbertype, timestamp
+- ContactProbe: contactData{id,data1,data12,data2,data3, data_version, is_primary, is_super_primary, mimetype, raw_contact_id}{...repeating...}, contact_id, custom_ringtone, last_time_contacted, lookup, photo_id, times_contacted, timestamp
 - HardwareInfoProbe: androidId, bluetoothMac, brand, model, timestamp, wifiMac
+- ImageMediaProbe: display_name, id, size, bucket_display_name, bucket_id, date_added, date_modified, datetaken, description, isprivate, latitude, longitude, mime_type, mini_thumb_magic, orientation, timestamp, title
 - LightSensorProbe: accuracy, lux, timestamp
 - MagneticFieldProbe: accuracy, timestamp, x, y, y
 - OrientationProbe: accuracy, azimuth, pitch, roll, timestamp
 - RunningApplicationsProbe: duration, taskInfo{baseIntent{mAction{mCategories,mComponent, mPackage}, mFlags, mWindowMode}, id, persistentId, stackId}, timestamp
+- ScreenProbe: screenOn, timestamp
 - ServiceProbe: activeSince, clientCount, clientLabel, crashCount, flags, foreground, lastActivityTime, pid, process, restarting, service{mClass, mPackage}, started, timestamp, uid
 - SimpleLocationProbe: mAccuracy, mAltitude, mBearing, mElapsedRealtimeNanos, mExtras{networkLocationType, nlpVersion, noGPSLocation{mAccuracy, mBearing, mElapsedRealtimeNanos,
     mExtras{coarseLocation{mAccuracy, mAltitude, mBearing, mElapsedRealtimeNanos, mHasAccuracy, mHasAltitude, mHasBearing, mHasSpeed, mlsFromMockProvider, mLatitude,
     mLongitude, mProvider, mSpeed, mTime}, networkLocationType, nlpVersion, travelState}, mHasAccuracy, mHasAltitude, mHasBearing, mHasSpeed, mlsFromMockProvider,
     mLatitude, mLongitude, mProvider, mSpeed, mTime}, travelState}, mHasAccuracy, mHasAltitude, mHasBearing, mHasSpeed, mlsFromMockProvider, mLatitude, mLongitude,
     mProvider, mSpeed, mTime, timestamp
-- ScreenProbe: screenOn, timestamp
 - SmsProbe: address, body, date, locked, person, protocol, read, reply_path_present, status, subject, thread_id, timestamp, type
+- Telephony: callState, deviceId, deviceSoftwareVersion, hasIccCard, line1Number, networkCountryIso, networkOperator, networkOperatorName, networkType, simCountryIso, simOperator, simOperatorName, simSerialNumber, simState, subscriberId, timestamp, voicemailAlphaTag, voicemailNumber
+- VideoMediaProbe: display_name, id, size, album, artist, bookmark, bucket_display_name, bucket_id, date_added, date_modified, datataken, duration, isprivate, latitude, longitue, mime_type, mini_thumb_magic, resolution, timestamp, title
 - WifiProbe: BSSID, SSID, capabilities, distanceCm, distanceSdCm, frequency, level, timestamp, tsf, wifiSsid{octets{buf,count}}}
 
 no data received yet:
