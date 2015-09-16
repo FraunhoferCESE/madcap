@@ -49,7 +49,7 @@
         android:layout_width="fill_parent"
         android:layout_height="2dip"
         android:layout_margin="5dp"
-        android:background="@color/primary_material_dark" />
+        android:background="@android:color/background_light" />
 
     <CheckBox
         android:id="@+id/checkBox"

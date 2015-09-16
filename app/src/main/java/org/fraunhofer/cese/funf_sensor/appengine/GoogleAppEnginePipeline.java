@@ -7,6 +7,8 @@ import android.util.Log;
 
 import com.google.gson.JsonElement;
 
+import org.fraunhofer.cese.funf_sensor.backend.MyBean;
+
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.config.RuntimeTypeAdapterFactory;
 import edu.mit.media.funf.json.IJsonObject;
@@ -54,6 +56,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 //        cv.put(NameValueDatabaseHelper.COLUMN_VALUE, value);
 //        cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
 //        db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
+        MyBean
     }
 
     /**

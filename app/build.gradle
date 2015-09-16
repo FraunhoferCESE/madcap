@@ -2,11 +2,11 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 21
-    buildToolsVersion "21.1.2"
+    buildToolsVersion "23.0.1"
 
     defaultConfig {
         applicationId "org.fraunhofer.cese.funf_sensor"
-        minSdkVersion 10
+        minSdkVersion 14
         targetSdkVersion 21
         versionCode 1
         versionName "1.0"
@@ -21,9 +21,10 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:21.0.3'
     compile files('libs/funf-v0.5.0RC1.jar')
     compile files('libs/gson-2.1.funf.jar')
     compile files('C:/Users/llayman/git/funf-sensor/libs/gson-2.1.funf.jar')
     compile files('C:/Users/llayman/git/funf-sensor/libs/funf-0.4.2.jar')
+    //    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile project(path: ':backend', configuration: 'android-endpoints')
 }
