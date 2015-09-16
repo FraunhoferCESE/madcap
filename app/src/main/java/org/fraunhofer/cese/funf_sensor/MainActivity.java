@@ -32,6 +32,7 @@ import org.fraunhofer.cese.funf_sensor.Probe.GPSProbe.Constants;
 import org.fraunhofer.cese.funf_sensor.Probe.GPSProbe.GPSManager;
 import org.fraunhofer.cese.funf_sensor.Probe.RunningApplicationsProbe.MyRunningApplicationsProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.SMSProbe.SMSProbe;
+import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
 
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
@@ -106,6 +107,7 @@ public class MainActivity extends Activity implements DataListener {
 
 
             pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
+            funfManager.registerPipeline("appengine", new GoogleAppEnginePipeline());
 
             funfManager.enablePipeline(PIPELINE_NAME);
             registerListeners();
