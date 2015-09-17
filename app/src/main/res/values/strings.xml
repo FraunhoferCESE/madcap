@@ -1,12 +1,12 @@
 <resources>
-    <!-- the name with that the application is displayed on the device -->
-    <string name="app_name">FUNF-Sensor</string>
-    <string name="notification_service_name">FUNF-sensor notification service</string>
+    <!-- the probeType with that the application is displayed on the device -->
+    <string probeType="app_name">FUNF-Sensor</string>
+    <string probeType="notification_service_name">FUNF-sensor notification service</string>
     <!-- the default pipeline defines which data is uploaded to a defined host -->
-     <string name="default_pipeline">
+     <string probeType="default_pipeline">
          <!-- a schedule has to be added in here -->
          {"@type":"edu.mit.media.funf.pipeline.BasicPipeline",
-         "name":"default",
+         "probeType":"default",
          "version":1,
          "archive": {
                 "@schedule": {"interval": 600}
@@ -51,5 +51,5 @@
          ]
         }
     </string>
-    <string name="checkBoxText">Collect Data?</string>
+    <string probeType="checkBoxText">Collect Data?</string>
 </resources>

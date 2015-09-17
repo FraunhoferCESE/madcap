@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
     <servlet>
-        <servlet-name>SystemServiceServlet</servlet-name>
+        <servlet-probeType>SystemServiceServlet</servlet-probeType>
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
         <init-param>
-            <param-name>services</param-name>
-            <param-value>org.fraunhofer.cese.funf_sensor.backend.MyEndpoint,
-                org.fraunhofer.cese.funf_sensor.backend.MyBeanEndpoint</param-value>
+            <param-probeType>services</param-probeType>
+            <param-value>org.fraunhofer.cese.funf_senseor.backend.apis.MyEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
-        <servlet-name>SystemServiceServlet</servlet-name>
+        <servlet-probeType>SystemServiceServlet</servlet-probeType>
         <url-pattern>/_ah/spi/*</url-pattern>
     </servlet-mapping>
 

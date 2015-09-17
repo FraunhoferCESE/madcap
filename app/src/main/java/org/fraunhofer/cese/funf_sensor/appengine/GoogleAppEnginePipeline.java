@@ -56,8 +56,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 //        cv.put(NameValueDatabaseHelper.COLUMN_VALUE, value);
 //        cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
 //        db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
-        MyBean
-    }
+
 
     /**
      * Called when the probe is finished sending a stream of data. This can

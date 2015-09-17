@@ -16,7 +16,7 @@ installing .apk files to the virtual device
     path if you click File -> Project Structure in Android Studio)
 - run the android virtual device with Android Studio
 - switch into the platform-tools directory with your command line and install the .apk file
-    (Windows: abd install "<application name>.apk"
+    (Windows: abd install "<application probeType>.apk"
 
 other things
 - if you close the emulator directly after clicking save to sd card, the db file will be broken
@@ -32,8 +32,8 @@ creating log file using the logcat logger
 get the different probes and the number of datasets with the sqlite browser
 - open your .db file
 - Execute SQL:
-    SELECT name AS Probe, COUNT(name) as 'Number of datasets' from data GROUP BY name;
-- for merged database files you have to replace name with probe
+    SELECT probeType AS Probe, COUNT(probeType) as 'Number of datasets' from data GROUP BY probeType;
+- for merged database files you have to replace probeType with probe
 
 .db data structure
 - AccelerometerFeaturProbe: diffFrameSecs, numFrameSamples, timestamp, x{absoluteCentralMoment, maxDeviation, mean, psdAcrossFrequencyBands, standardDeviation}
@@ -43,9 +43,9 @@ get the different probes and the number of datasets with the sqlite browser
 - AndroidInfoProbe: buildNumber, firmwareVersion, sdk, timestamp
 - AudioFeaturesProbe: diffSecs, l1Norm, l2Norm, linfNorm, mfccs, psdAcrossFrequencyBands, timestamp
 - AudioMediaProbe: display_name, id, size, album, album_id, artist_id, composer, date_added, date_modified, duration, is_alarm, is_notification, is_ringtone, mime_type, timestamp, title, track, year
-- BluetoothProbe: appearance, class, device{mAdress, mRemoteBrsf, mValueNREC, mValueWBS}, name, RSSI (reaction time), timestamp
+- BluetoothProbe: appearance, class, device{mAdress, mRemoteBrsf, mValueNREC, mValueWBS}, probeType, RSSI (reaction time), timestamp
 - BrowserSearchesProbe: id, date, search, timestamp
-- CallLogProbe: id, date, duration, name, number, numberlabel, numbertype, timestamp
+- CallLogProbe: id, date, duration, probeType, number, numberlabel, numbertype, timestamp
 - ContactProbe: contactData{id,data1,data12,data2,data3, data_version, is_primary, is_super_primary, mimetype, raw_contact_id}{...repeating...}, contact_id, custom_ringtone, last_time_contacted, lookup, photo_id, times_contacted, timestamp
 - HardwareInfoProbe: androidId, bluetoothMac, brand, model, timestamp, wifiMac
 - ImageMediaProbe: display_name, id, size, bucket_display_name, bucket_id, date_added, date_modified, datetaken, description, isprivate, latitude, longitude, mime_type, mini_thumb_magic, orientation, timestamp, title

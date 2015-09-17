@@ -52,7 +52,7 @@
             <div class="col-lg-12">
                 <h1>Hello, Endpoints!</h1>
 
-                <p>Enter your name and press the button below to call your Google Cloud Endpoints
+                <p>Enter your probeType and press the button below to call your Google Cloud Endpoints
                     API.</p>
 
                 <form>
@@ -93,8 +93,8 @@
     // A function that attaches a "Say Hello" button click handler
     function enableClick() {
       document.getElementById('helloButton').onclick = function() {
-        var name = document.getElementById('nameInput').value;
-        gapi.client.myApi.sayHi({'name': name}).execute(
+        var probeType = document.getElementById('nameInput').value;
+        gapi.client.myApi.sayHi({'probeType': probeType}).execute(
           function(response) {
             var outputAlertDiv = document.getElementById('outputAlert');
             outputAlertDiv.style.visibility = 'visible';
