@@ -1,4 +1,8 @@
-package org.fraunhofer.cese.funf_senseor.backend.models;
+package org.fraunhofer.cese.funf_sensor.backend.models;
+
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.sun.javafx.beans.IDProperty;
 
 import java.util.List;
 
@@ -9,9 +13,12 @@ import java.util.List;
  * @param ListOfSensorData      can contain multiple SensorDataSets to be passed over to the backend
  */
 
+@Entity
 public class Message {
 
     //attributes
+    @Id
+    private Long id;
     private List<SensorDataSet> ListOfSensorData;
 
     //getters and setters
@@ -22,6 +29,8 @@ public class Message {
     public void setListOfSensorData(List<SensorDataSet> listOfSensorData) {
         ListOfSensorData = listOfSensorData;
     }
+
+    public Long getId(){return id;}
 
     //Object methods
     @Override
@@ -34,17 +43,20 @@ public class Message {
 
         Message object=(Message)obj;
 
-        return this.ListOfSensorData.equals(object.getListOfSensorData());
+        return this.ListOfSensorData.equals(object.getListOfSensorData()) && this.id.equals(object.getId());
     }
 
     @Override
     public int hashCode(){
-        return this.ListOfSensorData.hashCode();
+        int hashCode=17;
+        hashCode=31*hashCode+this.ListOfSensorData.hashCode();
+        hashCode=31*hashCode+this.id.hashCode();
+        return hashCode;
     }
 
     @Override
     public String toString(){
-        return this.ListOfSensorData.toString();
+        return "Message-No.: "+this.id+" Message-Content: "+this.ListOfSensorData.toString();
     }
 
     //Constructor(s)

@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_senseor.backend.models;
+package org.fraunhofer.cese.funf_sensor.backend.models;
 
 import com.google.appengine.repackaged.com.google.api.client.util.DateTime;
 import com.googlecode.objectify.annotation.Entity;
@@ -20,21 +20,13 @@ public class SensorDataSet {
 
     //attributes
     @Id
-    private long id;
+    private Long id;                //maybe it will be assigned automatically
     private DateTime timestamp;
     private String probeType;       //maybe we should use an enum here
     private String sensorData;
 
-    private static long lastID;
 
     //getters and setters
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public DateTime getTimestamp() {
         return timestamp;
@@ -110,8 +102,7 @@ public class SensorDataSet {
         this.probeType=probeType;
         this.sensorData=sensorData;
 
-        lastID++;
-        this.id=lastID;
+
     }
 
 
