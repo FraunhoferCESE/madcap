@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
     <servlet>
-        <servlet-probeType>SystemServiceServlet</servlet-probeType>
+        <servlet-name>SystemServiceServlet</servlet-name>
+        <!-- That was called servlet-probeType.
+             I changed it so it would match the example
+             -Frederik-         -->
         <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
         <init-param>
-            <param-probeType>services</param-probeType>
-            <param-value>org.fraunhofer.cese.funf_senseor.backend.apis.MyEndpoint</param-value>
+            <param-name>services</param-name>
+            <!-- That was called param-probeType.
+             I changed it so it would match the example
+             -Frederik-         -->
+            <param-value>org.fraunhofer.cese.funf_sensor.backend.apis.MessageEndpoint,
+                         org.fraunhofer.cese.funf_sensor.backend.apis.SensorDataSetEndpoint</param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
-        <servlet-probeType>SystemServiceServlet</servlet-probeType>
+        <servlet-name>SystemServiceServlet</servlet-name>
+        <!-- That was called servlet-probeType.
+             I changed it so it would match the example
+             -Frederik-         -->
         <url-pattern>/_ah/spi/*</url-pattern>
     </servlet-mapping>
 
