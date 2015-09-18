@@ -2,6 +2,7 @@ package org.fraunhofer.cese.funf_senseor.backend.models;
 
 import com.google.appengine.repackaged.com.google.api.client.util.DateTime;
 import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
 
 /**
  * the result of a single measurement of any kind of device sensor.

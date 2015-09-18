@@ -19,6 +19,10 @@ android {
     }
 }
 
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile files('libs/funf-v0.5.0RC1.jar')
@@ -26,6 +30,5 @@ dependencies {
     compile files('C:/Users/llayman/git/funf-sensor/libs/gson-2.1.funf.jar')
     compile files('C:/Users/llayman/git/funf-sensor/libs/funf-0.4.2.jar')
     //    compile 'com.android.support:appcompat-v7:23.0.1'
-    compile project(path: ':backend', configuration: 'android-endpoints')
     compile project(path: ':backend', configuration: 'android-endpoints')
 }
