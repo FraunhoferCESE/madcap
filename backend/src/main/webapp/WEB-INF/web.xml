@@ -17,6 +17,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>SystemServiceServlet</servlet-name>
+
         <!-- That was called servlet-probeType.
              I changed it so it would match the example
              -Frederik-         -->
