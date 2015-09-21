@@ -2,7 +2,7 @@ package org.fraunhofer.cese.funf_sensor.backend.models;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.sun.javafx.beans.IDProperty;
+
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import java.util.List;
  * Message is the object that is sent from the device to the backend,
  * containing multiple SensorDataSets.
  *
+ * @param id                    Identifier, used in some Database-Methods
  * @param ListOfSensorData      can contain multiple SensorDataSets to be passed over to the backend
  */
 
@@ -60,7 +61,5 @@ public class Message {
     }
 
     //Constructor(s)
-    public Message(List<SensorDataSet> ListOfSensorData){
-        this.ListOfSensorData=ListOfSensorData;
-    }
+
 }

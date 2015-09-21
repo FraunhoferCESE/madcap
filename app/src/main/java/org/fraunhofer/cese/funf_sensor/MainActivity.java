@@ -57,7 +57,8 @@ public class MainActivity extends Activity implements DataListener {
 
     public static final String PIPELINE_NAME = "default";
     private FunfManager funfManager;
-    private BasicPipeline pipeline;
+    private GoogleAppEnginePipeline pipeline;
+//    private GoogleAppEnginePipeline appEnginePipeline;
 
     final SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
@@ -106,10 +107,13 @@ public class MainActivity extends Activity implements DataListener {
 //            runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
 
 
-            pipeline = (BasicPipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
+
             funfManager.registerPipeline("appengine", new GoogleAppEnginePipeline());
+            pipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline("appengine");
+//            appEnginePipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline("appengine");
 
             funfManager.enablePipeline(PIPELINE_NAME);
+            funfManager.enablePipeline("appengine");
             registerListeners();
 
             // This checkbox enables or disables the pipeline
@@ -315,15 +319,15 @@ public class MainActivity extends Activity implements DataListener {
 
 //        sdf.setCalendar(new GregorianCalendar());
 
-        SQLiteDatabase db = pipeline.getDb();
-        Cursor mCursor = db.rawQuery(TOTAL_COUNT_SQL, null);
-        mCursor.moveToFirst();
-        final int count = mCursor.getInt(0);
+//        SQLiteDatabase db = pipeline.getDb();
+//        Cursor mCursor = db.rawQuery(TOTAL_COUNT_SQL, null);
+//        mCursor.moveToFirst();
+//        final int count = mCursor.getInt(0);
         // Update interface on main thread
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String text = "Data Count: " + count;
+                String text = "Data Count: " + 0;
 //                text += "\nLast archived: "+ sdf.format(sdf.getCalendar().getTime());
                 dataCountView.setText(text);
             }

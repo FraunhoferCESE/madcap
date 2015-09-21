@@ -1,6 +1,21 @@
 package org.fraunhofer.cese.funf_sensor.appengine;
 
+import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.ListAdapter;
+
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.extensions.android.json.AndroidJsonFactory;
+import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
+import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 import com.google.gson.JsonElement;
+
+import org.fraunhofer.cese.funf_sensor.backend.models.messageApi.MessageApi;
+import org.fraunhofer.cese.funf_sensor.backend.models.messageApi.model.Message;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Vector;
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.json.IJsonObject;
@@ -8,7 +23,48 @@ import edu.mit.media.funf.pipeline.Pipeline;
 import edu.mit.media.funf.probe.Probe;
 
 public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
+
+    private static final String TAG = GoogleAppEnginePipeline.class.getSimpleName();
+
     private boolean enabled = false;
+
+    private MessageApi appEngineApi;
+
+    private class ListOfMessagesAsyncSender extends AsyncTask<Message,Void, Message> {
+
+
+        @Override
+        protected Message doInBackground(final Message... messages) {
+            if (appEngineApi == null) {  // Only do this once
+                MessageApi.Builder builder = new MessageApi.Builder(AndroidHttp.newCompatibleTransport(),
+                        new AndroidJsonFactory(), null)
+                        // options for running against local devappserver
+                        // - 10.0.2.2 is localhost's IP address in Android emulator
+                        // - turn off compression when running against local devappserver
+                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                            @Override
+                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                                abstractGoogleClientRequest.setDisableGZipContent(true);
+                            }
+                        });
+                // end options for devappserver
+                appEngineApi = builder.build();
+            }
+
+                for (Message message : messages) {
+                    try {
+                        appEngineApi.insert(message).execute();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+            return messages[0];
+            }
+
+    }
+
 
     /**
      * Called when the probe emits data. Data emitted from probes that
@@ -41,6 +97,20 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 //        cv.put(NameValueDatabaseHelper.COLUMN_VALUE, value);
 //        cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
 //        db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
+
+        //bundle
+        //compress
+        //send
+        Log.i(TAG, "GoogleAppEnginePipeline.onDataRecieved was called!!!!!");
+        new ListOfMessagesAsyncSender().execute(new Message());
+
+//        Message message = new Message();
+//        Message sent;
+//        try {
+//            sent = appEngineApi.message().insertMessage(message).execute();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
     }
 

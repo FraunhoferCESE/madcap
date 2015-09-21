@@ -14,8 +14,7 @@ import com.googlecode.objectify.annotation.Id;
  * @param probeType     information about what sensor the data was captured by as a String
  * @param sensorData    String containing the sensor information captured
  */
-
-@Entity
+//@Entity
 public class SensorDataSet {
 
     //attributes

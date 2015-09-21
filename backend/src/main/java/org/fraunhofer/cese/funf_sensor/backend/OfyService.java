@@ -13,7 +13,7 @@ public final class OfyService {
     }
 
     static {
-        factory().register(SensorDataSet.class);
+//        factory().register(SensorDataSet.class);
         factory().register(Message.class);
 
     }
