@@ -1,8 +1,11 @@
 package org.fraunhofer.cese.funf_sensor.backend.models;
 
-import com.google.appengine.repackaged.com.google.api.client.util.DateTime;
+
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * the result of a single measurement of any kind of device sensor.
@@ -15,24 +18,24 @@ import com.googlecode.objectify.annotation.Id;
  * @param sensorData    String containing the sensor information captured
  */
 //@Entity
-public class SensorDataSet {
+public class SensorDataSet implements Serializable{
 
     //attributes
     @Id
     private Long id;                //maybe it will be assigned automatically
-    private DateTime timestamp;
+    private Date timestamp;
     private String probeType;       //maybe we should use an enum here
     private String sensorData;
 
 
     //getters and setters
 
-    public DateTime getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(DateTime timestamp) {
-        this.timestamp = timestamp;
+    public void setTimestamp(Date date) {
+        this.timestamp = date;
     }
 
     public String getProbeType() {
@@ -95,14 +98,13 @@ public class SensorDataSet {
      * They can not be assigned manually.
      *
      */
-    public SensorDataSet(DateTime timestamp, String probeType, String sensorData){
-
-        this.timestamp=timestamp;
-        this.probeType=probeType;
-        this.sensorData=sensorData;
-
-
-    }
-
+//    public SensorDataSet(DateTime timestamp, String probeType, String sensorData){
+//
+//        this.timestamp=timestamp;
+//        this.probeType=probeType;
+//        this.sensorData=sensorData;
+//
+//
+//    }
 
 }

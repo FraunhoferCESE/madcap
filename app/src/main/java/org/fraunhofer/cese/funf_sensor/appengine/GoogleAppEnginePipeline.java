@@ -1,5 +1,7 @@
 package org.fraunhofer.cese.funf_sensor.appengine;
 
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ListAdapter;
@@ -8,19 +10,29 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
+import com.google.api.client.util.DateTime;
 import com.google.gson.JsonElement;
 
 import org.fraunhofer.cese.funf_sensor.backend.models.messageApi.MessageApi;
-import org.fraunhofer.cese.funf_sensor.backend.models.messageApi.model.Message;
+
+//import org.fraunhofer.cese.funf_sensor.backend.models.messageApi.model.Message;
+import org.fraunhofer.cese.funf_sensor.backend.models.sensorDataSetApi.SensorDataSetApi;
+import org.fraunhofer.cese.funf_sensor.backend.models.sensorDataSetApi.model.SensorDataSet;
 
 import java.io.IOException;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
+import java.util.Date;
 
 import edu.mit.media.funf.FunfManager;
+import edu.mit.media.funf.config.RuntimeTypeAdapterFactory;
 import edu.mit.media.funf.json.IJsonObject;
 import edu.mit.media.funf.pipeline.Pipeline;
 import edu.mit.media.funf.probe.Probe;
+import edu.mit.media.funf.probe.builtin.ProbeKeys;
+import edu.mit.media.funf.util.LogUtil;
 
 public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
@@ -28,20 +40,21 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
     private boolean enabled = false;
 
-    private MessageApi appEngineApi;
+    private SensorDataSetApi appEngineApi;
 
-    private class ListOfMessagesAsyncSender extends AsyncTask<Message,Void, Message> {
+    private class ListOfMessagesAsyncSender extends AsyncTask<SensorDataSet,Void, SensorDataSet> {
 
 
         @Override
-        protected Message doInBackground(final Message... messages) {
+        protected SensorDataSet doInBackground(final SensorDataSet... sensorDataSets) {
             if (appEngineApi == null) {  // Only do this once
-                MessageApi.Builder builder = new MessageApi.Builder(AndroidHttp.newCompatibleTransport(),
+                SensorDataSetApi.Builder builder = new SensorDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
                         new AndroidJsonFactory(), null)
+                        .setApplicationName("funfSensor")
                         // options for running against local devappserver
                         // - 10.0.2.2 is localhost's IP address in Android emulator
                         // - turn off compression when running against local devappserver
-                        .setRootUrl("http://10.0.2.2:8080/_ah/api/")
+                        .setRootUrl("https://192.168.0.67:8080/_ah/api/")
                         .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                             @Override
                             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
@@ -52,15 +65,17 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
                 appEngineApi = builder.build();
             }
 
-                for (Message message : messages) {
+                for (SensorDataSet sensorDataSet : sensorDataSets) {
                     try {
-                        appEngineApi.insert(message).execute();
+                        SensorDataSet sensorDataSet1 = appEngineApi.insertSensorDataSet(sensorDataSet).execute();
+                        Log.i(TAG, sensorDataSet1.getSensorData() + "GoogleAppEnginePipeline");
                     } catch (IOException e) {
+                        Log.i(TAG, "IOException was caught! GoogleAppEnginePipeline");
                         e.printStackTrace();
                     }
                 }
 
-            return messages[0];
+            return sensorDataSets[0];
             }
 
     }
@@ -73,37 +88,59 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      *
      */
     @Override
-    public void onDataReceived(IJsonObject iJsonObject, IJsonObject iJsonObject1) {
+    public void onDataReceived(IJsonObject probeConfig, IJsonObject data){
         // This is the method to write data received from a probe. This should probably be handled in a separate thread.
 
         // The code below is copied from the funf BasicPipline class, which is the default inplementation
         // THIS IS INCOMPLETE EXAMPLE CODE ONLY AND WILL NOT WORK. It is only here for reference.
         // This code shows how to create the data to save, but we want to save to the Google App Engine and not a SQLiteDatabase
 
-//        final String key = probeConfig.get(RuntimeTypeAdapterFactory.TYPE).toString();
-//        final IJsonObject finalData = data;
-//        if (key == null || data == null)
-//            return;
-//
-//        SQLiteDatabase db = dbHelper.getWritableDatabase();
-//        final double timestamp = data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsDouble();
-//        final String value = data.toString();
-//        if (timestamp == 0L || key == null || value == null) {
-//            Log.e(LogUtil.TAG, "Unable to save data.  Not all required values specified. " + timestamp + " " + key + " - " + value);
-//            throw new SQLException("Not all required fields specified.");
-//        }
+        final String key = probeConfig.get(RuntimeTypeAdapterFactory.TYPE).toString();
+        final IJsonObject finalData = data;
+        if (key == null || data == null)
+            return;
+
+        final double timestamp = data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsDouble();
+        final String value = data.toString();
+        if (timestamp == 0L || key == null || value == null) {
+            Log.e(LogUtil.TAG, "Unable to save data.  Not all required values specified. " + timestamp + " " + key + " - " + value);
+            throw new SQLException("Not all required fields specified.");
+        }
 //        ContentValues cv = new ContentValues();
 //        cv.put(NameValueDatabaseHelper.COLUMN_NAME, key);
 //        cv.put(NameValueDatabaseHelper.COLUMN_VALUE, value);
 //        cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
 //        db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
 
+
+        //Mockup data
+        SensorDataSet sensorData = new SensorDataSet();
+
+        Date date = new Date();
+        DateTime dateTime = new DateTime(date);
+        sensorData.setTimestamp(dateTime);
+        sensorData.setProbeType(key);
+        sensorData.setSensorData(value);
+
+        List<SensorDataSet> list = new ArrayList<SensorDataSet>();
+        list.add(sensorData);
+
+//        Message message = new Message();
+//        message.setListOfSensorData(list);
+
         //bundle
         //compress
         //send
-        Log.i(TAG, "GoogleAppEnginePipeline.onDataRecieved was called!!!!!");
-        new ListOfMessagesAsyncSender().execute(new Message());
 
+//        while(true) {
+            Log.i(TAG, "GoogleAppEnginePipeline.onDataRecieved was called!!!!!");
+            new ListOfMessagesAsyncSender().execute(sensorData);
+//           try {
+//               Thread.sleep(1000);
+//           }catch (InterruptedException e){
+//               Log.i(TAG, "INTERRUPTEDeXCEPTION");
+//           }
+//        }
 //        Message message = new Message();
 //        Message sent;
 //        try {

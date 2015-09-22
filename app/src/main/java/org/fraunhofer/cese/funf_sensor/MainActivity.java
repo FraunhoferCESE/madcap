@@ -243,8 +243,12 @@ public class MainActivity extends Activity implements DataListener {
 //        });
 
 
-        // Bind to the service, to create the connection with FunfManager
+        // Bind to the service, to create the connection with FunfManager+
+        startService(new Intent(this, FunfManager.class));
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
+
+
+
     }
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
