@@ -52,9 +52,9 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
                         new AndroidJsonFactory(), null)
                         .setApplicationName("funfSensor")
                         // options for running against local devappserver
-                        // - 10.0.2.2 is localhost's IP address in Android emulator
+//                         - 10.0.2.2 is localhost's IP address in Android emulator
                         // - turn off compression when running against local devappserver
-                        .setRootUrl("https://192.168.0.67:8080/_ah/api/")
+                        .setRootUrl("https://127.0.0.1:8080/_ah/api/")
                         .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                             @Override
                             public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
