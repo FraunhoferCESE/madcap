@@ -3,7 +3,10 @@ package org.fraunhofer.cese.funf_sensor.backend.apis;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
+import com.google.api.server.spi.response.ConflictException;
 
+
+import static org.fraunhofer.cese.funf_sensor.backend.OfyService.ofy;
 import org.fraunhofer.cese.funf_sensor.backend.models.SensorDataSet;
 
 import java.util.logging.Logger;
@@ -37,7 +40,7 @@ public class SensorDataSetEndpoint {
     public SensorDataSet getSensorDataSet(@Named("id") Long id) {
         // TODO: Implement this function
         logger.info("Calling getSensorDataSet method");
-        return null;
+        return ofy().load().type(SensorDataSet.class).id(id).now();
     }
 
     /**
@@ -47,9 +50,15 @@ public class SensorDataSetEndpoint {
      * @return The object to be added.
      */
     @ApiMethod(name = "insertSensorDataSet")
-    public SensorDataSet insertSensorDataSet(SensorDataSet sensorDataSet) {
+    public SensorDataSet insertSensorDataSet(SensorDataSet sensorDataSet) throws ConflictException{
         // TODO: Implement this function
-        logger.info("Calling insertSensorDataSet method");
+        if (sensorDataSet.getId() != null) {
+            if(getSensorDataSet(sensorDataSet.getId()) != null) {
+                throw new ConflictException("Object already exists");
+            }
+        }
+        ofy().save().entity(sensorDataSet).now();
+        logger.info("Calling insertSensorDataSet method with data:" + sensorDataSet);
         return sensorDataSet;
     }
 }

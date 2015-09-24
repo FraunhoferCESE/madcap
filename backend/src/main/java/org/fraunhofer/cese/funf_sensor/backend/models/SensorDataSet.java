@@ -17,7 +17,7 @@ import java.util.Date;
  * @param probeType     information about what sensor the data was captured by as a String
  * @param sensorData    String containing the sensor information captured
  */
-//@Entity
+@Entity
 public class SensorDataSet implements Serializable{
 
     //attributes
@@ -29,6 +29,10 @@ public class SensorDataSet implements Serializable{
 
 
     //getters and setters
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public Date getTimestamp() {
         return timestamp;
@@ -57,7 +61,7 @@ public class SensorDataSet implements Serializable{
     //Object methods
     @Override
     public String toString() {
-        return "Dataset-No.: " + id + "  Captured on: " + timestamp.toString() +
+        return "Dataset-No.: " + id + "  Captured on: " + (timestamp == null ? "<null>" : timestamp.toString()) +
                 "  Type of probe: " + probeType + "  Dataset: " + sensorData;
     }
 

@@ -5,17 +5,11 @@ import com.googlecode.objectify.*;
 /**
  *
  */
-public final class OfyService {
-    /**
-     * Default constructor, never called.
-     */
-    private OfyService() {
-    }
-
+public class OfyService {
     static {
 //        factory().register(SensorDataSet.class);
-        factory().register(Message.class);
-
+//        factory().register(Message.class);
+        ObjectifyService.register(SensorDataSet.class);
     }
 
     /**
