@@ -13,11 +13,9 @@ import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 import com.google.api.client.util.DateTime;
 import com.google.gson.JsonElement;
 
-import org.fraunhofer.cese.funf_sensor.backend.models.messageApi.MessageApi;
 
-//import org.fraunhofer.cese.funf_sensor.backend.models.messageApi.model.Message;
-import org.fraunhofer.cese.funf_sensor.backend.models.sensorDataSetApi.SensorDataSetApi;
 import org.fraunhofer.cese.funf_sensor.backend.models.sensorDataSetApi.model.SensorDataSet;
+import org.fraunhofer.cese.funf_sensor.backend.models.sensorDataSetApi.model.SensorEntry;
 
 import java.io.IOException;
 import java.sql.SQLOutput;
@@ -40,45 +38,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
     private boolean enabled = false;
 
-    private SensorDataSetApi appEngineApi;
-
-    private class ListOfMessagesAsyncSender extends AsyncTask<SensorDataSet,Void, SensorDataSet> {
 
 
-        @Override
-        protected SensorDataSet doInBackground(final SensorDataSet... sensorDataSets) {
-            if (appEngineApi == null) {  // Only do this once
-                SensorDataSetApi.Builder builder = new SensorDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
-                        new AndroidJsonFactory(), null)
-                        .setApplicationName("funfSensor")
-                        // options for running against local devappserver
-                        // - 10.0.2.2 is localhost's IP address in Android emulator
-                        // - turn off compression when running against local devappserver
-                        .setRootUrl("http://localhost:8080/_ah/api/")
-                        .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-                            @Override
-                            public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-                                abstractGoogleClientRequest.setDisableGZipContent(true);
-                            }
-                        });
-                // end options for devappserver
-                appEngineApi = builder.build();
-            }
-
-                for (SensorDataSet sensorDataSet : sensorDataSets) {
-                    try {
-                        SensorDataSet sensorDataSet1 = appEngineApi.insertSensorDataSet(sensorDataSet).execute();
-                        Log.i(TAG, sensorDataSet1.getSensorData() + "GoogleAppEnginePipeline");
-                    } catch (IOException e) {
-                        Log.i(TAG, "IOException was caught! GoogleAppEnginePipeline");
-                        e.printStackTrace();
-                    }
-                }
-
-            return sensorDataSets[0];
-            }
-
-    }
 
 
     /**
@@ -114,7 +75,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
 
         //Mockup data
-        SensorDataSet sensorData = new SensorDataSet();
+        SensorEntry sensorData = new SensorEntry();
 
         Date date = new Date();
         DateTime dateTime = new DateTime(date);
@@ -122,7 +83,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         sensorData.setProbeType(key);
         sensorData.setSensorData(value);
 
-        List<SensorDataSet> list = new ArrayList<SensorDataSet>();
+        List<SensorEntry> list = new ArrayList<SensorEntry>();
         list.add(sensorData);
 
 //        Message message = new Message();
@@ -133,8 +94,13 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         //send
 
 //        while(true) {
+        SensorDataSet toSend = new SensorDataSet();
+        toSend.setEntryList(list);
+        toSend.setTimestamp(new DateTime(new Date()));
+
+
             Log.i(TAG, "GoogleAppEnginePipeline.onDataRecieved was called!!!!!");
-            new ListOfMessagesAsyncSender().execute(sensorData);
+            new ListOfMessagesAsyncSender().execute(toSend);
 //           try {
 //               Thread.sleep(1000);
 //           }catch (InterruptedException e){

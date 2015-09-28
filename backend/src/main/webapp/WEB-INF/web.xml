@@ -19,8 +19,9 @@
             <!-- That was called param-probeType.
              I changed it so it would match the example
              -Frederik-         -->
-            <param-value>org.fraunhofer.cese.funf_sensor.backend.apis.MessageEndpoint,
-                org.fraunhofer.cese.funf_sensor.backend.apis.SensorDataSetEndpoint</param-value>
+            <param-value>
+                org.fraunhofer.cese.funf_sensor.backend.apis.SensorDataSetEndpoint
+            </param-value>
         </init-param>
     </servlet>
     <servlet-mapping>

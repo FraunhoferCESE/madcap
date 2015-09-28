@@ -30,18 +30,18 @@ public class SensorDataSetEndpoint {
 
     private static final Logger logger = Logger.getLogger(SensorDataSetEndpoint.class.getName());
 
-    /**
-     * This method gets the <code>SensorDataSet</code> object associated with the specified <code>id</code>.
-     *
-     * @param id The id of the object to be returned.
-     * @return The <code>SensorDataSet</code> associated with <code>id</code>.
-     */
-    @ApiMethod(name = "getSensorDataSet")
-    public SensorDataSet getSensorDataSet(@Named("id") Long id) {
-        // TODO: Implement this function
-        logger.info("Calling getSensorDataSet method");
-        return ofy().load().type(SensorDataSet.class).id(id).now();
-    }
+//    /**
+//     * This method gets the <code>SensorDataSet</code> object associated with the specified <code>id</code>.
+//     *
+//     * @param id The id of the object to be returned.
+//     * @return The <code>SensorDataSet</code> associated with <code>id</code>.
+//     */
+//    @ApiMethod(name = "getSensorDataSet")
+//    public SensorDataSet getSensorDataSet(@Named("id") Long id) {
+//        // TODO: Implement this function
+//        logger.info("Calling getSensorDataSet method");
+//        return ofy().load().type(SensorDataSet.class).id(id).now();
+//    }
 
     /**
      * This inserts a new <code>SensorDataSet</code> object.
@@ -52,12 +52,7 @@ public class SensorDataSetEndpoint {
     @ApiMethod(name = "insertSensorDataSet")
     public SensorDataSet insertSensorDataSet(SensorDataSet sensorDataSet) throws ConflictException{
         // TODO: Implement this function
-        if (sensorDataSet.getId() != null) {
-            if(getSensorDataSet(sensorDataSet.getId()) != null) {
-                throw new ConflictException("Object already exists");
-            }
-        }
-        ofy().save().entity(sensorDataSet).now();
+//        ofy().save().entity(sensorDataSet).now();
         logger.info("Calling insertSensorDataSet method with data:" + sensorDataSet);
         return sensorDataSet;
     }
