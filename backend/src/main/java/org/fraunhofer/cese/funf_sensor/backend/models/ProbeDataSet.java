@@ -9,12 +9,12 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-public class SensorDataSet implements Serializable {
+public class ProbeDataSet implements Serializable {
 
     //attributes
     @Id
     private Long id;
-    private List<SensorEntry> entryList;
+    private List<ProbeEntry> entryList;
     private Date timestamp;
 
 
@@ -37,11 +37,11 @@ public class SensorDataSet implements Serializable {
         this.timestamp = date;
     }
 
-    public void setEntryList(List<SensorEntry> entryList) {
+    public void setEntryList(List<ProbeEntry> entryList) {
         this.entryList = entryList;
     }
 
-    public List<SensorEntry> getEntryList() {
+    public List<ProbeEntry> getEntryList() {
         return entryList;
     }
 }

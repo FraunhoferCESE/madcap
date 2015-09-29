@@ -20,7 +20,7 @@
              I changed it so it would match the example
              -Frederik-         -->
             <param-value>
-                org.fraunhofer.cese.funf_sensor.backend.apis.SensorDataSetEndpoint
+                org.fraunhofer.cese.funf_sensor.backend.apis.ProbeDataSetEndpoint
             </param-value>
         </init-param>
     </servlet>

@@ -9,7 +9,7 @@ import java.util.Date;
  * Created by llayman on 9/24/2015.
  */
 @Entity
-public class SensorEntry {
+public class ProbeEntry {
 
     //attributes
     @Id
@@ -62,10 +62,10 @@ public class SensorEntry {
         if (obj == this)
             return true;
 
-        if (!(obj instanceof SensorEntry))
+        if (!(obj instanceof ProbeEntry))
             return false;
 
-        SensorEntry object = (SensorEntry) obj;
+        ProbeEntry object = (ProbeEntry) obj;
 
         return this.id == object.getId() && this.timestamp.equals(object.getTimestamp())
                 && this.probeType.equals(object.getProbeType())

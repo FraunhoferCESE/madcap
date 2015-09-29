@@ -14,8 +14,8 @@ import com.google.api.client.util.DateTime;
 import com.google.gson.JsonElement;
 
 
-import org.fraunhofer.cese.funf_sensor.backend.models.sensorDataSetApi.model.SensorDataSet;
-import org.fraunhofer.cese.funf_sensor.backend.models.sensorDataSetApi.model.SensorEntry;
+import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeDataSet;
+import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeEntry;
 
 import java.io.IOException;
 import java.sql.SQLOutput;
@@ -34,13 +34,9 @@ import edu.mit.media.funf.util.LogUtil;
 
 public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
-    private static final String TAG = GoogleAppEnginePipeline.class.getSimpleName();
+    private static final String TAG = "Fraunhofer."+GoogleAppEnginePipeline.class.getSimpleName();
 
     private boolean enabled = false;
-
-
-
-
 
     /**
      * Called when the probe emits data. Data emitted from probes that
@@ -55,65 +51,70 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         // The code below is copied from the funf BasicPipline class, which is the default inplementation
         // THIS IS INCOMPLETE EXAMPLE CODE ONLY AND WILL NOT WORK. It is only here for reference.
         // This code shows how to create the data to save, but we want to save to the Google App Engine and not a SQLiteDatabase
-
         final String key = probeConfig.get(RuntimeTypeAdapterFactory.TYPE).toString();
         final IJsonObject finalData = data;
-        if (key == null || data == null)
-            return;
 
-        final double timestamp = data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsDouble();
-        final String value = data.toString();
-        if (timestamp == 0L || key == null || value == null) {
-            Log.e(LogUtil.TAG, "Unable to save data.  Not all required values specified. " + timestamp + " " + key + " - " + value);
-            throw new SQLException("Not all required fields specified.");
-        }
-//        ContentValues cv = new ContentValues();
-//        cv.put(NameValueDatabaseHelper.COLUMN_NAME, key);
-//        cv.put(NameValueDatabaseHelper.COLUMN_VALUE, value);
-//        cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
-//        db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
+        Log.d(TAG,"(onDataReceived) key: " +key+ ", data: " + finalData);
+        return;
 
 
-        //Mockup data
-        SensorEntry sensorData = new SensorEntry();
 
-        Date date = new Date();
-        DateTime dateTime = new DateTime(date);
-        sensorData.setTimestamp(dateTime);
-        sensorData.setProbeType(key);
-        sensorData.setSensorData(value);
-
-        List<SensorEntry> list = new ArrayList<SensorEntry>();
-        list.add(sensorData);
-
-//        Message message = new Message();
-//        message.setListOfSensorData(list);
-
-        //bundle
-        //compress
-        //send
-
-//        while(true) {
-        SensorDataSet toSend = new SensorDataSet();
-        toSend.setEntryList(list);
-        toSend.setTimestamp(new DateTime(new Date()));
-
-
-            Log.i(TAG, "GoogleAppEnginePipeline.onDataRecieved was called!!!!!");
-            new ListOfMessagesAsyncSender().execute(toSend);
-//           try {
-//               Thread.sleep(1000);
-//           }catch (InterruptedException e){
-//               Log.i(TAG, "INTERRUPTEDeXCEPTION");
-//           }
+//        if (key == null || data == null)
+//            return;
+//
+//        final double timestamp = data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsDouble();
+//        final String value = data.toString();
+//        if (timestamp == 0L || key == null || value == null) {
+//            Log.e(LogUtil.TAG, "Unable to save data.  Not all required values specified. " + timestamp + " " + key + " - " + value);
+//            throw new SQLException("Not all required fields specified.");
 //        }
-//        Message message = new Message();
-//        Message sent;
-//        try {
-//            sent = appEngineApi.message().insertMessage(message).execute();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+////        ContentValues cv = new ContentValues();
+////        cv.put(NameValueDatabaseHelper.COLUMN_NAME, key);
+////        cv.put(NameValueDatabaseHelper.COLUMN_VALUE, value);
+////        cv.put(NameValueDatabaseHelper.COLUMN_TIMESTAMP, timestamp);
+////        db.insertOrThrow(NameValueDatabaseHelper.DATA_TABLE.name, "", cv);
+//
+//
+//        //Mockup data
+//        SensorEntry sensorData = new SensorEntry();
+//
+//        Date date = new Date();
+//        DateTime dateTime = new DateTime(date);
+//        sensorData.setTimestamp(dateTime);
+//        sensorData.setProbeType(key);
+//        sensorData.setSensorData(value);
+//
+//        List<SensorEntry> list = new ArrayList<SensorEntry>();
+//        list.add(sensorData);
+//
+////        Message message = new Message();
+////        message.setListOfSensorData(list);
+//
+//        //bundle
+//        //compress
+//        //send
+//
+////        while(true) {
+//        SensorDataSet toSend = new SensorDataSet();
+//        toSend.setEntryList(list);
+//        toSend.setTimestamp(new DateTime(new Date()));
+//
+//
+//            Log.i(TAG, "GoogleAppEnginePipeline.onDataRecieved was called!!!!!");
+//            new ListOfMessagesAsyncSender().execute(toSend);
+////           try {
+////               Thread.sleep(1000);
+////           }catch (InterruptedException e){
+////               Log.i(TAG, "INTERRUPTEDeXCEPTION");
+////           }
+////        }
+////        Message message = new Message();
+////        Message sent;
+////        try {
+////            sent = appEngineApi.message().insertMessage(message).execute();
+////        } catch (IOException e) {
+////            e.printStackTrace();
+////        }
 
     }
 
@@ -128,7 +129,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      * @param checkpoint
      */
     public void onDataCompleted(IJsonObject completeProbeUri, JsonElement checkpoint) {
-
+            Log.d(TAG,"(onDataCompleted) completeProbeUri: "+completeProbeUri+", checkpoint: "+checkpoint);
 
 //        String key = probeConfig.get(RuntimeTypeAdapterFactory.TYPE).toString();
 //        Log.d(LogUtil.TAG, "finished writing probe data " + key);
@@ -143,7 +144,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      */
     public void onCreate(FunfManager manager) {
         // This is the setup method that's called when the Pipeline is created
-
+        Log.d(TAG, "(onCreate)");
         this.enabled = true;
     }
 
@@ -154,6 +155,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      * @param config The object to perform the action on.
      */
     public void onRun(String action, JsonElement config) {
+        Log.d(TAG, "(onRun)");
         // Method which is called to tell the Pipeline to do something, like save the data locally or upload to the cloud
     }
 
@@ -162,7 +164,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      */
     public void onDestroy() {
         // Any closeout or disconnect operations
-
+        Log.d(TAG, "onDestroy");
         this.enabled = false;
     }
 
@@ -172,7 +174,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      */
     public boolean isEnabled() {
         // Determines whether the pipeline is enabled. The "enabled" flag should be toggled in the OnCreate and OnDestroy operations
-
+        Log.d(TAG, "(isEnabled:" +enabled+")");
         return enabled;
     }
 }

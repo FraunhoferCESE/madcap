@@ -114,12 +114,12 @@
     <orderEntry type="library" exported="" name="google-http-client-android-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="funf-v0.5.0RC1" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="junit-4.12" level="project" />
-    <orderEntry type="library" exported="" name="guava-jdk5-13.0" level="project" />
     <orderEntry type="library" exported="" name="google-oauth-client-1.19.0" level="project" />
+    <orderEntry type="library" exported="" name="guava-jdk5-13.0" level="project" />
     <orderEntry type="library" exported="" name="google-api-client-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="funf-0.4.2" level="project" />
     <orderEntry type="library" exported="" name="1_funf-0.4.2" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="jmockit-1.19" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="appengine-api-1.0-sdk-1.9.18" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="jmockit-1.19" level="project" />
   </component>
 </module>

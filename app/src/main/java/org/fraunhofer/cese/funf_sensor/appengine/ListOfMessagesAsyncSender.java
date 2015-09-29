@@ -8,22 +8,23 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
 import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 
-import org.fraunhofer.cese.funf_sensor.backend.models.sensorDataSetApi.SensorDataSetApi;
-import org.fraunhofer.cese.funf_sensor.backend.models.sensorDataSetApi.model.SensorDataSet;
+import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.ProbeDataSetApi;
+import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeDataSet;
+import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.UploadResult;
 
 import java.io.IOException;
 
 /**
  * Created by llayman on 9/24/2015.
  */
-public class ListOfMessagesAsyncSender extends AsyncTask<SensorDataSet,Void, SensorDataSet> {
-    private SensorDataSetApi appEngineApi;
+public class ListOfMessagesAsyncSender extends AsyncTask<ProbeDataSet,Void, ProbeDataSet> {
+    ProbeDataSetApi appEngineApi;
     private static final String TAG = GoogleAppEnginePipeline.class.getSimpleName();
 
     @Override
-    protected SensorDataSet doInBackground(final SensorDataSet... sensorDataSets) {
+    protected ProbeDataSet doInBackground(final ProbeDataSet... sensorDataSets) {
         if (appEngineApi == null) {  // Only do this once
-            SensorDataSetApi.Builder builder = new SensorDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
+            ProbeDataSetApi.Builder builder = new ProbeDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
                     new AndroidJsonFactory(), null)
                     .setApplicationName("funfSensor")
                             // options for running against local devappserver
@@ -40,10 +41,10 @@ public class ListOfMessagesAsyncSender extends AsyncTask<SensorDataSet,Void, Sen
             appEngineApi = builder.build();
         }
 
-        for (SensorDataSet sensorDataSet : sensorDataSets) {
+        for (ProbeDataSet sensorDataSet : sensorDataSets) {
             try {
-                SensorDataSet sensorDataSet1 = appEngineApi.insertSensorDataSet(sensorDataSet).execute();
-                Log.i(TAG, sensorDataSet1.getEntryList() + "GoogleAppEnginePipeline");
+                UploadResult result = appEngineApi.insertSensorDataSet(sensorDataSet).execute();
+                Log.i(TAG, result.toString());
             } catch (IOException e) {
                 Log.i(TAG, "IOException was caught! GoogleAppEnginePipeline");
                 e.printStackTrace();

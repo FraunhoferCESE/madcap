@@ -7,9 +7,9 @@ import com.googlecode.objectify.*;
  */
 public class OfyService {
     static {
-//        factory().register(SensorDataSet.class);
+//        factory().register(ProbeDataSet.class);
 //        factory().register(Message.class);
-        ObjectifyService.register(SensorDataSet.class);
+        ObjectifyService.register(ProbeDataSet.class);
     }
 
     /**
