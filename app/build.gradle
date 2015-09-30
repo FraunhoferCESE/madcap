@@ -51,6 +51,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            debuggable true
+        }
     }
 }
 
@@ -59,7 +62,7 @@ targetCompatibility = JavaVersion.VERSION_1_7
 
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/funf-v0.5.0RC1.jar')
     compile files('libs/gson-2.1.funf.jar')
     compile files('C:/Users/llayman/git/funf-sensor/libs/gson-2.1.funf.jar')
@@ -68,4 +71,11 @@ dependencies {
     compile project(path: ':backend', configuration: 'android-endpoints')
     compile 'com.google.android.gms:play-services-identity:8.1.0'
     compile 'com.google.android.gms:play-services-plus:8.1.0'
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.jmockit:jmockit:1.19'
+    testCompile 'com.google.appengine:appengine-api-labs:1.9.18'
+    testCompile 'com.google.appengine:appengine-api-stubs:1.9.18'
+    testCompile 'com.google.appengine:appengine-tools-sdk:1.9.18'
+    testCompile 'com.google.appengine:appengine-testing:1.9.18'
+    testCompile 'com.google.appengine:appengine-endpoints:1.9.18'
 }

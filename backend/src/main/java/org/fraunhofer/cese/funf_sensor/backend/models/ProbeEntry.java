@@ -1,25 +1,16 @@
 package org.fraunhofer.cese.funf_sensor.backend.models;
 
-
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.sun.org.apache.xpath.internal.operations.Plus;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
- * the result of a single measurement of any kind of device sensor.
- * Currently you can not assign a particular ID to a SensorDataSet.
- * The current constructor provides consecutive IDs.
- *
- * @param id            the unique ID of a SensorDataSet
- * @param timestamp     the moment a SensorDataSet was captured
- * @param probeType     information about what sensor the data was captured by as a String
- * @param sensorData    String containing the sensor information captured
+ * Created by llayman on 9/24/2015.
  */
-//@Entity
-public class SensorDataSet implements Serializable{
+@Entity
+public class ProbeEntry {
 
     //attributes
     @Id
@@ -39,6 +30,10 @@ public class SensorDataSet implements Serializable{
     public void setAccountName(String accountName) {
         this.accountName = accountName;
     }
+
+    public Long getId() { return id; }
+
+    public void setId(Long id) { this.id = id; }
 
     public Date getTimestamp() {
         return timestamp;
@@ -67,7 +62,7 @@ public class SensorDataSet implements Serializable{
     //Object methods
     @Override
     public String toString() {
-        return "Dataset-No.: " + id + "  Captured on: " + timestamp.toString() +
+        return "Dataset-No.: " + id + "  Captured on: " + (timestamp == null ? "<null>" : timestamp.toString()) +
                 "  Type of probe: " + probeType + "  Dataset: " + sensorData;
     }
 
@@ -77,12 +72,12 @@ public class SensorDataSet implements Serializable{
         if (obj == this)
             return true;
 
-        if (!(obj instanceof SensorDataSet))
+        if (!(obj instanceof ProbeEntry))
             return false;
 
-        SensorDataSet object = (SensorDataSet) obj;
+        ProbeEntry object = (ProbeEntry) obj;
 
-        return this.id == object.id && this.timestamp.equals(object.getTimestamp())
+        return this.id == object.getId() && this.timestamp.equals(object.getTimestamp())
                 && this.probeType.equals(object.getProbeType())
                 && this.sensorData.equals(object.getSensorData());
     }
@@ -101,21 +96,5 @@ public class SensorDataSet implements Serializable{
         return hashCode;
     }
 
-    //Constructor(s)
-
-    /**
-     * !!This constructor assigns consecutive IDs to SensorDataSets!!
-     * They can not be assigned manually.
-     *
-     */
-//    public SensorDataSet(DateTime timestamp, String probeType, String sensorData){
-//
-//        this.timestamp=timestamp;
-//        this.probeType=probeType;
-//        this.sensorData=sensorData;
-//        this.accountName= Plus.AccountApi.getAccountName(mGoogleApiClient);
-//
-//
-//    }
-
 }
+

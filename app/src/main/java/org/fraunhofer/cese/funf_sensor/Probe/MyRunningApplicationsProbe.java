@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor.Probe.RunningApplicationsProbe;
+package org.fraunhofer.cese.funf_sensor.Probe;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -15,6 +15,8 @@ import edu.mit.media.funf.probe.Probe;
  * Created by MLang on 18.02.2015.
  */
 public class MyRunningApplicationsProbe extends Probe.Base {
+    private static final String TAG = "Fraunhofer."+MyRunningApplicationsProbe.class.getSimpleName();
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -22,7 +24,7 @@ public class MyRunningApplicationsProbe extends Probe.Base {
         ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
         if(!am.isUserAMonkey()) {
             List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = am.getRunningAppProcesses();
-            Log.i("MyRunningApplicationsProbe.class", "MyRunningApplicationsProbe started.");
+            Log.i(TAG, "MyRunningApplicationsProbe started.");
             JsonObject allApps = new JsonObject();
             int i = 1;
             for(ActivityManager.RunningAppProcessInfo info : runningAppProcessInfoList){
