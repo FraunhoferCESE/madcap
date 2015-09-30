@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.IntentSender;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -22,6 +23,11 @@ import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.Scopes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.plus.Plus;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -50,8 +56,17 @@ import edu.mit.media.funf.storage.NameValueDatabaseHelper;
 /**
  * Created by MLang on 19.12.2014.
  */
-public class MainActivity extends Activity implements DataListener {
-    //all the event listeners have to be defined here
+public class MainActivity extends Activity implements
+         DataListener,
+        GoogleApiClient.ConnectionCallbacks,            //from https://developers.google.com/identity/sign-in/android/start-integrating#declare_permissions 9/28
+        GoogleApiClient.OnConnectionFailedListener,     //from https://developers.google.com/identity/sign-in/android/start-integrating#declare_permissions 9/28
+        View.OnClickListener {                          //from https://developers.google.com/identity/sign-in/android/start-integrating#declare_permissions 9/28
+//    //all the event listeners have to be defined here
+//
+//    //from https://developers.google.com/identity/sign-in/android/start-integrating#declare_permissions 9/28
+
+
+
 
     private static final String TAG = "MainActivity";
 
@@ -60,7 +75,7 @@ public class MainActivity extends Activity implements DataListener {
     private GoogleAppEnginePipeline pipeline;
 //    private GoogleAppEnginePipeline appEnginePipeline;
 
-    final SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+    final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
     //probes
     private AccelerometerSensorProbe accelerometerSensorProbe;
@@ -69,7 +84,6 @@ public class MainActivity extends Activity implements DataListener {
     private MyRunningApplicationsProbe myRunningApplicationsProbe;
     private ScreenProbe screenProbe;
     private SimpleLocationProbe locationProbe;
-
     private SMSProbe sMSProbe;
     private CallStateProbe callStateProbe;
 
@@ -77,7 +91,7 @@ public class MainActivity extends Activity implements DataListener {
 
     private CheckBox enabledCheckbox;
     private Button archiveButton;
-//    scanNowButton;
+    //    scanNowButton;
     private TextView dataCountView;
     private Handler handler;
     private Handler dataCounterUpdater;
@@ -107,7 +121,6 @@ public class MainActivity extends Activity implements DataListener {
 //            runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
 
 
-
             funfManager.registerPipeline("appengine", new GoogleAppEnginePipeline());
             pipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline("appengine");
 //            appEnginePipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline("appengine");
@@ -115,6 +128,7 @@ public class MainActivity extends Activity implements DataListener {
             funfManager.enablePipeline(PIPELINE_NAME);
             funfManager.enablePipeline("appengine");
             registerListeners();
+
 
             // This checkbox enables or disables the pipeline
 
@@ -146,6 +160,7 @@ public class MainActivity extends Activity implements DataListener {
             funfManager = null;
         }
     };
+
 
     private void registerListeners() {
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter("org.fraunhofer.funf.NotificationReceivedBroadcast"));
@@ -181,6 +196,16 @@ public class MainActivity extends Activity implements DataListener {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
+
+        //from https://developers.google.com/identity/sign-in/android/start-integrating#declare_permissions 9/28
+        //Build GoogleApiClient with access to basic profile
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(Plus.API)
+                .addScope(new Scope(Scopes.PROFILE))
+                .build();
+
 
         // Displays the count of rows in the data
         dataCountView = (TextView) findViewById(R.id.dataCountText);
@@ -226,7 +251,7 @@ public class MainActivity extends Activity implements DataListener {
                 handler.postDelayed(this, delay);
             }
 
-        },delay);
+        }, delay);
 
         // Forces the pipeline to scan now
 //        scanNowButton = (Button) findViewById(R.id.scanNowButton);
@@ -247,9 +272,13 @@ public class MainActivity extends Activity implements DataListener {
         startService(new Intent(this, FunfManager.class));
         bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
 
+        //from  https://developers.google.com/identity/sign-in/android/sign-in    Cast hinzugefuegt gegenueber modell
+        findViewById(R.id.sign_in_button).setOnClickListener((View.OnClickListener) this);
 
 
     }
+
+
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -265,8 +294,8 @@ public class MainActivity extends Activity implements DataListener {
         unregisterListeners();
 
         boolean isBound = false;
-        isBound = getApplicationContext().bindService( new Intent(getApplicationContext(), FunfManager.class), funfManagerConn, Context.BIND_AUTO_CREATE );
-        if(isBound)
+        isBound = getApplicationContext().bindService(new Intent(getApplicationContext(), FunfManager.class), funfManagerConn, Context.BIND_AUTO_CREATE);
+        if (isBound)
             getApplicationContext().unbindService(funfManagerConn);
     }
 
@@ -317,7 +346,6 @@ public class MainActivity extends Activity implements DataListener {
     private static final String TOTAL_COUNT_SQL = "select count(*) from " + NameValueDatabaseHelper.DATA_TABLE.name;
 
 
-
     private void updateScanCount() {
         // Query the pipeline db for the count of rows in the data table
 
@@ -338,4 +366,128 @@ public class MainActivity extends Activity implements DataListener {
         });
     }
 
+
+    /* Request code used to invoke sign in user interactions. */
+    private static final int RC_SIGN_IN = 0;
+
+    /* Client used to interact with Google APIs. */
+    private GoogleApiClient mGoogleApiClient;
+
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop(){
+        super.onStop();
+        mGoogleApiClient.disconnect();
+    }
+
+    // from https://developers.google.com/identity/sign-in/android/sign-in
+
+    /* Is there a ConnectionResult resolution in progress? */
+    private boolean mIsResolving = false;
+
+    /* Should we automatically resolve ConnectionResults when possible? */
+    private boolean mShouldResolve = false;
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        // Could not connect to Google Play Services.  The user needs to select an account,
+        // grant permissions or resolve an error in order to sign in. Refer to the javadoc for
+        // ConnectionResult to see possible error codes.
+        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+
+        if (!mIsResolving && mShouldResolve) {
+            if (connectionResult.hasResolution()) {
+                try {
+                    connectionResult.startResolutionForResult(this, RC_SIGN_IN);
+                    mIsResolving = true;
+                } catch (IntentSender.SendIntentException e) {
+                    Log.e(TAG, "Could not resolve ConnectionResult.", e);
+                    mIsResolving = false;
+                    mGoogleApiClient.connect();
+                }
+            } else {
+                // Could not resolve the connection result, show the user an
+                // error dialog.
+                Toast.makeText(MainActivity.this, "There was an error. No Connection", Toast.LENGTH_SHORT).show();
+//                showErrorDialog(connectionResult);
+            }
+        } else {
+            // Show the signed-out UI
+            Toast.makeText(MainActivity.this, "You are now signed out. Congratulations", Toast.LENGTH_SHORT).show();
+//            showSignedOutUI();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.sign_in_button) {
+            onSignInClicked();
+        }
+        if (v.getId() == R.id.SignOutButton) {
+            onSignOutClicked();
+        }
+
+    }
+
+    private void onSignInClicked() {
+        // User clicked the sign-in button, so begin the sign-in process and automatically
+        // attempt to resolve any errors that occur.
+        mShouldResolve = true;
+        mGoogleApiClient.connect();
+
+        // Show a message to the user that we are signing in.
+        Toast.makeText(MainActivity.this, "You are signing in now", Toast.LENGTH_SHORT).show();
+//        mStatus.setText(R.string.signing_in);
+    }
+
+    private void onSignOutClicked() {
+        //Clear the default account so that GoogleApiClient will not automatically
+        //connect in the future
+        if (mGoogleApiClient.isConnected()) {
+            Plus.AccountApi.clearDefaultAccount(mGoogleApiClient);
+            mGoogleApiClient.disconnect();
+        }
+        Toast.makeText(MainActivity.this, "You are signed out.", Toast.LENGTH_SHORT).show();
+//        showSignedOutUI();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: " + requestCode + " : " + resultCode + " : " + data);
+
+        if (requestCode == RC_SIGN_IN) {
+            //If the error resolution was not succesful we should not resolve further
+            if (resultCode != RESULT_OK) {
+                mShouldResolve = false;
+                mGoogleApiClient.connect();
+            }
+        }
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        // onConnected indicates that an account was selected on the device, that the selected
+        // account has granted any requested permissions to our app and that we were able to
+        // establish a service connection to Google Play services.
+        Log.d(TAG, "onConnected: " + bundle);
+        mShouldResolve = false;
+
+        //show the signed-in UI
+        Toast.makeText(MainActivity.this, "You are signed in.", Toast.LENGTH_SHORT).show();
+//        showSignedInUI();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    //End of auth-stuff
 }

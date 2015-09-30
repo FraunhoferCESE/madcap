@@ -1,9 +1,27 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 21
     buildToolsVersion "23.0.1"
 
+    //from http://stackoverflow.com/questions/19612628/installation-failed-with-android-studio-apk-not-signed 9/29
+
+//    signingConfigs{
+//
+//       debug {
+//            storeFile file("debug.keystore")
+//        }
+//
+//            myConfig{
+//            storeFile file("release.keystore")
+//            storePassword "android"
+//            keyAlias "adroiddebugkey"
+//            keyPassword "android"
+//        }
+//    }
+
+    //End
     defaultConfig {
         applicationId "org.fraunhofer.cese.funf_sensor"
         minSdkVersion 14
@@ -12,7 +30,24 @@ android {
         versionName "1.0"
     }
     buildTypes {
-        release {
+
+
+
+            //from http://stackoverflow.com/questions/19612628/installation-failed-with-android-studio-apk-not-signed 9/29
+//        foo {
+//            debuggable true
+//            jniDebuggable true
+//            signingConfig signingConfigs.myConfig
+//        }
+        //End
+
+//        debug {
+//            signingConfig signingConfigs.debug
+//            debuggable true
+//
+//        }
+
+            release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
@@ -31,5 +66,6 @@ dependencies {
     compile files('C:/Users/llayman/git/funf-sensor/libs/funf-0.4.2.jar')
     //    compile 'com.android.support:appcompat-v7:23.0.1'
     compile project(path: ':backend', configuration: 'android-endpoints')
-    compile 'com.google.android.gms:play-services-identity:7.3.0'
+    compile 'com.google.android.gms:play-services-identity:8.1.0'
+    compile 'com.google.android.gms:play-services-plus:8.1.0'
 }

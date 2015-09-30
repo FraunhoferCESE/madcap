@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:layout_alignParentTop="true">
+
+
 
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="#000">
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"/>
 
         <ImageView
             android:id="@+id/icon"
@@ -32,6 +41,10 @@
             android:background="#000"
             android:textSize="25sp"
             android:layout_toLeftOf="@id/icon" />
+
+
+
+
     </LinearLayout>
 
     <TextView
@@ -64,6 +77,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"/>
         -->
+
     <Button
         android:id="@+id/archiveButtonSD"
         android:layout_below="@id/checkBox"
@@ -105,6 +119,20 @@
         android:gravity="center"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
+
+   <Button
+       android:layout_height="wrap_content"
+       android:layout_width="wrap_content"
+       android:id="@+id/SignOutButton"
+       android:layout_below="@id/dataCountText"
+       android:layout_centerHorizontal="true"
+       android:textColor="#ffffff"
+       android:background="#dd4b39"
+       android:text="Sign out"
+       android:drawableLeft="@drawable/gplus"
+    />
+
+
     <!--
     <TextView
         android:id="@+id/info_message"
@@ -123,5 +151,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:autoLink="all"
-        android:layout_margin="5dp" />
+        android:layout_margin="5dp"
+        android:layout_below="@id/SignOutButton"/>
 </RelativeLayout>

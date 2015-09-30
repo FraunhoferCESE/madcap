@@ -3,6 +3,7 @@ package org.fraunhofer.cese.funf_sensor.backend.models;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.sun.org.apache.xpath.internal.operations.Plus;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -26,9 +27,18 @@ public class SensorDataSet implements Serializable{
     private Date timestamp;
     private String probeType;       //maybe we should use an enum here
     private String sensorData;
+    private String accountName;
+
 
 
     //getters and setters
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
 
     public Date getTimestamp() {
         return timestamp;
@@ -103,6 +113,7 @@ public class SensorDataSet implements Serializable{
 //        this.timestamp=timestamp;
 //        this.probeType=probeType;
 //        this.sensorData=sensorData;
+//        this.accountName= Plus.AccountApi.getAccountName(mGoogleApiClient);
 //
 //
 //    }
