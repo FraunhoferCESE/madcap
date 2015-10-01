@@ -29,13 +29,13 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         public void onReceive(Context context, Intent intent) {
             if (Telephony.Sms.Intents.SMS_EMERGENCY_CB_RECEIVED_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                    String messageBody = smsMessage.getMessageBody();
+                    String messageBody = smsMessage.getMessageBody(); //WHY?
                     Log.d(TAG, "SMS emergency received.");
                     intent.putExtra("SMS Action", "SMS emergency received");
                 }
             } else if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                    String messageBody = smsMessage.getMessageBody();
+                    String messageBody = smsMessage.getMessageBody(); //WHY?
                     Log.d(TAG, "SMS received.");
                     intent.putExtra("SMS Action", "SMS received");
                 }
