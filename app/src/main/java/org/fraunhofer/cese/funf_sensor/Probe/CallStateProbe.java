@@ -46,7 +46,7 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
     }
 
     @Override
-    protected void onStop() {
+    protected void onDisable() {
         TelephonyManager telephony = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_NONE);
 
