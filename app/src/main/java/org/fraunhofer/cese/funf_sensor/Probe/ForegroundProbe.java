@@ -64,7 +64,8 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
         foregroundProbeDeliverer = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true) {
+                boolean run = true;
+                while (run) {
                     ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
                     String foregroundTaskPackageName = foregroundTaskInfo.topActivity.getPackageName();
                     Log.i("ForegroundProbe.class", "ForegroundProbe started.");
@@ -75,6 +76,7 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
                     try {
                         Thread.sleep(15000l);
                     } catch (InterruptedException e) {
+                        run = false;
                         Log.i("ForegroundProbe.Class", "ForegroundProbe interrupted.");
                     }
                 }
