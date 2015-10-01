@@ -118,7 +118,7 @@
     <orderEntry type="library" exported="" name="guava-jdk5-13.0" level="project" />
     <orderEntry type="library" exported="" name="google-api-client-1.19.0" level="project" />
     <orderEntry type="library" exported="" name="funf-0.4.2" level="project" />
-    <orderEntry type="library" exported="" scope="TEST" name="appengine-api-1.0-sdk-1.9.18" level="project" />
     <orderEntry type="library" exported="" scope="TEST" name="jmockit-1.19" level="project" />
+    <orderEntry type="library" exported="" scope="TEST" name="appengine-api-1.0-sdk-1.9.18" level="project" />
   </component>
 </module>
