@@ -19,6 +19,7 @@ import org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.MyRunningApplicationsProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.PowerProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.SMSProbe;
+import org.fraunhofer.cese.funf_sensor.Probe.StateProbe;
 import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
 
 import java.text.SimpleDateFormat;
@@ -50,6 +51,7 @@ public class MainActivity extends Activity {
 
     private SMSProbe sMSProbe;
     private PowerProbe powerProbe;
+    private StateProbe stateProbe;
     private CallStateProbe callStateProbe;
 
     private CheckBox enabledCheckbox;
@@ -72,6 +74,7 @@ public class MainActivity extends Activity {
             screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
             sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
             powerProbe = gson.fromJson(new JsonObject(), PowerProbe.class);
+            stateProbe = gson.fromJson(new JsonObject(), StateProbe.class);
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
 
             // Initialize the pipeline
@@ -116,6 +119,7 @@ public class MainActivity extends Activity {
         screenProbe.registerPassiveListener(pipeline);
         sMSProbe.registerPassiveListener(pipeline);
         powerProbe.registerPassiveListener(pipeline);
+        stateProbe.registerPassiveListener(pipeline);
         callStateProbe.registerPassiveListener(pipeline);
     }
 
@@ -127,6 +131,7 @@ public class MainActivity extends Activity {
         screenProbe.unregisterListener(pipeline);
         sMSProbe.unregisterListener(pipeline);
         powerProbe.unregisterListener(pipeline);
+        stateProbe.unregisterListener(pipeline);
         callStateProbe.unregisterListener(pipeline);
     }
 

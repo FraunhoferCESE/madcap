@@ -90,6 +90,20 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".Probe.StateProbe$StateInformationReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN"/>
+                <action android:name="android.intent.action.AIRPLANE_MODE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.REBOOT"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.intent.action.DREAMING_STARTED"/>
+                <action android:name="android.intent.action.DREAMING_STOPPED"/>
+                <action android:name="android.intent.action.HEADSET_PLUG"/>
+                <!-- VOICE_COMMAND missing -->
+            </intent-filter>
+        </receiver>
 
         <!--
         <receiver android:probeType=".Probe.NotificationAndBroadcastHandlers.NotificationReceiver" >
@@ -121,11 +135,14 @@
                 <action android:name="android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED" />
             </intent-filter>
         </receiver>
+
         <receiver android:name=".Probe.CallStateProbe.MyPhoneStateReceiver">
             <intent-filter>
+
+
             </intent-filter>
         </receiver>
-        -->
+       -->
         <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

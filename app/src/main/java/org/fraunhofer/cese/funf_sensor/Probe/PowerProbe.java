@@ -32,7 +32,7 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
         intentFilter.addAction("android.intent.action.ACTION_BATTERY_CHANGED");
         getContext().registerReceiver(receiver, intentFilter);
         Log.i("PowerProbe.class: ", "PowerProbe enabled");
-        
+
     }
 
     private void sendData(Intent intent) {
@@ -43,6 +43,7 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
     @Override
     protected void onDisable() {
         super.onStop();
+        getContext().unregisterReceiver(receiver);
     }
 
 

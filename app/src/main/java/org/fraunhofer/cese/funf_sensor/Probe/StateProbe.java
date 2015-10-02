@@ -1,0 +1,104 @@
+package org.fraunhofer.cese.funf_sensor.Probe;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.util.Log;
+
+import edu.mit.media.funf.probe.Probe;
+
+/**
+ *
+ */
+public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
+
+
+    private static final String TAG = "StateProbe";
+    private BroadcastReceiver receiver = new StateInformationReceiver();
+
+
+    @Override
+    protected void onEnable() {
+
+        super.onStart();
+
+        IntentFilter filter = new IntentFilter();
+
+        filter.addAction("android.intent.action.AIRPLANE_MODE");
+        filter.addAction("android.intent.action.BOOT_COMPLETED");
+        filter.addAction("android.intent.action.ACTION_SHUTDOWN");
+        filter.addAction("android.intent.action.REBOOT");
+        filter.addAction("android.intent.action.USER_PRESENT");
+        filter.addAction("android.intent.action.DREAMING_STARTED");
+        filter.addAction("android.intent.action.DREAMING_STOPPED");
+        filter.addAction("android.intent.action.HEADSET_PLUG");
+        //filter.addAction("android.intent.action.ACTION_VOICE_COMMAND");
+        // VOICE_COMMAND can't be found in the Manifest
+
+        getContext().registerReceiver(receiver, filter);
+
+        Log.i("StateProbe", "StateProbe enabled");
+    }
+
+
+    @Override
+    protected void onDisable() {
+        super.onDisable();
+        getContext().unregisterReceiver(receiver);
+    }
+
+
+    public void sendData(Intent intent) {
+        sendData(getGson().toJsonTree(intent).getAsJsonObject());
+        Log.i("StateProbe", "StateProbe sent");
+    }
+
+
+    public class StateInformationReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            switch (intent.getAction()){
+                case Intent.ACTION_AIRPLANE_MODE_CHANGED:
+                    intent.putExtra("General: ","AirplaneMode changed");
+                    break;
+                case Intent.ACTION_BOOT_COMPLETED:
+                    intent.putExtra("General: ","boot completed");
+                    break;
+                case Intent.ACTION_DREAMING_STARTED:
+                    intent.putExtra("General: ","Dreaming started");
+                    break;
+                case Intent.ACTION_DREAMING_STOPPED:
+                    intent.putExtra("General: ","Dreaming stopped");
+                    break;
+                case Intent.ACTION_HEADSET_PLUG:
+                    intent.putExtra("General: ","headset plugged");
+                    break;
+                case Intent.ACTION_REBOOT:
+                    intent.putExtra("General: ","Device is rebooting");
+                    break;
+                case Intent.ACTION_SHUTDOWN:
+                    intent.putExtra("General: ","Device is shutting down");
+                    break;
+                case Intent.ACTION_USER_PRESENT:
+                    intent.putExtra("General: ","user is now present");
+                    break;
+                case Intent.ACTION_VOICE_COMMAND:
+                    intent.putExtra("General: ","Voice command started");
+                    break;
+                default:
+                    intent.putExtra("General: ","Error: StateProbe misscalled");
+                    break;
+
+            }
+
+            sendData(intent);
+        }
+
+        public StateInformationReceiver(){
+
+        }
+    }
+}
