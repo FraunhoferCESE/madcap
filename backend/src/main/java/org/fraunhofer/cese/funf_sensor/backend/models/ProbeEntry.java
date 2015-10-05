@@ -2,8 +2,9 @@ package org.fraunhofer.cese.funf_sensor.backend.models;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
-import java.util.Date;
+import java.util.UUID;
 
 /**
  * Created by llayman on 9/24/2015.
@@ -11,26 +12,24 @@ import java.util.Date;
 @Entity
 public class ProbeEntry {
 
-    //attributes
     @Id
-    private Long id;                //maybe it will be assigned automatically
-    private Date timestamp;
-    private String probeType;       //maybe we should use an enum here
+    private String id;
+    private Long timestamp;
+    private String probeType;
     private String sensorData;
-
 
     //getters and setters
 
-    public Long getId() { return id; }
+    public String getId() { return id; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setId(String id) { this.id = id; }
 
-    public Date getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date date) {
-        this.timestamp = date;
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getProbeType() {
@@ -49,41 +48,38 @@ public class ProbeEntry {
         this.sensorData = sensorData;
     }
 
-    //Object methods
     @Override
     public String toString() {
-        return "Dataset-No.: " + id + "  Captured on: " + (timestamp == null ? "<null>" : timestamp.toString()) +
-                "  Type of probe: " + probeType + "  Dataset: " + sensorData;
+        return "ProbeEntry{" +
+                "id=" + id +
+                ", timestamp=" + timestamp +
+                ", probeType='" + probeType + '\'' +
+                ", sensorData='" + sensorData + '\'' +
+                '}';
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        if (obj == this)
-            return true;
+        ProbeEntry that = (ProbeEntry) o;
 
-        if (!(obj instanceof ProbeEntry))
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null)
             return false;
+        if (probeType != null ? !probeType.equals(that.probeType) : that.probeType != null)
+            return false;
+        return !(sensorData != null ? !sensorData.equals(that.sensorData) : that.sensorData != null);
 
-        ProbeEntry object = (ProbeEntry) obj;
-
-        return this.id == object.getId() && this.timestamp.equals(object.getTimestamp())
-                && this.probeType.equals(object.getProbeType())
-                && this.sensorData.equals(object.getSensorData());
     }
 
     @Override
-    public int hashCode(){
-
-        int hashCode=17;
-
-        hashCode=31*hashCode+(int)(this.id^(this.id>>>32));
-        hashCode=31*hashCode+this.timestamp.hashCode();
-        hashCode=31*hashCode+this.probeType.hashCode();
-        hashCode=31*hashCode+this.sensorData.hashCode();
-
-
-        return hashCode;
+    public int hashCode() {
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (timestamp != null ? timestamp.hashCode() : 0);
+        result = 31 * result + (probeType != null ? probeType.hashCode() : 0);
+        result = 31 * result + (sensorData != null ? sensorData.hashCode() : 0);
+        return result;
     }
-
 }

@@ -13,6 +13,7 @@ import android.widget.CompoundButton;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.inject.Inject;
 
 import org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe;
@@ -27,15 +28,18 @@ import edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe;
 import edu.mit.media.funf.probe.builtin.BatteryProbe;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
+import roboguice.activity.RoboActivity;
 
 /**
  * Created by MLang on 19.12.2014.
  */
-public class MainActivity extends Activity {
+public class MainActivity extends RoboActivity {
     private static final String TAG = "Fraunhofer."+MainActivity.class.getSimpleName();
 
     public static final String PIPELINE_NAME = "appengine";
     private FunfManager funfManager;
+
+    @Inject
     private GoogleAppEnginePipeline pipeline;
 
     final SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
@@ -72,7 +76,7 @@ public class MainActivity extends Activity {
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
 
             // Initialize the pipeline
-            funfManager.registerPipeline(PIPELINE_NAME, new GoogleAppEnginePipeline());
+            funfManager.registerPipeline(PIPELINE_NAME, pipeline);
             pipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
             Log.i(TAG, "Enabling pipeline: "+ PIPELINE_NAME);
             funfManager.enablePipeline(PIPELINE_NAME);

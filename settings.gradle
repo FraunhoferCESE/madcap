@@ -1,1 +1,1 @@
-include ':app', ':backend', ':system-test-driver'
+include ':app', ':backend'

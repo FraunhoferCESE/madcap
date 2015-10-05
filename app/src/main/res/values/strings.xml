@@ -1,5 +1,10 @@
 <resources>
-    <!-- the probeType with that the application is displayed on the device -->
+
+    <!-- cache config -->
+
+
+
+    <!-- other app config -->
     <string name="app_name">FUNF-Sensor</string>
     <string name="notification_service_name">FUNF-sensor notification service</string>
     <string name="probe_foreground">

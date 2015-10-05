@@ -33,10 +33,14 @@ dependencies {
     compile project(path: ':backend', configuration: 'android-endpoints')
     testCompile 'junit:junit:4.12'
     testCompile 'org.jmockit:jmockit:1.19'
-    testCompile 'com.google.appengine:appengine-api-labs:1.9.18'
-    testCompile 'com.google.appengine:appengine-api-stubs:1.9.18'
-    testCompile 'com.google.appengine:appengine-tools-sdk:1.9.18'
-    testCompile 'com.google.appengine:appengine-testing:1.9.18'
-    testCompile 'com.google.appengine:appengine-endpoints:1.9.18'
-    compile 'com.google.android.gms:play-services-identity:7.8.0'
+//    testCompile 'com.google.appengine:appengine-api-labs:1.9.27'
+//    testCompile 'com.google.appengine:appengine-api-stubs:1.9.27'
+//    testCompile 'com.google.appengine:appengine-tools-sdk:1.9.27'
+//    testCompile 'com.google.appengine:appengine-testing:1.9.27'
+//    testCompile 'com.google.appengine:appengine-endpoints:1.9.27'
+    compile 'com.google.android.gms:play-services-identity:8.1.0'
+    compile 'com.j256.ormlite:ormlite-android:4.48'
+    compile 'org.roboguice:roboguice:3.+'
+    provided 'org.roboguice:roboblender:3.+'
+
 }

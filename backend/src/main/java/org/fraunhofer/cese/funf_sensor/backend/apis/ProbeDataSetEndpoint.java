@@ -5,19 +5,16 @@ import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ConflictException;
-import com.google.appengine.api.users.User;
-
-
-import static org.fraunhofer.cese.funf_sensor.backend.OfyService.ofy;
 
 import org.fraunhofer.cese.funf_sensor.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.funf_sensor.backend.models.ProbeEntry;
-import org.fraunhofer.cese.funf_sensor.backend.models.UploadResult;
+import org.fraunhofer.cese.funf_sensor.backend.models.ProbeUploadResult;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.logging.Logger;
 
-import javax.servlet.http.HttpServletRequest;
+import static org.fraunhofer.cese.funf_sensor.backend.OfyService.ofy;
 
 /**
  * An endpoint class we are exposing
@@ -43,19 +40,30 @@ public class ProbeDataSetEndpoint {
      * @return The object to be added.
      */
     @ApiMethod(name = "insertSensorDataSet")
-    public UploadResult insertSensorDataSet(HttpServletRequest req, User user, ProbeDataSet probeDataSet) throws ConflictException, BadRequestException {
+    public ProbeUploadResult insertSensorDataSet(ProbeDataSet probeDataSet) throws ConflictException, BadRequestException {
         if (probeDataSet == null) {
             throw new BadRequestException("sensorDataSet cannot be null");
         }
 
-        List<ProbeEntry> entryList = probeDataSet.getEntryList();
+        Collection<ProbeEntry> entryList = probeDataSet.getEntryList();
         if (entryList == null || entryList.isEmpty()) {
             throw new BadRequestException("entryList is null or empty");
         }
+        logger.info("Logging request received. Data: " + entryList);
 
-        UploadResult result = UploadResult.create(ofy().save().entities(entryList).now().size(), req.getRemoteAddr(), user);
-        logger.info(result.toString());
-        ofy().save().entity(result).now();
-        return result;
+        Collection<String> saved = new ArrayList<>();
+        Collection<String> alreadyExists = new ArrayList<>();
+
+        for(ProbeEntry entry : entryList) {
+            ProbeEntry result = ofy().load().type(ProbeEntry.class).id(entry.getId()).now();
+            if(result == null) {
+                saved.add(entry.getId());
+            }
+            else {
+                alreadyExists.add(result.getId());
+            }
+        }
+
+        return ProbeUploadResult.create(saved, alreadyExists);
     }
 }

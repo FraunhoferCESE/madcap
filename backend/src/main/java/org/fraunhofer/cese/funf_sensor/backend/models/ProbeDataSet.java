@@ -5,7 +5,7 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -14,13 +14,11 @@ public class ProbeDataSet implements Serializable {
     //attributes
     @Id
     private Long id;
-    private List<ProbeEntry> entryList;
-    private Date timestamp;
+    private Collection<ProbeEntry> entries;
+    private Long timestamp;
 
 
     //getters and setters
-
-
     public Long getId() {
         return id;
     }
@@ -29,19 +27,19 @@ public class ProbeDataSet implements Serializable {
         this.id = id;
     }
 
-    public Date getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(Date date) {
-        this.timestamp = date;
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
     }
 
-    public void setEntryList(List<ProbeEntry> entryList) {
-        this.entryList = entryList;
+    public void setEntryList(List<ProbeEntry> entries) {
+        this.entries = entries;
     }
 
-    public List<ProbeEntry> getEntryList() {
-        return entryList;
+    public Collection<ProbeEntry> getEntryList() {
+        return entries;
     }
 }
