@@ -19,11 +19,12 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
     /**
      * the internal class PowerInform... is on the bottom of this class
      */
-    private BroadcastReceiver receiver = new PowerInformationReceiver();
+    private BroadcastReceiver receiver;
 
     @Override
     protected void onEnable() {
         super.onStart();
+        receiver = new PowerInformationReceiver(this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.intent.action.ACTION_POWER_CONNECTED");
         intentFilter.addAction("android.intent.action.ACTION_POWER_DISCONNECTED");
@@ -49,6 +50,9 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
 
     public class PowerInformationReceiver extends BroadcastReceiver {
 
+        public PowerProbe callback;
+        public PowerInformationReceiver (PowerProbe callback){this.callback=callback;}
+
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -56,7 +60,7 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
             intent = addPlugStatus(intent);
             intent = addBatteryLevel(intent);
 
-            sendData(intent);
+            callback.sendData(intent);
 
 
         }

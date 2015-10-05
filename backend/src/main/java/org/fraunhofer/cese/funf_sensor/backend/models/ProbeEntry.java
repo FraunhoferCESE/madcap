@@ -4,6 +4,8 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 
 import java.util.Date;
+import java.util.regex.Pattern;
+
 
 /**
  * Created by llayman on 9/24/2015.
@@ -17,13 +19,18 @@ public class ProbeEntry {
     private Date timestamp;
     private String probeType;       //maybe we should use an enum here
     private String sensorData;
+    private String emailAddress;
 
 
     //getters and setters
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Date getTimestamp() {
         return timestamp;
@@ -47,6 +54,14 @@ public class ProbeEntry {
 
     public void setSensorData(String sensorData) {
         this.sensorData = sensorData;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
     }
 
     //Object methods
@@ -73,17 +88,24 @@ public class ProbeEntry {
     }
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
 
-        int hashCode=17;
+        int hashCode = 17;
 
-        hashCode=31*hashCode+(int)(this.id^(this.id>>>32));
-        hashCode=31*hashCode+this.timestamp.hashCode();
-        hashCode=31*hashCode+this.probeType.hashCode();
-        hashCode=31*hashCode+this.sensorData.hashCode();
+        hashCode = 31 * hashCode + (int) (this.id ^ (this.id >>> 32));
+        hashCode = 31 * hashCode + this.timestamp.hashCode();
+        hashCode = 31 * hashCode + this.probeType.hashCode();
+        hashCode = 31 * hashCode + this.sensorData.hashCode();
 
 
         return hashCode;
     }
+
+    public ProbeEntry(String probeType, String sensorData, String emailAddress) {
+        this.probeType = probeType;
+        this.sensorData = sensorData;
+        this.emailAddress = emailAddress;
+        //timestamp could cause problems because it's not a simple datatype and http transmission requires those
+        }
 
 }

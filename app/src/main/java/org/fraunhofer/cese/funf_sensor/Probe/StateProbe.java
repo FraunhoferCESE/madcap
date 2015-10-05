@@ -15,7 +15,7 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
 
 
     private static final String TAG = "StateProbe";
-    private BroadcastReceiver receiver = new StateInformationReceiver();
+    private BroadcastReceiver receiver;
 
 
     @Override
@@ -23,6 +23,7 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
 
         super.onStart();
 
+        receiver = new StateInformationReceiver(this);
         IntentFilter filter = new IntentFilter();
 
         filter.addAction("android.intent.action.AIRPLANE_MODE");
@@ -56,6 +57,10 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
 
 
     public class StateInformationReceiver extends BroadcastReceiver{
+        public StateProbe callback;
+        public StateInformationReceiver (StateProbe callback) {
+            this.callback = callback;
+        }
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -94,11 +99,9 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
 
             }
 
-            sendData(intent);
+            callback.sendData(intent);
         }
 
-        public StateInformationReceiver(){
 
-        }
     }
 }
