@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
@@ -25,7 +25,7 @@ public class ProbeCacheOpenHelper extends OrmLiteSqliteOpenHelper {
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 1;
 
-    private Dao<CacheEntry,String> dao = null;
+    private RuntimeExceptionDao<CacheEntry,String> dao = null;
 
     public ProbeCacheOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
@@ -65,10 +65,19 @@ public class ProbeCacheOpenHelper extends OrmLiteSqliteOpenHelper {
 
     }
 
-    public Dao<CacheEntry, String> getDao()  throws SQLException {
+    /**
+     * The DAO used to perform database operations. This is an instance of RuntimeExceptionDao, which wraps all normal SQLExceptions
+     * with RuntimeExceptions to be consistent with Android's exception handling structure. See http://ormlite.com/javadoc/ormlite-core/doc-files/ormlite_4.html#RuntimeExceptionDao
+     *
+     * @return the dao used to access the SQLLite database
+     */
+    public RuntimeExceptionDao<CacheEntry, String> getDao() {
         if(dao == null) {
-            dao = getDao(CacheEntry.class);
+//            dao = getDao(CacheEntry.class);
+            dao = getRuntimeExceptionDao(CacheEntry.class);
         }
         return dao;
     }
+
+
 }

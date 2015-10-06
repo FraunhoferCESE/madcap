@@ -6,11 +6,9 @@ import com.google.gson.JsonElement;
 import com.google.inject.Inject;
 
 
-import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeEntry;
 import org.fraunhofer.cese.funf_sensor.cache.CacheEntry;
-import org.fraunhofer.cese.funf_sensor.cache.ProbeCache;
+import org.fraunhofer.cese.funf_sensor.cache.Cache;
 
-import java.sql.SQLException;
 import java.util.UUID;
 
 
@@ -23,28 +21,31 @@ import edu.mit.media.funf.probe.builtin.ProbeKeys;
 
 public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
-    private static final String TAG = "Fraunhofer."+GoogleAppEnginePipeline.class.getSimpleName();
+    private static final String TAG = "Fraunhofer." + GoogleAppEnginePipeline.class.getSimpleName();
 
     private boolean enabled = false;
 
-    @Inject
-    ProbeCache probeCache;
 
+    private final Cache cache;
+
+    @Inject
+    public GoogleAppEnginePipeline(Cache cache) {
+        this.cache = cache;
+    }
 
     /**
      * Called when the probe emits data. Data emitted from probes that
      * extend the Probe class are guaranteed to have the PROBE and TIMESTAMP
      * parameters.
-     *
      */
     @Override
-    public void onDataReceived(IJsonObject probeConfig, IJsonObject data){
+    public void onDataReceived(IJsonObject probeConfig, IJsonObject data) {
         // This is the method to write data received from a probe. This should probably be handled in a separate thread.
 
         final String key = probeConfig.get(RuntimeTypeAdapterFactory.TYPE).toString();
         final IJsonObject finalData = data;
 
-        Log.d(TAG,"(onDataReceived) key: " +key+ ", data: " + finalData);
+        Log.d(TAG, "(onDataReceived) key: " + key + ", data: " + finalData);
 
         if (key == null || data == null) {
             Log.d(TAG, "(onDataReceived) Exiting due to null key or data.");
@@ -53,7 +54,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
         final Long timestamp = data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsLong();
         if (timestamp == 0L) {
-            Log.d(TAG, "Invalid timestamp for probe data: "+timestamp);
+            Log.d(TAG, "Invalid timestamp for probe data: " + timestamp);
             return;
         }
 
@@ -63,11 +64,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         probeEntry.setProbeType(key);
         probeEntry.setSensorData(finalData.toString());
 
-        try {
-            probeCache.add(probeEntry);
-        } catch (SQLException e) {
-            Log.e(TAG,"Error adding to cache", e);
-        }
+        cache.add(probeEntry);
     }
 
     /**
@@ -81,8 +78,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      * @param checkpoint
      */
     public void onDataCompleted(IJsonObject completeProbeUri, JsonElement checkpoint) {
-       Log.d(TAG, "(onDataCompleted) completeProbeUri: " + completeProbeUri + ", checkpoint: " + checkpoint);
-        probeCache.flush();
+        Log.d(TAG, "(onDataCompleted) completeProbeUri: " + completeProbeUri + ", checkpoint: " + checkpoint);
+        cache.flush();
     }
 
     /**
@@ -114,7 +111,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     public void onDestroy() {
         // Any closeout or disconnect operations
         Log.d(TAG, "onDestroy");
-        probeCache.close();
+        cache.close();
         this.enabled = false;
     }
 
@@ -124,7 +121,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      */
     public boolean isEnabled() {
         // Determines whether the pipeline is enabled. The "enabled" flag should be toggled in the OnCreate and OnDestroy operations
-        Log.d(TAG, "(isEnabled:" +enabled+")");
+        Log.d(TAG, "(isEnabled:" + enabled + ")");
         return enabled;
     }
 }

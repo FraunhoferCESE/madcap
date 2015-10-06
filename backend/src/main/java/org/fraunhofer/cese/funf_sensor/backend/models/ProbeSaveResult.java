@@ -1,7 +1,5 @@
 package org.fraunhofer.cese.funf_sensor.backend.models;
 
-import com.googlecode.objectify.annotation.Entity;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -9,19 +7,19 @@ import java.util.List;
 /**
  * Created by Lucas on 10/5/2015.
  */
-public class ProbeUploadResult {
+public class ProbeSaveResult {
 
     private List<String> saved;
     private List<String> alreadyExists;
 
-    public static ProbeUploadResult create(Collection<String> saved, Collection<String> alreadyExists) {
-        ProbeUploadResult result = new ProbeUploadResult();
+    public static ProbeSaveResult create(Collection<String> saved, Collection<String> alreadyExists) {
+        ProbeSaveResult result = new ProbeSaveResult();
         result.setSaved(saved);
         result.setAlreadyExists(alreadyExists);
         return result;
     }
 
-    private ProbeUploadResult() {}
+    private ProbeSaveResult() {}
 
     public List<String> getSaved() {
         return saved;

@@ -8,7 +8,7 @@ import com.google.api.server.spi.response.ConflictException;
 
 import org.fraunhofer.cese.funf_sensor.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.funf_sensor.backend.models.ProbeEntry;
-import org.fraunhofer.cese.funf_sensor.backend.models.ProbeUploadResult;
+import org.fraunhofer.cese.funf_sensor.backend.models.ProbeSaveResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,7 +40,7 @@ public class ProbeDataSetEndpoint {
      * @return The object to be added.
      */
     @ApiMethod(name = "insertSensorDataSet")
-    public ProbeUploadResult insertSensorDataSet(ProbeDataSet probeDataSet) throws ConflictException, BadRequestException {
+    public ProbeSaveResult insertSensorDataSet(ProbeDataSet probeDataSet) throws ConflictException, BadRequestException {
         if (probeDataSet == null) {
             throw new BadRequestException("sensorDataSet cannot be null");
         }
@@ -64,6 +64,7 @@ public class ProbeDataSetEndpoint {
             }
         }
 
-        return ProbeUploadResult.create(saved, alreadyExists);
+        logger.info("Num Saved: " + saved.size() +", Num already existing: "+alreadyExists.size());
+        return ProbeSaveResult.create(saved, alreadyExists);
     }
 }
