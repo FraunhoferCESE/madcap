@@ -34,8 +34,8 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
         filter.addAction("android.intent.action.DREAMING_STARTED");
         filter.addAction("android.intent.action.DREAMING_STOPPED");
         filter.addAction("android.intent.action.HEADSET_PLUG");
-        //filter.addAction("android.intent.action.ACTION_VOICE_COMMAND");
-        // VOICE_COMMAND can't be found in the Manifest
+        filter.addAction("android.intent.action.VOICE_COMMAND");
+
 
         getContext().registerReceiver(receiver, filter);
 
@@ -70,31 +70,31 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
                     intent.putExtra("General: ","AirplaneMode changed");
                     break;
                 case Intent.ACTION_BOOT_COMPLETED:
-                    intent.putExtra("General: ","boot completed");
+                    intent.putExtra("StateProbe: ","boot completed");
                     break;
                 case Intent.ACTION_DREAMING_STARTED:
-                    intent.putExtra("General: ","Dreaming started");
+                    intent.putExtra("StateProbe: ","Dreaming started");
                     break;
                 case Intent.ACTION_DREAMING_STOPPED:
-                    intent.putExtra("General: ","Dreaming stopped");
+                    intent.putExtra("StateProbe: ","Dreaming stopped");
                     break;
                 case Intent.ACTION_HEADSET_PLUG:
-                    intent.putExtra("General: ","headset plugged");
+                    intent.putExtra("StateProbe: ","headset plugged");
                     break;
                 case Intent.ACTION_REBOOT:
-                    intent.putExtra("General: ","Device is rebooting");
+                    intent.putExtra("StateProbe: ","Device is rebooting");
                     break;
                 case Intent.ACTION_SHUTDOWN:
-                    intent.putExtra("General: ","Device is shutting down");
+                    intent.putExtra("StateProbe: ","Device is shutting down");
                     break;
                 case Intent.ACTION_USER_PRESENT:
-                    intent.putExtra("General: ","user is now present");
+                    intent.putExtra("StateProbe: ","user is now present");
                     break;
                 case Intent.ACTION_VOICE_COMMAND:
-                    intent.putExtra("General: ","Voice command started");
+                    intent.putExtra("StateProbe: ","Voice command started");
                     break;
                 default:
-                    intent.putExtra("General: ","Error: StateProbe misscalled");
+                    intent.putExtra("StateProbe: ","Something went wrong");
                     break;
 
             }
