@@ -1,13 +1,16 @@
 package org.fraunhofer.cese.funf_sensor.cache;
 
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeEntry;
 
 /**
- * Created by Lucas on 10/5/2015.
+ * Local cache entry for Probe data. This holds the same data as ProbeEntry, but this data needs to be duplicated locally within the app
+ * since an ORM cannot be built for data types imported from the backend API.
+ *
+ * @author Lucas
+ * @see ProbeEntry
  */
 @DatabaseTable(tableName = "probedata")
 public class CacheEntry {
@@ -16,9 +19,11 @@ public class CacheEntry {
 
     @DatabaseField(id = true)
     private String id;
+    static final String ID_FIELD_NAME = "id";
 
     @DatabaseField
     private Long timestamp;
+    static final String TIMESTAMP_FIELD_NAME = "timestamp";
 
     @DatabaseField
     private String probeType;

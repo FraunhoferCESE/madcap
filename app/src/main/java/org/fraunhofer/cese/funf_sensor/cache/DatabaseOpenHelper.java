@@ -14,11 +14,13 @@ import org.fraunhofer.cese.funf_sensor.R;
 import java.sql.SQLException;
 
 /**
- * Created by Lucas on 10/5/2015.
+ * A helper for accessing the ORMLite database and DAO objects.
+ *
+ * See <a href="http://ormlite.com/javadoc/ormlite-core/doc-files/ormlite_4.html#Android-Basics">ORMLite Documentation: Using With Android</a>
  */
-public class ProbeCacheOpenHelper extends OrmLiteSqliteOpenHelper {
+public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String TAG = "Fraunhofer." + ProbeCacheOpenHelper.class.getSimpleName();
+    private static final String TAG = "Fraunhofer." + DatabaseOpenHelper.class.getSimpleName();
 
     // name of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = "probe_data.db";
@@ -27,7 +29,7 @@ public class ProbeCacheOpenHelper extends OrmLiteSqliteOpenHelper {
 
     private RuntimeExceptionDao<CacheEntry,String> dao = null;
 
-    public ProbeCacheOpenHelper(Context context) {
+    public DatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
     }
 

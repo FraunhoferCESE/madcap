@@ -3,63 +3,112 @@ package org.fraunhofer.cese.funf_sensor.cache;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.inject.Inject;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
+import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
+import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.ProbeDataSetApi;
+
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import roboguice.inject.ContextSingleton;
 
 /**
- * Created by Lucas on 10/5/2015.
+ * Implementation of a two-stage cache for ProbeEntry data. The cache first stores objects in memory, and flushes them to a backing
+ * database storage when specified conditions are met. Once the database size reaches a specified limit, the cache attempts to remotely
+ * upload entries to the remote data store.
+ * <p/>
+ * Internally, the cache has a fail-safe to make sure that memory and disk space are not being overly consumed.
+ * The cache will automatically purge its oldest entries if specified memory or disk limits are exceeded, which should only
+ * happen if remote upload fails consistently.
+ * <p/>
+ * This class is a Singleton.
+ *
+ * @author Lucas
  */
 @ContextSingleton
 public class Cache {
 
     private static final String TAG = "Fraunhofer." + Cache.class.getSimpleName();
 
-    // These variables will be moved to a config file
-    private static final int MAX_MEM_ENTRIES = 0;
-    private static final int MAX_DB_ENTRIES = 2;
 
-    private static final int MEM_ENTRY_LIMIT = 10000;
-    private static final int DB_ENTRY_LIMIT = 100000;
-
-    private static final long DB_WRITE_INTERVAL = 2000;
-    private static final long UPLOAD_INTERVAL = 5000;
-    private static final boolean UPLOAD_WIFI_ONLY = true;
-
+    /**
+     * Timestamp (in millis) of the last attempted write to the database.
+     */
     private long last_db_write_attempt;
+
+    /**
+     * Timestamp (in millis) of the last attempted remote upload.
+     */
     private long last_upload_attempt;
 
-    private Map<String, CacheEntry> memcache = new HashMap<>();
-    private ProbeCacheOpenHelper databaseHelper = null;
+    /**
+     * In-memory representation of the cache. Entries are held here prior to being written to the persistent database.
+     */
+    private Map<String, CacheEntry> memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>());
 
-    // Injected dependencies
+    /**
+     * Main object for accessing the SQLite database.
+     * <p/>
+     * See <a href="http://ormlite.com/javadoc/ormlite-core/doc-files/ormlite_4.html#Use-With-Android">ORMLite documentation: Using with Android</a>
+     *
+     * @see OrmLiteSqliteOpenHelper
+     */
+    private DatabaseOpenHelper databaseHelper = null;
+
+    /**
+     * The application context
+     */
     private final Context context;
+
+    /**
+     * The ConnectivityManager system service, which is used to determine wifi state for uploading.
+     */
     private final ConnectivityManager connManager;
 
     /**
-     * Constructor. This should be injected rather than called directly.
-     * <p/>
-     * Once instantiated, the Cache will attempt to upload to the remote server if proper conditions are met.
+     * Configuration settings the govern cache behavior.
      */
+    private final CacheConfig config;
+
+    /**
+     * Factory for creating asynchronous tasks to access the database
+     */
+    private final DatabaseAsyncTaskFactory dbTaskFactory;
+
+    /**
+     * Factoring for creating asynchronous tasks to upload data
+     */
+    private final RemoteUploadAsyncTaskFactory uploadTaskFactory;
+
+    /**
+     * The app engine api for remote upload.
+     */
+    private final ProbeDataSetApi appEngineApi;
+
     @Inject
-    public Cache(Context context, ConnectivityManager connManager) {
+    public Cache(Context context,
+                 ConnectivityManager connManager,
+                 CacheConfig config,
+                 DatabaseAsyncTaskFactory dbWriteTaskFactory,
+                 RemoteUploadAsyncTaskFactory uploadTaskFactory,
+                 ProbeDataSetApi appEngineApi) {
         this.context = context;
         this.connManager = connManager;
+        this.config = config;
+        this.dbTaskFactory = dbWriteTaskFactory;
+        this.uploadTaskFactory = uploadTaskFactory;
+        this.appEngineApi = appEngineApi;
 
         last_db_write_attempt = System.currentTimeMillis();
         last_upload_attempt = 0;
 
-        if (isTimeToUpload())
-            uploadData();
+        uploadIfNeeded();
     }
 
     /**
@@ -72,64 +121,110 @@ public class Cache {
             return;
 
         memcache.put(entry.getId(), entry);
-        if (memcache.size() > MAX_MEM_ENTRIES && System.currentTimeMillis() - last_db_write_attempt > DB_WRITE_INTERVAL) {
+        if (memcache.size() > config.getMaxMemEntries() && System.currentTimeMillis() - last_db_write_attempt > config.getDbWriteInterval()) {
             flush();
         }
+    }
+
+    /**
+     * Flush any entries to the database in memory.
+     */
+    public void flush() {
+        last_db_write_attempt = System.currentTimeMillis();
+        //noinspection unchecked
+        dbTaskFactory.createWriteTask(this).execute(memcache);
     }
 
     /**
      * This method is called when the DatabaseWriteAsyncTask successfully saves to the SQLLite database.
      * This method removes saved entries from the memcache and triggers an upload if conditions are correct.
      *
-     * @param savedIds a collection of saved entry IDs.
+     * @param result object containing information on successfully saved entries (if any) and errors that occured
      */
-    protected void doPostDatabaseWrite(Collection<String> savedIds) {
-        // TODO: Need to do some sanity checking. If DB writing persistently fails, we need to drop some items from memory.
-        if (savedIds == null || savedIds.isEmpty())
-            return;
+    void doPostDatabaseWrite(DatabaseWriteResult result) {
 
-        Log.d(TAG, "{doPostDatabaseWrite} entries saved to database: " + savedIds.size());
-        // Remove ids written to DB from memory
-        memcache.keySet().removeAll(savedIds);
+        // 1. Remove ids written to DB from memory
+        if (result.getSavedEntries() != null && !result.getSavedEntries().isEmpty()) {
+            Log.d(TAG, "{doPostDatabaseWrite} entries saved to database: " + result.getSavedEntries().size() + ", new database size: " +result.getDatabaseSize());
+            memcache.keySet().removeAll(result.getSavedEntries());
+        }
 
-        // Trigger an upload if the conditions are met.
-        if (isTimeToUpload())
-            uploadData();
+        // 2. Do some sanity checking. If DB writing persistently fails, we may need to drop some items from memory.
+        //noinspection ThrowableResultOfMethodCallIgnored
+        if (result.getError() != null) {
+            Log.e(TAG, "{doPostDatabaseWrite} Database write failed.", result.getError());
+            if (memcache.size() > config.getMemForcedCleanupLimit()) {
+                Log.w(TAG, "{doPostDatabaseWrite} Too many cache entries in memory. Purging oldest entries. LIMIT: "
+                        + config.getMemForcedCleanupLimit() + ", memcache size: " + memcache.size());
+
+                // Remove the oldest entries so that config.getMemForcedCleanupLimit() / 2 entries remain
+                Iterator<String> iterator = memcache.keySet().iterator();
+                while (iterator.hasNext() && memcache.size() > config.getMemForcedCleanupLimit() / 2) {
+                    iterator.next();
+                    iterator.remove();
+                }
+                Log.w(TAG, "{doPostDatabaseWrite} New memcache size: " + memcache.size());
+            }
+        }
+
+        // 3. Request an upload if the conditions are met.
+        uploadIfNeeded();
     }
 
     /**
-     * Method which determines if the appropriate conditions are met to trigger a remote upload.
-     * The conditions are determined by static class variables, but will eventually be configurable.
-     *
-     * @return <code>true</code> if upload conditions are met, <code>false</code> otherwise.
+     * This method checks if the conditions are met to trigger a remote upload, and then starts an asynchronous task to perform
+     * the upload if so
      */
-    private boolean isTimeToUpload() {
-        boolean result = getHelper().getDao().countOf() > MAX_DB_ENTRIES;
-        result &= System.currentTimeMillis() - last_upload_attempt > UPLOAD_INTERVAL;
-
-        if (UPLOAD_WIFI_ONLY) {
-            result &= connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
-        } else {
-            NetworkInfo netInfo = connManager.getActiveNetworkInfo();
-            result &= netInfo != null && netInfo.isConnected();
+    private void uploadIfNeeded() {
+        // 1. Check preconditions
+        if (appEngineApi == null) {
+            Log.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
+            return;
         }
 
-        return result;
-    }
+        if (getHelper() == null) {
+            Log.w(TAG, "{uploadIfNeeded} No helper found");
+            return;
+        }
 
-    private void uploadData() {
-        last_upload_attempt = System.currentTimeMillis();
-        new RemoteUploadAsyncTask(this).execute();
+        if (getHelper().getDao() == null) {
+            Log.w(TAG, "{uploadIfNeeded} getHelper().getDao() is null");
+            return;
+        }
+
+        // 2. Determine if an upload is needed based on configuration and number of database entries
+        boolean shouldUpload;
+        try {
+            long numEntries = getHelper().getDao().countOf();
+            shouldUpload = numEntries > config.getMaxDbEntries();
+            shouldUpload &= System.currentTimeMillis() - last_upload_attempt > config.getUploadInterval();
+
+            if (config.isUploadWifiOnly()) {
+                shouldUpload &= connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+            } else {
+                NetworkInfo netInfo = connManager.getActiveNetworkInfo();
+                shouldUpload &= netInfo != null && netInfo.isConnected();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "{uploadIfNeeded}  Unable to get count of database entries.", e);
+            return;
+        }
+
+        // 3. Upload if needed
+        if (shouldUpload) {
+            last_upload_attempt = System.currentTimeMillis();
+            uploadTaskFactory.createRemoteUploadTask(this, appEngineApi).execute();
+        }
     }
 
     /**
      * This method should not be called by clients.
      * <p/>
-     * Examines to the upload result and cleans the database accordingly.
+     * Examines the upload result and cleans the database accordingly.
      *
-     * @param uploadResult
+     * @param uploadResult the upload result passed from the remote upload task
      */
-    protected synchronized void doPostUpload(UploadResult uploadResult) {
+    void doPostUpload(RemoteUploadResult uploadResult) {
         // TODO: Need some sanity checking. If the upload fails and the DB is getting huge, we need to compact it.
 
         if (uploadResult == null)
@@ -141,48 +236,22 @@ public class Cache {
         }
 
         if (uploadResult.getException() != null) {
-            Log.i(TAG, "{doPostUpload} Uploading entries failed due to exception. No entries will be removed from cache.", uploadResult.getException());
+            Log.w(TAG, "{doPostUpload} Uploading entries failed due to exception.", uploadResult.getException());
+            Log.i(TAG, "{doPostUpload} Running task to determine if database is still within size limits");
+            dbTaskFactory.createCleanupTask(this, config.getDbForcedCleanupLimit()).execute();
             return;
         }
 
         if (uploadResult.getSaveResult() == null) {
-            Log.e(TAG, "{doPostUpload} saveResult is null.");
+            Log.w(TAG, "{doPostUpload} saveResult is null.");
             return;
         }
 
-        new AsyncTask<List<String>, Void, Integer>() {
-            @Override
-            protected Integer doInBackground(List<String>... lists) {
-                if (lists == null)
-                    return 0;
-
-                Log.d(TAG, "Removing entries from database.");
-                int result = 0;
-                for (List<String> ids : lists) {
-                    if (ids != null && !ids.isEmpty()) {
-                        result += getHelper().getDao().deleteIds(ids);
-                    }
-                }
-                return result;
-            }
-
-            @Override
-            protected void onPostExecute(Integer numEntriesRemoved) {
-                Log.d(TAG, "cached entries removed: " + numEntriesRemoved);
-            }
-        }.execute(uploadResult.getSaveResult().getSaved(), uploadResult.getSaveResult().getAlreadyExists());
+        //noinspection unchecked
+        dbTaskFactory.createRemoveTask(this)
+                .execute(uploadResult.getSaveResult().getSaved(), uploadResult.getSaveResult().getAlreadyExists());
     }
 
-    /**
-     * Flush cache entries to the database for persistent storage.
-     */
-    public void flush() {
-        last_db_write_attempt = System.currentTimeMillis();
-//        dbWriteProvider.get().execute(memcache);
-        new DatabaseWriteAsyncTask(this).execute(memcache);
-//
-        //
-    }
 
     /**
      * Closes the Cache, which has the effect of flushing pending entries to the database.
@@ -202,11 +271,11 @@ public class Cache {
      * <p/>
      * Only visible for purposes of callbacks from background threads.
      *
-     * @return
+     * @return the helper to access the database
      */
-    protected ProbeCacheOpenHelper getHelper() {
+    DatabaseOpenHelper getHelper() {
         if (databaseHelper == null) {
-            databaseHelper = OpenHelperManager.getHelper(context, ProbeCacheOpenHelper.class);
+            databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
         }
         return databaseHelper;
     }
