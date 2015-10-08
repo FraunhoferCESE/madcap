@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpServletRequest;
+
 import static org.fraunhofer.cese.funf_sensor.backend.OfyService.ofy;
 
 /**
@@ -40,7 +42,7 @@ public class ProbeDataSetEndpoint {
      * @return The object to be added.
      */
     @ApiMethod(name = "insertSensorDataSet")
-    public ProbeSaveResult insertSensorDataSet(ProbeDataSet probeDataSet) throws ConflictException, BadRequestException {
+    public ProbeSaveResult insertSensorDataSet(HttpServletRequest req, ProbeDataSet probeDataSet) throws ConflictException, BadRequestException {
         if (probeDataSet == null) {
             throw new BadRequestException("sensorDataSet cannot be null");
         }
@@ -49,22 +51,23 @@ public class ProbeDataSetEndpoint {
         if (entryList == null || entryList.isEmpty()) {
             throw new BadRequestException("entryList is null or empty");
         }
+
         logger.info("Logging request received. Data: " + entryList);
+        logger.info("Total request size: " + Long.parseLong(req.getHeader("Content-Length")));
 
         Collection<String> saved = new ArrayList<>();
         Collection<String> alreadyExists = new ArrayList<>();
 
-        for(ProbeEntry entry : entryList) {
+        for (ProbeEntry entry : entryList) {
             ProbeEntry result = ofy().load().type(ProbeEntry.class).id(entry.getId()).now();
-            if(result == null) {
+            if (result == null) {
                 saved.add(entry.getId());
-            }
-            else {
+            } else {
                 alreadyExists.add(result.getId());
             }
         }
 
-        logger.info("Num Saved: " + saved.size() +", Num already existing: "+alreadyExists.size());
+        logger.info("Num Saved: " + saved.size() + ", Num already existing: " + alreadyExists.size());
         return ProbeSaveResult.create(saved, alreadyExists);
     }
 }

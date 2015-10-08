@@ -36,7 +36,6 @@ public class Cache {
 
     private static final String TAG = "Fraunhofer." + Cache.class.getSimpleName();
 
-
     /**
      * Timestamp (in millis) of the last attempted write to the database.
      */
@@ -145,7 +144,7 @@ public class Cache {
 
         // 1. Remove ids written to DB from memory
         if (result.getSavedEntries() != null && !result.getSavedEntries().isEmpty()) {
-            Log.d(TAG, "{doPostDatabaseWrite} entries saved to database: " + result.getSavedEntries().size() + ", new database size: " +result.getDatabaseSize());
+            Log.d(TAG, "{doPostDatabaseWrite} entries saved to database: " + result.getSavedEntries().size() + ", new database size: " + result.getDatabaseSize());
             memcache.keySet().removeAll(result.getSavedEntries());
         }
 
