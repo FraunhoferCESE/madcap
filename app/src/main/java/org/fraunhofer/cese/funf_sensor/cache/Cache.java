@@ -6,6 +6,7 @@ import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
@@ -138,7 +139,7 @@ public class Cache {
     public void flush() {
         last_db_write_attempt = System.currentTimeMillis();
         //noinspection unchecked
-        dbTaskFactory.createWriteTask(this).execute(memcache);
+        dbTaskFactory.createWriteTask(this).execute(ImmutableMap.copyOf(memcache));
     }
 
     /**
@@ -183,7 +184,7 @@ public class Cache {
      */
     private void uploadIfNeeded() {
         // 1. Check preconditions
-        if(isClosing)
+        if (isClosing)
             return;
 
         if (appEngineApi == null) {
@@ -245,7 +246,7 @@ public class Cache {
         }
 
         if (uploadResult.getException() != null) {
-            Log.w(TAG, "{doPostUpload} Uploading entries failed due to exception.", uploadResult.getException());
+            Log.w(TAG, "{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
             dbTaskFactory.createCleanupTask(this, config.getDbForcedCleanupLimit()).execute();
             return;
         }

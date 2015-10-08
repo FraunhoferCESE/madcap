@@ -82,4 +82,13 @@ public class DatabaseWriteResult {
     void setDatabaseSize(long databaseSize) {
         this.databaseSize = databaseSize;
     }
+
+    @Override
+    public String toString() {
+        return "DatabaseWriteResult{" +
+                "savedEntries=" + savedEntries +
+                ", databaseSize=" + databaseSize +
+                ", error=" + error +
+                '}';
+    }
 }
