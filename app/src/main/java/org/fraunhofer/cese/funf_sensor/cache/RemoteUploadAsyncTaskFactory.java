@@ -40,9 +40,12 @@ public class RemoteUploadAsyncTaskFactory {
 
             @Override
             protected RemoteUploadResult doInBackground(Void... params) {
-                RemoteUploadResult result = null;
+                if(cache == null || cache.getHelper() == null || cache.getHelper().getDao() == null)
+                    return RemoteUploadResult.noop();
 
+                RemoteUploadResult result = null;
                 List<CacheEntry> entries = cache.getHelper().getDao().queryForAll();
+
                 if (!entries.isEmpty()) {
                     Log.i(TAG, "Attempting to upload " + entries.size() + " to " + appEngineApi.getRootUrl());
                     List<ProbeEntry> toUpload = Lists.transform(entries, new Function<CacheEntry, ProbeEntry>() {
