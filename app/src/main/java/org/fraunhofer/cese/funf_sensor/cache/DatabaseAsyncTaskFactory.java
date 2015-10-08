@@ -72,8 +72,6 @@ public class DatabaseAsyncTaskFactory {
 
                 // Try to save objects to the database. Supports partial saves, i.e., only some objects are saved.
                 try {
-                    long oldDatabaseSize = dao.countOf();
-
                     if (memcaches != null) {
                         for (Map<String, CacheEntry> memcache : memcaches) {
                             if (memcache != null && !memcache.isEmpty()) {
@@ -86,9 +84,6 @@ public class DatabaseAsyncTaskFactory {
                                 }
                             }
                         }
-
-                        long newDatabaseSize = dao.countOf();
-                        Log.d(TAG, "{doInBackground} db entries added: " + (newDatabaseSize - oldDatabaseSize) + ", total db entries: " + newDatabaseSize);
                     }
                 } catch (Exception e) {
                     result.setError(e);
@@ -134,7 +129,7 @@ public class DatabaseAsyncTaskFactory {
 
             @Override
             protected void onPostExecute(Integer numEntriesRemoved) {
-                Log.d(TAG, "cached entries removed: " + numEntriesRemoved);
+                Log.d(TAG, "Database entries removed: " + numEntriesRemoved);
             }
         };
     }
@@ -154,34 +149,40 @@ public class DatabaseAsyncTaskFactory {
 
             @Override
             protected Void doInBackground(Void... voids) {
+                Log.i(TAG, "Running task to determine if database is still within size limits");
+
                 if (dbEntryLimit < 0 || cache == null || cache.getHelper() == null || cache.getHelper().getDao() == null)
                     return null;
 
                 RuntimeExceptionDao<CacheEntry, String> dao = cache.getHelper().getDao();
-
                 long size = dao.countOf();
-                long numToDelete = size - (dbEntryLimit / 2);
+                if (size < dbEntryLimit) {
+                    Log.i(TAG, "No cleanup needed. Database limit: " + dbEntryLimit + " > Database size: " + size);
+                } else {
+                    Log.i(TAG, "Attempting cleanup. Database limit: " + dbEntryLimit + " <= Database size: " + size);
+                    long numToDelete = size - (dbEntryLimit / 2);
 
-                try {
-                    List<CacheEntry> toDelete = dao.queryBuilder()
-                            .selectColumns(CacheEntry.ID_FIELD_NAME)
-                            .orderBy(CacheEntry.TIMESTAMP_FIELD_NAME, true)
-                            .limit(numToDelete)
-                            .query();
+                    try {
+                        List<CacheEntry> toDelete = dao.queryBuilder()
+                                .selectColumns(CacheEntry.ID_FIELD_NAME)
+                                .orderBy(CacheEntry.TIMESTAMP_FIELD_NAME, true)
+                                .limit(numToDelete)
+                                .query();
 
-                    List<String> toDeleteIds = Lists.transform(toDelete, new Function<CacheEntry, String>() {
-                        @Nullable
-                        @Override
-                        public String apply(CacheEntry cacheEntry) {
-                            return cacheEntry.getId();
-                        }
-                    });
+                        List<String> toDeleteIds = Lists.transform(toDelete, new Function<CacheEntry, String>() {
+                            @Nullable
+                            @Override
+                            public String apply(CacheEntry cacheEntry) {
+                                return cacheEntry.getId();
+                            }
+                        });
 
-                    dao.deleteIds(toDeleteIds);
-                } catch (SQLException e) {
-                    Log.e(TAG, "Unable to delete entries from database", e);
+                        dao.deleteIds(toDeleteIds);
+                        Log.i(TAG, "Cleanup completed. New database size: " + dao.countOf());
+                    } catch (Exception e) {
+                        Log.e(TAG, "Unable to delete entries from database", e);
+                    }
                 }
-
                 return null;
             }
         };

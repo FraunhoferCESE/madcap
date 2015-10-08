@@ -236,7 +236,6 @@ public class Cache {
 
         if (uploadResult.getException() != null) {
             Log.w(TAG, "{doPostUpload} Uploading entries failed due to exception.", uploadResult.getException());
-            Log.i(TAG, "{doPostUpload} Running task to determine if database is still within size limits");
             dbTaskFactory.createCleanupTask(this, config.getDbForcedCleanupLimit()).execute();
             return;
         }

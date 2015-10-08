@@ -34,7 +34,7 @@ public class MyModule extends AbstractModule {
         config.setMaxDbEntries(2);
 
         config.setMemForcedCleanupLimit(10000);
-        config.setDbForcedCleanupLimit(100000);
+        config.setDbForcedCleanupLimit(5);
 
         config.setDbWriteInterval(2000);
         config.setUploadInterval(5000);

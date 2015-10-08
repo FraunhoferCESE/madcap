@@ -43,8 +43,8 @@ public class RemoteUploadAsyncTaskFactory {
                 RemoteUploadResult result = null;
 
                 List<CacheEntry> entries = cache.getHelper().getDao().queryForAll();
-                Log.i(TAG, "Attempting to upload " + entries.size() + " to " + appEngineApi.getRootUrl());
                 if (!entries.isEmpty()) {
+                    Log.i(TAG, "Attempting to upload " + entries.size() + " to " + appEngineApi.getRootUrl());
                     List<ProbeEntry> toUpload = Lists.transform(entries, new Function<CacheEntry, ProbeEntry>() {
                         @Nullable
                         @Override
@@ -62,7 +62,7 @@ public class RemoteUploadAsyncTaskFactory {
                         int numAlreadyExists = saveResult.getAlreadyExists() == null ? 0 : saveResult.getAlreadyExists().size();
 
                         result = RemoteUploadResult.create(saveResult);
-                        Log.i(TAG, "Upload successful. Saved: " + numSaved + ", Already existed: " + numAlreadyExists);
+                        Log.i(TAG, "Upload successful. Saved: " + numSaved + " entries, Already existed: " + numAlreadyExists);
                     } catch (IOException e) {
                         result = RemoteUploadResult.create(e);
                     }

@@ -12,14 +12,17 @@ import java.util.Collection;
  */
 public class DatabaseWriteResult {
 
-    private Collection<String> savedEntries = new ArrayList<>();
-    private long databaseSize = -1;
-    private Exception error = null;
+    private Collection<String> savedEntries;
+    private long databaseSize;
+    private Exception error;
 
     /**
      * Direct constructor calls are not supported.
      */
     private DatabaseWriteResult() {
+        savedEntries = new ArrayList<>();
+        databaseSize = -1;
+        error = null;
     }
 
     /**
