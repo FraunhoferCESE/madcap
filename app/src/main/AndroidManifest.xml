@@ -20,7 +20,7 @@
     -->
     <uses-permission android:name="android.permission.BATTERY_STATS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.GET_TASKS" />
 
 
@@ -83,6 +83,32 @@
             </intent-filter>
         </receiver>
 
+<!--
+        <receiver
+            android:name=".Probe.PowerProbe$PowerInformationReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
+                <action android:name="android.intent.action.BATTERY_CHANGED"/>
+                <action android:name="android.intent.action.BATTERY_LOW"/>
+                <action android:name="android.intent.action.BATTERY_OKAY"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".Probe.StateProbe$StateInformationReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN"/>
+                <action android:name="android.intent.action.AIRPLANE_MODE"/>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+                <action android:name="android.intent.action.REBOOT"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+                <action android:name="android.intent.action.DREAMING_STARTED"/>
+                <action android:name="android.intent.action.DREAMING_STOPPED"/>
+                <action android:name="android.intent.action.HEADSET_PLUG"/>
+            </intent-filter>
+        </receiver>
+-->
         <!--
         <receiver android:probeType=".Probe.NotificationAndBroadcastHandlers.NotificationReceiver" >
             <intent-filter>
@@ -113,15 +139,17 @@
                 <action android:name="android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED" />
             </intent-filter>
         </receiver>
+
         <receiver android:name=".Probe.CallStateProbe.MyPhoneStateReceiver">
             <intent-filter>
+
+
             </intent-filter>
         </receiver>
-        -->
+       -->
         <activity android:name=".MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

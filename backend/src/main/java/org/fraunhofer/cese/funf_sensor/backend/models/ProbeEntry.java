@@ -4,7 +4,13 @@ import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
+<<<<<<< HEAD
 import java.util.UUID;
+=======
+import java.util.Date;
+import java.util.regex.Pattern;
+
+>>>>>>> foregroundProbe
 
 /**
  * Created by llayman on 9/24/2015.
@@ -17,6 +23,7 @@ public class ProbeEntry {
     private Long timestamp;
     private String probeType;
     private String sensorData;
+    private String emailAddress;
 
     //getters and setters
 

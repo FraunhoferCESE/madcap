@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
@@ -17,7 +18,7 @@ import android.util.Log;
 import edu.mit.media.funf.probe.Probe;
 
 /**
- * Created by MLang on 09.02.2015.
+ *
  */
 public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
 
@@ -27,15 +28,28 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         @TargetApi(Build.VERSION_CODES.KITKAT)
         @Override
         public void onReceive(Context context, Intent intent) {
+
+            Bundle bundle = intent.getExtras();
+            SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
+            long timestamp = 0;
+            for (SmsMessage message : messages) {
+                if (timestamp < message.getTimestampMillis()) {
+                    timestamp = message.getTimestampMillis();
+                }
+            }
+
+            intent = new Intent();
+            intent.putExtra("SMSProbe Timestamp: ",timestamp);
+
+
             if (Telephony.Sms.Intents.SMS_EMERGENCY_CB_RECEIVED_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                    String messageBody = smsMessage.getMessageBody();
                     Log.d(TAG, "SMS emergency received.");
                     intent.putExtra("SMS Action", "SMS emergency received");
                 }
+
             } else if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                    String messageBody = smsMessage.getMessageBody();
                     Log.d(TAG, "SMS received.");
                     intent.putExtra("SMS Action", "SMS received");
                 }
@@ -43,6 +57,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
                 Log.d(TAG, "MMS content changed.");
                 intent.putExtra("MMS Action", "MMS content changed.");
             }
+
             sendData(intent);
         }
     };

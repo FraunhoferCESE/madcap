@@ -18,7 +18,10 @@ import com.google.inject.Inject;
 import org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.MyRunningApplicationsProbe;
+import org.fraunhofer.cese.funf_sensor.Probe.PowerProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.SMSProbe;
+import org.fraunhofer.cese.funf_sensor.Probe.StateProbe;
+import org.fraunhofer.cese.funf_sensor.Probe.AudioProbe;
 import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
 
 import java.text.SimpleDateFormat;
@@ -52,7 +55,10 @@ public class MainActivity extends RoboActivity {
     private SimpleLocationProbe locationProbe;
 
     private SMSProbe sMSProbe;
+    private PowerProbe powerProbe;
+    private StateProbe stateProbe;
     private CallStateProbe callStateProbe;
+    private AudioProbe audioProbe;
 
     private CheckBox enabledCheckbox;
 
@@ -73,7 +79,10 @@ public class MainActivity extends RoboActivity {
             myRunningApplicationsProbe = gson.fromJson(getString(R.string.probe_runningapplications), MyRunningApplicationsProbe.class); // TODO: not working
             screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
             sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
+            powerProbe = gson.fromJson(new JsonObject(), PowerProbe.class);
+            stateProbe = gson.fromJson(new JsonObject(), StateProbe.class);
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
+            audioProbe = gson.fromJson(new JsonObject(), AudioProbe.class);
 
             // Initialize the pipeline
             funfManager.registerPipeline(PIPELINE_NAME, pipeline);
@@ -116,7 +125,10 @@ public class MainActivity extends RoboActivity {
         myRunningApplicationsProbe.registerPassiveListener(pipeline);
         screenProbe.registerPassiveListener(pipeline);
         sMSProbe.registerPassiveListener(pipeline);
+        powerProbe.registerPassiveListener(pipeline);
+        stateProbe.registerPassiveListener(pipeline);
         callStateProbe.registerPassiveListener(pipeline);
+        audioProbe.registerPassiveListener(pipeline);
     }
 
     private void unregisterListeners() {
@@ -126,7 +138,10 @@ public class MainActivity extends RoboActivity {
         myRunningApplicationsProbe.unregisterListener(pipeline);
         screenProbe.unregisterListener(pipeline);
         sMSProbe.unregisterListener(pipeline);
+        powerProbe.unregisterListener(pipeline);
+        stateProbe.unregisterListener(pipeline);
         callStateProbe.unregisterListener(pipeline);
+        audioProbe.unregisterListener(pipeline);
     }
 
     //onCreate is the rendering of the main page
