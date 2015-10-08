@@ -7,7 +7,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +23,7 @@ import javax.annotation.Nullable;
 public class DatabaseAsyncTaskFactory {
 
     /**
-     * Create an asychronous task which supports asynchronous writing of cache entries to a persistent SQLite database.
+     * Create an asynchronous task which supports asynchronous writing of cache entries to a persistent SQLite database.
      * This class is used when cache entries stored in memory should be persisted. Results of the database writing actions
      * are stored in a DatabaseWriteResult.
      * <p/>
@@ -75,13 +74,15 @@ public class DatabaseAsyncTaskFactory {
                     if (memcaches != null) {
                         for (Map<String, CacheEntry> memcache : memcaches) {
                             if (memcache != null && !memcache.isEmpty()) {
+                                int skippedCount = 0;
                                 for (CacheEntry entry : memcache.values()) {
-                                    if (dao.create(entry) > 0) {
+                                    if (dao.queryForId(entry.getId()) == null && dao.create(entry) > 0) {
                                         savedEntries.add(entry.getId());
                                     } else {
-                                        Log.d(TAG, "{doInBackground} Entry was not saved to the database: " + entry.toString());
+                                        skippedCount++;
                                     }
                                 }
+                                Log.d(TAG, "{doInBackground} Skipped "+skippedCount+" entries already in database.");
                             }
                         }
                     }
