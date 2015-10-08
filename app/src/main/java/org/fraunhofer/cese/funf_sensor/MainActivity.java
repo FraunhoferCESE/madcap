@@ -172,7 +172,13 @@ public class MainActivity extends RoboActivity {
             getApplicationContext().unbindService(funfManagerConn);
     }
 
-//    private void updateScanCount() {
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        pipeline.onRun(pipeline.ACTION_FLUSH,null);
+    }
+
+    //    private void updateScanCount() {
 //        runOnUiThread(new Runnable() {
 //            @Override
 //            public void run() {

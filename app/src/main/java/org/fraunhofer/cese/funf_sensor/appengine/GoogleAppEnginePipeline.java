@@ -2,6 +2,7 @@ package org.fraunhofer.cese.funf_sensor.appengine;
 
 import android.util.Log;
 
+import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
 
@@ -24,7 +25,6 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     private static final String TAG = "Fraunhofer." + GoogleAppEnginePipeline.class.getSimpleName();
 
     private boolean enabled = false;
-
 
     private final Cache cache;
 
@@ -102,7 +102,13 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      */
     public void onRun(String action, JsonElement config) {
         // Method which is called to tell the Pipeline to do something, like save the data locally or upload to the cloud
+        if(Strings.isNullOrEmpty(action))
+            return;
+
         Log.d(TAG, "(onRun)");
+        if(action.equals(ACTION_FLUSH)) {
+            cache.flush();
+        }
     }
 
     /**
@@ -124,4 +130,6 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         Log.d(TAG, "(isEnabled:" + enabled + ")");
         return enabled;
     }
+
+    public static final String ACTION_FLUSH = "flush";
 }
