@@ -66,7 +66,7 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
                     int chargePlug = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
                     if (chargePlug == BatteryManager.BATTERY_PLUGGED_AC) {
                         plug = "AC";
-                    }else if(chargePlug == BatteryManager.BATTERY_PLUGGED_USB) {
+                    } else if (chargePlug == BatteryManager.BATTERY_PLUGGED_USB) {
                         plug = "USB";
                     }
                     intent.putExtra("PowerProbe: ", "now connected to" + plug);
@@ -93,68 +93,22 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
 
                 case Intent.ACTION_BATTERY_CHANGED:
 
-                    if((intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1))!=powerLevel){
+                    if ((intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)) != powerLevel) {
                         int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-                        powerLevel=level;
+                        powerLevel = level;
                         float batteryPct = level;
-                        intent.putExtra("PowerProbe: ", "Battery at " + batteryPct +" %");
+                        intent.putExtra("PowerProbe: ", "Battery at " + batteryPct + " %");
                         callback.sendData(intent);
                     }
                     break;
 
                 default:
 
-                    intent.putExtra("PowerProbe: ","Something went wrong.");
+                    intent.putExtra("PowerProbe: ", "Something went wrong.");
                     callback.sendData(intent);
                     break;
             }
 
-//            intent = addChargingStatus(intent);
-//            intent = addPlugStatus(intent);
-//            intent = addBatteryLevel(intent);
-
-//            callback.sendData(intent);
-
-
         }
-
-//        private Intent addChargingStatus(Intent intent) {
-//
-//            int status = intent.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-//
-//            if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
-//                intent.putExtra("Battery Status: ", "Charging");
-//            }
-//
-//            if (status == BatteryManager.BATTERY_STATUS_FULL) {
-//                intent.putExtra("Battery Status: ", "Full");
-//            }
-//
-//            return intent;
-//        }
-//
-//        private Intent addPlugStatus(Intent intent) {
-//
-//            int chargePlug = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-//            if (chargePlug == BatteryManager.BATTERY_PLUGGED_AC) {
-//                intent.putExtra("Plugged to: ", "AC");
-//            }
-//
-//            if (chargePlug == BatteryManager.BATTERY_PLUGGED_USB) {
-//                intent.putExtra("Plugged to: ", "USB");
-//            }
-//
-//            return intent;
-//        }
-//
-//        private Intent addBatteryLevel(Intent intent) {
-//
-//            int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-//            float batteryPct = level;
-//
-//            intent.putExtra("Battery Status: ", batteryPct +" %");
-//
-//            return intent;
-//        }
     }
 }
