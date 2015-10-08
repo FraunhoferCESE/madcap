@@ -30,8 +30,8 @@ public class MyModule extends AbstractModule {
     @Provides
     CacheConfig provideCacheConfig() {
         CacheConfig config = new CacheConfig();
-        config.setMaxMemEntries(200);
-        config.setMaxDbEntries(500);
+        config.setMaxMemEntries(2);
+        config.setMaxDbEntries(5);
 
         config.setMemForcedCleanupLimit(5000);
         config.setDbForcedCleanupLimit(30000); // Required to make sure upload doesn't exceed Google API limits for a single request
