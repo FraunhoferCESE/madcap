@@ -3,6 +3,7 @@ package org.fraunhofer.cese.funf_sensor.cache;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.inject.Inject;
@@ -35,6 +36,12 @@ import roboguice.inject.ContextSingleton;
 public class Cache {
 
     private static final String TAG = "Fraunhofer." + Cache.class.getSimpleName();
+
+    private boolean isClosing = false;
+    /**
+     * Background task holder for the remote upload task. Stored to query for uploads in progress.
+     */
+    private AsyncTask<Void, Void, RemoteUploadResult> uploadTask;
 
     /**
      * Timestamp (in millis) of the last attempted write to the database.
@@ -176,6 +183,9 @@ public class Cache {
      */
     private void uploadIfNeeded() {
         // 1. Check preconditions
+        if(isClosing)
+            return;
+
         if (appEngineApi == null) {
             Log.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
             return;
@@ -209,10 +219,10 @@ public class Cache {
             return;
         }
 
-        // 3. Upload if needed
-        if (shouldUpload) {
+        // 3. Upload if needed and not currently pending
+        if (shouldUpload && uploadTask == null) {
             last_upload_attempt = System.currentTimeMillis();
-            uploadTaskFactory.createRemoteUploadTask(this, appEngineApi).execute();
+            uploadTask = uploadTaskFactory.createRemoteUploadTask(this, appEngineApi).execute();
         }
     }
 
@@ -224,7 +234,7 @@ public class Cache {
      * @param uploadResult the upload result passed from the remote upload task
      */
     void doPostUpload(RemoteUploadResult uploadResult) {
-        // TODO: Need some sanity checking. If the upload fails and the DB is getting huge, we need to compact it.
+        uploadTask = null;
 
         if (uploadResult == null)
             return;
@@ -257,6 +267,7 @@ public class Cache {
      * Should be called when the app is destroyed, or other events when the cache is no longer needed.
      */
     public void close() {
+        this.isClosing = true;
         flush();
         if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();

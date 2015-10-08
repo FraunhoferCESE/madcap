@@ -40,7 +40,7 @@ public class RemoteUploadAsyncTaskFactory {
 
             @Override
             protected RemoteUploadResult doInBackground(Void... params) {
-                if(cache == null || cache.getHelper() == null || cache.getHelper().getDao() == null)
+                if (cache == null || cache.getHelper() == null || cache.getHelper().getDao() == null)
                     return RemoteUploadResult.noop();
 
                 RemoteUploadResult result = null;
@@ -76,6 +76,11 @@ public class RemoteUploadAsyncTaskFactory {
 
             @Override
             protected void onPostExecute(RemoteUploadResult result) {
+                cache.doPostUpload(result);
+            }
+
+            @Override
+            protected void onCancelled(RemoteUploadResult result) {
                 cache.doPostUpload(result);
             }
         };
