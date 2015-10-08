@@ -33,9 +33,6 @@ import edu.mit.media.funf.probe.builtin.ScreenProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
 import roboguice.activity.RoboActivity;
 
-/**
- * Created by MLang on 19.12.2014.
- */
 public class MainActivity extends RoboActivity {
     private static final String TAG = "Fraunhofer."+MainActivity.class.getSimpleName();
 

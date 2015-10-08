@@ -2,15 +2,7 @@ package org.fraunhofer.cese.funf_sensor.backend.models;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
-import com.googlecode.objectify.annotation.Index;
 
-<<<<<<< HEAD
-import java.util.UUID;
-=======
-import java.util.Date;
-import java.util.regex.Pattern;
-
->>>>>>> foregroundProbe
 
 /**
  * Created by llayman on 9/24/2015.
@@ -27,9 +19,13 @@ public class ProbeEntry {
 
     //getters and setters
 
-    public String getId() { return id; }
+    public String getId() {
+        return id;
+    }
 
-    public void setId(String id) { this.id = id; }
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public Long getTimestamp() {
         return timestamp;
