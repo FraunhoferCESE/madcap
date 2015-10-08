@@ -13,7 +13,7 @@ import edu.mit.media.funf.probe.Probe;
 /**
  *
  */
-public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe, AudioManager.OnAudioFocusChangeListener {
+public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe{
 
     private static final String TAG = "AudioProbe: ";
     private static Thread audioProbeDeliverer;
@@ -111,63 +111,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe, Aud
         Log.i(TAG,"AudioProbe sent.");
     }
 
-        @Override
-    public void onAudioFocusChange(int i) {
 
-            final AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-
-            StringBuilder audioInfo = new StringBuilder("AUDIO FOCUS CHANGED!!!");
-
-            //Audio Mode
-            audioInfo.append("AudioMode: ");
-            switch (audioManager.getMode()){
-                case AudioManager.MODE_NORMAL:
-                    audioInfo.append("MODE_NORMAL; ");break;
-                case AudioManager.MODE_RINGTONE:
-                    audioInfo.append("MODE_RINGTONE; ");break;
-                case AudioManager.MODE_IN_CALL:
-                    audioInfo.append("MODE_IN_CALL; ");break;
-                case AudioManager.MODE_IN_COMMUNICATION:
-                    audioInfo.append("MODE_IN_COMMUNICATION; ");break;
-                default:
-                    Log.i(TAG, "Something went wrong; ");
-                    break;
-            }
-
-            //Ringtone Mode
-            audioInfo.append("RingtoneMode: ");
-            switch (audioManager.getRingerMode()){
-                case AudioManager.RINGER_MODE_NORMAL:
-                    audioInfo.append("RINGER_MODE_NORMAL; ");break;
-                case AudioManager.RINGER_MODE_VIBRATE:
-                    audioInfo.append("RINGER_MODE_VIBRATE; ");break;
-                case AudioManager.RINGER_MODE_SILENT:
-                    audioInfo.append("RINGER_MODE_SILENT; ");break;
-                default:
-                    Log.i(TAG, "Something went wrong; ");
-                    break;
-            }
-
-            //Microphone mute?
-            audioInfo.append("Microphone: ");
-            if(audioManager.isMicrophoneMute()){audioInfo.append("muted; ");}
-            else{audioInfo.append("not muted; ");}
-
-            //Music on?
-            audioInfo.append("Music: ");
-            if(audioManager.isMusicActive()){audioInfo.append("active; ");}
-            else{audioInfo.append("inactive; ");}
-
-            //Headset connected?
-            audioInfo.append("Headset: ");
-            if(audioManager.isWiredHeadsetOn()){audioInfo.append(" plugged; ");}
-            else{audioInfo.append("no headset; ");}
-
-            Intent intent = new Intent();
-            intent.putExtra(TAG, audioInfo.toString());
-            sendData(intent);
-
-    }
 
     @Override
     protected void onDisable(){super.onDisable(); audioProbeDeliverer.interrupt();}
