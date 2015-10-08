@@ -30,11 +30,11 @@ public class MyModule extends AbstractModule {
     @Provides
     CacheConfig provideCacheConfig() {
         CacheConfig config = new CacheConfig();
-        config.setMaxMemEntries(0);
-        config.setMaxDbEntries(2);
+        config.setMaxMemEntries(500);
+        config.setMaxDbEntries(1000);
 
-        config.setMemForcedCleanupLimit(10000);
-        config.setDbForcedCleanupLimit(5);
+        config.setMemForcedCleanupLimit(5000);
+        config.setDbForcedCleanupLimit(150000);
 
         config.setDbWriteInterval(2000);
         config.setUploadInterval(5000);
