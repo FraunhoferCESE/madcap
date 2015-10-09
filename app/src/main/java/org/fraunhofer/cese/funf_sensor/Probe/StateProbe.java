@@ -30,12 +30,10 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
         filter.addAction("android.intent.action.AIRPLANE_MODE");
         filter.addAction("android.intent.action.BOOT_COMPLETED");
         filter.addAction("android.intent.action.ACTION_SHUTDOWN");
-        filter.addAction("android.intent.action.REBOOT");
         filter.addAction("android.intent.action.USER_PRESENT");
         filter.addAction("android.intent.action.DREAMING_STARTED");
         filter.addAction("android.intent.action.DREAMING_STOPPED");
         filter.addAction("android.intent.action.HEADSET_PLUG");
-        filter.addAction("android.intent.action.VOICE_COMMAND");
 
 
         getContext().registerReceiver(receiver, filter);
@@ -82,17 +80,11 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
                 case Intent.ACTION_HEADSET_PLUG:
                     intent.putExtra("StateProbe: ","headset plugged");
                     break;
-                case Intent.ACTION_REBOOT:
-                    intent.putExtra("StateProbe: ","Device is rebooting");
-                    break;
                 case Intent.ACTION_SHUTDOWN:
                     intent.putExtra("StateProbe: ","Device is shutting down");
                     break;
                 case Intent.ACTION_USER_PRESENT:
                     intent.putExtra("StateProbe: ","user is now present");
-                    break;
-                case Intent.ACTION_VOICE_COMMAND:
-                    intent.putExtra("StateProbe: ","Voice command started");
                     break;
                 default:
                     intent.putExtra("StateProbe: ","Something went wrong");
