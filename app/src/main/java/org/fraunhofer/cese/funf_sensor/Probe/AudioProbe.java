@@ -112,7 +112,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
                     Intent intent = new Intent();
                     intent.putExtra(TAG, audioInfo.toString());
 
-
+                    //only send when data changed
                     if (       audioManager.getMode() != oldMode
                             || audioManager.getRingerMode() != oldRingtoneMode
                             || audioManager.isMicrophoneMute() != oldMic
