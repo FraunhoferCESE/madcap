@@ -41,7 +41,7 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
         getContext().registerReceiver(receiver, filter);
 
         Log.i("StateProbe", "StateProbe enabled");
-    }
+        }
 
 
     @Override
@@ -68,7 +68,7 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
 
             switch (intent.getAction()){
                 case Intent.ACTION_AIRPLANE_MODE_CHANGED:
-                    intent.putExtra("General: ","AirplaneMode changed");
+                    intent.putExtra("StateProbe: ","AirplaneMode changed");
                     break;
                 case Intent.ACTION_BOOT_COMPLETED:
                     intent.putExtra("StateProbe: ","boot completed");

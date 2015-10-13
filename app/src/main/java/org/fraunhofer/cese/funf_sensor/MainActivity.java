@@ -8,8 +8,11 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -60,6 +63,8 @@ public class MainActivity extends RoboActivity {
     private BluetoothProbe bluetoothProbe;
 
     private CheckBox enabledCheckbox;
+    private Switch collectDataSwitch;
+    private Button instantSendButton;
 
 //    private TextView dataCountView;
 //    private Handler handler;
@@ -87,7 +92,7 @@ public class MainActivity extends RoboActivity {
             // Initialize the pipeline
             funfManager.registerPipeline(PIPELINE_NAME, pipeline);
             pipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
-            Log.i(TAG, "Enabling pipeline: "+ PIPELINE_NAME);
+            Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
             funfManager.enablePipeline(PIPELINE_NAME);
             registerListeners();
 
@@ -98,7 +103,7 @@ public class MainActivity extends RoboActivity {
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     if (funfManager != null) {
                         if (isChecked && !pipeline.isEnabled()) {
-                            Log.i(TAG,"Enabling pipeline: "+ PIPELINE_NAME);
+                            Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
                             funfManager.enablePipeline(PIPELINE_NAME);
                             registerListeners();
                         } else {
@@ -109,7 +114,38 @@ public class MainActivity extends RoboActivity {
                     }
                 }
             });
+
+            collectDataSwitch.setOnCheckedChangeListener(
+                    new CompoundButton.OnCheckedChangeListener(){
+                        @Override
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+                            if(isChecked){
+                                Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
+                                funfManager.enablePipeline(PIPELINE_NAME);
+                                registerListeners();
+                            }
+                            else{
+                                Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
+                                funfManager.disablePipeline(PIPELINE_NAME);
+                                unregisterListeners();
+                            }
+                        }
+                    }
+            );
+
+            instantSendButton.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            //here the sending-Message should be invoked.
+                        }
+                    }
+            );
+
             enabledCheckbox.setEnabled(true);
+
+
+
         }
 
         @Override
@@ -159,6 +195,10 @@ public class MainActivity extends RoboActivity {
         enabledCheckbox = (CheckBox) findViewById(R.id.checkBox);
         enabledCheckbox.setEnabled(false);
 
+        collectDataSwitch = (Switch) findViewById(R.id.switch1);
+        collectDataSwitch.setChecked(true);
+
+        instantSendButton = (Button) findViewById(R.id.SendButton);
 
         // Used to make interface changes on main thread
 //        handler = new Handler();
