@@ -19,9 +19,6 @@ import com.google.common.base.Strings;
 
 import edu.mit.media.funf.probe.Probe;
 
-/**
- *
- */
 public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
 
     private static final String TAG = "Fraunhofer." + SMSProbe.class.getSimpleName();
@@ -42,21 +39,17 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
 
             Intent myIntent = new Intent();
             myIntent.putExtra("SMSProbe Timestamp: ", timestamp);
-    Log.d(TAG,"RECEIVED ACTION" + intent.getAction().toString());
 
             if (Telephony.Sms.Intents.SMS_EMERGENCY_CB_RECEIVED_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                    Log.d(TAG, "{BroadcastReceiver}: SMS emergency received.");
                     myIntent.putExtra("SMS Action", "SMS emergency received");
                 }
 
             } else if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                    Log.d(TAG, "{BroadcastReceiver}: SMS received.");
                     myIntent.putExtra("SMS Action", "SMS received");
                 }
             } else if (Telephony.Mms.Intents.CONTENT_CHANGED_ACTION.equals(intent.getAction())) {
-                Log.d(TAG, "{BroadcastReceiver}: MMS content changed.");
                 myIntent.putExtra("MMS Action", "MMS content changed.");
             }
 
@@ -70,49 +63,53 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
 
-            Cursor cur = getContext().getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null, null, null, null);
-            if(cur == null)
-                return;
-
-
-            // If it's Type = 1 and ends in RAW, it's iether an SMS or MMS. We don't know
-            // If it's Type = 1 and does not end in /raw, it's an SMS
-            // If it's Type = 2 and ends in /raw, it's an MMS
-            // If it's Type = 2 and ends in 1234, it's an SMS
-
-            cur.moveToNext();
-            String messageType = uri.toString().endsWith("/raw") ? "MMS" : "SMS";
-            String sentOrReceived = cur.getString(cur.getColumnIndex("type"));
-
-            if (!Strings.isNullOrEmpty(sentOrReceived)) {
-                int type = Integer.parseInt(cur.getString(cur.getColumnIndex("type")));
-                cur.close();
-                String action = null;
-                switch (type) {
-                    case Telephony.Sms.MESSAGE_TYPE_SENT:
-                        action = " sent";
-                        break;
-                    case Telephony.Sms.MESSAGE_TYPE_DRAFT:
-                        action = " draft";
-                        break;
-                    case Telephony.Sms.MESSAGE_TYPE_FAILED:
-                        action = " send failed";
-                        break;
-                    case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
-                        action = " in outbox";
-                        break;
-                    case Telephony.Sms.MESSAGE_TYPE_QUEUED:
-                        action = " queued to send";
-                        break;
-                    default:
-                        break;
-                }
-                if (action != null) {
-                    Intent i = new Intent();
-                    i.putExtra("SMS/MMS Action", messageType + action);
-                    sendData(i);
-                }
-            }
+            Intent i = new Intent();
+            i.putExtra("SMS Action", "SMS activity detected");
+            sendData(i);
+//
+//            Cursor cur = getContext().getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null, null, null, null);
+//            if(cur == null)
+//                return;
+//
+//
+//            // If it's Type = 1 and ends in RAW, it's iether an SMS or MMS. We don't know
+//            // If it's Type = 1 and does not end in /raw, it's an SMS
+//            // If it's Type = 2 and ends in /raw, it's an MMS
+//            // If it's Type = 2 and ends in 1234, it's an SMS
+//
+//            cur.moveToNext();
+//            String messageType = uri.toString().endsWith("/raw") ? "MMS" : "SMS";
+//            String sentOrReceived = cur.getString(cur.getColumnIndex("type"));
+//
+//            if (!Strings.isNullOrEmpty(sentOrReceived)) {
+//                int type = Integer.parseInt(cur.getString(cur.getColumnIndex("type")));
+//                cur.close();
+//                String action = null;
+//                switch (type) {
+//                    case Telephony.Sms.MESSAGE_TYPE_SENT:
+//                        action = " sent";
+//                        break;
+//                    case Telephony.Sms.MESSAGE_TYPE_DRAFT:
+//                        action = " draft";
+//                        break;
+//                    case Telephony.Sms.MESSAGE_TYPE_FAILED:
+//                        action = " send failed";
+//                        break;
+//                    case Telephony.Sms.MESSAGE_TYPE_OUTBOX:
+//                        action = " in outbox";
+//                        break;
+//                    case Telephony.Sms.MESSAGE_TYPE_QUEUED:
+//                        action = " queued to send";
+//                        break;
+//                    default:
+//                        break;
+//                }
+//                if (action != null) {
+//                    Intent i = new Intent();
+//                    i.putExtra("SMS/MMS Action", messageType + action);
+//                    sendData(i);
+//                }
+//            }
         }
 
         @Override
@@ -127,7 +124,6 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         public void onChange(boolean selfChange) {
             super.onChange(selfChange);
 
-            Log.i(TAG, "MMS activity detected");
             Intent i = new Intent();
             i.putExtra("SMS Action", "MMS activity detected");
             sendData(i);
@@ -187,7 +183,6 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         filter.addAction("android.provider.Telephony.WAP_PUSH_RECEIVED");
         getContext().registerReceiver(receiver, filter);
 
-        Log.d(TAG,Telephony.Mms.CONTENT_URI.toString());
         getContext().getContentResolver().registerContentObserver(Telephony.Sms.CONTENT_URI, true, smsOutgoingObserver);
         getContext().getContentResolver().registerContentObserver(Telephony.Mms.CONTENT_URI, true, mmsOutgoingObserver);
     }
