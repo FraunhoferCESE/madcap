@@ -108,7 +108,6 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
                     callback.sendData(intent);
                     break;
             }
-
         }
     }
 }
