@@ -50,14 +50,38 @@
         android:layout_height="2dip"
         android:layout_margin="5dp"
         android:background="@android:color/background_light" />
-
+    <!--
     <CheckBox
         android:id="@+id/checkBox"
         android:layout_below="@id/intro"
         android:text="@string/checkBoxText"
         android:layout_marginTop="40dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" /> -->
+
+    <LinearLayout
+        android:id="@+id/userFunctions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/intro"
+        android:gravity="center"
+        android:layout_centerHorizontal="true">
+
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Collect Data"
+            android:id="@+id/switch1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Send Data now!"
+            android:id="@+id/SendButton" />
+
+
+    </LinearLayout>
+
     <!--
     <Button android:id="@+id/scanNowButton"
         android:text="Scan Now"
@@ -66,7 +90,7 @@
         -->
     <Button
         android:id="@+id/archiveButtonSD"
-        android:layout_below="@id/checkBox"
+        android:layout_below="@id/userFunctions"
         android:text="Save Data to SD Card"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -114,6 +138,7 @@
         android:textSize="30dip"
         android:text="@string/info"/>
         -->
+
     <TextView
         android:id="@+id/footnote"
         android:text="This application uses the Funf Open Sensing Framework licensed under the GNU Lesser GPL.\n\n This application was developed by the Fraunhofer CESE. For any questions, visit http://www.fc-md.umd.edu or email llayman@fc-md.umd.edu."
@@ -124,4 +149,5 @@
         android:layout_height="wrap_content"
         android:autoLink="all"
         android:layout_margin="5dp" />
+
 </RelativeLayout>
