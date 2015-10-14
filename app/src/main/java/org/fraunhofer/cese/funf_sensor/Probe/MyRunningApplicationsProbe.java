@@ -77,7 +77,6 @@ public class MyRunningApplicationsProbe extends Probe.Base implements Probe.Cont
             }
         });
 
-
         return runningApplicationsDeliverer;
     }
 }

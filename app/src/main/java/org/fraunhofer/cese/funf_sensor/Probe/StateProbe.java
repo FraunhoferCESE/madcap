@@ -21,7 +21,9 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
     private static final String TAG = "StateProbe";
     private BroadcastReceiver receiver;
 
-
+    /**
+     * Sets up the Intentfilter for the StateProbe and sends an initial StateProbe
+     */
     @Override
     protected void onEnable() {
 
@@ -46,12 +48,6 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
         Log.i("StateProbe: ", "Initial StateProbe sent.");
     }
 
-    private static boolean isAirplaneModeOn(Context context) {
-
-        return Settings.Global.getInt(context.getContentResolver(),
-                Settings.Global.AIRPLANE_MODE_ON,0)!= 0;
-    }
-
     @Override
     protected void onDisable() {
         super.onDisable();
@@ -64,13 +60,20 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
         Log.i("StateProbe", "StateProbe sent");
     }
 
-
+    /**
+     * Receiver-Class for general phone state events
+     */
     public class StateInformationReceiver extends BroadcastReceiver{
         public StateProbe callback;
         public StateInformationReceiver (StateProbe callback) {
             this.callback = callback;
         }
 
+        /**
+         * Adds information to the intent according to the triggering event and sends the intent afterwards
+         * @param context
+         * @param intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -105,6 +108,10 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
     }
 
 
+    /**
+     * Sends the initial State when a StateProbe object is set up.
+     * Should only be called from within the onEnable().
+     */
     private void sendInitialProbe() {
         Intent intent = new Intent();
         boolean airplaneMode = isAirplaneModeOn(getContext());
@@ -115,5 +122,11 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
         intent.putExtra("Initial HeadsetState: ", headsetPlugged);
 
         sendData(intent);
+    }
+
+    private static boolean isAirplaneModeOn(Context context) {
+
+        return Settings.Global.getInt(context.getContentResolver(),
+                Settings.Global.AIRPLANE_MODE_ON,0)!= 0;
     }
 }
