@@ -62,8 +62,9 @@ public class MainActivity extends RoboActivity {
     private AudioProbe audioProbe;
     private BluetoothProbe bluetoothProbe;
 
-    private CheckBox enabledCheckbox;
+//    private CheckBox enabledCheckbox;
     private Switch collectDataSwitch;
+    private Switch switchAutostart;
     private Button instantSendButton;
 
 //    private TextView dataCountView;
@@ -97,34 +98,33 @@ public class MainActivity extends RoboActivity {
             registerListeners();
 
             // This checkbox enables or disables the pipeline
-            enabledCheckbox.setChecked(pipeline.isEnabled());
-            enabledCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (funfManager != null) {
-                        if (isChecked && !pipeline.isEnabled()) {
-                            Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
-                            funfManager.enablePipeline(PIPELINE_NAME);
-                            registerListeners();
-                        } else {
-                            Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
-                            funfManager.disablePipeline(PIPELINE_NAME);
-                            unregisterListeners();
-                        }
-                    }
-                }
-            });
+//            enabledCheckbox.setChecked(pipeline.isEnabled());
+//            enabledCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//                @Override
+//                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                    if (funfManager != null) {
+//                        if (isChecked && !pipeline.isEnabled()) {
+//                            Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
+//                            funfManager.enablePipeline(PIPELINE_NAME);
+//                            registerListeners();
+//                        } else {
+//                            Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
+//                            funfManager.disablePipeline(PIPELINE_NAME);
+//                            unregisterListeners();
+//                        }
+//                    }
+//                }
+//            });
 
             collectDataSwitch.setOnCheckedChangeListener(
-                    new CompoundButton.OnCheckedChangeListener(){
+                    new CompoundButton.OnCheckedChangeListener() {
                         @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-                            if(isChecked){
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked) {
                                 Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
                                 funfManager.enablePipeline(PIPELINE_NAME);
                                 registerListeners();
-                            }
-                            else{
+                            } else {
                                 Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
                                 funfManager.disablePipeline(PIPELINE_NAME);
                                 unregisterListeners();
@@ -142,7 +142,7 @@ public class MainActivity extends RoboActivity {
                     }
             );
 
-            enabledCheckbox.setEnabled(true);
+//            enabledCheckbox.setEnabled(true);
 
 
 
@@ -192,11 +192,14 @@ public class MainActivity extends RoboActivity {
 //        dataCountView = (TextView) findViewById(R.id.dataCountText);
 
         //will be enabled in the onServiceConnected method
-        enabledCheckbox = (CheckBox) findViewById(R.id.checkBox);
-        enabledCheckbox.setEnabled(false);
+//        enabledCheckbox = (CheckBox) findViewById(R.id.checkBox);
+//        enabledCheckbox.setEnabled(false);
 
         collectDataSwitch = (Switch) findViewById(R.id.switch1);
         collectDataSwitch.setChecked(true);
+
+        switchAutostart = (Switch) findViewById(R.id.switchAutoStart);
+        switchAutostart.setChecked(true);
 
         instantSendButton = (Button) findViewById(R.id.SendButton);
 
@@ -234,6 +237,8 @@ public class MainActivity extends RoboActivity {
         super.onTrimMemory(level);
         pipeline.onRun(pipeline.ACTION_FLUSH,null);
     }
+
+    public Switch getSwitchAutoStart(){return switchAutostart;}
 
     //    private void updateScanCount() {
 //        runOnUiThread(new Runnable() {
