@@ -153,7 +153,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 intent.putExtra("new ConnectionState: ", "disconnected");
                 break;
             case BluetoothAdapter.STATE_DISCONNECTING:
-                intent.putExtra("new ConnectionState: ", "disconnecting");
+                intent.putExtra("new ConnectionState: ", "cacheClosing");
                 break;
             default:
                 intent.putExtra("new ConnectionState: ", "Something went wrong.");
@@ -171,7 +171,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 intent.putExtra("previous ConnectionState: ", "disconnected");
                 break;
             case BluetoothAdapter.STATE_DISCONNECTING:
-                intent.putExtra("previous ConnectionState: ", "disconnecting");
+                intent.putExtra("previous ConnectionState: ", "cacheClosing");
                 break;
             default:
                 intent.putExtra("previous ConnectionState: ", "Something went wrong.");

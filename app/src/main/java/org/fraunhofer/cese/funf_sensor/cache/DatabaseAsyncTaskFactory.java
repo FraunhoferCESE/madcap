@@ -30,11 +30,12 @@ public class DatabaseAsyncTaskFactory {
      * This task supports partial saves, i.e., the task will attempt to save each entry. If it encounters an exception or error,
      * it will abort but any previously saved entries will be persisted in the database.
      *
-     * @param cache the cache object handling the request. Needed for callbacks on write completion.
+     * @param cache          the cache object handling the request. Needed for callbacks on write completion.
+     * @param uploadStrategy the upload strategy to employ after the memcache has been written to the database
      * @return a new instance of an asynchronous database writing task
      * @see org.fraunhofer.cese.funf_sensor.cache.DatabaseWriteResult
      */
-    AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> createWriteTask(final Cache cache) {
+    AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> createWriteTask(final Cache cache, final Cache.UploadStrategy uploadStrategy) {
 
         return new AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult>() {
             private final String TAG = "Fraunhofer.DBWrite";
@@ -76,20 +77,22 @@ public class DatabaseAsyncTaskFactory {
                             if (memcache != null && !memcache.isEmpty()) {
                                 int skippedCount = 0;
                                 for (CacheEntry entry : memcache.values()) {
-                                    if (dao.queryForId(entry.getId()) == null && dao.create(entry) > 0) {
+                                    if (cache.getHelper().isOpen() && dao.queryForId(entry.getId()) == null && dao.create(entry) > 0) {
                                         savedEntries.add(entry.getId());
                                     } else {
                                         skippedCount++;
                                     }
                                 }
-                                Log.d(TAG, "{doInBackground} Skipped "+skippedCount+" entries already in database.");
+                                Log.d(TAG, "{doInBackground} Skipped " + skippedCount + " entries already in database.");
                             }
                         }
                     }
                 } catch (Exception e) {
                     result.setError(e);
                 } finally {
-                    result.setDatabaseSize(dao.countOf());
+                    if(cache.getHelper().isOpen()) {
+                        result.setDatabaseSize(dao.countOf());
+                    }
                     result.setSavedEntries(savedEntries);
                 }
                 return result;
@@ -97,7 +100,7 @@ public class DatabaseAsyncTaskFactory {
 
             @Override
             public void onPostExecute(DatabaseWriteResult result) {
-                cache.doPostDatabaseWrite(result);
+                cache.doPostDatabaseWrite(result, uploadStrategy);
             }
         };
     }
@@ -121,7 +124,7 @@ public class DatabaseAsyncTaskFactory {
                 Log.d(TAG, "Removing entries from database.");
                 int result = 0;
                 for (List<String> ids : lists) {
-                    if (ids != null && !ids.isEmpty()) {
+                    if (ids != null && !ids.isEmpty() && cache.getHelper().isOpen()) {
                         result += cache.getHelper().getDao().deleteIds(ids);
                     }
                 }

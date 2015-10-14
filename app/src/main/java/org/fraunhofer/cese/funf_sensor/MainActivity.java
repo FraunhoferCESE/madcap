@@ -1,23 +1,24 @@
 package org.fraunhofer.cese.funf_sensor;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
+import org.fraunhofer.cese.funf_sensor.Probe.AudioProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.BluetoothProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe;
@@ -25,28 +26,28 @@ import org.fraunhofer.cese.funf_sensor.Probe.MyRunningApplicationsProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.PowerProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.SMSProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.StateProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.AudioProbe;
 import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
+import org.fraunhofer.cese.funf_sensor.cache.Cache;
+import org.fraunhofer.cese.funf_sensor.cache.RemoteUploadResult;
+import org.fraunhofer.cese.funf_sensor.cache.UploadStatusListener;
 
-import java.text.SimpleDateFormat;
+import java.text.DateFormat;
+import java.util.Date;
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe;
-import edu.mit.media.funf.probe.builtin.BatteryProbe;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
 import roboguice.activity.RoboActivity;
 
 public class MainActivity extends RoboActivity {
-    private static final String TAG = "Fraunhofer."+MainActivity.class.getSimpleName();
+    private static final String TAG = "Fraunhofer." + MainActivity.class.getSimpleName();
 
     public static final String PIPELINE_NAME = "appengine";
     private FunfManager funfManager;
 
     @Inject
     private GoogleAppEnginePipeline pipeline;
-
-    final SimpleDateFormat sdf =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
 
     //probes
     private AccelerometerSensorProbe accelerometerSensorProbe;
@@ -62,14 +63,14 @@ public class MainActivity extends RoboActivity {
     private AudioProbe audioProbe;
     private BluetoothProbe bluetoothProbe;
 
-    private CheckBox enabledCheckbox;
     private Switch collectDataSwitch;
     private Button instantSendButton;
+    private TextView dataCountView;
+    private TextView uploadResultView;
 
-//    private TextView dataCountView;
-//    private Handler handler;
+    private UploadStatusListener uploadStatusListener;
+    private AsyncTask<Void, Long, Void> cacheCountUpdater;
 
-    private String applicationPackageName = "org.fraunhofer.cese.funf_sensor";
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -96,35 +97,15 @@ public class MainActivity extends RoboActivity {
             funfManager.enablePipeline(PIPELINE_NAME);
             registerListeners();
 
-            // This checkbox enables or disables the pipeline
-            enabledCheckbox.setChecked(pipeline.isEnabled());
-            enabledCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    if (funfManager != null) {
-                        if (isChecked && !pipeline.isEnabled()) {
-                            Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
-                            funfManager.enablePipeline(PIPELINE_NAME);
-                            registerListeners();
-                        } else {
-                            Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
-                            funfManager.disablePipeline(PIPELINE_NAME);
-                            unregisterListeners();
-                        }
-                    }
-                }
-            });
-
             collectDataSwitch.setOnCheckedChangeListener(
-                    new CompoundButton.OnCheckedChangeListener(){
+                    new CompoundButton.OnCheckedChangeListener() {
                         @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
-                            if(isChecked){
+                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                            if (isChecked) {
                                 Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
                                 funfManager.enablePipeline(PIPELINE_NAME);
                                 registerListeners();
-                            }
-                            else{
+                            } else {
                                 Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
                                 funfManager.disablePipeline(PIPELINE_NAME);
                                 unregisterListeners();
@@ -135,26 +116,60 @@ public class MainActivity extends RoboActivity {
 
             instantSendButton.setOnClickListener(
                     new View.OnClickListener() {
+                        private final DateFormat df = DateFormat.getDateTimeInstance();
+
                         @Override
                         public void onClick(View view) {
-                            //here the sending-Message should be invoked.
+                            String text = "Upload requested on " + df.format(new Date()) + "\n";
+                            int status = pipeline.requestUpload();
+
+                            if (status == Cache.UPLOAD_READY)
+                                text += "Upload started...";
+                            else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS)
+                                text += "Upload already in progress...";
+                            else if (status == Cache.CACHE_IS_CLOSING)
+                                text += "Error: Data system is closing down.";
+                            else {
+                                String errorText = "";
+                                if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
+                                    errorText += "\n- An internal error occurred and data could not be uploaded.";
+                                if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET)
+                                    errorText += "\n- An upload was just requested; please wait a few seconds.";
+                                if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION)
+                                    errorText += "\n- No internet connection detected.";
+                                if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
+                                    errorText += "\n- No entries to upload";
+
+                                if (!errorText.isEmpty()) {
+                                    text += "Error:" + errorText;
+                                }
+                                else {
+                                    text += "No status to report. Please wait.";
+                                }
+                            }
+                            uploadResultView.setText(text);
                         }
                     }
             );
 
-            enabledCheckbox.setEnabled(true);
-
-
-
+            cacheCountUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            cacheCountUpdater.cancel(true);
+            if (funfManager != null && pipeline.isEnabled()) {
+                Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
+                funfManager.disablePipeline(PIPELINE_NAME);
+                unregisterListeners();
+            }
             funfManager = null;
         }
     };
 
     private void registerListeners() {
+        pipeline.addUploadListener(uploadStatusListener);
+
         accelerometerSensorProbe.registerPassiveListener(pipeline);
         foregroundProbe.registerPassiveListener(pipeline);
         locationProbe.registerPassiveListener(pipeline);
@@ -169,6 +184,8 @@ public class MainActivity extends RoboActivity {
     }
 
     private void unregisterListeners() {
+        pipeline.removeUploadListener(uploadStatusListener);
+
         accelerometerSensorProbe.unregisterListener(pipeline);
         foregroundProbe.unregisterListener(pipeline);
         locationProbe.unregisterListener(pipeline);
@@ -188,30 +205,70 @@ public class MainActivity extends RoboActivity {
 
         setContentView(R.layout.main);
 
-        // Displays the count of rows in the data
-//        dataCountView = (TextView) findViewById(R.id.dataCountText);
-
-        //will be enabled in the onServiceConnected method
-        enabledCheckbox = (CheckBox) findViewById(R.id.checkBox);
-        enabledCheckbox.setEnabled(false);
+        dataCountView = (TextView) findViewById(R.id.dataCountText);
+        uploadResultView = (TextView) findViewById(R.id.uploadResult);
 
         collectDataSwitch = (Switch) findViewById(R.id.switch1);
         collectDataSwitch.setChecked(true);
 
         instantSendButton = (Button) findViewById(R.id.SendButton);
 
-        // Used to make interface changes on main thread
-//        handler = new Handler();
-//        final int delay = 15000;
-//        handler.postDelayed(new Runnable() {
-//            public void run() {
-//                updateScanCount();
-//                handler.postDelayed(this, delay);
-//            }
-//
-//        },delay);
+        uploadStatusListener = new UploadStatusListener() {
+            private static final String TAG = "UploadStatusListener";
+            private static final String pre = "Last upload attempt: ";
+            private final DateFormat df = DateFormat.getDateTimeInstance();
 
+            @Override
+            public void uploadFinished(RemoteUploadResult result) {
+                // handle the various options
+                if (uploadResultView == null)
+                    return;
 
+                String text = pre + "(" + df.format(new Date()) + ")\n";
+                if (result == null) {
+                    text += "Result: No upload due to an internal error.";
+                } else if (!result.isUploadAttempted()) {
+                    text += "Result: No entries to upload.";
+                } else if (result.getException() != null) {
+                    text += "Result: Upload failed due: " + result.getException().getMessage();
+                } else if (result.getSaveResult() == null) {
+                    text += "Result: An error occurred on the remote server.";
+                } else {
+                    text += "Result: " + result.getSaveResult().getSaved().size() + " entries saved.";
+                }
+
+                uploadResultView.setText(text);
+                if (pipeline != null && pipeline.isEnabled())
+                    updateDataCount(-1);
+                Log.d(TAG, "Upload result received");
+            }
+
+            @Override
+            public void cacheClosing() {
+                Log.d(TAG, "Cache is closing");
+            }
+        };
+
+        cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                while (!isCancelled()) {
+                    try {
+                        if (pipeline != null && pipeline.isEnabled())
+                            publishProgress(pipeline.getCacheSize());
+                        Thread.sleep(5000);
+                    } catch (InterruptedException e) {
+                        Log.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.", e);
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onProgressUpdate(Long... values) {
+                updateDataCount(values[0]);
+            }
+        };
         // Bind to the service, to create the connection with FunfManager+
         Log.d(TAG, "Starting FunfManager");
         startService(new Intent(this, FunfManager.class));
@@ -219,31 +276,30 @@ public class MainActivity extends RoboActivity {
         getApplicationContext().bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
     }
 
+    private void updateDataCount(long count) {
+
+        if (dataCountView != null) {
+            String text = "Data count: ";
+            text += (count < 0) ? "Computing..." : count;
+            dataCountView.setText(text);
+        }
+    }
+
     protected void onDestroy() {
         super.onDestroy();
-        unregisterListeners();
+//        unregisterListeners();
 
-        boolean isBound = false;
-        isBound = getApplicationContext().bindService( new Intent(getApplicationContext(), FunfManager.class), funfManagerConn, Context.BIND_AUTO_CREATE );
-        if(isBound)
+        boolean isBound = getApplicationContext().bindService(new Intent(getApplicationContext(), FunfManager.class), funfManagerConn, Context.BIND_AUTO_CREATE);
+        if (isBound)
             getApplicationContext().unbindService(funfManagerConn);
+        stopService(new Intent(this, FunfManager.class));
     }
 
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
-        pipeline.onRun(pipeline.ACTION_FLUSH,null);
+        pipeline.onTrimMemory();
     }
 
-    //    private void updateScanCount() {
-//        runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                String text = "Data Count: " + 0;
-////                text += "\nLast archived: "+ sdf.format(sdf.getCalendar().getTime());
-//                dataCountView.setText(text);
-//            }
-//        });
-//    }
 
 }
