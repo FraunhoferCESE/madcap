@@ -68,58 +68,40 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
             intent.putExtra("Connected devices:", devices);
 
             switch (intent.getAction()) {
-
                 case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED:
-
                     intent = getConnectionStateChangedInformation(intent);
                     callback.sendData(intent);
                     break;
-
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
-
                     intent.putExtra(TAG, "searching for remote devices.");
                     callback.sendData(intent);
                     break;
-
                 case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
-
                     intent.putExtra(TAG, "search for devices finished.");
                     callback.sendData(intent);
                     break;
-
                 case BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED:
-
                     intent.putExtra(TAG, "adapter name changed");
                     intent.putExtra("new name: ", bluetoothAdapter.getName());
                     callback.sendData(intent);
                     break;
-
                 case BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE:
-
                     intent.putExtra(TAG, "discoverability requested.");
                     callback.sendData(intent);
                     break;
-
                 case BluetoothAdapter.ACTION_REQUEST_ENABLE:
-
                     intent.putExtra(TAG, "user asked to enable Bluetooth");
                     callback.sendData(intent);
                     break;
-
                 case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
-
                     intent = getScanModeChangeInformation(intent);
                     callback.sendData(intent);
                     break;
-
                 case BluetoothAdapter.ACTION_STATE_CHANGED:
-
                     intent = getStateChangeInformation(intent);
                     callback.sendData(intent);
                     break;
-
                 default:
-
                     intent.putExtra(TAG, "Something went wrong");
                     callback.sendData(intent);
                     break;
