@@ -64,7 +64,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
             super.onChange(selfChange, uri);
 
             Intent i = new Intent();
-            i.putExtra("SMS Action", "SMS activity detected");
+            i.putExtra("SMS Action", "SMS/MMS activity detected");
             sendData(i);
 //
 //            Cursor cur = getContext().getContentResolver().query(Telephony.Sms.CONTENT_URI, null, null, null, null, null);
