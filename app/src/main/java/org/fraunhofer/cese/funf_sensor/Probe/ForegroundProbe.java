@@ -38,21 +38,7 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
         final ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
 
         foregroundProbeDeliverer = createForegroundProbeDeliverer(gson, am);
-
         foregroundProbeDeliverer.start();
-
-
-//        Log.d(TAG, "ForegroundProbe starting");
-//        super.onStart();
-//        Gson gson = getGson();
-//        ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-//        ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
-//        String foregroundTaskPackageName = foregroundTaskInfo .topActivity.getPackageName();
-//        Log.i("ForegroundProbe.class","ForegroundProbe started.");
-//        Log.i("ForegroundProbe",foregroundTaskPackageName);
-//        //Log.wtf("ForegroundProbe","Package name" + foregroundTaskPackageName);
-//        sendData(gson.toJsonTree(foregroundTaskInfo).getAsJsonObject());
-//        stop();
     }
 
     /**

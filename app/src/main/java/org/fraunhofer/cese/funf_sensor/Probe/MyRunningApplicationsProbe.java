@@ -12,37 +12,73 @@ import java.util.List;
 import edu.mit.media.funf.probe.Probe;
 
 /**
- * Created by MLang on 18.02.2015.
+ *
  */
-public class MyRunningApplicationsProbe extends Probe.Base {
-    private static final String TAG = "Fraunhofer."+MyRunningApplicationsProbe.class.getSimpleName();
+public class MyRunningApplicationsProbe extends Probe.Base implements Probe.ContinuousProbe {
+
+    private static final String TAG = "Fraunhofer." + MyRunningApplicationsProbe.class.getSimpleName();
+    private static Thread runningApplicationsDeliverer;
+
 
     @Override
-    protected void onStart() {
+    protected void onEnable() {
+
+        Log.d(TAG, "RunningApplicationsProbe starting");
         super.onStart();
-        Gson gson = getGson();
-        ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
-        if(!am.isUserAMonkey()) {
-            List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = am.getRunningAppProcesses();
-            Log.i(TAG, "MyRunningApplicationsProbe started.");
-            JsonObject allApps = new JsonObject();
-            int i = 1;
-            for(ActivityManager.RunningAppProcessInfo info : runningAppProcessInfoList){
-                JsonObject currentApp = new JsonObject();
-                currentApp.addProperty("pcs", info.processName);
-                int k = 1;
-                for(String pkg : info.pkgList){
-                    currentApp.addProperty("pkg" + k++, pkg);
+        final Gson gson = getGson();
+        final ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+
+        runningApplicationsDeliverer = createRunningApplicationsDeliverer(gson, am);
+        runningApplicationsDeliverer.start();
+    }
+
+    @Override
+    protected void onDisable() {
+        super.onDisable();
+        runningApplicationsDeliverer.interrupt();
+    }
+
+    private Thread createRunningApplicationsDeliverer(final Gson gson, final ActivityManager am) {
+
+        runningApplicationsDeliverer = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                boolean isInterrupted = false;
+
+                while (!isInterrupted && !(runningApplicationsDeliverer.isInterrupted())) {
+                    List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = am.getRunningAppProcesses();
+                    Log.i(TAG, "MyRunningApplicationsProbe started.");
+                    JsonObject allApps = new JsonObject();
+                    int i = 1;
+                    for (ActivityManager.RunningAppProcessInfo info : runningAppProcessInfoList) {
+                        JsonObject currentApp = new JsonObject();
+                        currentApp.addProperty("pcs", info.processName);
+                        int k = 1;
+                        for (String pkg : info.pkgList) {
+                            currentApp.addProperty("pkg" + k++, pkg);
+                        }
+                        currentApp.addProperty("imp", info.importance);
+                        currentApp.addProperty("imprc", info.importanceReasonCode);
+                        if (info.importanceReasonComponent != null) {
+                            currentApp.addProperty("impcom" + i, info.importanceReasonComponent.toString());
+                        }
+                        allApps.add("app" + i++, currentApp);
+                    }
+                    sendData(gson.toJsonTree(allApps).getAsJsonObject());
+
+                    try {
+                        Thread.sleep(15000l);
+                    } catch (InterruptedException e) {
+                        isInterrupted = true;
+                        e.printStackTrace();
+                    }
                 }
-                currentApp.addProperty("imp", info.importance);
-                currentApp.addProperty("imprc", info.importanceReasonCode);
-                if(info.importanceReasonComponent != null){
-                    currentApp.addProperty("impcom" + i, info.importanceReasonComponent.toString());
-                }
-                allApps.add("app"+ i++,currentApp);
             }
-            sendData(gson.toJsonTree(allApps).getAsJsonObject());
-        }
-        stop();
+        });
+
+
+        return runningApplicationsDeliverer;
     }
 }
+
