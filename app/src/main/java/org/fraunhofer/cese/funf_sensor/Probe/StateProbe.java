@@ -4,7 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.provider.Settings;
 import android.util.Log;
+
 
 
 import edu.mit.media.funf.probe.Probe;
@@ -37,10 +40,17 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
 
 
         getContext().registerReceiver(receiver, filter);
-
         Log.i("StateProbe", "StateProbe enabled");
-        }
 
+        sendInitialProbe();
+        Log.i("StateProbe: ", "Initial StateProbe sent.");
+    }
+
+    private static boolean isAirplaneModeOn(Context context) {
+
+        return Settings.Global.getInt(context.getContentResolver(),
+                Settings.Global.AIRPLANE_MODE_ON,0)!= 0;
+    }
 
     @Override
     protected void onDisable() {
@@ -89,12 +99,21 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
                 default:
                     intent.putExtra("StateProbe: ","Something went wrong");
                     break;
-
             }
-
             callback.sendData(intent);
         }
+    }
 
 
+    private void sendInitialProbe() {
+        Intent intent = new Intent();
+        boolean airplaneMode = isAirplaneModeOn(getContext());
+        intent.putExtra("Initial AirplaneMode: ", airplaneMode);
+
+        AudioManager audioManager = (AudioManager)getContext().getSystemService(Context.AUDIO_SERVICE);
+        boolean headsetPlugged =audioManager.isWiredHeadsetOn();
+        intent.putExtra("Initial HeadsetState: ", headsetPlugged);
+
+        sendData(intent);
     }
 }

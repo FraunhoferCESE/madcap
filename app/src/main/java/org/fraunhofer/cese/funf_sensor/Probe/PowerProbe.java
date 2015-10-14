@@ -33,7 +33,10 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
         getContext().registerReceiver(receiver, intentFilter);
         Log.i("PowerProbe.class: ", "PowerProbe enabled");
 
+        sendInitialProbe();
+        Log.i("PowerProbe: ", "Initial PowerProbe sent.");
     }
+
 
     private void sendData(Intent intent) {
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
@@ -109,5 +112,32 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
                     break;
             }
         }
+    }
+
+    private void sendInitialProbe() {
+
+        Intent intent = new Intent();
+
+        Intent batteryIntent = getContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        intent.putExtra("Initial PowerLevel: ", level + " %");
+
+        int plugged = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+        switch (plugged){
+            case 0:
+                intent.putExtra("Initial PlugState: ", "not plugged");
+                break;
+            case BatteryManager.BATTERY_PLUGGED_AC:
+                intent.putExtra("Initial PlugState: ", "plugged to AC");
+                break;
+            case BatteryManager.BATTERY_PLUGGED_USB:
+                intent.putExtra("Initial PlugState: ", "plugged to USB");
+                break;
+            default:
+                intent.putExtra("Initial PlugState: ", "plugged to unknown");
+                break;
+        }
+
+        sendData(intent);
     }
 }
