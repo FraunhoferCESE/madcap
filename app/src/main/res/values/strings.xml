@@ -29,5 +29,12 @@
             "maxWaitTime": 15
         }
     </string>
-    <string name="checkBoxText">Collect Data?</string>
+    <string name="titleText">Mobile Device Sensor by Fraunhofer CESE</string>
+    <string name="introText">This app collects data to study mobile device cybersecurity.  Our goal is to use this data to help users be more secure when using mobile devices.\n\nThe app collects information such as which other apps are running, the device\'s GPS location, and when a call is received.\n\nThis app DOES NOT sensitive content, such as your contact list, the content of SMS messages, or your browsing history.</string>
+    <string name="logoDescription">Fraunhofer logo</string>
+    <string name="collectDataSwitchText">Collect Data</string>
+    <string name="dataCountText">Data count: 0</string>
+    <string name="uploadResultText">Last upload result: None</string>
+    <string name="sendButtonText">Upload data now"</string>
+    <string name="footnoteText">This application uses the Funf Open Sensing Framework licensed under the GNU Lesser GPL.\n\n This application was developed by the Fraunhofer CESE. For any questions, visit http://www.fc-md.umd.edu or email llayman@fc-md.umd.edu.</string>
 </resources>

@@ -2,7 +2,6 @@ package org.fraunhofer.cese.funf_sensor.cache;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -13,9 +12,11 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.ProbeDataSetApi;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import roboguice.inject.ContextSingleton;
@@ -37,6 +38,8 @@ import roboguice.inject.ContextSingleton;
 public class Cache {
 
     private static final String TAG = "Fraunhofer." + Cache.class.getSimpleName();
+
+    private List<UploadStatusListener> uploadStatusListeners = new ArrayList<>();
 
     private boolean isClosing = false;
     /**
@@ -115,7 +118,8 @@ public class Cache {
         last_db_write_attempt = System.currentTimeMillis();
         last_upload_attempt = 0;
 
-        uploadIfNeeded();
+        if (checkUploadConditions(UploadStrategy.NORMAL) == UPLOAD_READY)
+            upload();
     }
 
     /**
@@ -129,26 +133,29 @@ public class Cache {
 
         memcache.put(entry.getId(), entry);
         if (memcache.size() > config.getMaxMemEntries() && System.currentTimeMillis() - last_db_write_attempt > config.getDbWriteInterval()) {
-            flush();
+            flush(UploadStrategy.NORMAL);
         }
     }
 
     /**
-     * Flush any entries to the database in memory.
+     * Flush any entries to the database in memory. They will be uploaded according to the upload strategy.
+     *
+     * @param uploadStrategy The upload strategy to use
      */
-    public void flush() {
+    public void flush(UploadStrategy uploadStrategy) {
         last_db_write_attempt = System.currentTimeMillis();
         //noinspection unchecked
-        dbTaskFactory.createWriteTask(this).execute(ImmutableMap.copyOf(memcache));
+        dbTaskFactory.createWriteTask(this, uploadStrategy).execute(ImmutableMap.copyOf(memcache));
     }
 
     /**
      * This method is called when the DatabaseWriteAsyncTask successfully saves to the SQLLite database.
      * This method removes saved entries from the memcache and triggers an upload if conditions are correct.
      *
-     * @param result object containing information on successfully saved entries (if any) and errors that occured
+     * @param result      object containing information on successfully saved entries (if any) and errors that occured
+     * @param uploadStrategy the upload strategy to use
      */
-    void doPostDatabaseWrite(DatabaseWriteResult result) {
+    void doPostDatabaseWrite(DatabaseWriteResult result, UploadStrategy uploadStrategy) {
 
         // 1. Remove ids written to DB from memory
         if (result.getSavedEntries() != null && !result.getSavedEntries().isEmpty()) {
@@ -174,68 +181,177 @@ public class Cache {
             }
         }
 
-        // 3. Request an upload if the conditions are met.
-        uploadIfNeeded();
+        // 3. Do upload if conditions are met.
+        if (checkUploadConditions(uploadStrategy) == UPLOAD_READY)
+            upload();
     }
+
+
+    /**
+     * Returns the total number of cached entries.
+     *
+     * @return the total number of cached entries, or -1 if the number cannot be determined (i.e., there is an error reading the database cache)
+     */
+    public long getSize() {
+        if (getHelper() == null || getHelper().getDao() == null)
+            return -1;
+        try {
+            return getHelper().getDao().countOf() + memcache.size();
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    /**
+     * Add a listener for upload events. The listener will be provided with an {@link RemoteUploadResult}. Listeners will also be notified
+     * when the cache is shutting down.
+     *
+     * @param listener the listener to add
+     */
+    public void addUploadListener(UploadStatusListener listener) {
+        if (uploadStatusListeners == null)
+            uploadStatusListeners = new ArrayList<>();
+        uploadStatusListeners.add(listener);
+    }
+
+    /**
+     * Removes the specified listener from upload events.
+     *
+     * @param listener the listener to remove
+     * @return {@code true} if this {@code listener} was removed from the list of listeners, {@code false} otherwise.
+     */
+    public boolean removeUploadListener(UploadStatusListener listener) {
+        return uploadStatusListeners != null && uploadStatusListeners.removeAll(Collections.singleton(listener));
+    }
+
+    /**
+     * An internal error occurred (such as the database could not be read) and no upload attempt will occur.
+     */
+    public static final int INTERNAL_ERROR = 1;
+
+    /**
+     * The required internet connection (i.e. wifi vs data) is not available to support an upload.
+     */
+    public static final int NO_INTERNET_CONNECTION = 1 << 1;
+
+    /**
+     * No upload will be attempted because one has been attempted too recently.
+     */
+    public static final int UPLOAD_INTERVAL_NOT_MET = 1 << 2;
+
+    /**
+     * No upload will be attempted because there are not enough entries in the database.
+     */
+    public static final int DATABASE_LIMIT_NOT_MET = 1 << 3;
+
+    /**
+     * All preconditions are met for an upload.
+     */
+    public static final int UPLOAD_READY = 0;
+
+    /**
+     * No upload will be attempted because an upload is already in progress.
+     */
+    public static final int UPLOAD_ALREADY_IN_PROGRESS = 1 << 5;
+
+    /**
+     * No upload will be attempted because the Cache is in the process of being shut down.
+     */
+    public static final int CACHE_IS_CLOSING = 1 << 6;
+
 
     /**
      * This method checks if the conditions are met to trigger a remote upload, and then starts an asynchronous task to perform
      * the upload if so
+     *
+     * @param strategy the upload strategy to use
      */
-    private void uploadIfNeeded() {
+    public int checkUploadConditions(UploadStrategy strategy) {
         // 1. Check preconditions
         if (isClosing)
-            return;
+            return CACHE_IS_CLOSING;
 
         if (appEngineApi == null) {
             Log.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
-            return;
+            return INTERNAL_ERROR;
         }
 
         if (getHelper() == null) {
             Log.w(TAG, "{uploadIfNeeded} No helper found");
-            return;
+            return INTERNAL_ERROR;
         }
 
         if (getHelper().getDao() == null) {
             Log.w(TAG, "{uploadIfNeeded} getHelper().getDao() is null");
-            return;
+            return INTERNAL_ERROR;
         }
 
-        // 2. Determine if an upload is needed based on configuration and number of database entries
-        boolean shouldUpload;
+        // 2. Check if an upload is already in progress
+        if (uploadTask != null) {
+            return UPLOAD_ALREADY_IN_PROGRESS;
+        }
+
+        // 3. Determine if an upload is ready based on parameters
+        long maxDbEntries;
+        long uploadInterval;
+        boolean wifiOnly = config.isUploadWifiOnly();
+
+        if(strategy == UploadStrategy.IMMEDIATE) {
+            maxDbEntries = 1;
+            uploadInterval = 5000;
+        }
+        else {
+            maxDbEntries = config.getMaxDbEntries();
+            uploadInterval = config.getUploadInterval();
+        }
+
+        int status = UPLOAD_READY;
         try {
             long numEntries = getHelper().getDao().countOf();
-            shouldUpload = numEntries > config.getMaxDbEntries();
-            shouldUpload &= System.currentTimeMillis() - last_upload_attempt > config.getUploadInterval();
+            if(strategy == UploadStrategy.IMMEDIATE)
+                numEntries += memcache.size();
 
-            if (config.isUploadWifiOnly()) {
-                shouldUpload &= connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
-            } else {
-                NetworkInfo netInfo = connManager.getActiveNetworkInfo();
-                shouldUpload &= netInfo != null && netInfo.isConnected();
+            if(numEntries < maxDbEntries) {
+                status |= DATABASE_LIMIT_NOT_MET;
+            }
+
+            if (System.currentTimeMillis() - last_upload_attempt <= uploadInterval) {
+                status |= UPLOAD_INTERVAL_NOT_MET;
+            }
+            if (wifiOnly && !connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) {
+                status |= NO_INTERNET_CONNECTION;
+            } else if (connManager.getActiveNetworkInfo() == null || !connManager.getActiveNetworkInfo().isConnected()) {
+                status |= NO_INTERNET_CONNECTION;
             }
         } catch (Exception e) {
             Log.e(TAG, "{uploadIfNeeded}  Unable to get count of database entries.", e);
-            return;
+            status |= INTERNAL_ERROR;
         }
+        return status;
+    }
 
-        // 3. Upload if needed and not currently pending
-        if (shouldUpload && uploadTask == null) {
-            last_upload_attempt = System.currentTimeMillis();
-            uploadTask = uploadTaskFactory.createRemoteUploadTask(this, appEngineApi).execute();
-        }
+    /**
+     * Starts an asynchronous task to perform the upload
+     */
+    private void upload() {
+        last_upload_attempt = System.currentTimeMillis();
+        uploadTask = uploadTaskFactory.createRemoteUploadTask(this, appEngineApi).execute();
     }
 
     /**
      * This method should not be called by clients.
      * <p/>
-     * Examines the upload result and cleans the database accordingly.
+     * Examines the upload result and cleans the database accordingly. Also notifies listeners with the upload result.
      *
      * @param uploadResult the upload result passed from the remote upload task
      */
     void doPostUpload(RemoteUploadResult uploadResult) {
         uploadTask = null;
+        if (uploadStatusListeners != null) {
+            for (UploadStatusListener listener : uploadStatusListeners) {
+                listener.uploadFinished(uploadResult);
+            }
+        }
 
         if (uploadResult == null)
             return;
@@ -269,10 +385,17 @@ public class Cache {
      */
     public void close() {
         this.isClosing = true;
-        flush();
+        flush(UploadStrategy.NORMAL);
         if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;
+        }
+
+        if (uploadStatusListeners != null) {
+            for (UploadStatusListener listener : uploadStatusListeners) {
+                listener.cacheClosing();
+            }
+            uploadStatusListeners.clear();
         }
     }
 
@@ -288,5 +411,9 @@ public class Cache {
             databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
         }
         return databaseHelper;
+    }
+
+    public enum UploadStrategy {
+        NORMAL, IMMEDIATE
     }
 }

@@ -2,16 +2,14 @@ package org.fraunhofer.cese.funf_sensor.appengine;
 
 import android.util.Log;
 
-import com.google.common.base.Strings;
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
 
-
-import org.fraunhofer.cese.funf_sensor.cache.CacheEntry;
 import org.fraunhofer.cese.funf_sensor.cache.Cache;
+import org.fraunhofer.cese.funf_sensor.cache.CacheEntry;
+import org.fraunhofer.cese.funf_sensor.cache.UploadStatusListener;
 
 import java.util.UUID;
-
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.config.RuntimeTypeAdapterFactory;
@@ -43,9 +41,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         // This is the method to write data received from a probe. This should probably be handled in a separate thread.
 
         final String key = probeConfig.get(RuntimeTypeAdapterFactory.TYPE).toString();
-        final IJsonObject finalData = data;
 
-        Log.d(TAG, "(onDataReceived) key: " + key + ", data: " + finalData);
+        Log.d(TAG, "(onDataReceived) key: " + key + ", data: " + data);
 
         if (key == null || data == null) {
             Log.d(TAG, "(onDataReceived) Exiting due to null key or data.");
@@ -62,7 +59,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         probeEntry.setId(UUID.randomUUID().toString());
         probeEntry.setTimestamp(timestamp);
         probeEntry.setProbeType(key);
-        probeEntry.setSensorData(finalData.toString());
+        probeEntry.setSensorData(data.toString());
 
         cache.add(probeEntry);
     }
@@ -74,41 +71,46 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      * stream the probe ran. Continuable probes can use this checkpoint to
      * start the data stream where it previously left off.
      *
-     * @param completeProbeUri
-     * @param checkpoint
+     * @param completeProbeUri the probe which has finished sending data
+     * @param checkpoint       a checkpoint indicating the leave off point for probes that support it
      */
     public void onDataCompleted(IJsonObject completeProbeUri, JsonElement checkpoint) {
         Log.d(TAG, "(onDataCompleted) completeProbeUri: " + completeProbeUri + ", checkpoint: " + checkpoint);
-        cache.flush();
+        cache.flush(Cache.UploadStrategy.NORMAL);
     }
 
     /**
      * Called once when the pipeline is created.  This method can be used
      * to register any scheduled operations.
      *
-     * @param manager
+     * @param manager the FunfManager the pipeline is attached to
      */
     public void onCreate(FunfManager manager) {
-        // This is the setup method that's called when the Pipeline is created
         Log.d(TAG, "(onCreate)");
         this.enabled = true;
     }
 
     /**
-     * Instructs pipeline to perform an operation.
+     * Instructs pipeline to perform an operation. This is a requirement of the Pipeline interface, but we don't use it.
      *
      * @param action The action to perform.
      * @param config The object to perform the action on.
      */
     public void onRun(String action, JsonElement config) {
         // Method which is called to tell the Pipeline to do something, like save the data locally or upload to the cloud
-        if(Strings.isNullOrEmpty(action))
-            return;
-
         Log.d(TAG, "(onRun)");
-        if(action.equals(ACTION_FLUSH)) {
-            cache.flush();
-        }
+    }
+
+    /**
+     * Requests an on-demand upload of cached data.
+     *
+     * @return a status code reflecting whether or not the upload request could be completed. {@link Cache#INTERNAL_ERROR} {@link Cache#UPLOAD_READY} {@link Cache#CACHE_IS_CLOSING} {@link Cache#DATABASE_LIMIT_NOT_MET} {@link Cache#NO_INTERNET_CONNECTION} {@link Cache#UPLOAD_ALREADY_IN_PROGRESS} {@link Cache#UPLOAD_INTERVAL_NOT_MET}
+     */
+    public int requestUpload() {
+        int status = cache.checkUploadConditions(Cache.UploadStrategy.IMMEDIATE);
+        if (status == Cache.UPLOAD_READY)
+            cache.flush(Cache.UploadStrategy.IMMEDIATE);
+        return status;
     }
 
     /**
@@ -117,8 +119,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     public void onDestroy() {
         // Any closeout or disconnect operations
         Log.d(TAG, "onDestroy");
-        cache.close();
         this.enabled = false;
+        cache.close();
     }
 
     /**
@@ -127,9 +129,43 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      */
     public boolean isEnabled() {
         // Determines whether the pipeline is enabled. The "enabled" flag should be toggled in the OnCreate and OnDestroy operations
-        Log.d(TAG, "(isEnabled:" + enabled + ")");
         return enabled;
     }
 
-    public static final String ACTION_FLUSH = "flush";
+    /**
+     * Attempts to add an upload status listener to the cache.
+     *
+     * @param listener the listener to add
+     * @see Cache#addUploadListener(UploadStatusListener)
+     */
+    public void addUploadListener(UploadStatusListener listener) {
+        cache.addUploadListener(listener);
+    }
+
+    /**
+     * Attempts to remove an upload status listener from the cache.
+     *
+     * @param listener the listener to remove
+     * @return {@code true} if the listener was removed, {@code false} otherwise.
+     */
+    public boolean removeUploadListener(UploadStatusListener listener) {
+        return cache.removeUploadListener(listener);
+    }
+
+    /**
+     * Returns the number of entities currently held in the cache.
+     *
+     * @return the number of entities in the cache.
+     * @see Cache#getSize()
+     */
+    public long getCacheSize() {
+        return cache.getSize();
+    }
+
+    /**
+     * Should be called when the OS triggers onTrimMemory in the app
+     */
+    public void onTrimMemory() {
+        cache.flush(Cache.UploadStrategy.NORMAL);
+    }
 }
