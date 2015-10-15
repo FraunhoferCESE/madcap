@@ -62,6 +62,7 @@ public class ProbeDataSetEndpoint {
             ProbeEntry result = ofy().load().type(ProbeEntry.class).id(entry.getId()).now();
             if (result == null) {
                 saved.add(entry.getId());
+                ofy().save().entity(entry);
             } else {
                 alreadyExists.add(result.getId());
             }
