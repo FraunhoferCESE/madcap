@@ -10,20 +10,17 @@ import android.widget.Switch;
 /**
  *
  */
-public class AutoStart extends BroadcastReceiver{
-
+public class AutoStart extends BroadcastReceiver {
 
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
 
-        Switch switchAutoStart = new MainActivity().getSwitchAutoStart();
-
-        if(switchAutoStart.isChecked()) {
-                Intent startIntent = new Intent(context, MainActivity.class);
-                startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                context.startService(startIntent);
-                Log.i("AutoStart: ", "launched!!");
-        }
+        Log.i("AutoStart: ", "started!!");
+        Intent startIntent = new Intent(context, StartService.class);
+        startIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startService(startIntent);
+        Log.i("AutoStart: ", "finished!!");
+        
     }
 }

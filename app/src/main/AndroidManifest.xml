@@ -142,6 +142,8 @@
             </intent-filter>
         </activity>
 
+        <service    android:name=".StartService"
+                    android:exported="false"/>
 
 
         <receiver   android:name="org.fraunhofer.cese.funf_sensor.AutoStart"
