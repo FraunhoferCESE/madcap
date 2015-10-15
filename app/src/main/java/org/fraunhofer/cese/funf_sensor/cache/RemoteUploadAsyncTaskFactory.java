@@ -42,7 +42,6 @@ public class RemoteUploadAsyncTaskFactory {
 
             @Override
             protected RemoteUploadResult doInBackground(Void... params) {
-                Log.d(TAG, "Doing in background");
                 if (context == null || cache == null)
                     return RemoteUploadResult.noop();
 
@@ -52,7 +51,6 @@ public class RemoteUploadAsyncTaskFactory {
 
                 RemoteUploadResult result = null;
                 List<CacheEntry> entries = databaseHelper.getDao().queryForAll();
-                Log.d(TAG,"entries size: "+entries.size());
 
                 if (!entries.isEmpty()) {
                     Log.i(TAG, "Attempting to upload " + entries.size() + " to " + appEngineApi.getRootUrl());

@@ -43,6 +43,7 @@ public class ProbeDataSetEndpoint {
      */
     @ApiMethod(name = "insertSensorDataSet")
     public ProbeSaveResult insertSensorDataSet(HttpServletRequest req, ProbeDataSet probeDataSet) throws ConflictException, BadRequestException {
+        logger.info("Upload request received from " + req.getRemoteAddr());
         if (probeDataSet == null) {
             throw new BadRequestException("sensorDataSet cannot be null");
         }
@@ -52,8 +53,8 @@ public class ProbeDataSetEndpoint {
             throw new BadRequestException("entryList is null or empty");
         }
 
-        logger.info("Logging request received. Data: " + entryList);
-        logger.info("Total request size: " + humanReadableByteCount(Long.parseLong(req.getHeader("Content-Length")), false));
+        logger.fine("Logging request received. Data: " + entryList);
+        logger.info("Number of entries received: " + entryList.size() + ", Request size: " + humanReadableByteCount(Long.parseLong(req.getHeader("Content-Length")), false));
 
         Collection<String> saved = new ArrayList<>();
         Collection<String> alreadyExists = new ArrayList<>();
@@ -74,11 +75,11 @@ public class ProbeDataSetEndpoint {
 
     /**
      * Displays raw byte counts (e.g., 1024) in human readable format (e.g., 1.0 KiB).
-     *
+     * <p/>
      * From <a href="http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java">http://stackoverflow.com/questions/3758606/how-to-convert-byte-size-into-human-readable-format-in-java</a>
      *
      * @param bytes size in bytes
-     * @param si use si units or not
+     * @param si    use si units or not
      * @return a human readable string of the byte size
      */
     public static String humanReadableByteCount(long bytes, boolean si) {
