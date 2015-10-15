@@ -54,33 +54,33 @@ public class MyModule extends AbstractModule {
         return new RemoteUploadAsyncTaskFactory();
     }
 
-//    @Provides
-//    ProbeDataSetApi provideProbeDataSetApi() {
-//        ProbeDataSetApi.Builder builder = new ProbeDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
-//                new AndroidJsonFactory(), null)
-//                .setApplicationName("funfSensor")
-//                .setRootUrl("http://192.168.0.100:8080/_ah/api/")
-//                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-//                    @Override
-//                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-//                        abstractGoogleClientRequest.setDisableGZipContent(true);
-//                    }
-//                });
-//        return builder.build();
-//    }
-
     @Provides
     ProbeDataSetApi provideProbeDataSetApi() {
         ProbeDataSetApi.Builder builder = new ProbeDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
                 new AndroidJsonFactory(), null)
-                .setRootUrl("https://funfcese.appspot.com/_ah/api/");
-//                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-//                    @Override
-//                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-//                        abstractGoogleClientRequest.setDisableGZipContent(true);
-//                    }
-//                });
+                .setApplicationName("funfSensor")
+                .setRootUrl("http://192.168.0.100:8080/_ah/api/")
+                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+                    @Override
+                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+                        abstractGoogleClientRequest.setDisableGZipContent(true);
+                    }
+                });
         return builder.build();
     }
+
+//    @Provides
+//    ProbeDataSetApi provideProbeDataSetApi() {
+//        ProbeDataSetApi.Builder builder = new ProbeDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
+//                new AndroidJsonFactory(), null)
+//                .setRootUrl("https://funfcese.appspot.com/_ah/api/");
+////                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+////                    @Override
+////                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+////                        abstractGoogleClientRequest.setDisableGZipContent(true);
+////                    }
+////                });
+//        return builder.build();
+//    }
 
 }
