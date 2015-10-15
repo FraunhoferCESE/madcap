@@ -238,7 +238,8 @@ public class MainActivity extends RoboActivity {
                 } else if (!result.isUploadAttempted()) {
                     text += "Result: No entries to upload.";
                 } else if (result.getException() != null) {
-                    text += "Result: Upload failed due: " + result.getException().getMessage();
+                    String exceptionText = result.getException().getMessage().length() > 20 ? result.getException().getMessage().substring(0, 19) : result.getException().getMessage();
+                    text += "Result: Upload failed due to " + exceptionText;
                 } else if (result.getSaveResult() == null) {
                     text += "Result: An error occurred on the remote server.";
                 } else {
