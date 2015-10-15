@@ -8,8 +8,6 @@ import android.media.AudioManager;
 import android.provider.Settings;
 import android.util.Log;
 
-
-
 import edu.mit.media.funf.probe.Probe;
 
 /**
@@ -57,50 +55,51 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
 
     public void sendData(Intent intent) {
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
-        Log.i("StateProbe", "StateProbe sent");
     }
 
     /**
      * Receiver-Class for general phone state events
      */
-    public class StateInformationReceiver extends BroadcastReceiver{
+    public class StateInformationReceiver extends BroadcastReceiver {
         public StateProbe callback;
-        public StateInformationReceiver (StateProbe callback) {
+
+        public StateInformationReceiver(StateProbe callback) {
             this.callback = callback;
         }
 
         /**
          * Adds information to the intent according to the triggering event and sends the intent afterwards
+         *
          * @param context
          * @param intent
          */
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            switch (intent.getAction()){
+            switch (intent.getAction()) {
                 case Intent.ACTION_AIRPLANE_MODE_CHANGED:
-                    intent.putExtra("StateProbe: ","AirplaneMode changed");
+                    intent.putExtra("StateProbe: ", "AirplaneMode changed");
                     break;
                 case Intent.ACTION_BOOT_COMPLETED:
-                    intent.putExtra("StateProbe: ","boot completed");
+                    intent.putExtra("StateProbe: ", "boot completed");
                     break;
                 case Intent.ACTION_DREAMING_STARTED:
-                    intent.putExtra("StateProbe: ","Dreaming started");
+                    intent.putExtra("StateProbe: ", "Dreaming started");
                     break;
                 case Intent.ACTION_DREAMING_STOPPED:
-                    intent.putExtra("StateProbe: ","Dreaming stopped");
+                    intent.putExtra("StateProbe: ", "Dreaming stopped");
                     break;
                 case Intent.ACTION_HEADSET_PLUG:
-                    intent.putExtra("StateProbe: ","headset plugged");
+                    intent.putExtra("StateProbe: ", "headset plugged");
                     break;
                 case Intent.ACTION_SHUTDOWN:
-                    intent.putExtra("StateProbe: ","Device is shutting down");
+                    intent.putExtra("StateProbe: ", "Device is shutting down");
                     break;
                 case Intent.ACTION_USER_PRESENT:
-                    intent.putExtra("StateProbe: ","user is now present");
+                    intent.putExtra("StateProbe: ", "user is now present");
                     break;
                 default:
-                    intent.putExtra("StateProbe: ","Something went wrong");
+                    intent.putExtra("StateProbe: ", "Something went wrong");
                     break;
             }
             callback.sendData(intent);
@@ -117,8 +116,8 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
         boolean airplaneMode = isAirplaneModeOn(getContext());
         intent.putExtra("Initial AirplaneMode: ", airplaneMode);
 
-        AudioManager audioManager = (AudioManager)getContext().getSystemService(Context.AUDIO_SERVICE);
-        boolean headsetPlugged =audioManager.isWiredHeadsetOn();
+        AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+        boolean headsetPlugged = audioManager.isWiredHeadsetOn();
         intent.putExtra("Initial HeadsetState: ", headsetPlugged);
 
         sendData(intent);
@@ -127,6 +126,6 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
     private static boolean isAirplaneModeOn(Context context) {
 
         return Settings.Global.getInt(context.getContentResolver(),
-                Settings.Global.AIRPLANE_MODE_ON,0)!= 0;
+                Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
     }
 }

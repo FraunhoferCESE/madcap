@@ -6,7 +6,6 @@
 
     <!-- other app config -->
     <string name="app_name">FUNF-Sensor</string>
-    <string name="notification_service_name">FUNF-sensor notification service</string>
     <string name="probe_foreground">
         {"@type": "org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe.ForegroundProbe",
             "@schedule": {"interval": 15}

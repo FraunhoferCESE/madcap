@@ -117,7 +117,6 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
     private void sendData(Intent intent) {
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
-        Log.i(TAG, "BluetoothProbe sent");
     }
 
     private Intent getConnectionStateChangedInformation (Intent intent){

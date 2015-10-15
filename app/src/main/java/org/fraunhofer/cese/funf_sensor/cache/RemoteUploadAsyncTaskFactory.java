@@ -46,7 +46,7 @@ public class RemoteUploadAsyncTaskFactory {
                     return RemoteUploadResult.noop();
 
                 DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
-                if(databaseHelper == null || databaseHelper.getDao() == null)
+                if (databaseHelper == null || databaseHelper.getDao() == null)
                     return RemoteUploadResult.noop();
 
                 RemoteUploadResult result = null;
@@ -67,6 +67,7 @@ public class RemoteUploadAsyncTaskFactory {
 
                     try {
                         ProbeSaveResult saveResult = appEngineApi.insertSensorDataSet(dataSet).execute();
+                        Log.d(TAG,"Insert executed");
                         int numSaved = saveResult.getSaved() == null ? 0 : saveResult.getSaved().size();
                         int numAlreadyExists = saveResult.getAlreadyExists() == null ? 0 : saveResult.getAlreadyExists().size();
 
@@ -74,6 +75,7 @@ public class RemoteUploadAsyncTaskFactory {
                         Log.i(TAG, "Upload successful. Saved: " + numSaved + " entries, Already existed: " + numAlreadyExists);
                     } catch (IOException e) {
                         result = RemoteUploadResult.create(e);
+                        Log.w(TAG, "Upload failed", e);
                     }
                 }
 

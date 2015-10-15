@@ -39,7 +39,7 @@ public class ProbeDataSetEndpointTest {
     ProbeDataSetEndpoint endpoint;
 
     @Test
-    public void testInsertSensorDataSet(@Mocked final ProbeDataSet mockDataSet, @Mocked final ProbeEntry entry1, @Mocked final ProbeEntry entry2, @Mocked final Objectify mockOfy, @Mocked final Map<Key<ProbeEntry>, ProbeEntry> entities, @Mocked final HttpServletRequest req, @Mocked final User user) throws Exception {
+    public void testInsertSensorDataSet(@Mocked final HttpServletRequest request, @Mocked final ProbeDataSet mockDataSet, @Mocked final ProbeEntry entry1, @Mocked final ProbeEntry entry2, @Mocked final Objectify mockOfy, @Mocked final Map<Key<ProbeEntry>, ProbeEntry> entities, @Mocked final HttpServletRequest req, @Mocked final User user) throws Exception {
 
         new MockUp<OfyService>() {
             @Mock
@@ -50,6 +50,9 @@ public class ProbeDataSetEndpointTest {
 
 
         new NonStrictExpectations() {{
+            request.getRequestURI(); result = "127.0.0.1";
+            request.getHeader("Content-Length"); result = 2048;
+
             entry1.getId(); result = "123-4567-889";
             entry1.getProbeType(); result = "funf.accelerometer";
             entry1.getSensorData(); result = "this.is.not.real.data";
@@ -71,7 +74,7 @@ public class ProbeDataSetEndpointTest {
             user.getUserId(); result= "unitTestUser";
         }};
 
-        final Collection<ProbeEntry> result = endpoint.insertSensorDataSet(mockDataSet);
+        endpoint.insertSensorDataSet(request, mockDataSet);
 
 //        new Verifications() {{
 //            assertEquals(2, result.size());
@@ -80,28 +83,33 @@ public class ProbeDataSetEndpointTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void testInsertNullDataSet() throws ConflictException, BadRequestException {
-        endpoint.insertSensorDataSet(null);
+    public void testInsertNullDataSet(@Mocked final HttpServletRequest request) throws ConflictException, BadRequestException {
+
+        new NonStrictExpectations() {{
+            request.getRequestURI(); result = "127.0.0.1";
+        }};
+
+        endpoint.insertSensorDataSet(request, null);
     }
 
     @Test(expected = BadRequestException.class)
-    public void testInsertNullEntryList(@Mocked final ProbeDataSet mockDataSet) throws ConflictException, BadRequestException {
+    public void testInsertNullEntryList(@Mocked final HttpServletRequest request, @Mocked final ProbeDataSet mockDataSet) throws ConflictException, BadRequestException {
 
         new Expectations() {{
             mockDataSet.getEntryList(); result = null;
         }};
 
-        endpoint.insertSensorDataSet(mockDataSet);
+        endpoint.insertSensorDataSet(request, mockDataSet);
     }
 
     @Test(expected = BadRequestException.class)
-    public void testInsertEmptyEntryList(@Mocked final ProbeDataSet mockDataSet) throws ConflictException, BadRequestException {
+    public void testInsertEmptyEntryList(@Mocked final HttpServletRequest request, @Mocked final ProbeDataSet mockDataSet) throws ConflictException, BadRequestException {
 
         new Expectations() {{
             mockDataSet.getEntryList(); result = new ArrayList<>();
         }};
 
-        endpoint.insertSensorDataSet(mockDataSet);
+        endpoint.insertSensorDataSet(request, mockDataSet);
     }
 
 

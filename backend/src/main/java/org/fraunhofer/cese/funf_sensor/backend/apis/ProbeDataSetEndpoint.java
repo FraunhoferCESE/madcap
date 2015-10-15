@@ -12,6 +12,7 @@ import org.fraunhofer.cese.funf_sensor.backend.models.ProbeSaveResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +44,7 @@ public class ProbeDataSetEndpoint {
      */
     @ApiMethod(name = "insertSensorDataSet")
     public ProbeSaveResult insertSensorDataSet(HttpServletRequest req, ProbeDataSet probeDataSet) throws ConflictException, BadRequestException {
+        long startTime = System.currentTimeMillis();
         logger.info("Upload request received from " + req.getRemoteAddr());
         if (probeDataSet == null) {
             throw new BadRequestException("sensorDataSet cannot be null");
@@ -59,17 +61,26 @@ public class ProbeDataSetEndpoint {
         Collection<String> saved = new ArrayList<>();
         Collection<String> alreadyExists = new ArrayList<>();
 
+        Collection<ProbeEntry> toSave = new ArrayList<>();
+
+        Collection<String> uploadedIds = new ArrayList<>();
         for (ProbeEntry entry : entryList) {
-            ProbeEntry result = ofy().load().type(ProbeEntry.class).id(entry.getId()).now();
-            if (result == null) {
-                saved.add(entry.getId());
-                ofy().save().entity(entry);
-            } else {
-                alreadyExists.add(result.getId());
-            }
+            uploadedIds.add(entry.getId());
         }
 
-        logger.info("Num Saved: " + saved.size() + ", Num already existing: " + alreadyExists.size());
+        Map<String, ProbeEntry> ids = ofy().load().type(ProbeEntry.class).ids(uploadedIds);
+        for (ProbeEntry entry : entryList) {
+            if (ids.get(entry.getId()) == null) {
+                saved.add(entry.getId());
+                toSave.add(entry);
+            } else {
+                alreadyExists.add(entry.getId());
+            }
+        }
+        ofy().save().entities(toSave).now();
+        ofy().clear();
+
+        logger.info("Num Saved: " + saved.size() + ", Num already existing: " + alreadyExists.size() + ", Time taken: " + ((System.currentTimeMillis() - startTime) / 1000) + "s");
         return ProbeSaveResult.create(saved, alreadyExists);
     }
 

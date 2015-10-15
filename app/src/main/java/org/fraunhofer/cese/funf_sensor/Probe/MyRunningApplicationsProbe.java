@@ -48,7 +48,6 @@ public class MyRunningApplicationsProbe extends Probe.Base implements Probe.Cont
 
                 while (!isInterrupted && !(runningApplicationsDeliverer.isInterrupted())) {
                     List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = am.getRunningAppProcesses();
-                    Log.i(TAG, "MyRunningApplicationsProbe started.");
                     JsonObject allApps = new JsonObject();
                     int i = 1;
                     for (ActivityManager.RunningAppProcessInfo info : runningAppProcessInfoList) {

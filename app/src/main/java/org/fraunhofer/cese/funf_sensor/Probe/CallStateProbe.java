@@ -49,7 +49,6 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
 
     public void sendData(Intent intent) {
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
-        Log.i("CallStateProbe: ", "CallStateProbe sent");
     }
 
     private class CallStateReceiver extends BroadcastReceiver {

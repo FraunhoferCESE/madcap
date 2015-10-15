@@ -43,7 +43,6 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
 
     private void sendData(Intent intent) {
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
-        Log.i("PowerProbe.class: ", "PowerProbe sent");
     }
 
     @Override

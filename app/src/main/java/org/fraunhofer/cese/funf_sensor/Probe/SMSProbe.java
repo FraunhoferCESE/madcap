@@ -6,16 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
-import android.util.Log;
-
-import com.google.common.base.Strings;
 
 import edu.mit.media.funf.probe.Probe;
 

@@ -143,7 +143,6 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
 
     public void sendData(Intent intent) {
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
-        Log.i(TAG, "AudioProbe sent.");
     }
 
 

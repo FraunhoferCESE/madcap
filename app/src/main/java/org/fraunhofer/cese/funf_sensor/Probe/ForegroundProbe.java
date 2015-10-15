@@ -55,11 +55,8 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
                 while (run && !(foregroundProbeDeliverer.isInterrupted())) {
                     ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
                     String foregroundTaskPackageName = foregroundTaskInfo.topActivity.getPackageName();
-                    Log.i("ForegroundProbe.class", "ForegroundProbe started.");
-                    Log.i("ForegroundProbe", foregroundTaskPackageName);
                     //Log.wtf("ForegroundProbe","Package name" + foregroundTaskPackageName);
                     sendData(gson.toJsonTree(foregroundTaskInfo).getAsJsonObject());
-                    Log.i("ForegroundProbe.class", "ForegroundProbe sent.");
                     try {
                         Thread.sleep(15000l);
                     } catch (InterruptedException e) {
