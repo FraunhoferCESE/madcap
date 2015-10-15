@@ -41,7 +41,6 @@ public class Cache {
 
     private List<UploadStatusListener> uploadStatusListeners = new ArrayList<>();
 
-    private boolean isClosing = false;
     /**
      * Background task holder for the remote upload task. Stored to query for uploads in progress.
      */
@@ -145,14 +144,14 @@ public class Cache {
     public void flush(UploadStrategy uploadStrategy) {
         last_db_write_attempt = System.currentTimeMillis();
         //noinspection unchecked
-        dbTaskFactory.createWriteTask(this, uploadStrategy).execute(ImmutableMap.copyOf(memcache));
+        dbTaskFactory.createWriteTask(context, this, uploadStrategy).execute(ImmutableMap.copyOf(memcache));
     }
 
     /**
      * This method is called when the DatabaseWriteAsyncTask successfully saves to the SQLLite database.
      * This method removes saved entries from the memcache and triggers an upload if conditions are correct.
      *
-     * @param result      object containing information on successfully saved entries (if any) and errors that occured
+     * @param result         object containing information on successfully saved entries (if any) and errors that occured
      * @param uploadStrategy the upload strategy to use
      */
     void doPostDatabaseWrite(DatabaseWriteResult result, UploadStrategy uploadStrategy) {
@@ -254,13 +253,7 @@ public class Cache {
      */
     public static final int UPLOAD_ALREADY_IN_PROGRESS = 1 << 5;
 
-    /**
-     * No upload will be attempted because the Cache is in the process of being shut down.
-     */
-    public static final int CACHE_IS_CLOSING = 1 << 6;
-
-
-    /**
+      /**
      * This method checks if the conditions are met to trigger a remote upload, and then starts an asynchronous task to perform
      * the upload if so
      *
@@ -268,9 +261,6 @@ public class Cache {
      */
     public int checkUploadConditions(UploadStrategy strategy) {
         // 1. Check preconditions
-        if (isClosing)
-            return CACHE_IS_CLOSING;
-
         if (appEngineApi == null) {
             Log.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
             return INTERNAL_ERROR;
@@ -296,11 +286,10 @@ public class Cache {
         long uploadInterval;
         boolean wifiOnly = config.isUploadWifiOnly();
 
-        if(strategy == UploadStrategy.IMMEDIATE) {
+        if (strategy == UploadStrategy.IMMEDIATE) {
             maxDbEntries = 1;
             uploadInterval = 5000;
-        }
-        else {
+        } else {
             maxDbEntries = config.getMaxDbEntries();
             uploadInterval = config.getUploadInterval();
         }
@@ -308,10 +297,10 @@ public class Cache {
         int status = UPLOAD_READY;
         try {
             long numEntries = getHelper().getDao().countOf();
-            if(strategy == UploadStrategy.IMMEDIATE)
+            if (strategy == UploadStrategy.IMMEDIATE)
                 numEntries += memcache.size();
 
-            if(numEntries < maxDbEntries) {
+            if (numEntries < maxDbEntries) {
                 status |= DATABASE_LIMIT_NOT_MET;
             }
 
@@ -335,7 +324,7 @@ public class Cache {
      */
     private void upload() {
         last_upload_attempt = System.currentTimeMillis();
-        uploadTask = uploadTaskFactory.createRemoteUploadTask(this, appEngineApi).execute();
+        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi).execute();
     }
 
     /**
@@ -347,7 +336,7 @@ public class Cache {
      */
     void doPostUpload(RemoteUploadResult uploadResult) {
         uploadTask = null;
-        if (uploadStatusListeners != null) {
+        if (uploadStatusListeners != null && !uploadStatusListeners.isEmpty()) {
             for (UploadStatusListener listener : uploadStatusListeners) {
                 listener.uploadFinished(uploadResult);
             }
@@ -363,7 +352,7 @@ public class Cache {
 
         if (uploadResult.getException() != null) {
             Log.w(TAG, "{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
-            dbTaskFactory.createCleanupTask(this, config.getDbForcedCleanupLimit()).execute();
+            dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).execute();
             return;
         }
 
@@ -373,7 +362,7 @@ public class Cache {
         }
 
         //noinspection unchecked
-        dbTaskFactory.createRemoveTask(this)
+        dbTaskFactory.createRemoveTask(context, this)
                 .execute(uploadResult.getSaveResult().getSaved(), uploadResult.getSaveResult().getAlreadyExists());
     }
 
@@ -384,7 +373,6 @@ public class Cache {
      * Should be called when the app is destroyed, or other events when the cache is no longer needed.
      */
     public void close() {
-        this.isClosing = true;
         flush(UploadStrategy.NORMAL);
         if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
@@ -395,7 +383,6 @@ public class Cache {
             for (UploadStatusListener listener : uploadStatusListeners) {
                 listener.cacheClosing();
             }
-            uploadStatusListeners.clear();
         }
     }
 
@@ -406,7 +393,7 @@ public class Cache {
      *
      * @return the helper to access the database
      */
-    DatabaseOpenHelper getHelper() {
+    private DatabaseOpenHelper getHelper() {
         if (databaseHelper == null) {
             databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
         }

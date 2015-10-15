@@ -104,13 +104,22 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     /**
      * Requests an on-demand upload of cached data.
      *
-     * @return a status code reflecting whether or not the upload request could be completed. {@link Cache#INTERNAL_ERROR} {@link Cache#UPLOAD_READY} {@link Cache#CACHE_IS_CLOSING} {@link Cache#DATABASE_LIMIT_NOT_MET} {@link Cache#NO_INTERNET_CONNECTION} {@link Cache#UPLOAD_ALREADY_IN_PROGRESS} {@link Cache#UPLOAD_INTERVAL_NOT_MET}
+     * @return a status code reflecting whether or not the upload request could be completed. {@link Cache#INTERNAL_ERROR} {@link Cache#UPLOAD_READY} {@link Cache#DATABASE_LIMIT_NOT_MET} {@link Cache#NO_INTERNET_CONNECTION} {@link Cache#UPLOAD_ALREADY_IN_PROGRESS} {@link Cache#UPLOAD_INTERVAL_NOT_MET}
      */
     public int requestUpload() {
         int status = cache.checkUploadConditions(Cache.UploadStrategy.IMMEDIATE);
         if (status == Cache.UPLOAD_READY)
             cache.flush(Cache.UploadStrategy.IMMEDIATE);
         return status;
+    }
+
+    /**
+     * Sets flag indicating if the pipeline is enabled or not.
+     *
+     * @param isEnabled the boolean value to set
+     */
+    public void setEnabled(boolean isEnabled) {
+        this.enabled = isEnabled;
     }
 
     /**

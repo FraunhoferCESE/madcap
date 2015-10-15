@@ -1,10 +1,12 @@
 package org.fraunhofer.cese.funf_sensor.cache;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.ProbeDataSetApi;
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeDataSet;
@@ -34,18 +36,22 @@ public class RemoteUploadAsyncTaskFactory {
      * @return a new instance of an asynchronous remote upload task
      * @see RemoteUploadResult
      */
-    AsyncTask<Void, Void, RemoteUploadResult> createRemoteUploadTask(final Cache cache, final ProbeDataSetApi appEngineApi) {
+    AsyncTask<Void, Void, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeDataSetApi appEngineApi) {
         return new AsyncTask<Void, Void, RemoteUploadResult>() {
             private final String TAG = "Fraunhofer.UploadTask";
 
             @Override
             protected RemoteUploadResult doInBackground(Void... params) {
                 Log.d(TAG, "Doing in background");
-                if (cache == null || cache.getHelper() == null || cache.getHelper().getDao() == null)
+                if (context == null || cache == null)
+                    return RemoteUploadResult.noop();
+
+                DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
+                if(databaseHelper == null || databaseHelper.getDao() == null)
                     return RemoteUploadResult.noop();
 
                 RemoteUploadResult result = null;
-                List<CacheEntry> entries = cache.getHelper().getDao().queryForAll();
+                List<CacheEntry> entries = databaseHelper.getDao().queryForAll();
                 Log.d(TAG,"entries size: "+entries.size());
 
                 if (!entries.isEmpty()) {
@@ -78,11 +84,13 @@ public class RemoteUploadAsyncTaskFactory {
 
             @Override
             protected void onPostExecute(RemoteUploadResult result) {
+                OpenHelperManager.releaseHelper();
                 cache.doPostUpload(result);
             }
 
             @Override
             protected void onCancelled(RemoteUploadResult result) {
+                OpenHelperManager.releaseHelper();
                 cache.doPostUpload(result);
             }
         };

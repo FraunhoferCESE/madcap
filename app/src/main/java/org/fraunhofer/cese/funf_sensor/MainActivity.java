@@ -93,8 +93,10 @@ public class MainActivity extends RoboActivity {
             // Initialize the pipeline
             funfManager.registerPipeline(PIPELINE_NAME, pipeline);
             pipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
+            pipeline.addUploadListener(uploadStatusListener);
             Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
             funfManager.enablePipeline(PIPELINE_NAME);
+            pipeline.setEnabled(true);
             registerListeners();
 
             collectDataSwitch.setOnCheckedChangeListener(
@@ -104,11 +106,15 @@ public class MainActivity extends RoboActivity {
                             if (isChecked) {
                                 Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
                                 funfManager.enablePipeline(PIPELINE_NAME);
+                                pipeline.setEnabled(true);
                                 registerListeners();
+                                instantSendButton.setEnabled(true);
                             } else {
                                 Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
-                                funfManager.disablePipeline(PIPELINE_NAME);
+                                instantSendButton.setEnabled(false);
                                 unregisterListeners();
+                                pipeline.setEnabled(false);
+                                funfManager.disablePipeline(PIPELINE_NAME);
                             }
                         }
                     }
@@ -121,14 +127,18 @@ public class MainActivity extends RoboActivity {
                         @Override
                         public void onClick(View view) {
                             String text = "Upload requested on " + df.format(new Date()) + "\n";
+                            if (!pipeline.isEnabled()) {
+                                text += "Error: Data system is disabled.";
+                                uploadResultView.setText(text);
+                                return;
+                            }
+
                             int status = pipeline.requestUpload();
 
                             if (status == Cache.UPLOAD_READY)
                                 text += "Upload started...";
                             else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS)
                                 text += "Upload already in progress...";
-                            else if (status == Cache.CACHE_IS_CLOSING)
-                                text += "Error: Data system is closing down.";
                             else {
                                 String errorText = "";
                                 if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
@@ -142,8 +152,7 @@ public class MainActivity extends RoboActivity {
 
                                 if (!errorText.isEmpty()) {
                                     text += "Error:" + errorText;
-                                }
-                                else {
+                                } else {
                                     text += "No status to report. Please wait.";
                                 }
                             }
@@ -152,14 +161,17 @@ public class MainActivity extends RoboActivity {
                     }
             );
 
+
             cacheCountUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
+            pipeline.removeUploadListener(uploadStatusListener);
             cacheCountUpdater.cancel(true);
             if (funfManager != null && pipeline.isEnabled()) {
-                Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
+                Log.d(TAG, "Service disconnected. Disabling pipeline: " + PIPELINE_NAME);
+                pipeline.setEnabled(false);
                 funfManager.disablePipeline(PIPELINE_NAME);
                 unregisterListeners();
             }
@@ -168,8 +180,6 @@ public class MainActivity extends RoboActivity {
     };
 
     private void registerListeners() {
-        pipeline.addUploadListener(uploadStatusListener);
-
         accelerometerSensorProbe.registerPassiveListener(pipeline);
         foregroundProbe.registerPassiveListener(pipeline);
         locationProbe.registerPassiveListener(pipeline);
@@ -184,8 +194,6 @@ public class MainActivity extends RoboActivity {
     }
 
     private void unregisterListeners() {
-        pipeline.removeUploadListener(uploadStatusListener);
-
         accelerometerSensorProbe.unregisterListener(pipeline);
         foregroundProbe.unregisterListener(pipeline);
         locationProbe.unregisterListener(pipeline);
@@ -277,7 +285,6 @@ public class MainActivity extends RoboActivity {
     }
 
     private void updateDataCount(long count) {
-
         if (dataCountView != null) {
             String text = "Data count: ";
             text += (count < 0) ? "Computing..." : count;
@@ -287,7 +294,6 @@ public class MainActivity extends RoboActivity {
 
     protected void onDestroy() {
         super.onDestroy();
-//        unregisterListeners();
 
         boolean isBound = getApplicationContext().bindService(new Intent(getApplicationContext(), FunfManager.class), funfManagerConn, Context.BIND_AUTO_CREATE);
         if (isBound)
@@ -300,6 +306,4 @@ public class MainActivity extends RoboActivity {
         super.onTrimMemory(level);
         pipeline.onTrimMemory();
     }
-
-
 }

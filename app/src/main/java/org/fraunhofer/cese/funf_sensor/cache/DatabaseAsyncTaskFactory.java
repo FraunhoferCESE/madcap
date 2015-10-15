@@ -1,10 +1,12 @@
 package org.fraunhofer.cese.funf_sensor.cache;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 
 import java.util.ArrayList;
@@ -35,7 +37,7 @@ public class DatabaseAsyncTaskFactory {
      * @return a new instance of an asynchronous database writing task
      * @see org.fraunhofer.cese.funf_sensor.cache.DatabaseWriteResult
      */
-    AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> createWriteTask(final Cache cache, final Cache.UploadStrategy uploadStrategy) {
+    AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> createWriteTask(final Context context, final Cache cache, final Cache.UploadStrategy uploadStrategy) {
 
         return new AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult>() {
             private final String TAG = "Fraunhofer.DBWrite";
@@ -44,14 +46,15 @@ public class DatabaseAsyncTaskFactory {
             @SafeVarargs
             public final DatabaseWriteResult doInBackground(Map<String, CacheEntry>... memcaches) {
                 DatabaseWriteResult result = DatabaseWriteResult.create();
-
                 // Check preconditions for full or partial write of entry objects to database
-                if (cache == null) {
-                    result.setError(new RuntimeException("{doInBackground} cache object is null!"));
+                if (context == null) {
+                    result.setError(new RuntimeException("{doInBackground} context object is null!"));
                     return result;
                 }
 
-                if (cache.getHelper() == null) {
+                DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
+
+                if (databaseHelper == null) {
                     result.setError(new RuntimeException("{doInBackground} Attempting to write cache to database, but DatabaseOpenHelper is null. Returning empty result."));
                     return result;
                 }
@@ -59,7 +62,7 @@ public class DatabaseAsyncTaskFactory {
                 Collection<String> savedEntries = new ArrayList<>();
                 RuntimeExceptionDao<CacheEntry, String> dao;
                 try {
-                    dao = cache.getHelper().getDao();
+                    dao = databaseHelper.getDao();
                 } catch (Exception e) {
                     result.setError(e);
                     return result;
@@ -77,7 +80,7 @@ public class DatabaseAsyncTaskFactory {
                             if (memcache != null && !memcache.isEmpty()) {
                                 int skippedCount = 0;
                                 for (CacheEntry entry : memcache.values()) {
-                                    if (cache.getHelper().isOpen() && dao.queryForId(entry.getId()) == null && dao.create(entry) > 0) {
+                                    if (databaseHelper.isOpen() && dao.queryForId(entry.getId()) == null && dao.create(entry) > 0) {
                                         savedEntries.add(entry.getId());
                                     } else {
                                         skippedCount++;
@@ -90,7 +93,7 @@ public class DatabaseAsyncTaskFactory {
                 } catch (Exception e) {
                     result.setError(e);
                 } finally {
-                    if(cache.getHelper().isOpen()) {
+                    if(databaseHelper.isOpen()) {
                         result.setDatabaseSize(dao.countOf());
                     }
                     result.setSavedEntries(savedEntries);
@@ -100,7 +103,14 @@ public class DatabaseAsyncTaskFactory {
 
             @Override
             public void onPostExecute(DatabaseWriteResult result) {
+                OpenHelperManager.releaseHelper();
                 cache.doPostDatabaseWrite(result, uploadStrategy);
+            }
+
+            @Override
+            protected void onCancelled(DatabaseWriteResult databaseWriteResult) {
+                super.onCancelled(databaseWriteResult);
+                OpenHelperManager.releaseHelper();
             }
         };
     }
@@ -111,21 +121,25 @@ public class DatabaseAsyncTaskFactory {
      * @param cache the handling cache. Needed for callbacks.
      * @return a task object
      */
-    AsyncTask<List<String>, Void, Integer> createRemoveTask(final Cache cache) {
+    AsyncTask<List<String>, Void, Integer> createRemoveTask(final Context context, final Cache cache) {
         return new AsyncTask<List<String>, Void, Integer>() {
             private static final String TAG = "Fraunhofer.DBRemove";
 
             @Override
             @SafeVarargs
             protected final Integer doInBackground(List<String>... lists) {
-                if (lists == null || cache == null || cache.getHelper() == null || cache.getHelper().getDao() == null)
+                if (lists == null || context == null || cache == null)
                     return 0;
+
+                DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context,DatabaseOpenHelper.class);
+                if(databaseHelper == null || databaseHelper.getDao() == null)
+                return 0;
 
                 Log.d(TAG, "Removing entries from database.");
                 int result = 0;
                 for (List<String> ids : lists) {
-                    if (ids != null && !ids.isEmpty() && cache.getHelper().isOpen()) {
-                        result += cache.getHelper().getDao().deleteIds(ids);
+                    if (ids != null && !ids.isEmpty() && databaseHelper.isOpen()) {
+                        result += databaseHelper.getDao().deleteIds(ids);
                     }
                 }
                 return result;
@@ -133,7 +147,14 @@ public class DatabaseAsyncTaskFactory {
 
             @Override
             protected void onPostExecute(Integer numEntriesRemoved) {
+                OpenHelperManager.releaseHelper();
                 Log.d(TAG, "Database entries removed: " + numEntriesRemoved);
+            }
+
+            @Override
+            protected void onCancelled(Integer integer) {
+                super.onCancelled(integer);
+                OpenHelperManager.releaseHelper();
             }
         };
     }
@@ -147,18 +168,22 @@ public class DatabaseAsyncTaskFactory {
      * @return the new task instance
      */
 
-    public AsyncTask<Void, Void, Void> createCleanupTask(final Cache cache, final long dbEntryLimit) {
+    public AsyncTask<Void, Void, Void> createCleanupTask(final Context context, final Cache cache, final long dbEntryLimit) {
         return new AsyncTask<Void, Void, Void>() {
             private static final String TAG = "Fraunhofer.DBCleanup";
 
             @Override
             protected Void doInBackground(Void... voids) {
-                Log.i(TAG, "Running task to determine if database is still within size limits");
+                Log.d(TAG, "Running task to determine if database is still within size limits");
 
-                if (dbEntryLimit < 0 || cache == null || cache.getHelper() == null || cache.getHelper().getDao() == null)
+                if (dbEntryLimit < 0 || cache == null)
                     return null;
 
-                RuntimeExceptionDao<CacheEntry, String> dao = cache.getHelper().getDao();
+                DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
+                if(databaseHelper == null || databaseHelper.getDao() == null)
+                    return null;
+
+                RuntimeExceptionDao<CacheEntry, String> dao = databaseHelper.getDao();
                 long size = dao.countOf();
                 if (size < dbEntryLimit) {
                     Log.i(TAG, "No cleanup needed. Database limit: " + dbEntryLimit + " > Database size: " + size);
@@ -188,6 +213,18 @@ public class DatabaseAsyncTaskFactory {
                     }
                 }
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                OpenHelperManager.releaseHelper();
+            }
+
+            @Override
+            protected void onCancelled(Void aVoid) {
+                super.onCancelled(aVoid);
+                OpenHelperManager.releaseHelper();
             }
         };
     }

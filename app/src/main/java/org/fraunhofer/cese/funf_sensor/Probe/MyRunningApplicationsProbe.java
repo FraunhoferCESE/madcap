@@ -71,7 +71,6 @@ public class MyRunningApplicationsProbe extends Probe.Base implements Probe.Cont
                         Thread.sleep(15000l);
                     } catch (InterruptedException e) {
                         isInterrupted = true;
-                        e.printStackTrace();
                     }
                 }
             }
