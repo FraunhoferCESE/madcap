@@ -30,19 +30,36 @@ public class MyModule extends AbstractModule {
     @Provides
     CacheConfig provideCacheConfig() {
         CacheConfig config = new CacheConfig();
-        config.setMaxMemEntries(50);
-        config.setMaxDbEntries(250);
+        config.setMaxMemEntries(2);
+        config.setMaxDbEntries(5);
 
         config.setMemForcedCleanupLimit(5000);
         config.setDbForcedCleanupLimit(30000); // Required to make sure upload doesn't exceed Google API limits for a single request
 
-        config.setDbWriteInterval(2000); // 2 second minimum
-        config.setUploadInterval(75000); // 15 minute minimum
+        config.setDbWriteInterval(1000); // 2 second minimum
+        config.setUploadInterval(5000); // 15 minute minimum
 
         config.setUploadWifiOnly(true);
 
         return config;
     }
+
+//    @Provides
+//    CacheConfig provideCacheConfig() {
+//        CacheConfig config = new CacheConfig();
+//        config.setMaxMemEntries(100);
+//        config.setMaxDbEntries(250);
+//
+//        config.setMemForcedCleanupLimit(5000);
+//        config.setDbForcedCleanupLimit(30000); // Required to make sure upload doesn't exceed Google API limits for a single request
+//
+//        config.setDbWriteInterval(2000); // 2 second minimum
+//        config.setUploadInterval(75000); // 15 minute minimum
+//
+//        config.setUploadWifiOnly(true);
+//
+//        return config;
+//    }
 
     @Provides
     DatabaseAsyncTaskFactory provideDatabaseWriteAsyncTaskFactory() {

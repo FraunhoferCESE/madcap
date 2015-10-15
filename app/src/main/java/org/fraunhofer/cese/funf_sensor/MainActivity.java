@@ -232,7 +232,7 @@ public class MainActivity extends RoboActivity {
                 if (uploadResultView == null)
                     return;
 
-                String text = pre + "(" + df.format(new Date()) + ")\n";
+                String text = pre + df.format(new Date()) + "\n";
                 if (result == null) {
                     text += "Result: No upload due to an internal error.";
                 } else if (!result.isUploadAttempted()) {
