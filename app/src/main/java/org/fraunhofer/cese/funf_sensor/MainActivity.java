@@ -31,6 +31,7 @@ import edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe;
 import edu.mit.media.funf.probe.builtin.BatteryProbe;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
+import edu.mit.media.funf.probe.builtin.WifiProbe;
 import roboguice.activity.RoboActivity;
 
 public class MainActivity extends RoboActivity {
@@ -50,6 +51,7 @@ public class MainActivity extends RoboActivity {
     private MyRunningApplicationsProbe myRunningApplicationsProbe;
     private ScreenProbe screenProbe;
     private SimpleLocationProbe locationProbe;
+    private WifiProbe wifiProbe;
 
     private SMSProbe sMSProbe;
     private PowerProbe powerProbe;
@@ -73,6 +75,7 @@ public class MainActivity extends RoboActivity {
             accelerometerSensorProbe = gson.fromJson(getString(R.string.probe_accelerometer), AccelerometerSensorProbe.class); // TODO: not working
             foregroundProbe = gson.fromJson(getString(R.string.probe_foreground), ForegroundProbe.class); // TODO: not working
             locationProbe = gson.fromJson(getString(R.string.probe_location), SimpleLocationProbe.class);
+            wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
             myRunningApplicationsProbe = gson.fromJson(getString(R.string.probe_runningapplications), MyRunningApplicationsProbe.class); // TODO: not working
             screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
             sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
@@ -119,6 +122,7 @@ public class MainActivity extends RoboActivity {
         accelerometerSensorProbe.registerPassiveListener(pipeline);
         foregroundProbe.registerPassiveListener(pipeline);
         locationProbe.registerPassiveListener(pipeline);
+        wifiProbe.registerPassiveListener(pipeline);
         myRunningApplicationsProbe.registerPassiveListener(pipeline);
         screenProbe.registerPassiveListener(pipeline);
         sMSProbe.registerPassiveListener(pipeline);
@@ -132,6 +136,7 @@ public class MainActivity extends RoboActivity {
         accelerometerSensorProbe.unregisterListener(pipeline);
         foregroundProbe.unregisterListener(pipeline);
         locationProbe.unregisterListener(pipeline);
+        wifiProbe.unregisterListener(pipeline);
         myRunningApplicationsProbe.unregisterListener(pipeline);
         screenProbe.unregisterListener(pipeline);
         sMSProbe.unregisterListener(pipeline);
