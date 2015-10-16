@@ -3,6 +3,7 @@ package org.fraunhofer.cese.funf_sensor.cache;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.provider.Settings.Secure;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -18,6 +19,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.Nullable;
+
+import static java.security.AccessController.getContext;
 
 /**
  * Factory for creating asynchronous remote data storage tasks.
@@ -64,6 +67,7 @@ public class RemoteUploadAsyncTaskFactory {
                     ProbeDataSet dataSet = new ProbeDataSet();
                     dataSet.setTimestamp(Calendar.getInstance().getTimeInMillis());
                     dataSet.setEntryList(toUpload);
+                    dataSet.setUserId(Secure.ANDROID_ID);
 
                     try {
                         ProbeSaveResult saveResult = appEngineApi.insertSensorDataSet(dataSet).execute();

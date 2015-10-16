@@ -16,9 +16,18 @@ public class ProbeDataSet implements Serializable {
     private Long id;
     private Collection<ProbeEntry> entries;
     private Long timestamp;
+    private String userId;
 
 
     //getters and setters
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
     public Long getId() {
         return id;
     }
