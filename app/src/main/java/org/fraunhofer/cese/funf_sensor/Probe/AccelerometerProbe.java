@@ -61,7 +61,7 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
     }
 
     public void sendData(Intent intent) {
-        Log.i(TAG, "sent.");
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
+        Log.i(TAG, "sent.");
     }
 }
