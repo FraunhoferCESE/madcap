@@ -2,6 +2,7 @@ package org.fraunhofer.cese.funf_sensor.cache;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.common.base.Function;
@@ -13,6 +14,9 @@ import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.Prob
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeEntry;
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeSaveResult;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
@@ -76,6 +80,22 @@ public class RemoteUploadAsyncTaskFactory {
                     } catch (IOException e) {
                         result = RemoteUploadResult.create(e);
                         Log.w(TAG, "Upload failed", e);
+                        File logFile = new File(Environment.getExternalStorageDirectory(),"log.file");
+                        if(!logFile.exists()) {
+                            try {
+                                logFile.createNewFile();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                            try {
+                                BufferedWriter buf = new BufferedWriter(new FileWriter(logFile,true));
+                                buf.append(e.getMessage());
+                                buf.newLine();
+                                buf.close();
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
+                        }
                     }
                 }
 

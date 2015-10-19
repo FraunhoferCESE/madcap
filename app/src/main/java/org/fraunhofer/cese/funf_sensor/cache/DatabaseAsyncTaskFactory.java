@@ -93,7 +93,7 @@ public class DatabaseAsyncTaskFactory {
                 } catch (Exception e) {
                     result.setError(e);
                 } finally {
-                    if(databaseHelper.isOpen()) {
+                    if (databaseHelper.isOpen()) {
                         result.setDatabaseSize(dao.countOf());
                     }
                     result.setSavedEntries(savedEntries);
@@ -131,9 +131,9 @@ public class DatabaseAsyncTaskFactory {
                 if (lists == null || context == null || cache == null)
                     return 0;
 
-                DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context,DatabaseOpenHelper.class);
-                if(databaseHelper == null || databaseHelper.getDao() == null)
-                return 0;
+                DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
+                if (databaseHelper == null || databaseHelper.getDao() == null)
+                    return 0;
 
                 Log.d(TAG, "Removing entries from database.");
                 int result = 0;
@@ -152,8 +152,9 @@ public class DatabaseAsyncTaskFactory {
             }
 
             @Override
-            protected void onCancelled(Integer integer) {
-                super.onCancelled(integer);
+            protected void onCancelled(Integer numEntriesRemoved) {
+                Log.d(TAG, "Database entries removed: " + numEntriesRemoved);
+                super.onCancelled(numEntriesRemoved);
                 OpenHelperManager.releaseHelper();
             }
         };
@@ -180,7 +181,7 @@ public class DatabaseAsyncTaskFactory {
                     return null;
 
                 DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
-                if(databaseHelper == null || databaseHelper.getDao() == null)
+                if (databaseHelper == null || databaseHelper.getDao() == null)
                     return null;
 
                 RuntimeExceptionDao<CacheEntry, String> dao = databaseHelper.getDao();

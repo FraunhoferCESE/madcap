@@ -243,7 +243,10 @@ public class MainActivity extends RoboActivity {
                 } else if (result.getSaveResult() == null) {
                     text += "Result: An error occurred on the remote server.";
                 } else {
-                    text += "Result: " + result.getSaveResult().getSaved().size() + " entries saved.";
+                    text += "Result:\n";
+                    text += "\t" + (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
+                    if (result.getSaveResult().getAlreadyExists() != null)
+                        text += "\n\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
                 }
 
                 uploadResultView.setText(text);

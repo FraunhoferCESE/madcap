@@ -341,7 +341,6 @@ public class Cache {
                 listener.uploadFinished(uploadResult);
             }
         }
-
         if (uploadResult == null)
             return;
 
