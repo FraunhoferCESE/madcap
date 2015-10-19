@@ -20,15 +20,17 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
     private static final String TAG = "AccelerometerProbe: ";
     private SensorManager sensorManager;
     private Sensor linearAcclerometerSensor;
-    private static long lastUpdate;
+    private static long lastProbeStart;
+    private static final long measureInterval = 30000;
+    private static final long measureDuration = 1000;
 
     @Override
     protected void onEnable() {
         super.onStart();
         sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
         linearAcclerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this, linearAcclerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        lastUpdate = System.currentTimeMillis();
+        sensorManager.registerListener(this, linearAcclerometerSensor, SensorManager.SENSOR_DELAY_UI);
+        lastProbeStart = System.currentTimeMillis();
         Log.i(TAG, " enabled");
     }
 
@@ -45,13 +47,16 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
 
             long now = System.currentTimeMillis();
 
-            if((now-lastUpdate)>200) {
+            if ((now - lastProbeStart) > (measureInterval-measureDuration)) {
                 float[] sensorData = event.values;
                 long timestamp = event.timestamp;
                 Intent intent = new Intent();
                 intent.putExtra(TAG, timestamp);
                 intent.putExtra(TAG, sensorData);
                 sendData(intent);
+                if ((now - lastProbeStart) > measureInterval) {
+                    lastProbeStart = System.currentTimeMillis();
+                }
             }
         }
 
