@@ -1,6 +1,5 @@
 package org.fraunhofer.cese.funf_sensor.Probe;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -8,11 +7,6 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
-
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import edu.mit.media.funf.probe.Probe;
 
@@ -23,15 +17,15 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
 
     private static final String TAG = "AccelerometerProbe: ";
     private SensorManager sensorManager;
-    private Sensor linearAcclerometerSensor;
+    private Sensor acclerometerSensor;
     private static long lastUpdate;
 
     @Override
     protected void onEnable() {
         super.onStart();
         sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
-        linearAcclerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-        sensorManager.registerListener(this, linearAcclerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        acclerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        sensorManager.registerListener(this, acclerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
         lastUpdate = System.currentTimeMillis();
         Log.i(TAG, " enabled");
     }
@@ -39,13 +33,13 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
     @Override
     protected void onDisable() {
         super.onDisable();
-        sensorManager.unregisterListener(this, linearAcclerometerSensor);
+        sensorManager.unregisterListener(this, acclerometerSensor);
         Log.i(TAG, "disabled.");
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
 
             long now = System.currentTimeMillis();
 
