@@ -25,6 +25,7 @@ import org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.MyRunningApplicationsProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.PowerProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.SMSProbe;
+import org.fraunhofer.cese.funf_sensor.Probe.AccelerometerProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.StateProbe;
 import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
 import org.fraunhofer.cese.funf_sensor.cache.Cache;
@@ -51,7 +52,8 @@ public class MainActivity extends RoboActivity {
     private GoogleAppEnginePipeline pipeline;
 
     //probes
-    private AccelerometerSensorProbe accelerometerSensorProbe;
+//    private AccelerometerSensorProbe accelerometerSensorProbe;
+    private AccelerometerProbe accelerometerProbe;
     private ForegroundProbe foregroundProbe;
     private MyRunningApplicationsProbe myRunningApplicationsProbe;
     private ScreenProbe screenProbe;
@@ -80,7 +82,8 @@ public class MainActivity extends RoboActivity {
             funfManager = ((FunfManager.LocalBinder) service).getManager();
             Gson gson = funfManager.getGson();
 
-            accelerometerSensorProbe = gson.fromJson(getString(R.string.probe_accelerometer), AccelerometerSensorProbe.class); // TODO: not working
+//            accelerometerSensorProbe = gson.fromJson(getString(R.string.probe_accelerometer), AccelerometerSensorProbe.class); // TODO: not working
+            accelerometerProbe = gson.fromJson(new JsonObject(), AccelerometerProbe.class);
             foregroundProbe = gson.fromJson(getString(R.string.probe_foreground), ForegroundProbe.class); // TODO: not working
             locationProbe = gson.fromJson(getString(R.string.probe_location), SimpleLocationProbe.class);
             wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
@@ -183,7 +186,8 @@ public class MainActivity extends RoboActivity {
     };
 
     private void registerListeners() {
-        accelerometerSensorProbe.registerPassiveListener(pipeline);
+//        accelerometerSensorProbe.registerPassiveListener(pipeline);
+        accelerometerProbe.registerPassiveListener(pipeline);
         foregroundProbe.registerPassiveListener(pipeline);
         locationProbe.registerPassiveListener(pipeline);
         wifiProbe.registerPassiveListener(pipeline);
@@ -198,7 +202,8 @@ public class MainActivity extends RoboActivity {
     }
 
     private void unregisterListeners() {
-        accelerometerSensorProbe.unregisterListener(pipeline);
+//        accelerometerSensorProbe.unregisterListener(pipeline);
+        accelerometerProbe.unregisterListener(pipeline);
         foregroundProbe.unregisterListener(pipeline);
         locationProbe.unregisterListener(pipeline);
         wifiProbe.unregisterListener(pipeline);
