@@ -82,12 +82,11 @@ public class MainActivity extends RoboActivity {
             funfManager = ((FunfManager.LocalBinder) service).getManager();
             Gson gson = funfManager.getGson();
 
-//            accelerometerSensorProbe = gson.fromJson(getString(R.string.probe_accelerometer), AccelerometerSensorProbe.class); // TODO: not working
             accelerometerProbe = gson.fromJson(new JsonObject(), AccelerometerProbe.class);
-            foregroundProbe = gson.fromJson(getString(R.string.probe_foreground), ForegroundProbe.class); // TODO: not working
+            foregroundProbe = gson.fromJson(new JsonObject(), ForegroundProbe.class);
             locationProbe = gson.fromJson(getString(R.string.probe_location), SimpleLocationProbe.class);
             wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
-            myRunningApplicationsProbe = gson.fromJson(getString(R.string.probe_runningapplications), MyRunningApplicationsProbe.class); // TODO: not working
+            myRunningApplicationsProbe = gson.fromJson(new JsonObject(), MyRunningApplicationsProbe.class);
             screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
             sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
             powerProbe = gson.fromJson(new JsonObject(), PowerProbe.class);
