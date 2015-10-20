@@ -124,6 +124,7 @@ public class DatabaseAsyncTaskFactory {
     AsyncTask<List<String>, Void, Integer> createRemoveTask(final Context context, final Cache cache) {
         return new AsyncTask<List<String>, Void, Integer>() {
             private static final String TAG = "Fraunhofer.DBRemove";
+            private static final int BUFFER_SIZE = 250;
 
             @Override
             @SafeVarargs
@@ -139,7 +140,11 @@ public class DatabaseAsyncTaskFactory {
                 int result = 0;
                 for (List<String> ids : lists) {
                     if (ids != null && !ids.isEmpty() && databaseHelper.isOpen()) {
-                        result += databaseHelper.getDao().deleteIds(ids);
+                        int cursor = 0;
+                        while (cursor < ids.size()) {
+                            result += databaseHelper.getDao().deleteIds(ids.subList(cursor, (cursor + BUFFER_SIZE > ids.size() ? ids.size() : cursor + BUFFER_SIZE)));
+                            cursor += BUFFER_SIZE;
+                        }
                     }
                 }
                 return result;
@@ -207,7 +212,12 @@ public class DatabaseAsyncTaskFactory {
                             }
                         });
 
-                        dao.deleteIds(toDeleteIds);
+                        int cursor = 0;
+                        while (cursor < toDeleteIds.size()) {
+                            dao.deleteIds(toDeleteIds.subList(cursor, (cursor + 250 > toDeleteIds.size() ? toDeleteIds.size() : cursor + 250)));
+                            cursor += 250;
+                        }
+
                         Log.i(TAG, "Cleanup completed. New database size: " + dao.countOf());
                     } catch (Exception e) {
                         Log.e(TAG, "Unable to delete entries from database", e);
