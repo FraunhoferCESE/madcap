@@ -41,7 +41,7 @@ public class RemoteUploadAsyncTaskFactory {
     AsyncTask<Void, Void, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeDataSetApi appEngineApi) {
         return new AsyncTask<Void, Void, RemoteUploadResult>() {
             private final String TAG = "Fraunhofer.UploadTask";
-            private static final int BUFFER_SIZE = 100;
+            private static final int BUFFER_SIZE = 250;
 
             @Override
             protected RemoteUploadResult doInBackground(Void... params) {
@@ -86,7 +86,7 @@ public class RemoteUploadAsyncTaskFactory {
                             if (remoteResult.getAlreadyExists() != null) {
                                 saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
                             }
-                            Log.i(TAG, "Uploaded chunk " + ((cursor / BUFFER_SIZE) + 1) + " (" + cursor + "-" + (cursor + BUFFER_SIZE - 1) + ") - " +
+                            Log.i(TAG, "Uploaded chunk " + ((cursor / BUFFER_SIZE) + 1) + " (" + cursor + "-" + (cursor + BUFFER_SIZE > entries.size() ? entries.size() : cursor + BUFFER_SIZE) + ") - " +
                                     "Saved: " + (remoteResult.getSaved() == null ? 0 : remoteResult.getSaved().size()) +
                                     ", Already existed: " + (remoteResult.getAlreadyExists() == null ? 0 : remoteResult.getAlreadyExists().size()));
                             cursor += BUFFER_SIZE;

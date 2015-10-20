@@ -1,26 +1,7 @@
 <resources>
 
-    <!-- cache config -->
-
-
-
     <!-- other app config -->
     <string name="app_name">FUNF-Sensor</string>
-    <string name="probe_foreground">
-        {"@type": "org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe.ForegroundProbe",
-            "@schedule": {"interval": 15}
-        }
-    </string>
-    <string name="probe_accelerometer">
-        {"@type": "edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe",
-            "@schedule": {"interval": 5, "duration": 1}
-        }
-    </string>
-    <string name="probe_runningapplications">
-        {"@type": "org.fraunhofer.cese.funf_sensor.Probe.RunningApplicationsProbe.MyRunningApplicationsProbe",
-            "@schedule": {"interval": 15}
-        }
-    </string>
     <string name="probe_location">
         {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
             "@schedule": {"interval": 60},
