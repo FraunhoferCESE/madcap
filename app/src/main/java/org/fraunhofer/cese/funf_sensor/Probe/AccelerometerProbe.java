@@ -17,7 +17,7 @@ import edu.mit.media.funf.probe.Probe;
  */
 public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousProbe, SensorEventListener {
 
-    private static final String TAG = "AccelerometerProbe: ";
+    private static final String TAG = "Fraunhofer.AccelPr";
     private SensorManager sensorManager;
     private Sensor linearAcclerometerSensor;
     private static long lastProbeStart;
@@ -68,7 +68,6 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
     }
 
     public void sendData(Intent intent) {
-        Log.i(TAG, "sent.");
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
     }
 }
