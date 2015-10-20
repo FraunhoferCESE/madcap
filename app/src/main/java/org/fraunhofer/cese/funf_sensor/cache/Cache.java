@@ -345,18 +345,17 @@ public class Cache {
             return;
 
         if (!uploadResult.isUploadAttempted()) {
-            Log.i(TAG, "{doPostUpload} Upload aborted: no entries in database cache.");
+            Log.i(TAG, "{doPostUpload} Upload aborted: no entries were sent to be uploaded.");
             return;
         }
 
         if (uploadResult.getException() != null) {
             Log.w(TAG, "{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
             dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).execute();
-            return;
         }
 
-        if (uploadResult.getSaveResult() == null) {
-            Log.w(TAG, "{doPostUpload} saveResult is null.");
+        if (uploadResult.getSaveResult() == null || (uploadResult.getSaveResult().getAlreadyExists().isEmpty() && uploadResult.getSaveResult().getSaved().isEmpty())) {
+            Log.i(TAG, "{doPostUpload} No save results to remove from database.");
             return;
         }
 
