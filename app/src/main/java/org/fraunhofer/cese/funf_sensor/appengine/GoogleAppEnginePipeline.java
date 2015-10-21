@@ -1,6 +1,12 @@
 package org.fraunhofer.cese.funf_sensor.appengine;
 
+import android.accounts.AccountManager;
+import android.os.UserManager;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.content.Context;
+import android.content.ContentResolver;
 
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
@@ -18,6 +24,8 @@ import edu.mit.media.funf.pipeline.Pipeline;
 import edu.mit.media.funf.probe.Probe;
 import edu.mit.media.funf.probe.builtin.ProbeKeys;
 
+
+
 public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
     private static final String TAG = "Fraunhofer." + GoogleAppEnginePipeline.class.getSimpleName();
@@ -25,10 +33,17 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     private boolean enabled = false;
 
     private final Cache cache;
+    private final Context context;
+    private final String deviceID;
+
+
 
     @Inject
-    public GoogleAppEnginePipeline(Cache cache) {
+    public GoogleAppEnginePipeline(Cache cache, Context context) {
         this.cache = cache;
+        this.context = context;
+        TelephonyManager telephony = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        this.deviceID = telephony.getDeviceId();
     }
 
     /**
@@ -55,11 +70,14 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
             return;
         }
 
+        TelephonyManager telephony = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
         CacheEntry probeEntry = new CacheEntry();
         probeEntry.setId(UUID.randomUUID().toString());
         probeEntry.setTimestamp(timestamp);
         probeEntry.setProbeType(key);
         probeEntry.setSensorData(data.toString());
+        probeEntry.setUserID(deviceID);
 
         cache.add(probeEntry);
     }

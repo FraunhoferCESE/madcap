@@ -15,9 +15,17 @@ public class ProbeEntry {
     private Long timestamp;
     private String probeType;
     private String sensorData;
-    private String emailAddress;
+    private String userID;
 
     //getters and setters
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 
     public String getId() {
         return id;
