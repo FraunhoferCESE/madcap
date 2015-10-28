@@ -91,12 +91,12 @@ public class MyModule extends AbstractModule {
 //        ProbeDataSetApi.Builder builder = new ProbeDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
 //                new AndroidJsonFactory(), null)
 //                .setRootUrl("https://funfcese.appspot.com/_ah/api/");
-////                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-////                    @Override
-////                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-////                        abstractGoogleClientRequest.setDisableGZipContent(true);
-////                    }
-////                });
+//                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
+//                    @Override
+//                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
+//                        abstractGoogleClientRequest.setDisableGZipContent(true);
+//                    }
+//                });
 //        return builder.build();
 //    }
 

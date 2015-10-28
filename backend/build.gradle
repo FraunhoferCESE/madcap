@@ -23,10 +23,13 @@ dependencies {
     compile 'com.google.appengine:appengine-endpoints:1.9.27'
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.27'
     compile 'javax.servlet:servlet-api:2.5'
+    compile 'com.opencsv:opencsv:3.5'
+    compile 'com.googlecode.jcsv:jcsv:1.4.0'
     compile 'com.googlecode.objectify:objectify:5.0.3'
     testCompile 'com.google.appengine:appengine-tools-sdk:1.9.27'
     testCompile 'org.jmockit:jmockit:1.19'
     testCompile 'junit:junit:4.12'
+    compile files('C:/Users/fdietrich/AndroidStudioProjects/funf-sensor/libs/appengine-gcs-client-0.5.jar')
 }
 
 appengine {

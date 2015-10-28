@@ -2,19 +2,21 @@ package org.fraunhofer.cese.funf_sensor.backend.models;
 
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Index;
 
 
 /**
- * Created by llayman on 9/24/2015.
+ *
  */
 @Entity
-public class ProbeEntry {
+public class ProbeEntry implements Comparable<ProbeEntry>{
 
     @Id
     private String id;
     private Long timestamp;
     private String probeType;
     private String sensorData;
+    @Index
     private String userID;
 
     //getters and setters
@@ -92,5 +94,15 @@ public class ProbeEntry {
         result = 31 * result + (probeType != null ? probeType.hashCode() : 0);
         result = 31 * result + (sensorData != null ? sensorData.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(ProbeEntry other) {
+        if(this.getTimestamp()>other.getTimestamp())
+                return 1;
+        else if ((this.getTimestamp()) == other.getTimestamp())
+                return 0;
+        else
+                return -1;
     }
 }

@@ -1,0 +1,26 @@
+apply plugin: 'java'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile project(path: ':backend', configuration: 'android-endpoints')
+    compile 'com.google.inject:guice:3.0'
+    compile files('libs/gson-2.1.funf.jar')
+    compile 'com.google.apis:google-api-services-storage:v1-rev49-1.20.0'
+
+
+
+    compile('com.google.api-client:google-api-client-android:1.17.0-rc') {
+        exclude group: 'xpp3'
+        exclude group: 'com.google.android.google-play-services'
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.google.android'
+    }
+
+    compile('com.google.http-client:google-http-client:1.17.0-rc') {
+        exclude group: 'xpp3'
+        exclude group: 'com.google.android.google-play-services'
+        exclude group: 'org.apache.httpcomponents'
+        exclude group: 'com.google.android'
+    }
+
+}
