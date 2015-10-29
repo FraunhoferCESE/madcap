@@ -29,8 +29,12 @@ dependencies {
     testCompile 'com.google.appengine:appengine-tools-sdk:1.9.27'
     testCompile 'org.jmockit:jmockit:1.19'
     testCompile 'junit:junit:4.12'
-    compile files('C:/Users/fdietrich/AndroidStudioProjects/funf-sensor/libs/appengine-gcs-client-0.5.jar')
+    compile 'com.google.appengine.tools:appengine-gcs-client:0.5'
+    
+
 }
+
+
 
 appengine {
     downloadSdk = true
@@ -41,5 +45,8 @@ appengine {
         getClientLibsOnBuild = true
         getDiscoveryDocsOnBuild = true
     }
-    httpAddress = "0.0.0.0"
+
+
+
+//    httpAddress = "0.0.0.0"
 }

@@ -4,15 +4,26 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.config.Named;
+import com.google.appengine.tools.cloudstorage.GcsFileOptions;
+import com.google.appengine.tools.cloudstorage.GcsFilename;
+import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
+import com.google.appengine.tools.cloudstorage.GcsService;
+import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
+import com.google.appengine.tools.cloudstorage.ListOptions;
+import com.google.appengine.tools.cloudstorage.RetryParams;
 
 
 import org.fraunhofer.cese.funf_sensor.backend.models.ProbeEntry;
 import org.fraunhofer.cese.funf_sensor.backend.models.ResponseDataSet;
 
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.nio.channels.Channels;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import static org.fraunhofer.cese.funf_sensor.backend.OfyService.ofy;
 
@@ -32,16 +43,42 @@ import static org.fraunhofer.cese.funf_sensor.backend.OfyService.ofy;
 
 public class ResponseDataSetEndpoint {
 
+    private static final Logger logger = Logger.getLogger(ResponseDataSetEndpoint.class.getName());
     private static List<String> keys = new ArrayList<String>();
 
 
     @ApiMethod(name = "getResponseFromTo")
-    public ResponseDataSet getResponseFromTo(@Named("fromTimestamp") long fromTimestamp, @Named("toTimestamp") long toTimestamp) {
+    public void getResponseFromTo(@Named("fromTimestamp") long fromTimestamp, @Named("toTimestamp") long toTimestamp) {
 
-        if (fromTimestamp == 0 && toTimestamp == 0)
-            return getLatestEntries();
-        else
-            return getSpecificEntries(fromTimestamp, toTimestamp);
+        dumpToGoogleCloudStorage();
+
+
+//        if (fromTimestamp == 0 && toTimestamp == 0)
+//            return getLatestEntries();
+//        else
+//            return getSpecificEntries(fromTimestamp, toTimestamp);
+    }
+
+    private static final String BUCKETNAME = "c3s3d4t4dump";
+    private static final String FILENAME = "testfile";
+
+    @ApiMethod(name = "flushData")
+    private void dumpToGoogleCloudStorage() {
+        GcsService gcsService = GcsServiceFactory.createGcsService(RetryParams.getDefaultInstance());
+        GcsFilename filename = new GcsFilename(BUCKETNAME, FILENAME);
+        logger.fine(gcsService.toString());
+//        gcsService.list(BUCKETNAME, ListOptions.DEFAULT);
+        try {
+            GcsOutputChannel outputChannel = gcsService.createOrReplace(filename, GcsFileOptions.getDefaultInstance());
+            List<ProbeEntry> entries = ofy().load().type(ProbeEntry.class).limit(1000).list();
+            ObjectOutputStream oout =
+                    new ObjectOutputStream(Channels.newOutputStream(outputChannel));
+            oout.writeObject(entries);
+            oout.close();
+        } catch (IOException e) {
+            logger.severe(e.getMessage());
+        }
+
     }
 
 
