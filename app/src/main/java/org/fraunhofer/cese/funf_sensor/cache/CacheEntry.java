@@ -31,6 +31,9 @@ public class CacheEntry {
     @DatabaseField
     private String sensorData;
 
+    @DatabaseField
+    private String userID;
+
     public String getId() {
         return id;
     }
@@ -63,6 +66,14 @@ public class CacheEntry {
         this.sensorData = sensorData;
     }
 
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
+
     public static ProbeEntry createProbeEntry(CacheEntry entry) {
         if(entry == null)
             return null;
@@ -72,6 +83,7 @@ public class CacheEntry {
         probeEntry.setTimestamp(entry.getTimestamp());
         probeEntry.setProbeType(entry.getProbeType());
         probeEntry.setSensorData(entry.getSensorData());
+        probeEntry.setUserID(entry.getUserID());
         return probeEntry;
     }
 }
