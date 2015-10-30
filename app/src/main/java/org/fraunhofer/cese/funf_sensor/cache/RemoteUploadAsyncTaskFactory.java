@@ -62,19 +62,19 @@ public class RemoteUploadAsyncTaskFactory {
                     saveResult.setSaved(new ArrayList<String>());
                     saveResult.setAlreadyExists(new ArrayList<String>());
 
+                    List<ProbeEntry> toUpload = Lists.transform(entries, new Function<CacheEntry, ProbeEntry>() {
+                        @Nullable
+                        @Override
+                        public ProbeEntry apply(CacheEntry cacheEntry) {
+                            return CacheEntry.createProbeEntry(cacheEntry);
+                        }
+                    });
+
                     int cursor = 0;
                     while (cursor < entries.size() && result.getException() == null) {
-                        List<ProbeEntry> toUpload = Lists.transform(entries, new Function<CacheEntry, ProbeEntry>() {
-                            @Nullable
-                            @Override
-                            public ProbeEntry apply(CacheEntry cacheEntry) {
-                                return CacheEntry.createProbeEntry(cacheEntry);
-                            }
-                        });
-
                         ProbeDataSet dataSet = new ProbeDataSet();
                         dataSet.setTimestamp(Calendar.getInstance().getTimeInMillis());
-                        dataSet.setEntryList(toUpload.subList(cursor, (cursor + BUFFER_SIZE > entries.size() ? entries.size() : cursor + BUFFER_SIZE)));
+                        dataSet.setEntryList(toUpload.subList(cursor, (cursor + BUFFER_SIZE > toUpload.size() ? toUpload.size() : cursor + BUFFER_SIZE)));
                         result.setUploadAttempted(true);
 
                         try {
@@ -86,7 +86,7 @@ public class RemoteUploadAsyncTaskFactory {
                             if (remoteResult.getAlreadyExists() != null) {
                                 saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
                             }
-                            Log.i(TAG, "Uploaded chunk " + ((cursor / BUFFER_SIZE) + 1) + " (" + cursor + "-" + (cursor + BUFFER_SIZE > entries.size() ? entries.size() : cursor + BUFFER_SIZE) + ") - " +
+                            Log.i(TAG, "Uploaded chunk " + ((cursor / BUFFER_SIZE) + 1) + " (" + cursor + "-" + (cursor + BUFFER_SIZE > toUpload.size() ? toUpload.size() : cursor + BUFFER_SIZE) + ") - " +
                                     "Saved: " + (remoteResult.getSaved() == null ? 0 : remoteResult.getSaved().size()) +
                                     ", Already existed: " + (remoteResult.getAlreadyExists() == null ? 0 : remoteResult.getAlreadyExists().size()));
                             cursor += BUFFER_SIZE;

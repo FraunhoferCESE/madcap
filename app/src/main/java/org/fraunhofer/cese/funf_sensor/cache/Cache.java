@@ -3,21 +3,30 @@ package org.fraunhofer.cese.funf_sensor.cache;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 
+import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
+import com.opencsv.CSVWriter;
 
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.ProbeDataSetApi;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.annotation.Nullable;
 
 import roboguice.inject.ContextSingleton;
 
@@ -253,7 +262,7 @@ public class Cache {
      */
     public static final int UPLOAD_ALREADY_IN_PROGRESS = 1 << 5;
 
-      /**
+    /**
      * This method checks if the conditions are met to trigger a remote upload, and then starts an asynchronous task to perform
      * the upload if so
      *
@@ -324,8 +333,49 @@ public class Cache {
      */
     private void upload() {
         last_upload_attempt = System.currentTimeMillis();
+        try {
+            writeToFile();
+        } catch (IOException e) {
+            Log.e(TAG, "Error writing to CSV file", e);
+        }
         uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi).execute();
     }
+
+    private void writeToFile() throws IOException {
+        String state = Environment.getExternalStorageState();
+        if (!Environment.MEDIA_MOUNTED.equals(state)) {
+            Log.e(TAG, "External media not mounted for read/write");
+            return;
+        }
+
+        File dir = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "probeData");
+        Log.d(TAG, "CSV directory " + dir.getAbsolutePath() + " exists: " + dir.exists());
+        if (!dir.exists() && !dir.mkdirs()) {
+            Log.e(TAG, "Probe data directory not created");
+            return;
+        }
+
+        List<String[]> toWrite = Lists.transform(getHelper().getDao().queryForAll(), new Function<CacheEntry, String[]>() {
+            @Nullable
+            @Override
+            public String[] apply(CacheEntry cacheEntry) {
+                return new String[]{cacheEntry.getId(), cacheEntry.getTimestamp().toString(), cacheEntry.getProbeType(), cacheEntry.getSensorData()};
+            }
+        });
+
+        File f = new File(dir, "probeData.csv");
+        if (!f.exists()) {
+            f.createNewFile();
+        }
+
+        CSVWriter writer = new CSVWriter(new FileWriter(f, true));
+        Log.d(TAG, "Writing CSV file to:" + f.getAbsolutePath());
+        writer.writeAll(toWrite);
+        writer.flush();
+        writer.close();
+        Log.d(TAG, "CSV write completed");
+    }
+
 
     /**
      * This method should not be called by clients.

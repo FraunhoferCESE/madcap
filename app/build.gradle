@@ -44,5 +44,8 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'org.roboguice:roboguice:3.0.1'
     provided 'org.roboguice:roboblender:3.0.1'
+    compile  'com.opencsv:opencsv:3.5'
+
+
 
 }
