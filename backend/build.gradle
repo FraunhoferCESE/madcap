@@ -30,8 +30,10 @@ dependencies {
     testCompile 'org.jmockit:jmockit:1.19'
     testCompile 'junit:junit:4.12'
     compile 'com.google.appengine.tools:appengine-gcs-client:0.5'
-    
+    compile 'com.google.inject:guice:3.0'
 
+
+    compile 'com.google.appengine:appengine-tools-sdk:1.9.27'
 }
 
 

@@ -6,7 +6,7 @@
     </filter>
     <filter-mapping>
         <filter-name>ObjectifyFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/goToOfy</url-pattern>
     </filter-mapping>
 
     <servlet>
@@ -29,11 +29,10 @@
     <servlet-mapping>
         <servlet-name>SystemServiceServlet</servlet-name>
 
-        <!-- That was called servlet-probeType.
-             I changed it so it would match the example
-             -Frederik-         -->
+
         <url-pattern>/_ah/spi/*</url-pattern>
     </servlet-mapping>
+
 
     <servlet>
         <servlet-name>myServlet</servlet-name>
@@ -41,7 +40,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>myServlet</servlet-name>
-        <url-pattern>/put*</url-pattern>
+        <url-pattern>/putDataToBucket</url-pattern>
     </servlet-mapping>
 
 

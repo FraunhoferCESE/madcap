@@ -15,6 +15,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 
@@ -30,6 +33,7 @@ import com.google.appengine.api.files.GSFileOptions.GSFileOptionsBuilder;
  */
 public class HttpsGetServlet extends HttpServlet {
 
+    private static final String BUCKETNAME = "c3s3d4t4dump";
     private static final String COMMA_DELIMITER = ",";
     private static final String NEW_LINE_SEPARATOR = "\n";
     private static final String FILE_HEADER = "id,timestamp,probeType,sensorData,userID";
@@ -40,26 +44,29 @@ public class HttpsGetServlet extends HttpServlet {
 
         logger.warning("Something reached the Servlet. Fly, you fools!");
 
+       //Getting the timestamps out of the request
         String fromTimestampString = request.getParameter("fromTimestamp");
         String toTimestampString = request.getParameter("toTimestamp");
 
         long fromTimestamp = Long.parseLong(fromTimestampString);
         long toTimestamp = Long.parseLong(toTimestampString);
 
-        response.getWriter().print("Seems like it worked");
+        //Google Cloud Storage has a limit of only one upload a second. Just to ensure we don't bust that.
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+       //Getting the required entries using Objectify
+        List<ProbeEntry> entries = ofy().load().type(ProbeEntry.class).filter("timestamp >=", fromTimestamp).list();
+        entries.removeAll(ofy().load().type(ProbeEntry.class).filter("timestamp >", toTimestamp).list());
+        Collections.sort(entries);
+
+       String filename = "From"+fromTimestamp+"To"+toTimestamp+".csv";
 
 
-//        //Google Cloud Storage has a limit of only one upload a second. Just to ensure we don't bust that.
-//        try {
-//            Thread.sleep(1000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//        List<ProbeEntry> entries = ofy().load().type(ProbeEntry.class).filter("timestamp >=", fromTimestamp).list();
-//        entries.removeAll(ofy().load().type(ProbeEntry.class).filter("timestamp >", toTimestamp).list());
-//        Collections.sort(entries);
+
 //
 //
 //        GcsService gcsService = GcsServiceFactory.createGcsService();
@@ -106,6 +113,8 @@ public class HttpsGetServlet extends HttpServlet {
 //
 //        response.getWriter().println("I am done.");
 //        response.getWriter().println("It might have worked.");
+
+       response.getWriter().print("Seems like it worked");
 
     }
 }
