@@ -109,7 +109,7 @@
         var hour = time[0];
         var minute = time[1];
 
-        var result = new Date(year, month, day, hour, minute, 0, 0).getTime();
+        var result = (new Date(year, month, day, hour, minute, 0, 0).getTime())/1000;
         document.getElementById("timestampResult").innerHTML = "DateTime as long: "+result;
     }
 
