@@ -9,7 +9,6 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-
 import java.util.List;
 
 import edu.mit.media.funf.probe.Probe;
@@ -30,9 +29,8 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
 
     /**
      * initial values for the filter.
-      */
-    float[] gravity = {1,1,1};
-
+     */
+    float[] gravity = {1, 1, 1};
 
 
     @Override
@@ -45,6 +43,7 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
         for (Sensor sensor : list) {
             if (sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
                 hasLinearAccelerometer = true;
+                break;
             }
         }
 
@@ -57,7 +56,7 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
             Log.i(TAG, "using regular accelerometer");
         }
 
-        sensorManager.registerListener(this, acclerometerSensor, SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener(this, acclerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
         lastProbeStart = System.currentTimeMillis();
         Log.i(TAG, " enabled");
     }
@@ -76,41 +75,39 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
 
         if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
             if ((now - lastProbeStart) > (measureInterval - measureDuration)) {
-                float[] sensorData = event.values;
-                long timestampLocal = event.timestamp;
                 Intent intent = new Intent();
-                intent.putExtra(TAG, timestampLocal);
-                intent.putExtra(TAG, sensorData);
-                intent.putExtra(TAG, "linear acceleration sensor.");
+                intent.putExtra("type", "linear accelerometer");
+                intent.putExtra("x", event.values[0]);
+                intent.putExtra("y", event.values[1]);
+                intent.putExtra("z", event.values[2]);
+                intent.putExtra("timestamp", event.timestamp);
                 sendData(intent);
                 if ((now - lastProbeStart) > measureInterval) {
                     lastProbeStart = System.currentTimeMillis();
                 }
             }
         }
-
-        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
-
+        else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
             gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
             gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
-
 
             if ((now - lastProbeStart) > (measureInterval - measureDuration)) {
 
                 long timestampLocal = event.timestamp;
 
-                float[] linear_acceleration={0,0,0};
+                float[] linear_acceleration = {0, 0, 0};
                 linear_acceleration[0] = event.values[0] - gravity[0];
                 linear_acceleration[1] = event.values[1] - gravity[1];
                 linear_acceleration[2] = event.values[2] - gravity[2];
 
 
-
                 Intent intent = new Intent();
-                intent.putExtra(TAG, timestampLocal);
-                intent.putExtra(TAG, linear_acceleration);
-                intent.putExtra(TAG, "regular acceleration sensor.");
+                intent.putExtra("type", "regular acceleration");
+                intent.putExtra("x", linear_acceleration[0]);
+                intent.putExtra("y", linear_acceleration[1]);
+                intent.putExtra("z", linear_acceleration[2]);
+                intent.putExtra("timestamp", timestampLocal);
                 sendData(intent);
                 if ((now - lastProbeStart) > measureInterval) {
                     lastProbeStart = System.currentTimeMillis();
@@ -121,7 +118,7 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        Log.i(TAG, "accuracy changed.");
+
     }
 
     public void sendData(Intent intent) {
