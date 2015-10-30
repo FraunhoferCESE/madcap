@@ -229,7 +229,7 @@ public class Cache {
      * @return {@code true} if this {@code listener} was removed from the list of listeners, {@code false} otherwise.
      */
     public boolean removeUploadListener(UploadStatusListener listener) {
-        return uploadStatusListeners != null && uploadStatusListeners.removeAll(Collections.singleton(listener));
+        return uploadStatusListeners != null && uploadStatusListeners.remove(listener);
     }
 
     /**

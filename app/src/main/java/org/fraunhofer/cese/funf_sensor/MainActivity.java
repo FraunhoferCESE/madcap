@@ -51,7 +51,6 @@ public class MainActivity extends RoboActivity {
     private GoogleAppEnginePipeline pipeline;
 
     //probes
-//    private AccelerometerSensorProbe accelerometerSensorProbe;
     private AccelerometerProbe accelerometerProbe;
     private ForegroundProbe foregroundProbe;
     private MyRunningApplicationsProbe myRunningApplicationsProbe;
@@ -106,8 +105,12 @@ public class MainActivity extends RoboActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            pipeline.removeUploadListener(uploadStatusListener);
-            cacheCountUpdater.cancel(true);
+            AsyncTask.Status status = getCacheCountUpdater().getStatus();
+            if(status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING) {
+                getCacheCountUpdater().cancel(true);
+            }
+            pipeline.removeUploadListener(getUploadStatusListener());
+
             if (funfManager != null && pipeline.isEnabled()) {
                 Log.d(TAG, "Service disconnected. Disabling pipeline: " + PIPELINE_NAME);
                 pipeline.setEnabled(false);
@@ -119,7 +122,6 @@ public class MainActivity extends RoboActivity {
     };
 
     private void registerListeners() {
-//        accelerometerSensorProbe.registerPassiveListener(pipeline);
         accelerometerProbe.registerPassiveListener(pipeline);
         foregroundProbe.registerPassiveListener(pipeline);
         locationProbe.registerPassiveListener(pipeline);
@@ -135,22 +137,22 @@ public class MainActivity extends RoboActivity {
     }
 
     private void unregisterListeners() {
-//        accelerometerSensorProbe.unregisterListener(pipeline);
-        accelerometerProbe.unregisterListener(pipeline);
-        foregroundProbe.unregisterListener(pipeline);
-        locationProbe.unregisterListener(pipeline);
-        wifiProbe.unregisterListener(pipeline);
-        myRunningApplicationsProbe.unregisterListener(pipeline);
-        screenProbe.unregisterListener(pipeline);
-        sMSProbe.unregisterListener(pipeline);
-        powerProbe.unregisterListener(pipeline);
-        stateProbe.unregisterListener(pipeline);
-        callStateProbe.unregisterListener(pipeline);
-        audioProbe.unregisterListener(pipeline);
+
+        accelerometerProbe.unregisterPassiveListener(pipeline);
+        foregroundProbe.unregisterPassiveListener(pipeline);
+        locationProbe.unregisterPassiveListener(pipeline);
+        wifiProbe.unregisterPassiveListener(pipeline);
+        myRunningApplicationsProbe.unregisterPassiveListener(pipeline);
+        screenProbe.unregisterPassiveListener(pipeline);
+        sMSProbe.unregisterPassiveListener(pipeline);
+        powerProbe.unregisterPassiveListener(pipeline);
+        stateProbe.unregisterPassiveListener(pipeline);
+        callStateProbe.unregisterPassiveListener(pipeline);
+        audioProbe.unregisterPassiveListener(pipeline);
         bluetoothProbe.unregisterListener(pipeline);
     }
 
-    //onCreate is the rendering of the main page
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -168,10 +170,8 @@ public class MainActivity extends RoboActivity {
                             funfManager.enablePipeline(PIPELINE_NAME);
                             pipeline.setEnabled(true);
                             registerListeners();
-                            instantSendButton.setEnabled(true);
                         } else {
                             Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
-                            instantSendButton.setEnabled(false);
                             unregisterListeners();
                             pipeline.setEnabled(false);
                             funfManager.disablePipeline(PIPELINE_NAME);
@@ -199,7 +199,7 @@ public class MainActivity extends RoboActivity {
                         if (status == Cache.UPLOAD_READY)
                             text += "Upload started...";
                         else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS)
-                            text += "Upload already in progress...";
+                            text += "Upload in progress...";
                         else {
                             String errorText = "";
                             if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
@@ -221,7 +221,6 @@ public class MainActivity extends RoboActivity {
                     }
                 }
         );
-
 
         // Bind to the service, to create the connection with FunfManager+
         Log.d(TAG, "Starting FunfManager");
@@ -308,6 +307,11 @@ public class MainActivity extends RoboActivity {
                     if (pipeline != null && pipeline.isEnabled())
                         updateDataCount(-1);
                     Log.d(TAG, "Upload result received");
+                }
+
+                @Override
+                public void progressUpdate(int value) {
+                    uploadResultView.setText(uploadResultView.getText() + " " + value +"% completed.");
                 }
 
                 @Override

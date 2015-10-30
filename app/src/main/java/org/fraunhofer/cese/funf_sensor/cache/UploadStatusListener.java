@@ -18,4 +18,10 @@ public interface UploadStatusListener {
      */
     void cacheClosing();
 
+    /**
+     * Provides the percentage of upload that is completed thus far.
+     *
+     * @param value The percentage of the uploaded completed thus far
+     */
+    void progressUpdate(int value);
 }

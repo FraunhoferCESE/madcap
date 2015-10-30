@@ -38,8 +38,8 @@ public class RemoteUploadAsyncTaskFactory {
      * @return a new instance of an asynchronous remote upload task
      * @see RemoteUploadResult
      */
-    AsyncTask<Void, Void, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeDataSetApi appEngineApi) {
-        return new AsyncTask<Void, Void, RemoteUploadResult>() {
+    AsyncTask<Void, Integer, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeDataSetApi appEngineApi, final UploadStatusListener listener) {
+        return new AsyncTask<Void, Integer, RemoteUploadResult>() {
             private final String TAG = "Fraunhofer.UploadTask";
             private static final int BUFFER_SIZE = 250;
 
@@ -90,6 +90,8 @@ public class RemoteUploadAsyncTaskFactory {
                                     "Saved: " + (remoteResult.getSaved() == null ? 0 : remoteResult.getSaved().size()) +
                                     ", Already existed: " + (remoteResult.getAlreadyExists() == null ? 0 : remoteResult.getAlreadyExists().size()));
                             cursor += BUFFER_SIZE;
+                            publishProgress(cursor > toUpload.size() ? 100 : Math.round(((float) cursor / (float) toUpload.size()) * 100));
+
                         } catch (IOException e) {
                             result.setException(e);
                             Log.w(TAG, "Upload failed", e);
@@ -113,6 +115,11 @@ public class RemoteUploadAsyncTaskFactory {
             protected void onCancelled(RemoteUploadResult result) {
                 OpenHelperManager.releaseHelper();
                 cache.doPostUpload(result);
+            }
+
+            @Override
+            protected void onProgressUpdate(Integer... values) {
+                listener.progressUpdate(values[0]);
             }
         };
     }
