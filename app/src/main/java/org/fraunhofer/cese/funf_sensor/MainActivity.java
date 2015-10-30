@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
+import org.fraunhofer.cese.funf_sensor.Probe.AccelerometerProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.AudioProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.BluetoothProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe;
@@ -25,7 +26,6 @@ import org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.MyRunningApplicationsProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.PowerProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.SMSProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.AccelerometerProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.StateProbe;
 import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
 import org.fraunhofer.cese.funf_sensor.cache.Cache;
@@ -36,7 +36,6 @@ import java.text.DateFormat;
 import java.util.Date;
 
 import edu.mit.media.funf.FunfManager;
-import edu.mit.media.funf.probe.builtin.AccelerometerSensorProbe;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
 import edu.mit.media.funf.probe.builtin.WifiProbe;
@@ -98,76 +97,11 @@ public class MainActivity extends RoboActivity {
             // Initialize the pipeline
             funfManager.registerPipeline(PIPELINE_NAME, pipeline);
             pipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
-            pipeline.addUploadListener(uploadStatusListener);
+
             Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
             funfManager.enablePipeline(PIPELINE_NAME);
             pipeline.setEnabled(true);
             registerListeners();
-
-            collectDataSwitch.setOnCheckedChangeListener(
-                    new CompoundButton.OnCheckedChangeListener() {
-                        @Override
-                        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                            if (isChecked) {
-                                Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
-                                funfManager.enablePipeline(PIPELINE_NAME);
-                                pipeline.setEnabled(true);
-                                registerListeners();
-                                instantSendButton.setEnabled(true);
-                            } else {
-                                Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
-                                instantSendButton.setEnabled(false);
-                                unregisterListeners();
-                                pipeline.setEnabled(false);
-                                funfManager.disablePipeline(PIPELINE_NAME);
-                            }
-                        }
-                    }
-            );
-
-            instantSendButton.setOnClickListener(
-                    new View.OnClickListener() {
-                        private final DateFormat df = DateFormat.getDateTimeInstance();
-
-                        @Override
-                        public void onClick(View view) {
-                            String text = "Upload requested on " + df.format(new Date()) + "\n";
-                            if (!pipeline.isEnabled()) {
-                                text += "Error: Data system is disabled.";
-                                uploadResultView.setText(text);
-                                return;
-                            }
-
-                            int status = pipeline.requestUpload();
-
-                            if (status == Cache.UPLOAD_READY)
-                                text += "Upload started...";
-                            else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS)
-                                text += "Upload already in progress...";
-                            else {
-                                String errorText = "";
-                                if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
-                                    errorText += "\n- An internal error occurred and data could not be uploaded.";
-                                if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET)
-                                    errorText += "\n- An upload was just requested; please wait a few seconds.";
-                                if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION)
-                                    errorText += "\n- No internet connection detected.";
-                                if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
-                                    errorText += "\n- No entries to upload";
-
-                                if (!errorText.isEmpty()) {
-                                    text += "Error:" + errorText;
-                                } else {
-                                    text += "No status to report. Please wait.";
-                                }
-                            }
-                            uploadResultView.setText(text);
-                        }
-                    }
-            );
-
-
-            cacheCountUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         @Override
@@ -221,80 +155,168 @@ public class MainActivity extends RoboActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.main);
-
         dataCountView = (TextView) findViewById(R.id.dataCountText);
         uploadResultView = (TextView) findViewById(R.id.uploadResult);
-
         collectDataSwitch = (Switch) findViewById(R.id.switch1);
         collectDataSwitch.setChecked(true);
-
-        instantSendButton = (Button) findViewById(R.id.SendButton);
-
-        uploadStatusListener = new UploadStatusListener() {
-            private static final String TAG = "UploadStatusListener";
-            private static final String pre = "Last upload attempt: ";
-            private final DateFormat df = DateFormat.getDateTimeInstance();
-
-            @Override
-            public void uploadFinished(RemoteUploadResult result) {
-                // handle the various options
-                if (uploadResultView == null)
-                    return;
-
-                String text = pre + df.format(new Date()) + "\n";
-                if (result == null) {
-                    text += "Result: No upload due to an internal error.";
-                } else if (!result.isUploadAttempted()) {
-                    text += "Result: No entries to upload.";
-                } else if (result.getException() != null) {
-                    String exceptionText = result.getException().getMessage().length() > 20 ? result.getException().getMessage().substring(0, 19) : result.getException().getMessage();
-                    text += "Result: Upload failed due to " + exceptionText;
-                } else if (result.getSaveResult() == null) {
-                    text += "Result: An error occurred on the remote server.";
-                } else {
-                    text += "Result:\n";
-                    text += "\t" + (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
-                    if (result.getSaveResult().getAlreadyExists() != null)
-                        text += "\n\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
-                }
-
-                uploadResultView.setText(text);
-                if (pipeline != null && pipeline.isEnabled())
-                    updateDataCount(-1);
-                Log.d(TAG, "Upload result received");
-            }
-
-            @Override
-            public void cacheClosing() {
-                Log.d(TAG, "Cache is closing");
-            }
-        };
-
-        cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                while (!isCancelled()) {
-                    try {
-                        if (pipeline != null && pipeline.isEnabled())
-                            publishProgress(pipeline.getCacheSize());
-                        Thread.sleep(5000);
-                    } catch (InterruptedException e) {
-                        Log.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.", e);
+        collectDataSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
+                            funfManager.enablePipeline(PIPELINE_NAME);
+                            pipeline.setEnabled(true);
+                            registerListeners();
+                            instantSendButton.setEnabled(true);
+                        } else {
+                            Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
+                            instantSendButton.setEnabled(false);
+                            unregisterListeners();
+                            pipeline.setEnabled(false);
+                            funfManager.disablePipeline(PIPELINE_NAME);
+                        }
                     }
                 }
-                return null;
-            }
+        );
 
-            @Override
-            protected void onProgressUpdate(Long... values) {
-                updateDataCount(values[0]);
-            }
-        };
+
+        instantSendButton = (Button) findViewById(R.id.SendButton);
+        instantSendButton.setOnClickListener(
+                new View.OnClickListener() {
+                    private final DateFormat df = DateFormat.getDateTimeInstance();
+
+                    @Override
+                    public void onClick(View view) {
+                        String text = "Upload requested on " + df.format(new Date()) + "\n";
+                        if (!pipeline.isEnabled()) {
+                            text += "Error: Data system is disabled.";
+                            uploadResultView.setText(text);
+                            return;
+                        }
+
+                        int status = pipeline.requestUpload();
+                        if (status == Cache.UPLOAD_READY)
+                            text += "Upload started...";
+                        else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS)
+                            text += "Upload already in progress...";
+                        else {
+                            String errorText = "";
+                            if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
+                                errorText += "\n- An internal error occurred and data could not be uploaded.";
+                            if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET)
+                                errorText += "\n- An upload was just requested; please wait a few seconds.";
+                            if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION)
+                                errorText += "\n- No internet connection detected.";
+                            if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
+                                errorText += "\n- No entries to upload";
+
+                            if (!errorText.isEmpty()) {
+                                text += "Error:" + errorText;
+                            } else {
+                                text += "No status to report. Please wait.";
+                            }
+                        }
+                        uploadResultView.setText(text);
+                    }
+                }
+        );
+
+
         // Bind to the service, to create the connection with FunfManager+
         Log.d(TAG, "Starting FunfManager");
         startService(new Intent(this, FunfManager.class));
         Log.d(TAG, "Binding Funf ServiceConnection to activity");
         getApplicationContext().bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        pipeline.addUploadListener(getUploadStatusListener());
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        AsyncTask.Status status = getCacheCountUpdater().getStatus();
+        if(status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING) {
+            getCacheCountUpdater().cancel(true);
+        }
+        pipeline.removeUploadListener(getUploadStatusListener());
+    }
+
+    private AsyncTask<Void, Long, Void> getCacheCountUpdater() {
+        if (cacheCountUpdater == null) {
+            cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    while (!isCancelled()) {
+                        try {
+                            if (pipeline != null && pipeline.isEnabled())
+                                publishProgress(pipeline.getCacheSize());
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            Log.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.", e);
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onProgressUpdate(Long... values) {
+                    updateDataCount(values[0]);
+                }
+            };
+        }
+        return cacheCountUpdater;
+    }
+
+    private UploadStatusListener getUploadStatusListener() {
+        if (uploadStatusListener == null) {
+
+            uploadStatusListener = new UploadStatusListener() {
+                private static final String TAG = "UploadStatusListener";
+                private static final String pre = "Last upload attempt: ";
+                private final DateFormat df = DateFormat.getDateTimeInstance();
+
+                @Override
+                public void uploadFinished(RemoteUploadResult result) {
+                    // handle the various options
+                    if (uploadResultView == null)
+                        return;
+
+                    String text = pre + df.format(new Date()) + "\n";
+                    if (result == null) {
+                        text += "Result: No upload due to an internal error.";
+                    } else if (!result.isUploadAttempted()) {
+                        text += "Result: No entries to upload.";
+                    } else if (result.getException() != null) {
+                        String exceptionText = result.getException().getMessage().length() > 20 ? result.getException().getMessage().substring(0, 19) : result.getException().getMessage();
+                        text += "Result: Upload failed due to " + exceptionText;
+                    } else if (result.getSaveResult() == null) {
+                        text += "Result: An error occurred on the remote server.";
+                    } else {
+                        text += "Result:\n";
+                        text += "\t" + (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
+                        if (result.getSaveResult().getAlreadyExists() != null)
+                            text += "\n\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
+                    }
+
+                    uploadResultView.setText(text);
+                    if (pipeline != null && pipeline.isEnabled())
+                        updateDataCount(-1);
+                    Log.d(TAG, "Upload result received");
+                }
+
+                @Override
+                public void cacheClosing() {
+                    Log.d(TAG, "Cache is closing");
+                }
+            };
+        }
+        return uploadStatusListener;
     }
 
     private void updateDataCount(long count) {
