@@ -27,8 +27,6 @@ import java.util.List;
  */
 public class MainToExecute {
 
-
-
     public static void main(String[] args) throws IOException {
         Injector injector = Guice.createInjector(new MyModule());
         DataPuller dp = new DataPuller(injector.getInstance(GcsService.class));

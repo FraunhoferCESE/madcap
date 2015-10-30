@@ -8,6 +8,7 @@
         <filter-name>ObjectifyFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+
     <servlet>
         <servlet-name>SystemServiceServlet</servlet-name>
         <!-- That was called servlet-probeType.
@@ -35,12 +36,12 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>HttpGetServlet</servlet-name>
+        <servlet-name>myServlet</servlet-name>
         <servlet-class>org.fraunhofer.cese.funf_sensor.backend.servlets.HttpsGetServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>HttpGetServlet</servlet-name>
-        <url-pattern>/*</url-pattern>
+        <servlet-name>myServlet</servlet-name>
+        <url-pattern>/put*</url-pattern>
     </servlet-mapping>
 
 

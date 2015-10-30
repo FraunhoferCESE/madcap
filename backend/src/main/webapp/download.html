@@ -52,18 +52,21 @@
             <div class="col-lg-12">
                 <h1>Howdy World! Hallo Heimur! Servus Mitanand!</h1>
 
-                <p>This is where you hopefully might be able to download a CSV-file containing our
-                    sensor data.
-                    Please keep in mind that you can only download it once using this button. The
-                    data will still be safe in the datastore though.</p>
+                <p>This is where you hopefully might be able save a CSV-file containing
+                    sensor data to a hard-to-get-to bucket.
+                    The data will still be safe in the datastore though.</p>
 
-                <form method="get" action="">
-                    <button class="btn btn-default btn-primary btn-group btn-lg"
-                            type="submit" id="downloadButton">Download Data as CSV-File
-                    </button>
+                <form action="putDataToBucket" method ="get">
+                    <div class="input-group">
+                        <input type="number" id="fromTimestamp" placeholder="fromTimestamp" name="fromTimestamp"
+                               autofocus/>
+                        <input type="number" id="toTimestamp" placeholder="toTimestamp" name="toTimestamp"/>
+                        <input type="submit" value="Save Data to Bucket" formmethod="get">
+                        <!--In case you wanted to use AJAX <input type="button" onclick="initiateSaving()" value="Save Data to bucket">-->
+                    </div>
+
                 </form>
                 <br/>
-
                 <p>
                     <small>
                         For more information about Google App Engine for Java, check out the <a
@@ -81,15 +84,33 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    function enableClick() {
-      document.getElementById('downloadButton').onclick = function() {
+<script>
+
+    function feedback(){alert("I think your request might have been sent. Check at https://console.developers.google.com/project/funfcese/storage/browser");}
+
+    function initiateSaving(){
+
+        var fromTimestamp = getElementById("fromTimestamp").value;
+        var toTimestamp = getElementById("toTimestamp").value;
+        alert("CALLED");
+        var xhttpAJAXthing = new XMLHttpRequest();
+
+        var requestURL = "putStuffToBucket*";
 
 
-        );
-        return false;
-      }
+
+        xhttpAJAXthing.open("GET", requestURL, true);
+        xhttpAJAXthing.send();
     }
+
+    function getRequestURL(fromTimestamp, toTimestamp){
+        var result = "putStuffToBucket";
+        var add1 = "?fromTimestamp=" + fromTimestamp;
+        var add2 = "?toTimestamp="   +   toTimestamp;
+        result = result.concat(add1,add2);
+        return result;
+    }
+
     // This is called initially
     function init() {
       var apiName = 'myApi';
@@ -106,6 +127,9 @@
       }
       gapi.client.load(apiName, apiVersion, callback, apiRoot);
     }
+
+
+
 
 
 </script>
