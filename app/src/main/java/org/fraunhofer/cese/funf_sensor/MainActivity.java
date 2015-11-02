@@ -176,7 +176,6 @@ public class MainActivity extends RoboActivity {
                 }
         );
 
-
         instantSendButton = (Button) findViewById(R.id.SendButton);
         instantSendButton.setOnClickListener(
                 new View.OnClickListener() {
@@ -185,11 +184,6 @@ public class MainActivity extends RoboActivity {
                     @Override
                     public void onClick(View view) {
                         String text = "Upload requested on " + df.format(new Date()) + "\n";
-                        if (!pipeline.isEnabled()) {
-                            text += "Error: Data system is disabled.";
-                            uploadResultView.setText(text);
-                            return;
-                        }
 
                         int status = pipeline.requestUpload();
                         if (status == Cache.UPLOAD_READY)
