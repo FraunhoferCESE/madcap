@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
@@ -70,18 +72,20 @@ public class HttpsGetServlet extends HttpServlet {
         Collections.sort(entries);
 
         //using dummy entries
-        entries = getDummyEntries();
+//        entries.addAll(getDummyEntries());
 
-        response.getWriter().print(entries.size());
-        response.getWriter().println(" elements written to csv");
+        response.getWriter().println("Trying to write " + entries.size() + " entries to csv-files.");
+
 
         //opening streams/channels
-        String filenameOnly = "From" + fromTimestamp + "To" + toTimestamp + ".csv";
+        String filenameOnly = "From" + fromTimestamp + "To" + toTimestamp + ".zip";
         GcsFilename filename = new GcsFilename(BUCKETNAME, filenameOnly);
         GcsService gcsService = GcsServiceFactory.createGcsService(RetryParams.getDefaultInstance());
         GcsOutputChannel outputChannel = gcsService.createOrReplace(filename, GcsFileOptions.getDefaultInstance());
-        ObjectOutputStream outputStream = new ObjectOutputStream(Channels.newOutputStream(outputChannel));
-        PrintWriter writer = new PrintWriter(Channels.newOutputStream(outputChannel));
+        ZipOutputStream zipOutputStream = new ZipOutputStream(Channels.newOutputStream(outputChannel));
+        zipOutputStream.putNextEntry(new ZipEntry("From" + fromTimestamp + "To" + toTimestamp + ".csv"));
+        PrintWriter writer = new PrintWriter(zipOutputStream);
+//        PrintWriter writer = new PrintWriter(Channels.newOutputStream(outputChannel));
 
         //writing the file
         writer.append(FILE_HEADER);
@@ -101,57 +105,12 @@ public class HttpsGetServlet extends HttpServlet {
 
         //closing stuff. data is send when stream/channel is closed
         writer.close();
-        outputStream.close();
+        zipOutputStream.close();
         outputChannel.close();
+
 
         response.getWriter().println("Seems like it worked");
 
-//
-//
-//        GcsService gcsService = GcsServiceFactory.createGcsService();
-//
-//        FileService fileService = FileServiceFactory.getFileService();
-//
-//        GSFileOptionsBuilder optionsBuilder = new GSFileOptionsBuilder()
-//                .setBucket("my_bucket") //bucket name not known yet
-//                .setKey("DataFrom" + fromTimestamp + "To" + toTimestamp + "SavedAt"
-//                        + System.currentTimeMillis() + ".csv")
-//                .setContentDisposition("attachment; filename=DataFrom" + fromTimestamp
-//                        + "To" + toTimestamp + "SavedAt" + System.currentTimeMillis() + ".csv");
-//
-//        AppEngineFile writableFile = null;
-//
-//        writableFile = fileService.createNewGSFile(optionsBuilder.build());
-//
-//
-//        boolean lockForWrite = false;
-//        FileWriteChannel writeChannel = null;
-//
-//        writeChannel = fileService.openWriteChannel(writableFile, lockForWrite);
-//
-//
-//        PrintWriter writer = new PrintWriter(Channels.newWriter(writeChannel, "UTF-8"));
-//
-//        writer.append(FILE_HEADER);
-//        writer.append(NEW_LINE_SEPARATOR);
-//
-//        for (ProbeEntry entry : entries) {
-//            writer.append(entry.getId());
-//            writer.append(COMMA_DELIMITER);
-//            writer.append(entry.getTimestamp().toString());
-//            writer.append(COMMA_DELIMITER);
-//            writer.append(entry.getProbeType());
-//            writer.append(COMMA_DELIMITER);
-//            writer.append(entry.getSensorData());
-//            writer.append(COMMA_DELIMITER);
-//            writer.append(entry.getUserID());
-//            writer.append(NEW_LINE_SEPARATOR);
-//        }
-//
-//        writeChannel.closeFinally();
-//
-//        response.getWriter().println("I am done.");
-//        response.getWriter().println("It might have worked.");
     }
 
     private List<ProbeEntry> getDummyEntries() {
