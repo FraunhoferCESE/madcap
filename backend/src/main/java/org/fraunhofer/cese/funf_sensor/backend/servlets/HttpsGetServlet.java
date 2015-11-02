@@ -52,65 +52,69 @@ public class HttpsGetServlet extends HttpServlet {
 
         logger.warning("Something reached the Servlet. Fly, you fools!");
 
-        //Getting the timestamps out of the request
-        String fromTimestampString = request.getParameter("fromTimestamp");
-        String toTimestampString = request.getParameter("toTimestamp");
+        if(request.getParameter("password").equals("swordfish")) {
 
-        long fromTimestamp = Long.parseLong(fromTimestampString);
-        long toTimestamp = Long.parseLong(toTimestampString);
+            //Getting the timestamps out of the request
+            String fromTimestampString = request.getParameter("fromTimestamp");
+            String toTimestampString = request.getParameter("toTimestamp");
 
-        //Google Cloud Storage has a limit of only one upload a second. Just to ensure we don't bust that.
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+            long fromTimestamp = Long.parseLong(fromTimestampString);
+            long toTimestamp = Long.parseLong(toTimestampString);
 
-        //Getting the required entries using Objectify. CURRENTLY NOT WORKING
-        List<ProbeEntry> entries = ofy().load().type(ProbeEntry.class).filter("timestamp >=", fromTimestamp).list();
-        entries.removeAll(ofy().load().type(ProbeEntry.class).filter("timestamp >", toTimestamp).list());
-        Collections.sort(entries);
+            //Google Cloud Storage has a limit of only one upload a second. Just to ensure we don't bust that.
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-        //using dummy entries
+            //Getting the required entries using Objectify. CURRENTLY NOT WORKING
+            List<ProbeEntry> entries = ofy().load().type(ProbeEntry.class).filter("timestamp >=", fromTimestamp).list();
+            entries.removeAll(ofy().load().type(ProbeEntry.class).filter("timestamp >", toTimestamp).list());
+            Collections.sort(entries);
+
+            //using dummy entries
 //        entries.addAll(getDummyEntries());
 
-        response.getWriter().println("Trying to write " + entries.size() + " entries to csv-files.");
+            response.getWriter().println("Trying to write " + entries.size() + " entries to csv-files.");
 
 
-        //opening streams/channels
-        String filenameOnly = "From" + fromTimestamp + "To" + toTimestamp + ".zip";
-        GcsFilename filename = new GcsFilename(BUCKETNAME, filenameOnly);
-        GcsService gcsService = GcsServiceFactory.createGcsService(RetryParams.getDefaultInstance());
-        GcsOutputChannel outputChannel = gcsService.createOrReplace(filename, GcsFileOptions.getDefaultInstance());
-        ZipOutputStream zipOutputStream = new ZipOutputStream(Channels.newOutputStream(outputChannel));
-        zipOutputStream.putNextEntry(new ZipEntry("From" + fromTimestamp + "To" + toTimestamp + ".csv"));
-        PrintWriter writer = new PrintWriter(zipOutputStream);
+            //opening streams/channels
+            String filenameOnly = "From" + fromTimestamp + "To" + toTimestamp + ".zip";
+            GcsFilename filename = new GcsFilename(BUCKETNAME, filenameOnly);
+            GcsService gcsService = GcsServiceFactory.createGcsService(RetryParams.getDefaultInstance());
+            GcsOutputChannel outputChannel = gcsService.createOrReplace(filename, GcsFileOptions.getDefaultInstance());
+            ZipOutputStream zipOutputStream = new ZipOutputStream(Channels.newOutputStream(outputChannel));
+            zipOutputStream.putNextEntry(new ZipEntry("From" + fromTimestamp + "To" + toTimestamp + ".csv"));
+            PrintWriter writer = new PrintWriter(zipOutputStream);
 //        PrintWriter writer = new PrintWriter(Channels.newOutputStream(outputChannel));
 
-        //writing the file
-        writer.append(FILE_HEADER);
-        writer.append(NEW_LINE_SEPARATOR);
-        for (ProbeEntry entry : entries) {
-            writer.append(entry.getId());
-            writer.append(COMMA_DELIMITER);
-            writer.append(entry.getTimestamp().toString());
-            writer.append(COMMA_DELIMITER);
-            writer.append(entry.getProbeType());
-            writer.append(COMMA_DELIMITER);
-            writer.append(entry.getSensorData());
-            writer.append(COMMA_DELIMITER);
-            writer.append(entry.getUserID());
+            //writing the file
+            writer.append(FILE_HEADER);
             writer.append(NEW_LINE_SEPARATOR);
+            for (ProbeEntry entry : entries) {
+                writer.append(entry.getId());
+                writer.append(COMMA_DELIMITER);
+                writer.append(entry.getTimestamp().toString());
+                writer.append(COMMA_DELIMITER);
+                writer.append(entry.getProbeType());
+                writer.append(COMMA_DELIMITER);
+                writer.append(entry.getSensorData());
+                writer.append(COMMA_DELIMITER);
+                writer.append(entry.getUserID());
+                writer.append(NEW_LINE_SEPARATOR);
+            }
+
+            //closing stuff. data is send when stream/channel is closed
+            writer.close();
+            zipOutputStream.close();
+            outputChannel.close();
+
+
+            response.getWriter().println("Seems like it worked");
+        }else{
+            response.getWriter().println("Request has not been executed. Guess why!");
         }
-
-        //closing stuff. data is send when stream/channel is closed
-        writer.close();
-        zipOutputStream.close();
-        outputChannel.close();
-
-
-        response.getWriter().println("Seems like it worked");
-
     }
 
     private List<ProbeEntry> getDummyEntries() {
