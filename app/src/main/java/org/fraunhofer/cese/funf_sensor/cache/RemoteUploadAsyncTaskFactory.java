@@ -38,7 +38,7 @@ public class RemoteUploadAsyncTaskFactory {
      * @return a new instance of an asynchronous remote upload task
      * @see RemoteUploadResult
      */
-    AsyncTask<Void, Integer, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeDataSetApi appEngineApi, final UploadStatusListener listener) {
+    AsyncTask<Void, Integer, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeDataSetApi appEngineApi, final List<UploadStatusListener> listeners) {
         return new AsyncTask<Void, Integer, RemoteUploadResult>() {
             private final String TAG = "Fraunhofer.UploadTask";
             private static final int BUFFER_SIZE = 250;
@@ -119,7 +119,13 @@ public class RemoteUploadAsyncTaskFactory {
 
             @Override
             protected void onProgressUpdate(Integer... values) {
-                listener.progressUpdate(values[0]);
+                if (listeners == null || listeners.isEmpty())
+                    return;
+
+                for (UploadStatusListener listener : listeners) {
+                    listener.progressUpdate(values[0]);
+                }
+
             }
         };
     }

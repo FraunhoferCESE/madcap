@@ -53,7 +53,7 @@ public class Cache {
     /**
      * Background task holder for the remote upload task. Stored to query for uploads in progress.
      */
-    private AsyncTask<Void, Void, RemoteUploadResult> uploadTask;
+    private  AsyncTask<Void, Integer, RemoteUploadResult> uploadTask;
 
     /**
      * Timestamp (in millis) of the last attempted write to the database.
@@ -338,7 +338,7 @@ public class Cache {
         } catch (IOException e) {
             Log.e(TAG, "Error writing to CSV file", e);
         }
-        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi).execute();
+        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi, uploadStatusListeners).execute();
     }
 
     private void writeToFile() throws IOException {

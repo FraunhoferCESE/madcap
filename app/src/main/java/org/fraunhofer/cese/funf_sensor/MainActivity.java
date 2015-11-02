@@ -105,11 +105,7 @@ public class MainActivity extends RoboActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            AsyncTask.Status status = getCacheCountUpdater().getStatus();
-            if(status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING) {
-                getCacheCountUpdater().cancel(true);
-            }
-            pipeline.removeUploadListener(getUploadStatusListener());
+
 
             if (funfManager != null && pipeline.isEnabled()) {
                 Log.d(TAG, "Service disconnected. Disabling pipeline: " + PIPELINE_NAME);
@@ -227,22 +223,19 @@ public class MainActivity extends RoboActivity {
         startService(new Intent(this, FunfManager.class));
         Log.d(TAG, "Binding Funf ServiceConnection to activity");
         getApplicationContext().bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
+
+        getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         pipeline.addUploadListener(getUploadStatusListener());
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        AsyncTask.Status status = getCacheCountUpdater().getStatus();
-        if(status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING) {
-            getCacheCountUpdater().cancel(true);
-        }
         pipeline.removeUploadListener(getUploadStatusListener());
     }
 
@@ -303,7 +296,8 @@ public class MainActivity extends RoboActivity {
                             text += "\n\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
                     }
 
-                    uploadResultView.setText(text);
+                    if (uploadResultView.isShown())
+                        uploadResultView.setText(text);
                     if (pipeline != null && pipeline.isEnabled())
                         updateDataCount(-1);
                     Log.d(TAG, "Upload result received");
@@ -311,7 +305,8 @@ public class MainActivity extends RoboActivity {
 
                 @Override
                 public void progressUpdate(int value) {
-                    uploadResultView.setText(uploadResultView.getText() + " " + value +"% completed.");
+                    if (uploadResultView.isShown())
+                        uploadResultView.setText(uploadResultView.getText() + " " + value + "% completed.");
                 }
 
                 @Override
@@ -324,7 +319,7 @@ public class MainActivity extends RoboActivity {
     }
 
     private void updateDataCount(long count) {
-        if (dataCountView != null) {
+        if (dataCountView != null && dataCountView.isShown()) {
             String text = "Data count: ";
             text += (count < 0) ? "Computing..." : count;
             dataCountView.setText(text);
@@ -333,6 +328,11 @@ public class MainActivity extends RoboActivity {
 
     protected void onDestroy() {
         super.onDestroy();
+
+        AsyncTask.Status status = getCacheCountUpdater().getStatus();
+        if (!getCacheCountUpdater().isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
+            getCacheCountUpdater().cancel(true);
+        }
 
         boolean isBound = getApplicationContext().bindService(new Intent(getApplicationContext(), FunfManager.class), funfManagerConn, Context.BIND_AUTO_CREATE);
         if (isBound)
