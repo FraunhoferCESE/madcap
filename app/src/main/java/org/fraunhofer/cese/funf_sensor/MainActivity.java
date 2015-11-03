@@ -309,7 +309,7 @@ public class MainActivity extends RoboActivity {
                 public void progressUpdate(int value) {
                     Matcher matcher = pattern.matcher(uploadResultView.getText());
                     if (matcher.find()) {
-                        uploadText = matcher.replaceFirst(value + "%completed.");
+                        uploadText = matcher.replaceFirst(value + "% completed.");
                     } else {
                         uploadText += " " + value + "% completed.";
                     }
