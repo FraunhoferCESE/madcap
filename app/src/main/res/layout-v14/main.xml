@@ -6,42 +6,15 @@
     android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/header"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="#000">
-
-        <ImageView
-            android:id="@+id/icon"
-            android:contentDescription="@string/logoDescription"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:background="#000"
-            android:src="@mipmap/ic_launcher" />
-
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_margin="5dp"
-            android:background="#000"
-            android:text="@string/titleText"
-            android:textColor="#FFF"
-            android:textSize="25sp" />
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/body"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/header"
         android:layout_margin="5dp"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/intro"
+            android:autoLink="all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/introText"

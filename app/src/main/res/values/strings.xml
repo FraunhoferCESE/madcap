@@ -1,7 +1,7 @@
 <resources>
 
     <!-- other app config -->
-    <string name="app_name">FUNF-Sensor</string>
+    <string name="app_name">MADCAP</string>
     <string name="probe_location">
         {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
             "@schedule": {"interval": 60},
@@ -10,11 +10,11 @@
         }
     </string>
     <string name="titleText">Mobile Device Sensor by Fraunhofer CESE</string>
-    <string name="introText">This app collects data to study mobile device cybersecurity.  This data to help users be more secure when using mobile devices.\n\nThe app collects information such as which other apps are running, the device\'s GPS location, and when a call is received.\n\nThis app DOES NOT collect sensitive content, such as your contact list, the content of SMS messages, or your browsing history.</string>
+    <string name="introText">The MADCAP (Mobile Application Data CAPture) app collects data for research on mobile device security.\n\nThe app records information such as which apps are running, the device\'s GPS location, and when a call is made. This app DOES NOT collect sensitive content, such as your contact list, the content of SMS messages, or your browsing history.\n\nThe app periodically uploads its data to a remote server when you are connected to a WiFi network. You may turn data collection on or off at any time using the toggle switch below.\n\nPlease vists https://www.fc-md.umd.edu/madcap for more information.</string>
     <string name="logoDescription">Fraunhofer logo</string>
     <string name="collectDataSwitchText">Collect Data</string>
     <string name="dataCountText">Data count: 0</string>
     <string name="uploadResultText">Last upload result: None</string>
-    <string name="sendButtonText">Upload data now"</string>
-    <string name="footnoteText">This application uses the Funf Open Sensing Framework licensed under the GNU Lesser GPL.\n\n This application was developed by the Fraunhofer CESE. For any questions, email llayman@fc-md.umd.edu.</string>
+    <string name="sendButtonText">Upload data now</string>
+    <string name="footnoteText">This application uses the Funf Open Sensing Framework licensed under the GNU Lesser GPL.\n\n This application was developed by the Fraunhofer CESE. For any questions, email llayman@cese.fraunhofer.org.</string>
 </resources>
