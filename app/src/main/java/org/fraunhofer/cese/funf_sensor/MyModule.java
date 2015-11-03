@@ -92,6 +92,7 @@ public class MyModule extends AbstractModule {
     ProbeDataSetApi provideProbeDataSetApi() {
         ProbeDataSetApi.Builder builder = new ProbeDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
                 new AndroidJsonFactory(), null)
+                .setApplicationName("Fraunhofer MADCAP")
                 .setRootUrl("https://funfcese.appspot.com/_ah/api/");
 //                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
 //                    @Override
