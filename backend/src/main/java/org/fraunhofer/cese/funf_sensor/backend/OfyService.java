@@ -1,6 +1,8 @@
 package org.fraunhofer.cese.funf_sensor.backend;
 
 import org.fraunhofer.cese.funf_sensor.backend.models.*;
+import org.fraunhofer.cese.funf_sensor.backend.models.ResponseDataSet;
+
 import com.googlecode.objectify.*;
 /**
  *
@@ -9,6 +11,7 @@ public class OfyService {
     static {
         ObjectifyService.register(ProbeDataSet.class);
         ObjectifyService.register(ProbeEntry.class);
+        ObjectifyService.register(ResponseDataSet.class);
     }
 
     /**

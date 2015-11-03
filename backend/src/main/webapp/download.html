@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Hello, Endpoints!</title>
+    <title>CESE-Sensors Developers' Page</title>
     <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
     <link rel="stylesheet"
           href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
@@ -32,7 +32,6 @@
                 <li><a href="/_ah/api/explorer">Google Cloud Endpoints API Explorer</a></li>
                 <li><a href="https://console.developers.google.com">Google Developers Console</a>
                 </li>
-                <li><a href="http://funfcese.appspot.com/download.html">Download</a></li>
             </ul>
         </div>
     </div>
@@ -51,28 +50,26 @@
     <div class="jumbotron">
         <div class="row">
             <div class="col-lg-12">
-                <h1>Hello, Endpoints!</h1>
+                <h1>Howdy World! Hallo Heimur! Servus Mitanand!</h1>
 
-                <p>Enter your probeType and press the button below to call your Google Cloud
-                    Endpoints
-                    API.</p>
+                <p>This is where you hopefully might be able save a CSV-file containing
+                    sensor data to a hard-to-get-to bucket.
+                    The data will still be safe in the datastore though.</p>
 
-                <form method="get">
-                    <div class="input-group">
-                        <input type="text" class="form-control input-lg" placeholder="Name"
-                               id="nameInput"/>
-                          <span class="input-group-btn">
-                             <button class="btn btn-default btn-primary btn-group btn-lg"
-                                     type="submit" id="downloadButton">Say Hello</button>
-                          </span>
+                <form action="putDataToBucket" method="get">
+                    <div class="input-group" id="requestForm">
+                        <input type="number" id="fromTimestamp" placeholder="fromTimestamp"
+                               name="fromTimestamp"
+                               autofocus/>
+                        <input type="number" id="toTimestamp" placeholder="toTimestamp"
+                               name="toTimestamp"/>
+                        <input type="password" id="password" placeholder="password" name="password"/>
+                        <input type="submit" value="Save Data to Bucket" formmethod="get">
+                        <!--In case you wanted to use AJAX <input type="button" onclick="initiateSaving()" value="Save Data to bucket">-->
                     </div>
+
                 </form>
                 <br/>
-
-                <p>If you need step-by-step instructions for connecting your Android application to
-                    this backend module, see <a
-                            href="https://github.com/GoogleCloudPlatform/gradle-appengine-templates/tree/master/HelloEndpoints">"App
-                        Engine Java Endpoints Module" template documentation</a>.</p>
 
                 <p>
                     <small>
@@ -86,21 +83,63 @@
                         see the <a href="/_ah/api/explorer">Cloud Endpoints API Explorer</a>.
                     </small>
                 </p>
+                <br/>
+                <br/>
+                <br/>
+
+                <h2>Santa's little helper to calculate timestamps</h2>
+
+                <input type="datetime-local" id="datetime">
+                <button onclick="calculateTimestamp()">Get datetime as long</button>
+                <p id="timestampResult"></p>
             </div>
         </div>
     </div>
 </div>
 
-<script type="text/javascript">
-    // A function that attaches a "Say Hello" button click handler
-    function enableClick() {
-      document.getElementById('downloadButton').onclick = function() {
+<script>
 
+    function calculateTimestamp(){
+        var input = document.getElementById("datetime").value;
+        var dateTime = input.split("T");
+        var date = dateTime[0].split("-");
+        var time = dateTime[1].split(":");
+        var year = date[0];
+        var month = date[1]-1;
+        var day = date[2];
+        var hour = time[0];
+        var minute = time[1];
 
-        );
-        return false;
-      }
+        var result = new Date(year, month, day, hour, minute, 0, 0).getTime();
+        document.getElementById("timestampResult").innerHTML = "DateTime as long: "+result;
     }
+
+    function feedback(){alert("I think your request might have been sent. Check at https://console.developers.google.com/project/funfcese/storage/browser");}
+
+
+    function initiateSaving(){
+
+        var fromTimestamp = getElementById("fromTimestamp").value;
+        var toTimestamp = getElementById("toTimestamp").value;
+        alert("CALLED");
+        var xhttpAJAXthing = new XMLHttpRequest();
+
+        var requestURL = "putStuffToBucket*";
+
+
+
+        xhttpAJAXthing.open("GET", requestURL, true);
+        xhttpAJAXthing.send();
+    }
+
+    function getRequestURL(fromTimestamp, toTimestamp){
+        var result = "putStuffToBucket";
+        var add1 = "?fromTimestamp=" + fromTimestamp;
+        var add2 = "?toTimestamp="   +   toTimestamp;
+        result = result.concat(add1,add2);
+        return result;
+    }
+
     // This is called initially
     function init() {
       var apiName = 'myApi';
@@ -117,6 +156,10 @@
       }
       gapi.client.load(apiName, apiVersion, callback, apiRoot);
     }
+
+
+
+
 
 
 </script>

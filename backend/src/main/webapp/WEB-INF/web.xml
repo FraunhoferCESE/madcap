@@ -6,8 +6,9 @@
     </filter>
     <filter-mapping>
         <filter-name>ObjectifyFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <url-pattern>/goToOfy</url-pattern>
     </filter-mapping>
+
     <servlet>
         <servlet-name>SystemServiceServlet</servlet-name>
         <!-- That was called servlet-probeType.
@@ -20,18 +21,28 @@
              I changed it so it would match the example
              -Frederik-         -->
             <param-value>
-                org.fraunhofer.cese.funf_sensor.backend.apis.ProbeDataSetEndpoint
+                org.fraunhofer.cese.funf_sensor.backend.apis.ProbeDataSetEndpoint,
+                org.fraunhofer.cese.funf_sensor.backend.apis.ResponseDataSetEndpoint
             </param-value>
         </init-param>
     </servlet>
     <servlet-mapping>
         <servlet-name>SystemServiceServlet</servlet-name>
 
-        <!-- That was called servlet-probeType.
-             I changed it so it would match the example
-             -Frederik-         -->
+
         <url-pattern>/_ah/spi/*</url-pattern>
     </servlet-mapping>
+
+
+    <servlet>
+        <servlet-name>myServlet</servlet-name>
+        <servlet-class>org.fraunhofer.cese.funf_sensor.backend.servlets.HttpsGetServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>myServlet</servlet-name>
+        <url-pattern>/putDataToBucket</url-pattern>
+    </servlet-mapping>
+
 
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>

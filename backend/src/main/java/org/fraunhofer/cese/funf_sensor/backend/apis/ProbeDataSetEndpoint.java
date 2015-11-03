@@ -9,6 +9,7 @@ import com.google.api.server.spi.response.ConflictException;
 import org.fraunhofer.cese.funf_sensor.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.funf_sensor.backend.models.ProbeEntry;
 import org.fraunhofer.cese.funf_sensor.backend.models.ProbeSaveResult;
+import org.fraunhofer.cese.funf_sensor.backend.servlets.HttpsGetServlet;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -72,6 +73,7 @@ public class ProbeDataSetEndpoint {
         for (ProbeEntry entry : entryList) {
             if (ids.get(entry.getId()) == null) {
                 saved.add(entry.getId());
+                ResponseDataSetEndpoint.addToKeys(entry.getId());
                 toSave.add(entry);
             } else {
                 alreadyExists.add(entry.getId());
