@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -76,7 +77,9 @@ public class MainActivity extends RoboActivity {
     private AsyncTask<Void, Long, Void> cacheCountUpdater;
 
     private String uploadText = "";
-    private String cacheText = "";
+    private String cacheText = "Data count: 0";
+
+    private String deviceID;
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -154,10 +157,13 @@ public class MainActivity extends RoboActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        this.deviceID = ((TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+
         setContentView(R.layout.main);
         dataCountView = (TextView) findViewById(R.id.dataCountText);
         uploadResultView = (TextView) findViewById(R.id.uploadResult);
         collectDataSwitch = (Switch) findViewById(R.id.switch1);
+        ((TextView) findViewById(R.id.deviceIdText)).setText("Device ID: " + this.deviceID);
         collectDataSwitch.setChecked(true);
         collectDataSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {

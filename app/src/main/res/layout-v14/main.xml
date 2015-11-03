@@ -14,46 +14,43 @@
 
         <TextView
             android:id="@+id/intro"
-            android:autoLink="all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:autoLink="all"
             android:text="@string/introText"
             android:textColor="#000" />
 
-        <Switch
-            android:id="@+id/switch1"
+        <TextView
+            android:id="@+id/deviceIdText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:textSize="15sp"
-            android:text="@string/collectDataSwitchText" />
+            android:text="@string/deviceIdText"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/dataCountText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:text="@string/dataCountText"
+            android:textSize="15sp" />
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/collectDataSwitchText"
             android:layout_marginTop="15dp"
-            android:text="@string/dataCountText" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/uploadResult"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:textSize="15sp"
             android:layout_marginTop="15dp"
-            android:text="@string/uploadResultText" />
-
-        <Button
-            android:id="@+id/SendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="15dp"
-            android:text="@string/sendButtonText" />
-
+            android:text="@string/uploadResultText"
+            android:textSize="15sp" />
     </LinearLayout>
-
 
     <TextView
         android:id="@+id/footnote"
@@ -66,5 +63,13 @@
         android:text="@string/footnoteText"
         android:textSize="12sp" />
 
+    <Button
+        android:id="@+id/SendButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/footnote"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:text="@string/sendButtonText" />
 
 </RelativeLayout>

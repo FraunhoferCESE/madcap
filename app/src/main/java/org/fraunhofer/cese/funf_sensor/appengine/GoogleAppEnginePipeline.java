@@ -1,12 +1,8 @@
 package org.fraunhofer.cese.funf_sensor.appengine;
 
-import android.accounts.AccountManager;
-import android.os.UserManager;
-import android.provider.Settings;
+import android.content.Context;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.content.Context;
-import android.content.ContentResolver;
 
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
@@ -25,7 +21,6 @@ import edu.mit.media.funf.probe.Probe;
 import edu.mit.media.funf.probe.builtin.ProbeKeys;
 
 
-
 public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
     private static final String TAG = "Fraunhofer." + GoogleAppEnginePipeline.class.getSimpleName();
@@ -33,17 +28,13 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     private boolean enabled = false;
 
     private final Cache cache;
-    private final Context context;
     private final String deviceID;
-
 
 
     @Inject
     public GoogleAppEnginePipeline(Cache cache, Context context) {
         this.cache = cache;
-        this.context = context;
-        TelephonyManager telephony = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        this.deviceID = telephony.getDeviceId();
+        this.deviceID = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
     }
 
     /**
@@ -65,16 +56,13 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         }
 
 //        Getting millis as timestamp. If you change that, change it as well within the webapp.
-        final Double timestampDouble = (data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsDouble())*1000;
+        final Double timestampDouble = (data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsDouble()) * 1000;
         final Long timestamp = timestampDouble.longValue();
 
-//        final Long timestamp = data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsLong();
         if (timestamp == 0L) {
             Log.d(TAG, "Invalid timestamp for probe data: " + timestamp);
             return;
         }
-
-        TelephonyManager telephony = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
         CacheEntry probeEntry = new CacheEntry();
         probeEntry.setId(UUID.randomUUID().toString());
