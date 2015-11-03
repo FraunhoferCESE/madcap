@@ -34,6 +34,8 @@ import org.fraunhofer.cese.funf_sensor.cache.UploadStatusListener;
 
 import java.text.DateFormat;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
@@ -74,7 +76,7 @@ public class MainActivity extends RoboActivity {
     private AsyncTask<Void, Long, Void> cacheCountUpdater;
 
     private String uploadText = "";
-    private String cacheText =  "";
+    private String cacheText = "";
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -301,9 +303,17 @@ public class MainActivity extends RoboActivity {
                     Log.d(TAG, "Upload result received");
                 }
 
+                private final Pattern pattern = Pattern.compile("[0-9]+% completed.");
+
                 @Override
                 public void progressUpdate(int value) {
-                    uploadText += " " + value + "% completed.";
+                    Matcher matcher = pattern.matcher(uploadResultView.getText());
+                    if (matcher.find()) {
+                        uploadText = matcher.replaceFirst(value + "%completed.");
+                    } else {
+                        uploadText += " " + value + "% completed.";
+                    }
+
                     if (uploadResultView.isShown())
                         uploadResultView.setText(uploadText);
                 }
