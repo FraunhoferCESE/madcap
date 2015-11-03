@@ -18,6 +18,16 @@ public class CacheConfig {
     private long uploadInterval;
     private boolean uploadWifiOnly;
 
+    private boolean writeToFile;
+
+    public boolean getWriteToFile() {
+        return writeToFile;
+    }
+
+    public void setWriteToFile(boolean writeToFile) {
+        this.writeToFile = writeToFile;
+    }
+
     public void setMaxMemEntries(int maxMemEntries) {
         this.maxMemEntries = maxMemEntries;
     }

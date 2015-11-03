@@ -333,10 +333,13 @@ public class Cache {
      */
     private void upload() {
         last_upload_attempt = System.currentTimeMillis();
-        try {
-            writeToFile();
-        } catch (IOException e) {
-            Log.e(TAG, "Error writing to CSV file", e);
+
+        if(config.getWriteToFile()) {
+            try {
+                writeToFile();
+            } catch (IOException e) {
+                Log.e(TAG, "Error writing to CSV file", e);
+            }
         }
         uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi, uploadStatusListeners).execute();
     }
