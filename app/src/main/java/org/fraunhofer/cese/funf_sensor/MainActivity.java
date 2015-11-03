@@ -68,8 +68,6 @@ public class MainActivity extends RoboActivity {
     private AudioProbe audioProbe;
     private BluetoothProbe bluetoothProbe;
 
-    private Switch collectDataSwitch;
-    private Button instantSendButton;
     private TextView dataCountView;
     private TextView uploadResultView;
 
@@ -78,8 +76,6 @@ public class MainActivity extends RoboActivity {
 
     private String uploadText = "";
     private String cacheText = "Data count: 0";
-
-    private String deviceID;
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -157,13 +153,11 @@ public class MainActivity extends RoboActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        this.deviceID = ((TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
-
         setContentView(R.layout.main);
         dataCountView = (TextView) findViewById(R.id.dataCountText);
         uploadResultView = (TextView) findViewById(R.id.uploadResult);
-        collectDataSwitch = (Switch) findViewById(R.id.switch1);
-        ((TextView) findViewById(R.id.deviceIdText)).setText("Device ID: " + this.deviceID);
+        Switch collectDataSwitch = (Switch) findViewById(R.id.switch1);
+        ((TextView) findViewById(R.id.deviceIdText)).setText("Device ID: " + ((TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId());
         collectDataSwitch.setChecked(true);
         collectDataSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
@@ -184,7 +178,7 @@ public class MainActivity extends RoboActivity {
                 }
         );
 
-        instantSendButton = (Button) findViewById(R.id.SendButton);
+        Button instantSendButton = (Button) findViewById(R.id.SendButton);
         instantSendButton.setOnClickListener(
                 new View.OnClickListener() {
                     private final DateFormat df = DateFormat.getDateTimeInstance();

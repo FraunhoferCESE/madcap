@@ -5,11 +5,13 @@ import android.content.Context;
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.ProbeDataSetApi;
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeSaveResult;
 
+import java.util.List;
+
 /**
  * Class for capturing the results of remote upload attempts by the cache.
  *
  * @see Cache
- * @see RemoteUploadAsyncTaskFactory#createRemoteUploadTask(Context, Cache, ProbeDataSetApi)
+ * @see RemoteUploadAsyncTaskFactory#createRemoteUploadTask(Context, Cache, ProbeDataSetApi, List)
  */
 public class RemoteUploadResult {
 

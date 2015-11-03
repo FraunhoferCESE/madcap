@@ -2,8 +2,6 @@ package org.fraunhofer.cese.funf_sensor;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
-import com.google.api.client.googleapis.services.AbstractGoogleClientRequest;
-import com.google.api.client.googleapis.services.GoogleClientRequestInitializer;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
@@ -13,8 +11,6 @@ import org.fraunhofer.cese.funf_sensor.cache.Cache;
 import org.fraunhofer.cese.funf_sensor.cache.CacheConfig;
 import org.fraunhofer.cese.funf_sensor.cache.DatabaseAsyncTaskFactory;
 import org.fraunhofer.cese.funf_sensor.cache.RemoteUploadAsyncTaskFactory;
-
-import java.io.IOException;
 
 /**
  * Created by Lucas on 10/6/2015.

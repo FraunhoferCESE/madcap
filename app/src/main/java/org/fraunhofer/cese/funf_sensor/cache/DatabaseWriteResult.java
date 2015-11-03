@@ -1,5 +1,7 @@
 package org.fraunhofer.cese.funf_sensor.cache;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -8,7 +10,7 @@ import java.util.Collection;
  *
  * @author Lucas
  * @see Cache
- * @see DatabaseAsyncTaskFactory#createWriteTask(Cache)
+ * @see DatabaseAsyncTaskFactory#createWriteTask(Context, Cache, Cache.UploadStrategy)
  */
 public class DatabaseWriteResult {
 

@@ -367,16 +367,14 @@ public class Cache {
         });
 
         File f = new File(dir, "probeData.csv");
-        if (!f.exists()) {
-            f.createNewFile();
+        if (!f.exists() && f.createNewFile()) {
+            CSVWriter writer = new CSVWriter(new FileWriter(f, true));
+            Log.d(TAG, "Writing CSV file to:" + f.getAbsolutePath());
+            writer.writeAll(toWrite);
+            writer.flush();
+            writer.close();
+            Log.d(TAG, "CSV write completed");
         }
-
-        CSVWriter writer = new CSVWriter(new FileWriter(f, true));
-        Log.d(TAG, "Writing CSV file to:" + f.getAbsolutePath());
-        writer.writeAll(toWrite);
-        writer.flush();
-        writer.close();
-        Log.d(TAG, "CSV write completed");
     }
 
 
