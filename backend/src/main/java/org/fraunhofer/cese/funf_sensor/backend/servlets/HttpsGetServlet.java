@@ -23,17 +23,9 @@ import com.google.appengine.tools.cloudstorage.GcsFileOptions;
 import com.google.appengine.tools.cloudstorage.GcsFilename;
 import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
 import com.google.appengine.tools.cloudstorage.RetryParams;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 
 import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
-
-import com.google.appengine.api.files.AppEngineFile;
-import com.google.appengine.api.files.FileService;
-import com.google.appengine.api.files.FileServiceFactory;
-import com.google.appengine.api.files.FileWriteChannel;
-import com.google.appengine.api.files.GSFileOptions.GSFileOptionsBuilder;
 
 
 /**

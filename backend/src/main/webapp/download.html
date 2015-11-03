@@ -64,7 +64,7 @@
                         <input type="number" id="toTimestamp" placeholder="toTimestamp"
                                name="toTimestamp"/>
                         <input type="password" id="password" placeholder="password" name="password"/>
-                        <input type="submit" value="Save data to Bucket" formmethod="get">
+                        <input type="submit" value="Save Data to Bucket" formmethod="get">
                         <!--In case you wanted to use AJAX <input type="button" onclick="initiateSaving()" value="Save Data to bucket">-->
                     </div>
 
@@ -110,7 +110,7 @@
         var hour = time[0];
         var minute = time[1];
 
-        var result = (new Date(year, month, day, hour, minute, 0, 0).getTime())/1000;
+        var result = new Date(year, month, day, hour, minute, 0, 0).getTime();
         document.getElementById("timestampResult").innerHTML = "DateTime as long: "+result;
     }
 
