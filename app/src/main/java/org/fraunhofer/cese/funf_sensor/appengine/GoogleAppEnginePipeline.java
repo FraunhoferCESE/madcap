@@ -64,7 +64,11 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
             return;
         }
 
-        final Long timestamp = data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsLong();
+//        Getting millis as timestamp. If you change that, change it as well within the webapp.
+        final Double timestampDouble = (data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsDouble())*1000;
+        final Long timestamp = timestampDouble.longValue();
+
+//        final Long timestamp = data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsLong();
         if (timestamp == 0L) {
             Log.d(TAG, "Invalid timestamp for probe data: " + timestamp);
             return;
