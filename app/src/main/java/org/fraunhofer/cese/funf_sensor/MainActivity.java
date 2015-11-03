@@ -73,6 +73,8 @@ public class MainActivity extends RoboActivity {
     private UploadStatusListener uploadStatusListener;
     private AsyncTask<Void, Long, Void> cacheCountUpdater;
 
+    private String uploadText = "";
+    private String cacheText =  "";
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -105,8 +107,6 @@ public class MainActivity extends RoboActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
-
             if (funfManager != null && pipeline.isEnabled()) {
                 Log.d(TAG, "Service disconnected. Disabling pipeline: " + PIPELINE_NAME);
                 pipeline.setEnabled(false);
@@ -207,7 +207,8 @@ public class MainActivity extends RoboActivity {
                                 text += "No status to report. Please wait.";
                             }
                         }
-                        uploadResultView.setText(text);
+                        uploadText = text;
+                        uploadResultView.setText(uploadText);
                     }
                 }
         );
@@ -225,6 +226,8 @@ public class MainActivity extends RoboActivity {
     protected void onStart() {
         super.onStart();
         pipeline.addUploadListener(getUploadStatusListener());
+        dataCountView.setText(cacheText);
+        uploadResultView.setText(uploadText);
     }
 
     @Override
@@ -290,8 +293,9 @@ public class MainActivity extends RoboActivity {
                             text += "\n\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
                     }
 
+                    uploadText = text;
                     if (uploadResultView.isShown())
-                        uploadResultView.setText(text);
+                        uploadResultView.setText(uploadText);
                     if (pipeline != null && pipeline.isEnabled())
                         updateDataCount(-1);
                     Log.d(TAG, "Upload result received");
@@ -299,8 +303,9 @@ public class MainActivity extends RoboActivity {
 
                 @Override
                 public void progressUpdate(int value) {
+                    uploadText += " " + value + "% completed.";
                     if (uploadResultView.isShown())
-                        uploadResultView.setText(uploadResultView.getText() + " " + value + "% completed.");
+                        uploadResultView.setText(uploadText);
                 }
 
                 @Override
@@ -313,10 +318,10 @@ public class MainActivity extends RoboActivity {
     }
 
     private void updateDataCount(long count) {
+        cacheText = "Data count: " + ((count < 0) ? "Computing..." : count);
+
         if (dataCountView != null && dataCountView.isShown()) {
-            String text = "Data count: ";
-            text += (count < 0) ? "Computing..." : count;
-            dataCountView.setText(text);
+            dataCountView.setText(cacheText);
         }
     }
 
