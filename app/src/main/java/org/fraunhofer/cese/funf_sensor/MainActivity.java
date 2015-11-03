@@ -18,6 +18,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
+import org.fraunhofer.cese.funf_sensor.Probe.NetworkConnectionProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.AudioProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.BluetoothProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe;
@@ -66,6 +67,7 @@ public class MainActivity extends RoboActivity {
     private CallStateProbe callStateProbe;
     private AudioProbe audioProbe;
     private BluetoothProbe bluetoothProbe;
+    private NetworkConnectionProbe networkConnectionProbe;
 
     private Switch collectDataSwitch;
     private Button instantSendButton;
@@ -94,6 +96,7 @@ public class MainActivity extends RoboActivity {
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
             audioProbe = gson.fromJson(new JsonObject(), AudioProbe.class);
             bluetoothProbe = gson.fromJson(new JsonObject(), BluetoothProbe.class);
+            networkConnectionProbe = gson.fromJson(new JsonObject(), NetworkConnectionProbe.class);
 
             // Initialize the pipeline
             funfManager.registerPipeline(PIPELINE_NAME, pipeline);
@@ -198,6 +201,7 @@ public class MainActivity extends RoboActivity {
         callStateProbe.registerPassiveListener(pipeline);
         audioProbe.registerPassiveListener(pipeline);
         bluetoothProbe.registerListener(pipeline);
+        networkConnectionProbe.registerPassiveListener(pipeline);
     }
 
     private void unregisterListeners() {
@@ -214,6 +218,7 @@ public class MainActivity extends RoboActivity {
         callStateProbe.unregisterListener(pipeline);
         audioProbe.unregisterListener(pipeline);
         bluetoothProbe.unregisterListener(pipeline);
+        networkConnectionProbe.unregisterListener(pipeline);
     }
 
     //onCreate is the rendering of the main page
