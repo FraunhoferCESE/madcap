@@ -281,7 +281,7 @@ public class MainActivity extends RoboActivity {
                 protected Void doInBackground(Void... params) {
                     while (!isCancelled()) {
                         try {
-                            if (pipeline != null && pipeline.isEnabled())
+                            if (pipeline != null)
                                 publishProgress(pipeline.getCacheSize());
                             Thread.sleep(5000);
                         } catch (InterruptedException e) {
