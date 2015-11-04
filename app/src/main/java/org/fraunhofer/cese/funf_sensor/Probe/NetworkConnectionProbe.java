@@ -104,6 +104,10 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
                         WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
                         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                         intent.putExtra("WifiInfo: ", wifiInfo.toString());
+                        int ipAdress = wifiInfo.getIpAddress();
+                        String sSID = wifiInfo.getSSID();
+                        intent.putExtra("IP-Adress: ", ipAdress);
+                        intent.putExtra("SSID: ", sSID);
                     }
                     callback.sendData(intent);
                     break;
