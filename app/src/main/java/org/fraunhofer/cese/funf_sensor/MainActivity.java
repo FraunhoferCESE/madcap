@@ -47,8 +47,11 @@ import roboguice.activity.RoboActivity;
 
 public class MainActivity extends RoboActivity {
     private static final String TAG = "Fraunhofer." + MainActivity.class.getSimpleName();
-
     public static final String PIPELINE_NAME = "appengine";
+    private static final String STATE_UPLOAD_STATUS = "uploadStatus";
+    private static final String STATE_DATA_COUNT = "dataCount";
+
+    
     private FunfManager funfManager;
 
     @Inject
@@ -61,7 +64,6 @@ public class MainActivity extends RoboActivity {
     private ScreenProbe screenProbe;
     private SimpleLocationProbe locationProbe;
     private WifiProbe wifiProbe;
-
     private SMSProbe sMSProbe;
     private PowerProbe powerProbe;
     private StateProbe stateProbe;
@@ -69,14 +71,15 @@ public class MainActivity extends RoboActivity {
     private AudioProbe audioProbe;
     private BluetoothProbe bluetoothProbe;
 
+    // UI elements
     private TextView dataCountView;
     private TextView uploadResultView;
 
     private UploadStatusListener uploadStatusListener;
     private AsyncTask<Void, Long, Void> cacheCountUpdater;
 
-    private String uploadText = "";
-    private String cacheText = "Data count: 0";
+    private String uploadResultText;
+    private String dataCountText;
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -154,6 +157,15 @@ public class MainActivity extends RoboActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(savedInstanceState != null ) {
+            this.dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
+            this.uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
+        }
+        else {
+            this.dataCountText = "Data count: 0";
+            this.uploadResultText = "";
+        }
+
         setContentView(R.layout.main);
         dataCountView = (TextView) findViewById(R.id.dataCountText);
         uploadResultView = (TextView) findViewById(R.id.uploadResult);
@@ -210,8 +222,8 @@ public class MainActivity extends RoboActivity {
                                 text += "No status to report. Please wait.";
                             }
                         }
-                        uploadText = text;
-                        uploadResultView.setText(uploadText);
+                        uploadResultText = text;
+                        uploadResultView.setText(uploadResultText);
                     }
                 }
         );
@@ -221,6 +233,7 @@ public class MainActivity extends RoboActivity {
         startService(new Intent(this, FunfManager.class));
         Log.d(TAG, "Binding Funf ServiceConnection to activity");
         getApplicationContext().bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
+        pipeline.addUploadListener(getUploadStatusListener());
 
         getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -228,15 +241,13 @@ public class MainActivity extends RoboActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        pipeline.addUploadListener(getUploadStatusListener());
-        dataCountView.setText(cacheText);
-        uploadResultView.setText(uploadText);
+        dataCountView.setText(dataCountText);
+        uploadResultView.setText(uploadResultText);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        pipeline.removeUploadListener(getUploadStatusListener());
     }
 
     private AsyncTask<Void, Long, Void> getCacheCountUpdater() {
@@ -296,9 +307,9 @@ public class MainActivity extends RoboActivity {
                             text += "\n\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
                     }
 
-                    uploadText = text;
+                    uploadResultText = text;
                     if (uploadResultView.isShown())
-                        uploadResultView.setText(uploadText);
+                        uploadResultView.setText(uploadResultText);
                     if (pipeline != null && pipeline.isEnabled())
                         updateDataCount(-1);
                     Log.d(TAG, "Upload result received");
@@ -310,13 +321,13 @@ public class MainActivity extends RoboActivity {
                 public void progressUpdate(int value) {
                     Matcher matcher = pattern.matcher(uploadResultView.getText());
                     if (matcher.find()) {
-                        uploadText = matcher.replaceFirst(value + "% completed.");
+                        uploadResultText = matcher.replaceFirst(value + "% completed.");
                     } else {
-                        uploadText += " " + value + "% completed.";
+                        uploadResultText += " " + value + "% completed.";
                     }
 
                     if (uploadResultView.isShown())
-                        uploadResultView.setText(uploadText);
+                        uploadResultView.setText(uploadResultText);
                 }
 
                 @Override
@@ -329,16 +340,17 @@ public class MainActivity extends RoboActivity {
     }
 
     private void updateDataCount(long count) {
-        cacheText = "Data count: " + ((count < 0) ? "Computing..." : count);
+        dataCountText = "Data count: " + ((count < 0) ? "Computing..." : count);
 
         if (dataCountView != null && dataCountView.isShown()) {
-            dataCountView.setText(cacheText);
+            dataCountView.setText(dataCountText);
         }
     }
 
     protected void onDestroy() {
         super.onDestroy();
 
+        pipeline.removeUploadListener(getUploadStatusListener());
         AsyncTask.Status status = getCacheCountUpdater().getStatus();
         if (!getCacheCountUpdater().isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
             getCacheCountUpdater().cancel(true);
@@ -348,6 +360,14 @@ public class MainActivity extends RoboActivity {
         if (isBound)
             getApplicationContext().unbindService(funfManagerConn);
         stopService(new Intent(this, FunfManager.class));
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_UPLOAD_STATUS, uploadResultText);
+        outState.putString(STATE_DATA_COUNT, dataCountText);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
