@@ -50,6 +50,7 @@ public class MainActivity extends RoboActivity {
     public static final String PIPELINE_NAME = "appengine";
     private static final String STATE_UPLOAD_STATUS = "uploadStatus";
     private static final String STATE_DATA_COUNT = "dataCount";
+    private static final String STATE_COLLECTING_DATA = "isCollectingData";
 
 
     private FunfManager funfManager;
@@ -80,6 +81,7 @@ public class MainActivity extends RoboActivity {
 
     private String uploadResultText;
     private String dataCountText;
+    private boolean isCollectingData;
 
     private ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -103,26 +105,42 @@ public class MainActivity extends RoboActivity {
             // Initialize the pipeline
             funfManager.registerPipeline(PIPELINE_NAME, pipeline);
             pipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
-
-            Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
-            funfManager.enablePipeline(PIPELINE_NAME);
-            pipeline.setEnabled(true);
-            registerListeners();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             if (funfManager != null && pipeline.isEnabled()) {
-                Log.d(TAG, "Service disconnected. Disabling pipeline: " + PIPELINE_NAME);
-                pipeline.setEnabled(false);
-                funfManager.disablePipeline(PIPELINE_NAME);
-                unregisterListeners();
+                disablePipelines();
             }
             funfManager = null;
         }
     };
 
-    private void registerListeners() {
+    private void disablePipelines() {
+        Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
+
+        accelerometerProbe.unregisterPassiveListener(pipeline);
+        foregroundProbe.unregisterPassiveListener(pipeline);
+        locationProbe.unregisterPassiveListener(pipeline);
+        wifiProbe.unregisterPassiveListener(pipeline);
+        myRunningApplicationsProbe.unregisterPassiveListener(pipeline);
+        screenProbe.unregisterPassiveListener(pipeline);
+        sMSProbe.unregisterPassiveListener(pipeline);
+        powerProbe.unregisterPassiveListener(pipeline);
+        stateProbe.unregisterPassiveListener(pipeline);
+        callStateProbe.unregisterPassiveListener(pipeline);
+        audioProbe.unregisterPassiveListener(pipeline);
+        bluetoothProbe.unregisterListener(pipeline);
+
+        pipeline.setEnabled(false);
+        funfManager.disablePipeline(PIPELINE_NAME);
+    }
+
+    private void enablePipelines() {
+        Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
+        funfManager.enablePipeline(PIPELINE_NAME);
+        pipeline.setEnabled(true);
+
         accelerometerProbe.registerPassiveListener(pipeline);
         foregroundProbe.registerPassiveListener(pipeline);
         locationProbe.registerPassiveListener(pipeline);
@@ -137,55 +155,37 @@ public class MainActivity extends RoboActivity {
         bluetoothProbe.registerListener(pipeline);
     }
 
-    private void unregisterListeners() {
-
-        accelerometerProbe.unregisterPassiveListener(pipeline);
-        foregroundProbe.unregisterPassiveListener(pipeline);
-        locationProbe.unregisterPassiveListener(pipeline);
-        wifiProbe.unregisterPassiveListener(pipeline);
-        myRunningApplicationsProbe.unregisterPassiveListener(pipeline);
-        screenProbe.unregisterPassiveListener(pipeline);
-        sMSProbe.unregisterPassiveListener(pipeline);
-        powerProbe.unregisterPassiveListener(pipeline);
-        stateProbe.unregisterPassiveListener(pipeline);
-        callStateProbe.unregisterPassiveListener(pipeline);
-        audioProbe.unregisterPassiveListener(pipeline);
-        bluetoothProbe.unregisterListener(pipeline);
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState != null ) {
+        if (savedInstanceState != null) {
             this.dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
             this.uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
-        }
-        else {
-            this.dataCountText = "Data count: 0";
-            this.uploadResultText = "";
+            this.isCollectingData = savedInstanceState.getBoolean(STATE_COLLECTING_DATA);
+        } else {
+            this.dataCountText = "Computing...";
+            this.uploadResultText = "None.";
+            this.isCollectingData = true;
         }
 
         setContentView(R.layout.main);
         dataCountView = (TextView) findViewById(R.id.dataCountText);
         uploadResultView = (TextView) findViewById(R.id.uploadResult);
         Switch collectDataSwitch = (Switch) findViewById(R.id.switch1);
-        ((TextView) findViewById(R.id.deviceIdText)).setText("Device ID: " + ((TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId());
-        collectDataSwitch.setChecked(true);
+
+        ((TextView) findViewById(R.id.deviceIdText)).setText(getString(R.string.deviceIdText, ((TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId()));
+        collectDataSwitch.setChecked(this.isCollectingData);
         collectDataSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
-                            Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
-                            funfManager.enablePipeline(PIPELINE_NAME);
-                            pipeline.setEnabled(true);
-                            registerListeners();
+                            isCollectingData = true;
+                            enablePipelines();
                         } else {
-                            Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
-                            unregisterListeners();
-                            pipeline.setEnabled(false);
-                            funfManager.disablePipeline(PIPELINE_NAME);
+                            isCollectingData = false;
+                            disablePipelines();
                         }
                     }
                 }
@@ -198,7 +198,7 @@ public class MainActivity extends RoboActivity {
 
                     @Override
                     public void onClick(View view) {
-                        String text = "Upload requested on " + df.format(new Date()) + "\n";
+                        String text = "\nUpload requested on " + df.format(new Date()) + "\n";
 
                         int status = pipeline.requestUpload();
                         if (status == Cache.UPLOAD_READY)
@@ -223,7 +223,7 @@ public class MainActivity extends RoboActivity {
                             }
                         }
                         uploadResultText = text;
-                        uploadResultView.setText(uploadResultText);
+                        uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
                     }
                 }
         );
@@ -234,20 +234,44 @@ public class MainActivity extends RoboActivity {
         Log.d(TAG, "Binding Funf ServiceConnection to activity");
         getApplicationContext().bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
         pipeline.addUploadListener(getUploadStatusListener());
-
         getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        dataCountView.setText(dataCountText);
-        uploadResultView.setText(uploadResultText);
+        dataCountView.setText(getString(R.string.dataCountText, dataCountText));
+        uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
+    }
+
+    protected void onDestroy() {
+        super.onDestroy();
+
+        pipeline.removeUploadListener(getUploadStatusListener());
+        AsyncTask.Status status = getCacheCountUpdater().getStatus();
+        if (!getCacheCountUpdater().isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
+            getCacheCountUpdater().cancel(true);
+        }
+
+        boolean isBound = getApplicationContext().bindService(new Intent(getApplicationContext(), FunfManager.class), funfManagerConn, Context.BIND_AUTO_CREATE);
+        if (isBound)
+            getApplicationContext().unbindService(funfManagerConn);
+        stopService(new Intent(this, FunfManager.class));
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_UPLOAD_STATUS, uploadResultText);
+        outState.putString(STATE_DATA_COUNT, dataCountText);
+        outState.putBoolean(STATE_COLLECTING_DATA, isCollectingData);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        pipeline.onTrimMemory();
     }
 
     private AsyncTask<Void, Long, Void> getCacheCountUpdater() {
@@ -261,7 +285,7 @@ public class MainActivity extends RoboActivity {
                                 publishProgress(pipeline.getCacheSize());
                             Thread.sleep(5000);
                         } catch (InterruptedException e) {
-                            Log.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.", e);
+                            Log.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
                         }
                     }
                     return null;
@@ -281,7 +305,7 @@ public class MainActivity extends RoboActivity {
 
             uploadStatusListener = new UploadStatusListener() {
                 private static final String TAG = "UploadStatusListener";
-                private static final String pre = "Last upload attempt: ";
+                private static final String pre = "\nLast upload attempt: ";
                 private final DateFormat df = DateFormat.getDateTimeInstance();
 
                 @Override
@@ -309,7 +333,7 @@ public class MainActivity extends RoboActivity {
 
                     uploadResultText = text;
                     if (uploadResultView.isShown())
-                        uploadResultView.setText(uploadResultText);
+                        uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
                     if (pipeline != null && pipeline.isEnabled())
                         updateDataCount(-1);
                     Log.d(TAG, "Upload result received");
@@ -327,7 +351,7 @@ public class MainActivity extends RoboActivity {
                     }
 
                     if (uploadResultView.isShown())
-                        uploadResultView.setText(uploadResultText);
+                        uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
                 }
 
                 @Override
@@ -340,39 +364,12 @@ public class MainActivity extends RoboActivity {
     }
 
     private void updateDataCount(long count) {
-        dataCountText = "Data count: " + ((count < 0) ? "Computing..." : count);
+        dataCountText = count < 0 ? "Computing..." : Long.toString(count);
 
         if (dataCountView != null && dataCountView.isShown()) {
-            dataCountView.setText(dataCountText);
+            dataCountView.setText(getString(R.string.dataCountText, dataCountText));
         }
     }
 
-    protected void onDestroy() {
-        super.onDestroy();
 
-        pipeline.removeUploadListener(getUploadStatusListener());
-        AsyncTask.Status status = getCacheCountUpdater().getStatus();
-        if (!getCacheCountUpdater().isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
-            getCacheCountUpdater().cancel(true);
-        }
-
-        boolean isBound = getApplicationContext().bindService(new Intent(getApplicationContext(), FunfManager.class), funfManagerConn, Context.BIND_AUTO_CREATE);
-        if (isBound)
-            getApplicationContext().unbindService(funfManagerConn);
-        stopService(new Intent(this, FunfManager.class));
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(STATE_UPLOAD_STATUS, uploadResultText);
-        outState.putString(STATE_DATA_COUNT, dataCountText);
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-        pipeline.onTrimMemory();
-    }
 }
