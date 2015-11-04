@@ -215,7 +215,7 @@ public class MainActivity extends RoboActivity {
                             if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET)
                                 errorText += "\n- An upload was just requested; please wait a few seconds.";
                             if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION)
-                                errorText += "\n- No internet connection detected.";
+                                errorText += "\n- No WiFi connection detected.";
                             if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
                                 errorText += "\n- No entries to upload";
 
