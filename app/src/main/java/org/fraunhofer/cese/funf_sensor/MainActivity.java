@@ -32,6 +32,7 @@ import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
 import org.fraunhofer.cese.funf_sensor.cache.Cache;
 import org.fraunhofer.cese.funf_sensor.cache.RemoteUploadResult;
 import org.fraunhofer.cese.funf_sensor.cache.UploadStatusListener;
+import org.fraunhofer.cese.madcap.R;
 
 import java.text.DateFormat;
 import java.util.Date;

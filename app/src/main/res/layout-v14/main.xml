@@ -17,6 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:autoLink="all"
+            android:textIsSelectable="true"
             android:text="@string/introText"
             android:textColor="#000" />
 
@@ -24,6 +25,7 @@
             android:id="@+id/deviceIdText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textIsSelectable="true"
             android:layout_marginTop="15dp"
             android:text="@string/deviceIdText"
             android:textSize="15sp" />
@@ -32,6 +34,7 @@
             android:id="@+id/dataCountText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textIsSelectable="true"
             android:text="@string/dataCountText"
             android:textSize="15sp" />
 
@@ -48,6 +51,7 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_marginTop="15dp"
+            android:textIsSelectable="true"
             android:text="@string/uploadResultText"
             android:textSize="15sp" />
     </LinearLayout>
@@ -59,6 +63,7 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="5dp"
         android:autoLink="all"
+        android:textIsSelectable="true"
         android:gravity="center"
         android:text="@string/footnoteText"
         android:textSize="12sp" />

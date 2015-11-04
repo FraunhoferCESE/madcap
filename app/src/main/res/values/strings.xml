@@ -9,9 +9,7 @@
             "maxWaitTime": 15
         }
     </string>
-    <string name="titleText">Mobile Device Sensor by Fraunhofer CESE</string>
     <string name="introText">The MADCAP (Mobile Application Data CAPture) app collects data for research on mobile device security. Please visit https://www.fc-md.umd.edu/madcap for more information.\n\nThe app periodically uploads data to a remote server only when you are connected to a WiFi network.\n\nYou may turn data collection on or off at any time using the toggle switch below.</string>
-    <string name="logoDescription">Fraunhofer logo</string>
     <string name="collectDataSwitchText">Collect Data</string>
     <string name="dataCountText">Data count: 0</string>
     <string name="deviceIdText">Device ID: -</string>

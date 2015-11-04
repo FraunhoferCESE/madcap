@@ -9,7 +9,7 @@ import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import org.fraunhofer.cese.funf_sensor.R;
+import org.fraunhofer.cese.madcap.R;
 
 import java.sql.SQLException;
 
