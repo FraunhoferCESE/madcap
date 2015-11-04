@@ -15,14 +15,29 @@ import android.util.Log;
 import edu.mit.media.funf.probe.Probe;
 
 /**
- *
+ * A probetype that gives information about the wifi connection of the user.
+ * Generally, this probe type is intent driven, but it also sends initial information upon creation.
+ * I hope you believe in creation.
  */
 public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveProbe {
 
+
+    /**
+     * Receiver to handle incoming intents
+     */
     private BroadcastReceiver receiver;
+
+    /**
+     * only used in Log statements
+     */
     private static final String TAG = "NetworkProbe: ";
 
 
+    /**
+     * Executed when probe is registered.
+     * Sets up and registers the filter for wifi-specific intents.
+     * Triggers the sending of an initial probeEntry.
+     */
     @Override
     protected void onEnable() {
         super.onStart();
@@ -43,16 +58,29 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         sendInitialProbe();
     }
 
+    /**
+     * Executed when probe is unregistered.
+     * Unregisters the related receiver.
+     */
     @Override
     protected void onDisable() {
         super.onStop();
         getContext().unregisterReceiver(receiver);
     }
 
+    /**
+     * Sends an intent as a JsonObject.
+     * Triggers the onDataReceived of the GoogleAppEnginePipeline.
+     * @param intent
+     */
     private void sendData(Intent intent) {
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
     }
 
+    /**
+     * Creates an Intent object that contains the initial wifi state.
+     * Uses sendData(Intent intent) to send the intent as a JsonObject.
+     */
     private void sendInitialProbe() {
 
         Intent intent = new Intent();
@@ -70,16 +98,33 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         Log.i(TAG, "initial probe sent.");
     }
 
+    /**
+     * A specific receiver class for wifi- and network-related intents.
+     */
     private class ConnectionInfoReceiver extends BroadcastReceiver {
         private final String STATE = "new Connection State: ";
         private final String PREVIOUS_STATE = "previous Connection State: ";
+
+        /**
+         * callback object to use the sendData(Intent intent) on.
+         */
         public NetworkConnectionProbe callback;
 
 
+        /**
+         * Creator for an ConnectionInfoReceiver. Takes a NetworkConnectionProbe used for callbacks.
+         * @param callback
+         */
         public ConnectionInfoReceiver(NetworkConnectionProbe callback) {
             this.callback = callback;
         }
 
+        /**
+         * Called when one of the wifi specific intents occurs.
+         * Adds additional information to the intent object and initialises the sending of that object
+         * @param context
+         * @param intent
+         */
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -126,6 +171,10 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         }
     }
 
+    /**
+     * Returns the state of the cellular network as a string for adding it to an intent.
+     * @return cellular network state
+     */
     private String getCellDataState(){
 
         String result;
@@ -152,6 +201,11 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         return result;
     }
 
+    /**
+     * Returns the current wifi state as a String for adding it to an intent.
+     * @param intent Current wifi state
+     * @return
+     */
     private String getWifiState(Intent intent){
 
         String result;
@@ -180,6 +234,11 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         return result;
     }
 
+    /**
+     * Returns the wifi state from before a change as a String for adding that information to an intent object.
+     * @param intent
+     * @return previous wifi state
+     */
     private String getPreviousWifiState(Intent intent){
 
         String result;
