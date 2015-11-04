@@ -27,6 +27,8 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
     protected void onEnable() {
         super.onStart();
         receiver = new ConnectionInfoReceiver(this);
+
+        //defining the filter
         IntentFilter intentFilter = new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
         intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
 //        intentFilter.addAction("android.net.wifi.RSSI_CHANGED");
@@ -59,6 +61,10 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         intent.putExtra("Initial WifiState: ", getWifiState(intent));
         intent.putExtra("Initial connection quality: ", intent.getIntExtra(WifiManager.EXTRA_NEW_RSSI, 0));
 
+        WifiManager wifiManager = (WifiManager)getContext().getSystemService(Context.WIFI_SERVICE);
+        intent.putExtra("WifiInfo: ", wifiManager.getConnectionInfo().toString());
+        intent.putExtra("IP-Adress: ", wifiManager.getConnectionInfo().getIpAddress());
+        intent.putExtra("SSID: ", wifiManager.getConnectionInfo().getSSID());
         sendData(intent);
 
         Log.i(TAG, "initial probe sent.");
@@ -76,7 +82,6 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
 
             switch (intent.getAction()) {
                 case WifiManager.WIFI_STATE_CHANGED_ACTION:
