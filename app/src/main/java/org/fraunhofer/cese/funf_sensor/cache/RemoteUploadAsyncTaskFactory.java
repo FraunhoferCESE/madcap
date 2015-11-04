@@ -15,6 +15,7 @@ import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.Prob
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeSaveResult;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -53,33 +54,36 @@ public class RemoteUploadAsyncTaskFactory {
                     return new RemoteUploadResult();
 
                 RemoteUploadResult result = new RemoteUploadResult();
-                List<CacheEntry> entries = databaseHelper.getDao().queryForAll();
-                if (entries.isEmpty())
+                long numCachedEntries = databaseHelper.getDao().countOf();
+                if (numCachedEntries == 0)
                     return result;
 
-
-                Log.i(TAG, "Attempting to upload " + entries.size() + " to " + appEngineApi.getRootUrl());
+                Log.i(TAG, "Attempting to upload " + numCachedEntries + " to " + appEngineApi.getRootUrl());
 
                 ProbeSaveResult saveResult = new ProbeSaveResult();
                 saveResult.setSaved(new ArrayList<String>());
                 saveResult.setAlreadyExists(new ArrayList<String>());
 
-                List<ProbeEntry> toUpload = Lists.transform(entries, new Function<CacheEntry, ProbeEntry>() {
-                    @Nullable
-                    @Override
-                    public ProbeEntry apply(CacheEntry cacheEntry) {
-                        return CacheEntry.createProbeEntry(cacheEntry);
-                    }
-                });
-
-                int cursor = 0;
-                while (cursor < entries.size() && result.getException() == null) {
-                    ProbeDataSet dataSet = new ProbeDataSet();
-                    dataSet.setTimestamp(Calendar.getInstance().getTimeInMillis());
-                    dataSet.setEntryList(toUpload.subList(cursor, (cursor + BUFFER_SIZE > toUpload.size() ? toUpload.size() : cursor + BUFFER_SIZE)));
-                    result.setUploadAttempted(true);
-
+                databaseHelper.getDao().iterator();
+                long offset = 0;
+                while (offset < numCachedEntries && result.getException() == null) {
+                    long limit = offset + BUFFER_SIZE > numCachedEntries ? numCachedEntries : offset + BUFFER_SIZE;
                     try {
+                        List<ProbeEntry> toUpload = Lists.transform(
+                                databaseHelper.getDao().queryBuilder().offset(offset).limit(limit).query(),
+                                new Function<CacheEntry, ProbeEntry>() {
+                                    @Nullable
+                                    @Override
+                                    public ProbeEntry apply(CacheEntry cacheEntry) {
+                                        return CacheEntry.createProbeEntry(cacheEntry);
+                                    }
+                                });
+
+                        ProbeDataSet dataSet = new ProbeDataSet();
+                        dataSet.setTimestamp(Calendar.getInstance().getTimeInMillis());
+                        dataSet.setEntryList(toUpload);
+                        result.setUploadAttempted(true);
+
                         ProbeSaveResult remoteResult = appEngineApi.insertSensorDataSet(dataSet).execute();
                         if (remoteResult.getSaved() != null) {
                             saveResult.getSaved().addAll(ImmutableList.copyOf(remoteResult.getSaved()));
@@ -88,13 +92,13 @@ public class RemoteUploadAsyncTaskFactory {
                         if (remoteResult.getAlreadyExists() != null) {
                             saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
                         }
-                        Log.i(TAG, "Uploaded chunk " + ((cursor / BUFFER_SIZE) + 1) + " (" + cursor + "-" + (cursor + BUFFER_SIZE > toUpload.size() ? toUpload.size() : cursor + BUFFER_SIZE) + ") - " +
+                        Log.i(TAG, "Uploaded chunk " + ((offset / BUFFER_SIZE) + 1) + " (" + offset + "-" + (offset + BUFFER_SIZE > numCachedEntries ? numCachedEntries : offset + BUFFER_SIZE) + ") - " +
                                 "Saved: " + (remoteResult.getSaved() == null ? 0 : remoteResult.getSaved().size()) +
                                 ", Already existed: " + (remoteResult.getAlreadyExists() == null ? 0 : remoteResult.getAlreadyExists().size()));
-                        cursor += BUFFER_SIZE;
-                        publishProgress(cursor > toUpload.size() ? 100 : Math.round(((float) cursor / (float) toUpload.size()) * 100));
+                        offset += BUFFER_SIZE;
+                        publishProgress(offset > numCachedEntries ? 100 : Math.round(((float) offset / (float) numCachedEntries) * 100));
 
-                    } catch (IOException e) {
+                    } catch (IOException | SQLException e) {
                         result.setException(e);
                         Log.w(TAG, "Upload failed", e);
                     }

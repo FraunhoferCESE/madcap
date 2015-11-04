@@ -105,6 +105,9 @@ public class MainActivity extends RoboActivity {
             // Initialize the pipeline
             funfManager.registerPipeline(PIPELINE_NAME, pipeline);
             pipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
+
+            if(isCollectingData)
+                enablePipelines();
         }
 
         @Override
@@ -343,7 +346,7 @@ public class MainActivity extends RoboActivity {
 
                 @Override
                 public void progressUpdate(int value) {
-                    Matcher matcher = pattern.matcher(uploadResultView.getText());
+                    Matcher matcher = pattern.matcher(uploadResultText);
                     if (matcher.find()) {
                         uploadResultText = matcher.replaceFirst(value + "% completed.");
                     } else {
