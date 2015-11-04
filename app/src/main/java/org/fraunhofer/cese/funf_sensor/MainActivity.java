@@ -51,7 +51,7 @@ public class MainActivity extends RoboActivity {
     private static final String STATE_UPLOAD_STATUS = "uploadStatus";
     private static final String STATE_DATA_COUNT = "dataCount";
 
-    
+
     private FunfManager funfManager;
 
     @Inject
