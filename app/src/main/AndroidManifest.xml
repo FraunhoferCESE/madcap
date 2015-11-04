@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.fraunhofer.cese.funf_sensor" >
+    package="org.fraunhofer.cese.madcap" >
 
     <!--
         The permissions for the app are defined here.
@@ -45,7 +45,8 @@
 
     <!-- The used actions are defined here. -->
     <application
-        android:allowBackup="true"
+        android:fullBackupContent="false"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
@@ -67,72 +68,7 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
-
-<!--
-        <receiver
-            android:name=".Probe.PowerProbe$PowerInformationReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
-                <action android:name="android.intent.action.BATTERY_CHANGED"/>
-                <action android:name="android.intent.action.BATTERY_LOW"/>
-                <action android:name="android.intent.action.BATTERY_OKAY"/>
-            </intent-filter>
-        </receiver>
-
-        <receiver
-            android:name=".Probe.StateProbe$StateInformationReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.ACTION_SHUTDOWN"/>
-                <action android:name="android.intent.action.AIRPLANE_MODE"/>
-                <action android:name="android.intent.action.BOOT_COMPLETED"/>
-                <action android:name="android.intent.action.REBOOT"/>
-                <action android:name="android.intent.action.USER_PRESENT"/>
-                <action android:name="android.intent.action.DREAMING_STARTED"/>
-                <action android:name="android.intent.action.DREAMING_STOPPED"/>
-                <action android:name="android.intent.action.HEADSET_PLUG"/>
-            </intent-filter>
-        </receiver>
--->
-        <!--
-        <receiver android:probeType=".Probe.NotificationAndBroadcastHandlers.NotificationReceiver" >
-            <intent-filter>
-                <action android:probeType="org.fraunhofer.funf.NotificationReceivedBroadcast" />
-                <action android:probeType="com.eample.mlang.funf_sensor.Probe.Security.NotificationProbe" />
-                <action android:probeType="android.service.notification.NotificationListenerService" />
-                <action android:probeType="android.intent.action.ACTION_POWER_DISCONNECTED" />
-                <action android:probeType="com.avast.android.mobilesecurity" />
-                <action android:probeType="com.cleanmaster.security" />
-                <action android:probeType="com.trendmicro.tmmspersonal" />
-                <action android:probeType="com.symantec.mobilesecurity" />
-                <action android:probeType="com.avira.android" />
-                <action android:probeType="com.bitdefender.antivirus" />
-                <action android:probeType="com.lookout" />
-                <action android:probeType="android.intent.action.MAIN" />
-                <action android:probeType="android.intent.action.PACKAGE_ADDED" />
-                <action android:probeType="android.intent.action.PACKAGE_REMOVED" />
-                <action android:probeType="android.intent.action.SEND" />
-                <category android:probeType="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </receiver>
-        -->
-        <!--
-        <receiver android:name=".Probe.SMSProbe.MySMSListener">
-            <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
-                <action android:name="android.provider.Telephony.SMS_DELIVER" />
-                <action android:name="android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED" />
-            </intent-filter>
-        </receiver>
-
-        <receiver android:name=".Probe.CallStateProbe.MyPhoneStateReceiver">
-            <intent-filter>
-
-
-            </intent-filter>
-        </receiver>
-       -->
-        <activity android:name=".MainActivity" >
+        <activity android:name="org.fraunhofer.cese.funf_sensor.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -5,4 +5,10 @@
         <ignore regexp="roboblender-3.0.1.jar" />
         <ignore regexp="velocity-1.7.jar" />
     </issue>
+    <issue id="BackButton" severity="ignore" />
+    <issue id="EasterEgg" severity="error" />
+    <issue id="NewerVersionAvailable" severity="warning" />
+    <issue id="FieldGetter" severity="ignore" />
+    <issue id="StopShip" severity="error" />
+
 </lint>
