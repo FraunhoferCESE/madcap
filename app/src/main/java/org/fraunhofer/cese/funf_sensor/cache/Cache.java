@@ -53,7 +53,7 @@ public class Cache {
     /**
      * Background task holder for the remote upload task. Stored to query for uploads in progress.
      */
-    private  AsyncTask<Void, Integer, RemoteUploadResult> uploadTask;
+    private AsyncTask<Void, Integer, RemoteUploadResult> uploadTask;
 
     /**
      * Timestamp (in millis) of the last attempted write to the database.
@@ -334,7 +334,7 @@ public class Cache {
     private void upload() {
         last_upload_attempt = System.currentTimeMillis();
 
-        if(config.getWriteToFile()) {
+        if (config.getWriteToFile()) {
             try {
                 writeToFile();
             } catch (IOException e) {
@@ -404,8 +404,6 @@ public class Cache {
             Log.w(TAG, "{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
             dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).execute();
         }
-
-
     }
 
 
