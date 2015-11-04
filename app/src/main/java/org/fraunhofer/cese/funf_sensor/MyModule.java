@@ -51,10 +51,10 @@ public class MyModule extends AbstractModule {
         config.setDbForcedCleanupLimit(30000); // Required to make sure upload doesn't exceed Google API limits for a single request
 
         config.setDbWriteInterval(2000); // 2 second minimum
-        config.setUploadInterval(75000); // 15 minute minimum
+        config.setUploadInterval(900000); // 15 minute minimum
 
         config.setUploadWifiOnly(true);
-        config.setWriteToFile(true);
+        config.setWriteToFile(false);
 
         return config;
     }

@@ -405,14 +405,7 @@ public class Cache {
             dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).execute();
         }
 
-        if (uploadResult.getSaveResult() == null || (uploadResult.getSaveResult().getAlreadyExists().isEmpty() && uploadResult.getSaveResult().getSaved().isEmpty())) {
-            Log.i(TAG, "{doPostUpload} No save results to remove from database.");
-            return;
-        }
 
-        //noinspection unchecked
-        dbTaskFactory.createRemoveTask(context, this)
-                .execute(uploadResult.getSaveResult().getSaved(), uploadResult.getSaveResult().getAlreadyExists());
     }
 
 

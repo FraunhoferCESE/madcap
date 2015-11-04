@@ -116,56 +116,6 @@ public class DatabaseAsyncTaskFactory {
     }
 
     /**
-     * Creates an asynchronous task for removing entries from the database. The task reports the number of entries successfully removed.
-     *
-     * @param cache the handling cache. Needed for callbacks.
-     * @return a task object
-     */
-    AsyncTask<List<String>, Void, Integer> createRemoveTask(final Context context, final Cache cache) {
-        return new AsyncTask<List<String>, Void, Integer>() {
-            private static final String TAG = "Fraunhofer.DBRemove";
-            private static final int BUFFER_SIZE = 250;
-
-            @Override
-            @SafeVarargs
-            protected final Integer doInBackground(List<String>... lists) {
-                if (lists == null || context == null || cache == null)
-                    return 0;
-
-                DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
-                if (databaseHelper == null || databaseHelper.getDao() == null)
-                    return 0;
-
-                Log.d(TAG, "Removing entries from database.");
-                int result = 0;
-                for (List<String> ids : lists) {
-                    if (ids != null && !ids.isEmpty() && databaseHelper.isOpen()) {
-                        int cursor = 0;
-                        while (cursor < ids.size()) {
-                            result += databaseHelper.getDao().deleteIds(ids.subList(cursor, (cursor + BUFFER_SIZE > ids.size() ? ids.size() : cursor + BUFFER_SIZE)));
-                            cursor += BUFFER_SIZE;
-                        }
-                    }
-                }
-                return result;
-            }
-
-            @Override
-            protected void onPostExecute(Integer numEntriesRemoved) {
-                OpenHelperManager.releaseHelper();
-                Log.d(TAG, "Database entries removed: " + numEntriesRemoved);
-            }
-
-            @Override
-            protected void onCancelled(Integer numEntriesRemoved) {
-                Log.d(TAG, "Database entries removed: " + numEntriesRemoved);
-                super.onCancelled(numEntriesRemoved);
-                OpenHelperManager.releaseHelper();
-            }
-        };
-    }
-
-    /**
      * Creates an asynchronous task to remove entries from a database that has surpassed the specified limit. The oldest entries will be removed
      * based on their timestamp.
      *

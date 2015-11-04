@@ -54,54 +54,80 @@ public class RemoteUploadAsyncTaskFactory {
 
                 RemoteUploadResult result = new RemoteUploadResult();
                 List<CacheEntry> entries = databaseHelper.getDao().queryForAll();
+                if (entries.isEmpty())
+                    return result;
 
-                if (!entries.isEmpty()) {
-                    Log.i(TAG, "Attempting to upload " + entries.size() + " to " + appEngineApi.getRootUrl());
 
-                    ProbeSaveResult saveResult = new ProbeSaveResult();
-                    saveResult.setSaved(new ArrayList<String>());
-                    saveResult.setAlreadyExists(new ArrayList<String>());
+                Log.i(TAG, "Attempting to upload " + entries.size() + " to " + appEngineApi.getRootUrl());
 
-                    List<ProbeEntry> toUpload = Lists.transform(entries, new Function<CacheEntry, ProbeEntry>() {
-                        @Nullable
-                        @Override
-                        public ProbeEntry apply(CacheEntry cacheEntry) {
-                            return CacheEntry.createProbeEntry(cacheEntry);
-                        }
-                    });
+                ProbeSaveResult saveResult = new ProbeSaveResult();
+                saveResult.setSaved(new ArrayList<String>());
+                saveResult.setAlreadyExists(new ArrayList<String>());
 
-                    int cursor = 0;
-                    while (cursor < entries.size() && result.getException() == null) {
-                        ProbeDataSet dataSet = new ProbeDataSet();
-                        dataSet.setTimestamp(Calendar.getInstance().getTimeInMillis());
-                        dataSet.setEntryList(toUpload.subList(cursor, (cursor + BUFFER_SIZE > toUpload.size() ? toUpload.size() : cursor + BUFFER_SIZE)));
-                        result.setUploadAttempted(true);
-
-                        try {
-                            ProbeSaveResult remoteResult = appEngineApi.insertSensorDataSet(dataSet).execute();
-                            if (remoteResult.getSaved() != null) {
-                                saveResult.getSaved().addAll(ImmutableList.copyOf(remoteResult.getSaved()));
-                            }
-
-                            if (remoteResult.getAlreadyExists() != null) {
-                                saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
-                            }
-                            Log.i(TAG, "Uploaded chunk " + ((cursor / BUFFER_SIZE) + 1) + " (" + cursor + "-" + (cursor + BUFFER_SIZE > toUpload.size() ? toUpload.size() : cursor + BUFFER_SIZE) + ") - " +
-                                    "Saved: " + (remoteResult.getSaved() == null ? 0 : remoteResult.getSaved().size()) +
-                                    ", Already existed: " + (remoteResult.getAlreadyExists() == null ? 0 : remoteResult.getAlreadyExists().size()));
-                            cursor += BUFFER_SIZE;
-                            publishProgress(cursor > toUpload.size() ? 100 : Math.round(((float) cursor / (float) toUpload.size()) * 100));
-
-                        } catch (IOException e) {
-                            result.setException(e);
-                            Log.w(TAG, "Upload failed", e);
-                        }
+                List<ProbeEntry> toUpload = Lists.transform(entries, new Function<CacheEntry, ProbeEntry>() {
+                    @Nullable
+                    @Override
+                    public ProbeEntry apply(CacheEntry cacheEntry) {
+                        return CacheEntry.createProbeEntry(cacheEntry);
                     }
-                    result.setSaveResult(saveResult);
-                    Log.i(TAG, "Upload finished. Saved: " + saveResult.getSaved().size() + " entries, Already existed: " + saveResult.getAlreadyExists().size()
-                            + ", Exception: " + (result.getException() != null));
+                });
+
+                int cursor = 0;
+                while (cursor < entries.size() && result.getException() == null) {
+                    ProbeDataSet dataSet = new ProbeDataSet();
+                    dataSet.setTimestamp(Calendar.getInstance().getTimeInMillis());
+                    dataSet.setEntryList(toUpload.subList(cursor, (cursor + BUFFER_SIZE > toUpload.size() ? toUpload.size() : cursor + BUFFER_SIZE)));
+                    result.setUploadAttempted(true);
+
+                    try {
+                        ProbeSaveResult remoteResult = appEngineApi.insertSensorDataSet(dataSet).execute();
+                        if (remoteResult.getSaved() != null) {
+                            saveResult.getSaved().addAll(ImmutableList.copyOf(remoteResult.getSaved()));
+                        }
+
+                        if (remoteResult.getAlreadyExists() != null) {
+                            saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
+                        }
+                        Log.i(TAG, "Uploaded chunk " + ((cursor / BUFFER_SIZE) + 1) + " (" + cursor + "-" + (cursor + BUFFER_SIZE > toUpload.size() ? toUpload.size() : cursor + BUFFER_SIZE) + ") - " +
+                                "Saved: " + (remoteResult.getSaved() == null ? 0 : remoteResult.getSaved().size()) +
+                                ", Already existed: " + (remoteResult.getAlreadyExists() == null ? 0 : remoteResult.getAlreadyExists().size()));
+                        cursor += BUFFER_SIZE;
+                        publishProgress(cursor > toUpload.size() ? 100 : Math.round(((float) cursor / (float) toUpload.size()) * 100));
+
+                    } catch (IOException e) {
+                        result.setException(e);
+                        Log.w(TAG, "Upload failed", e);
+                    }
+                }
+                result.setSaveResult(saveResult);
+                Log.i(TAG, "Upload finished. Saved: " + saveResult.getSaved().size() + " entries, Already existed: " + saveResult.getAlreadyExists().size()
+                        + ", Exception: " + (result.getException() != null));
+
+
+                // Remove uploaded entries from the database
+                if (saveResult.getAlreadyExists().isEmpty() && saveResult.getSaved().isEmpty()) {
+                    Log.i(TAG, "No save results to remove from database.");
+                } else {
+                    Log.d(TAG, "Removing entries from database.");
+                    @SuppressWarnings("unchecked") int numRemovedEntries = removeIds(databaseHelper, saveResult.getSaved(), saveResult.getAlreadyExists());
+                    Log.d(TAG, "Database entries removed: " + numRemovedEntries);
                 }
 
+                return result;
+            }
+
+            @SafeVarargs
+            private final int removeIds(DatabaseOpenHelper databaseHelper, List<String>... lists) {
+                int result = 0;
+                for (List<String> ids : lists) {
+                    if (ids != null && !ids.isEmpty() && databaseHelper.isOpen()) {
+                        int cursor = 0;
+                        while (cursor < ids.size()) {
+                            result += databaseHelper.getDao().deleteIds(ids.subList(cursor, (cursor + BUFFER_SIZE > ids.size() ? ids.size() : cursor + BUFFER_SIZE)));
+                            cursor += BUFFER_SIZE;
+                        }
+                    }
+                }
                 return result;
             }
 
