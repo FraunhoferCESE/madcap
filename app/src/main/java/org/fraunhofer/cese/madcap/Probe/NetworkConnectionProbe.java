@@ -76,6 +76,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
     /**
      * Sends an intent as a JsonObject.
      * Triggers the onDataReceived of the GoogleAppEnginePipeline.
+     *
      * @param intent
      */
     private void sendData(Intent intent) {
@@ -94,7 +95,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         intent.putExtra("Initial WifiState: ", getWifiState(intent));
         intent.putExtra("Initial connection quality: ", intent.getIntExtra(WifiManager.EXTRA_NEW_RSSI, 0));
 
-        WifiManager wifiManager = (WifiManager)getContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
         intent.putExtra("WifiInfo: ", wifiManager.getConnectionInfo().toString());
         intent.putExtra("IP-Address: ", getIpAddress(wifiManager.getConnectionInfo().getIpAddress()));
         intent.putExtra("SSID: ", wifiManager.getConnectionInfo().getSSID());
@@ -104,9 +105,9 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
     }
 
 
-
     private static final boolean isLittleEndian = ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN);
-    private String getIpAddress(int ipAddress) {
+
+    private static String getIpAddress(int ipAddress) {
         // Convert little-endian to big-endianif needed
 
         if (isLittleEndian) {
@@ -126,9 +127,6 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
      * A specific receiver class for wifi- and network-related intents.
      */
     private class ConnectionInfoReceiver extends BroadcastReceiver {
-        private final String STATE = "new Connection State: ";
-        private final String PREVIOUS_STATE = "previous Connection State: ";
-
         /**
          * callback object to use the sendData(Intent intent) on.
          */
@@ -137,6 +135,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
 
         /**
          * Creator for an ConnectionInfoReceiver. Takes a NetworkConnectionProbe used for callbacks.
+         *
          * @param callback
          */
         public ConnectionInfoReceiver(NetworkConnectionProbe callback) {
@@ -146,6 +145,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         /**
          * Called when one of the wifi specific intents occurs.
          * Adds additional information to the intent object and initialises the sending of that object
+         *
          * @param context
          * @param intent
          */
@@ -174,8 +174,8 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
                     SupplicantState supplicantState = intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE);
                     intent.putExtra("new supplicant state: ", supplicantState.toString());
                     intent.putExtra("cellular data network state: ", getCellDataState());
-                    if (supplicantState.toString().equals("COMPLETED")){
-                        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
+                    if (supplicantState.toString().equals("COMPLETED")) {
+                        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                         intent.putExtra("WifiInfo: ", wifiInfo.toString());
                         intent.putExtra("IP-Address: ", getIpAddress(wifiInfo.getIpAddress()));
@@ -188,21 +188,20 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
                     callback.sendData(intent);
                     break;
             }
-
-            Log.i(TAG, "NetworkConnectionProbe sent");
         }
     }
 
     /**
      * Returns the state of the cellular network as a string for adding it to an intent.
+     *
      * @return cellular network state
      */
-    private String getCellDataState(){
+    private String getCellDataState() {
 
         String result;
         TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
 
-        switch(telephonyManager.getDataState()){
+        switch (telephonyManager.getDataState()) {
             case TelephonyManager.DATA_CONNECTED:
                 result = "connected.";
                 break;
@@ -225,10 +224,11 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
 
     /**
      * Returns the current wifi state as a String for adding it to an intent.
+     *
      * @param intent Current wifi state
      * @return
      */
-    private String getWifiState(Intent intent){
+    private String getWifiState(Intent intent) {
 
         String result;
 
@@ -258,10 +258,11 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
 
     /**
      * Returns the wifi state from before a change as a String for adding that information to an intent object.
+     *
      * @param intent
      * @return previous wifi state
      */
-    private String getPreviousWifiState(Intent intent){
+    private String getPreviousWifiState(Intent intent) {
 
         String result;
 
