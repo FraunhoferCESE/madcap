@@ -119,11 +119,12 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
                     intent.putExtra("new supplicant state: ", supplicantState.toString());
                     intent.putExtra("cellular data network state: ", getCellDataState());
                     if (supplicantState.toString().equals("COMPLETED")) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        // fixes the issue of reading the IP address before the device is done connecting
+//                        try {
+//                            Thread.sleep(1000);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
                         final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                         final WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                         intent.putExtra("WifiInfo: ", wifiInfo.toString());
