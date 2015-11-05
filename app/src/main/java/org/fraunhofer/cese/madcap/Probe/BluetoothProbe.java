@@ -101,7 +101,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                     callback.sendData(intent);
                     break;
                 default:
-                    intent.putExtra(TAG, "Something went wrong");
+                    intent.putExtra(TAG, intent.getAction());
                     callback.sendData(intent);
                     break;
             }
@@ -122,7 +122,8 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
         intent.putExtra(TAG, "ConnectionState changed");
 
-        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, 0)) {
+        final int intExtra = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, 0);
+        switch (intExtra) {
             case BluetoothAdapter.STATE_CONNECTED:
                 intent.putExtra("new ConnectionState: ", "connected");
                 break;
@@ -136,11 +137,12 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 intent.putExtra("new ConnectionState: ", "cacheClosing");
                 break;
             default:
-                intent.putExtra("new ConnectionState: ", "Something went wrong.");
+                intent.putExtra("new ConnectionState: ", intExtra);
                 break;
         }
 
-        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_CONNECTION_STATE, 0)) {
+        int extraPrevious = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_CONNECTION_STATE, 0);
+        switch (extraPrevious) {
             case BluetoothAdapter.STATE_CONNECTED:
                 intent.putExtra("previous ConnectionState: ", "connected");
                 break;
@@ -154,7 +156,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 intent.putExtra("previous ConnectionState: ", "cacheClosing");
                 break;
             default:
-                intent.putExtra("previous ConnectionState: ", "Something went wrong.");
+                intent.putExtra("previous ConnectionState: ", extraPrevious);
                 break;
         }
 
@@ -176,7 +178,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 intent.putExtra("new ScanMode: ", "visible and connectable");
                 break;
             default:
-                intent.putExtra("new ScanMode: ", "Something went wrong.");
+                intent.putExtra("new ScanMode: ", intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0));
                 break;
         }
 
@@ -191,7 +193,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 intent.putExtra("previous ScanMode: ", "visible and connectable");
                 break;
             default:
-                intent.putExtra("previous ScandMode: ", "Something went wrong.");
+                intent.putExtra("previous ScandMode: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, 0));
                 break;
         }
 
@@ -216,7 +218,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 intent.putExtra("new State: ", "Turning ON");
                 break;
             default:
-                intent.putExtra("new State: ", "Something went wrong");
+                intent.putExtra("new State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,0));
                 break;
         }
 
@@ -234,7 +236,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 intent.putExtra("previous State: ", "Turning ON");
                 break;
             default:
-                intent.putExtra("previous State: ", "Something went wrong");
+                intent.putExtra("previous State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE,0));
                 break;
         }
 
@@ -272,7 +274,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 result = "turning off.";
                 break;
             default:
-                result = "Something went wrong.";
+                result = Integer.toString(bluetoothAdapter.getState());
                 break;
         }
         return result;
