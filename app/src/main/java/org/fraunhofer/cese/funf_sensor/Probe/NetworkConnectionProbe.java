@@ -4,11 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import edu.mit.media.funf.probe.Probe;
@@ -32,6 +34,8 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         intentFilter.addAction("android.net.wifi.STATE_CHANGED");
         intentFilter.addAction("android.net.wifi.NETWORK_STATE_CHANGED_ACTION");
         intentFilter.addAction("android.net.wifi.supplicant.STATE_CHANGED");
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_ACTION");
 
         getContext().registerReceiver(receiver, intentFilter);
 
@@ -57,13 +61,15 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         intent.putExtra("Initial cellular data network state: ", getCellDataState());
         intent.putExtra("Initial WifiState: ", getWifiState(intent));
         intent.putExtra("Initial connection quality: ", intent.getIntExtra(WifiManager.EXTRA_NEW_RSSI, 0));
-        WifiManager wifiManager = (WifiManager)getContext().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) getContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         intent.putExtra("WifiInfo: ", wifiInfo.toString());
         int ipAdress = wifiInfo.getIpAddress();
         String sSID = wifiInfo.getSSID();
         intent.putExtra("IP-Adress: ", ipAdress);
         intent.putExtra("SSID: ", sSID);
+        String ip = Formatter.formatIpAddress(ipAdress);
+        intent.putExtra("IP-Adress-formatted: ", ip);
 
         sendData(intent);
 
@@ -84,8 +90,13 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         public void onReceive(Context context, Intent intent) {
 
 
-
             switch (intent.getAction()) {
+                case ConnectivityManager.CONNECTIVITY_ACTION:
+                    intent.putExtra("new Connectivity state: ", intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO));
+                    intent.putExtra("noConnectivity: ", intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false));
+                    intent.putExtra("cellular data network state: ", getCellDataState());
+                    callback.sendData(intent);
+                    break;
                 case WifiManager.WIFI_STATE_CHANGED_ACTION:
                     intent.putExtra("New Wifi State: ", getWifiState(intent));
                     intent.putExtra("Previous Wifi State: ", getPreviousWifiState(intent));
@@ -107,13 +118,20 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
                     SupplicantState supplicantState = intent.getParcelableExtra(WifiManager.EXTRA_NEW_STATE);
                     intent.putExtra("new supplicant state: ", supplicantState.toString());
                     intent.putExtra("cellular data network state: ", getCellDataState());
-                    if (supplicantState.toString().equals("COMPLETED")){
-                        WifiManager wifiManager = (WifiManager)context.getSystemService(Context.WIFI_SERVICE);
-                        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                    if (supplicantState.toString().equals("COMPLETED")) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        final WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+                        final WifiInfo wifiInfo = wifiManager.getConnectionInfo();
                         intent.putExtra("WifiInfo: ", wifiInfo.toString());
-                        int ipAdress = wifiInfo.getIpAddress();
-                        String sSID = wifiInfo.getSSID();
+                        final int ipAdress = wifiInfo.getIpAddress();
+                        final String ip = Formatter.formatIpAddress(ipAdress);
+                        final String sSID = wifiInfo.getSSID();
                         intent.putExtra("IP-Adress: ", ipAdress);
+                        intent.putExtra("IP-Adress-formatted: ", ip);
                         intent.putExtra("SSID: ", sSID);
                     }
                     callback.sendData(intent);
@@ -124,16 +142,16 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
                     break;
             }
 
-        Log.i(TAG, "NetworkConnectionProbe sent");
+            Log.i(TAG, "NetworkConnectionProbe sent");
         }
     }
 
-    private String getCellDataState(){
+    private String getCellDataState() {
 
         String result;
         TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
 
-        switch(telephonyManager.getDataState()){
+        switch (telephonyManager.getDataState()) {
             case TelephonyManager.DATA_CONNECTED:
                 result = "connected.";
                 break;
@@ -154,7 +172,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         return result;
     }
 
-    private String getWifiState(Intent intent){
+    private String getWifiState(Intent intent) {
 
         String result;
 
@@ -182,7 +200,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         return result;
     }
 
-    private String getPreviousWifiState(Intent intent){
+    private String getPreviousWifiState(Intent intent) {
 
         String result;
 
@@ -209,4 +227,5 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
 
         return result;
     }
+
 }
