@@ -25,6 +25,7 @@ import org.fraunhofer.cese.funf_sensor.Probe.StateProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.AudioProbe;
 import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
 import org.fraunhofer.cese.funf_sensor.Probe.NetworkConnectionProbe;
+import org.fraunhofer.cese.funf_sensor.Probe.BluetoothProbe;
 
 import java.text.SimpleDateFormat;
 
@@ -55,7 +56,7 @@ public class MainActivity extends RoboActivity {
     private ScreenProbe screenProbe;
     private SimpleLocationProbe locationProbe;
     private WifiProbe wifiProbe;
-
+    private BluetoothProbe bluetoothProbe;
     private SMSProbe sMSProbe;
     private PowerProbe powerProbe;
     private StateProbe stateProbe;
@@ -89,6 +90,7 @@ public class MainActivity extends RoboActivity {
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
             audioProbe = gson.fromJson(new JsonObject(), AudioProbe.class);
             networkConnectionProbe = gson.fromJson(new JsonObject(), NetworkConnectionProbe.class);
+            bluetoothProbe = gson.fromJson(new JsonObject(), BluetoothProbe.class);
 
             // Initialize the pipeline
             funfManager.registerPipeline(PIPELINE_NAME, pipeline);
@@ -138,6 +140,7 @@ public class MainActivity extends RoboActivity {
         callStateProbe.registerPassiveListener(pipeline);
         audioProbe.registerPassiveListener(pipeline);
         networkConnectionProbe.registerPassiveListener(pipeline);
+        bluetoothProbe.registerPassiveListener(pipeline);
     }
 
     private void unregisterListeners() {
@@ -154,6 +157,7 @@ public class MainActivity extends RoboActivity {
         callStateProbe.unregisterListener(pipeline);
         audioProbe.unregisterListener(pipeline);
         networkConnectionProbe.unregisterListener(pipeline);
+        bluetoothProbe.unregisterListener(pipeline);
     }
 
     //onCreate is the rendering of the main page

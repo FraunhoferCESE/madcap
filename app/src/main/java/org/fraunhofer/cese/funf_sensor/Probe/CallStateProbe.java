@@ -11,7 +11,7 @@ import android.util.Log;
 import edu.mit.media.funf.probe.Probe;
 
 /**
- * Created by MLang on 09.02.2015.
+ *
  */
 public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
 
@@ -36,12 +36,11 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
 
         Log.i("CallStateProbe: ", "CallStateProbe enabled");
 
+        sendInitialState();
     }
 
     @Override
     protected void onDisable() {
-        TelephonyManager telephony = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
-        telephony.listen(phoneListener, PhoneStateListener.LISTEN_NONE);
 
         super.onStop();
         getContext().unregisterReceiver(receiver);
@@ -49,7 +48,6 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
 
     public void sendData(Intent intent) {
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
-        Log.i("CallStateProbe: ", "CallStateProbe sent");
     }
 
     private class CallStateReceiver extends BroadcastReceiver {
@@ -105,4 +103,60 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
             sendData(intent);
         }
     };
+
+    private void sendInitialState(){
+
+        Intent intent = new Intent();
+
+        TelephonyManager telephonyManager = (TelephonyManager)getContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+        intent.putExtra(TAG, "Initial Call State!");
+        intent.putExtra("Call State: ", getCallState(telephonyManager));
+        intent.putExtra("Data State: ", getDataState(telephonyManager));
+
+        sendData(intent);
+
+        Log.i(TAG, "initial Probe sent");
+    }
+
+    private String getDataState(TelephonyManager telephonyManager){
+        String result;
+        switch (telephonyManager.getDataState()){
+            case TelephonyManager.DATA_CONNECTING:
+                result = "connecting.";
+                break;
+            case TelephonyManager.DATA_SUSPENDED:
+                result = "suspended.";
+                break;
+            case TelephonyManager.DATA_DISCONNECTED:
+                result = "disconnected.";
+                break;
+            case TelephonyManager.DATA_CONNECTED:
+                result = "connected.";
+                break;
+            default:
+                result= "Something went wrong.";
+                break;
+        }
+        return result;
+    }
+
+    private String getCallState(TelephonyManager telephonyManager){
+        String result;
+        switch(telephonyManager.getCallState()) {
+            case TelephonyManager.CALL_STATE_RINGING:
+                result = "ringing";
+                break;
+            case TelephonyManager.CALL_STATE_IDLE:
+                result = "idle";
+                break;
+            case TelephonyManager.CALL_STATE_OFFHOOK:
+                result = "offhook";
+                break;
+            default:
+                result = "Something went wrong.";
+                break;
+        }
+        return result;
+    }
 }
