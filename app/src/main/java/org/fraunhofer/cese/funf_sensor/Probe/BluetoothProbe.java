@@ -2,6 +2,9 @@ package org.fraunhofer.cese.funf_sensor.Probe;
 
 import edu.mit.media.funf.probe.Probe;
 
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.util.Log;
 import android.content.Context;
@@ -12,6 +15,7 @@ import android.bluetooth.BluetoothDevice;
 
 import com.google.gson.JsonObject;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -55,14 +59,15 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Set<BluetoothDevice> deviceSet = bluetoothAdapter.getBondedDevices();
+            List<BluetoothDevice> deviceList = ((BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE)).getConnectedDevices(BluetoothProfile.GATT);
+            deviceList.addAll(((BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE)).getConnectedDevices(BluetoothProfile.GATT_SERVER));
             String devices = "";
-            if(deviceSet.isEmpty()){
+            if(deviceList.isEmpty()){
                 devices = "no devices.";
             }
             else {
-                for (BluetoothDevice bluetoothDevice : deviceSet) {
-                    devices = devices + bluetoothDevice.getName() + " ";
+                for (BluetoothDevice bluetoothDevice : deviceList) {
+                    devices = devices + bluetoothDevice.getName() + ";; ";
                 }
             }
             intent.putExtra("Connected devices:", devices);
