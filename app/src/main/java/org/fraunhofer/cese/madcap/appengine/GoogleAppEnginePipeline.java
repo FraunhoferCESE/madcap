@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor.appengine;
+package org.fraunhofer.cese.madcap.appengine;
 
 import android.content.Context;
 import android.telephony.TelephonyManager;
@@ -7,9 +7,9 @@ import android.util.Log;
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
 
-import org.fraunhofer.cese.funf_sensor.cache.Cache;
-import org.fraunhofer.cese.funf_sensor.cache.CacheEntry;
-import org.fraunhofer.cese.funf_sensor.cache.UploadStatusListener;
+import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.cache.CacheEntry;
+import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 
 import java.util.UUID;
 

@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor.cache;
+package org.fraunhofer.cese.madcap.cache;
 
 /**
  * Interface for listening to the status of remote upload attempts by the cache. Classes implementing this interface can be registered using

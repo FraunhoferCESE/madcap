@@ -53,7 +53,7 @@
 
         <meta-data
             android:name="roboguice.modules"
-            android:value="org.fraunhofer.cese.funf_sensor.MyModule" />
+            android:value="org.fraunhofer.cese.madcap.MyModule" />
 
         <service android:name="edu.mit.media.funf.FunfManager" />
 
@@ -68,7 +68,7 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
-        <activity android:name="org.fraunhofer.cese.funf_sensor.MainActivity"
+        <activity android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:configChanges="orientation|keyboardHidden">
             <intent-filter>

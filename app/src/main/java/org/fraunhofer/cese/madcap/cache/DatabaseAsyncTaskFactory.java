@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor.cache;
+package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -35,7 +35,7 @@ public class DatabaseAsyncTaskFactory {
      * @param cache          the cache object handling the request. Needed for callbacks on write completion.
      * @param uploadStrategy the upload strategy to employ after the memcache has been written to the database
      * @return a new instance of an asynchronous database writing task
-     * @see org.fraunhofer.cese.funf_sensor.cache.DatabaseWriteResult
+     * @see DatabaseWriteResult
      */
     AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> createWriteTask(final Context context, final Cache cache, final Cache.UploadStrategy uploadStrategy) {
 

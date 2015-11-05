@@ -1,5 +1,5 @@
 
-package org.fraunhofer.cese.funf_sensor.Probe;
+package org.fraunhofer.cese.madcap.Probe;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

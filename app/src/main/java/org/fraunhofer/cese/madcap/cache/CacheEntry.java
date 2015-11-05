@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor.cache;
+package org.fraunhofer.cese.madcap.cache;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;

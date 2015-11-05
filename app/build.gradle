@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "org.fraunhofer.cese.funf_sensor"
+        applicationId "org.fraunhofer.cese.madcap"
         minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
@@ -41,9 +41,6 @@ dependencies {
 //    testCompile 'com.google.appengine:appengine-testing:1.9.27'
 //    testCompile 'com.google.appengine:appengine-endpoints:1.9.27'
     provided 'org.roboguice:roboblender:3.0.1'
-
-
-
     compile 'com.google.android.gms:play-services-identity:8.1.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'org.roboguice:roboguice:3.0.1'

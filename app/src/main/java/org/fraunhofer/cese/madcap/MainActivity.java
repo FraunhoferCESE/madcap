@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor;
+package org.fraunhofer.cese.madcap;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -19,21 +19,20 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
-import org.fraunhofer.cese.funf_sensor.Probe.AccelerometerProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.AudioProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.BluetoothProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.NetworkConnectionProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.PowerProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.RunningApplicationsProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.SMSProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.StateProbe;
-import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
-import org.fraunhofer.cese.funf_sensor.cache.Cache;
-import org.fraunhofer.cese.funf_sensor.cache.RemoteUploadResult;
-import org.fraunhofer.cese.funf_sensor.cache.UploadStatusListener;
-import org.fraunhofer.cese.madcap.R;
+import org.fraunhofer.cese.madcap.Probe.AccelerometerProbe;
+import org.fraunhofer.cese.madcap.Probe.AudioProbe;
+import org.fraunhofer.cese.madcap.Probe.BluetoothProbe;
+import org.fraunhofer.cese.madcap.Probe.CallStateProbe;
+import org.fraunhofer.cese.madcap.Probe.ForegroundProbe;
+import org.fraunhofer.cese.madcap.Probe.NetworkConnectionProbe;
+import org.fraunhofer.cese.madcap.Probe.PowerProbe;
+import org.fraunhofer.cese.madcap.Probe.RunningApplicationsProbe;
+import org.fraunhofer.cese.madcap.Probe.SMSProbe;
+import org.fraunhofer.cese.madcap.Probe.StateProbe;
+import org.fraunhofer.cese.madcap.appengine.GoogleAppEnginePipeline;
+import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
+import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 
 import java.text.DateFormat;
 import java.util.Date;

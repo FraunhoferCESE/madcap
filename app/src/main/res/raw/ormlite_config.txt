@@ -2,7 +2,7 @@
 # generated on 2015/10/05 04:25:09
 #
 # --table-start--
-dataClass=org.fraunhofer.cese.funf_sensor.cache.CacheEntry
+dataClass=org.fraunhofer.cese.madcap.cache.CacheEntry
 tableName=probedata
 # --table-fields-start--
 # --field-start--

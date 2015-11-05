@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor.Probe;
+package org.fraunhofer.cese.madcap.Probe;
 
 import android.app.ActivityManager;
 import android.content.Context;

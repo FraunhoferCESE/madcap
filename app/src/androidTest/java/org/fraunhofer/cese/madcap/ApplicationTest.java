@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor;
+package org.fraunhofer.cese.madcap;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

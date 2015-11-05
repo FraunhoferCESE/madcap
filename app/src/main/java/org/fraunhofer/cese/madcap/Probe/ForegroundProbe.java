@@ -1,11 +1,10 @@
-package org.fraunhofer.cese.funf_sensor.Probe;
+package org.fraunhofer.cese.madcap.Probe;
 
 import android.app.ActivityManager;
 import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
 import edu.mit.media.funf.probe.Probe;
 

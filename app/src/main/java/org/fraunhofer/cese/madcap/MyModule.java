@@ -1,16 +1,16 @@
-package org.fraunhofer.cese.funf_sensor;
+package org.fraunhofer.cese.madcap;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
-import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
+import org.fraunhofer.cese.madcap.appengine.GoogleAppEnginePipeline;
 import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.ProbeDataSetApi;
-import org.fraunhofer.cese.funf_sensor.cache.Cache;
-import org.fraunhofer.cese.funf_sensor.cache.CacheConfig;
-import org.fraunhofer.cese.funf_sensor.cache.DatabaseAsyncTaskFactory;
-import org.fraunhofer.cese.funf_sensor.cache.RemoteUploadAsyncTaskFactory;
+import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.cache.CacheConfig;
+import org.fraunhofer.cese.madcap.cache.DatabaseAsyncTaskFactory;
+import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
 
 /**
  * Created by Lucas on 10/6/2015.

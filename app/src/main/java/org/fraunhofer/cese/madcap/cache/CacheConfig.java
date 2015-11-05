@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor.cache;
+package org.fraunhofer.cese.madcap.cache;
 
 /**
  * Contains various configuration parameters needed by the Cache to operate.

@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor.Probe;
+package org.fraunhofer.cese.madcap.Probe;
 
 import edu.mit.media.funf.probe.Probe;
 
@@ -9,8 +9,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-
-import com.google.gson.JsonObject;
 
 import java.util.Set;
 
