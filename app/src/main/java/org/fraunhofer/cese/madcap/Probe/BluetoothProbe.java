@@ -1,16 +1,18 @@
 package org.fraunhofer.cese.madcap.Probe;
 
-import edu.mit.media.funf.probe.Probe;
-
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
-import android.util.Log;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
+import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+
+import edu.mit.media.funf.probe.Probe;
 
 /**
  *
@@ -54,17 +56,19 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Set<BluetoothDevice> deviceSet = bluetoothAdapter.getBondedDevices();
-            String devices = "";
-            if(deviceSet.isEmpty()){
-                devices = "no devices.";
-            }
-            else {
-                for (BluetoothDevice bluetoothDevice : deviceSet) {
-                    devices = devices + bluetoothDevice.getName() + " ";
-                }
-            }
-            intent.putExtra("Connected devices:", devices);
+
+//            List<BluetoothDevice> deviceList = ((BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE)).getConnectedDevices(BluetoothProfile.GATT);
+//            deviceList.addAll(((BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE)).getConnectedDevices(BluetoothProfile.GATT_SERVER));
+//            String devices = "";
+//            if(deviceList.isEmpty()){
+//                devices = "no devices.";
+//            }
+//            else {
+//                for (BluetoothDevice bluetoothDevice : deviceList) {
+//                    devices = devices + bluetoothDevice.getName() + ";; ";
+//                }
+//            }
+//            intent.putExtra("Connected devices:", devices);
 
             switch (intent.getAction()) {
                 case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED:
@@ -118,7 +122,14 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
     }
 
-    private Intent getConnectionStateChangedInformation (Intent intent){
+    private static String getDeviceName(Intent intent) {
+        BluetoothDevice device = intent
+                .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+
+        return device == null ? "N/A" : device.getName();
+    }
+
+    private Intent getConnectionStateChangedInformation(Intent intent) {
 
         intent.putExtra(TAG, "ConnectionState changed");
 
@@ -126,12 +137,14 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         switch (intExtra) {
             case BluetoothAdapter.STATE_CONNECTED:
                 intent.putExtra("new ConnectionState: ", "connected");
+                intent.putExtra("connected device:", getDeviceName(intent));
                 break;
             case BluetoothAdapter.STATE_CONNECTING:
                 intent.putExtra("new ConnectionState: ", "connecting");
                 break;
             case BluetoothAdapter.STATE_DISCONNECTED:
                 intent.putExtra("new ConnectionState: ", "disconnected");
+                intent.putExtra("disconnected device:", getDeviceName(intent));
                 break;
             case BluetoothAdapter.STATE_DISCONNECTING:
                 intent.putExtra("new ConnectionState: ", "cacheClosing");
@@ -163,11 +176,11 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         return intent;
     }
 
-    private Intent getScanModeChangeInformation(Intent intent){
+    private Intent getScanModeChangeInformation(Intent intent) {
 
         intent.putExtra(TAG, "ScanMode changed");
 
-        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0)){
+        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0)) {
             case BluetoothAdapter.SCAN_MODE_NONE:
                 intent.putExtra("new ScanMode: ", "invisible");
                 break;
@@ -182,7 +195,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 break;
         }
 
-        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, 0)){
+        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, 0)) {
             case BluetoothAdapter.SCAN_MODE_NONE:
                 intent.putExtra("previous ScanMode: ", "invisible");
                 break;
@@ -200,11 +213,11 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         return intent;
     }
 
-    private Intent getStateChangeInformation (Intent intent) {
+    private Intent getStateChangeInformation(Intent intent) {
 
         intent.putExtra(TAG, "State changed.");
 
-        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,0)){
+        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
             case BluetoothAdapter.STATE_OFF:
                 intent.putExtra("new State: ", "OFF");
                 break;
@@ -218,11 +231,11 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 intent.putExtra("new State: ", "Turning ON");
                 break;
             default:
-                intent.putExtra("new State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE,0));
+                intent.putExtra("new State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0));
                 break;
         }
 
-        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE,0)){
+        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0)) {
             case BluetoothAdapter.STATE_OFF:
                 intent.putExtra("previous State: ", "OFF");
                 break;
@@ -236,14 +249,14 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
                 intent.putExtra("previous State: ", "Turning ON");
                 break;
             default:
-                intent.putExtra("previous State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE,0));
+                intent.putExtra("previous State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0));
                 break;
         }
 
         return intent;
     }
 
-    private void sendInitialData(){
+    private void sendInitialData() {
 
         Intent intent = new Intent();
 
@@ -251,14 +264,19 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         intent.putExtra("State: ", getBluetoothState());
         intent.putExtra("Address: ", bluetoothAdapter.getAddress());
         intent.putExtra("Name: ", bluetoothAdapter.getName());
-        intent.putExtra("Bonded devices: ", bluetoothAdapter.getBondedDevices().toString());
+        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
+        List<String> bondedDeviceNames = new ArrayList<>();
+        for (BluetoothDevice device : bondedDevices) {
+            bondedDeviceNames.add(device.getName());
+        }
+        intent.putExtra("Bonded devices: ", bondedDeviceNames.toString());
 
         sendData(intent);
 
         Log.i(TAG, "Initial state sent");
     }
 
-    private String getBluetoothState(){
+    private String getBluetoothState() {
         String result;
         switch (bluetoothAdapter.getState()) {
             case BluetoothAdapter.STATE_OFF:
