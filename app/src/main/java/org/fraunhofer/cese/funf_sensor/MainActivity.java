@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
 import org.fraunhofer.cese.funf_sensor.Probe.AccelerometerProbe;
+import org.fraunhofer.cese.funf_sensor.Probe.NetworkConnectionProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.AudioProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.BluetoothProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe;
@@ -71,6 +72,7 @@ public class MainActivity extends RoboActivity {
     private CallStateProbe callStateProbe;
     private AudioProbe audioProbe;
     private BluetoothProbe bluetoothProbe;
+    private NetworkConnectionProbe networkConnectionProbe;
 
     // UI elements
     private TextView dataCountView;
@@ -101,6 +103,7 @@ public class MainActivity extends RoboActivity {
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
             audioProbe = gson.fromJson(new JsonObject(), AudioProbe.class);
             bluetoothProbe = gson.fromJson(new JsonObject(), BluetoothProbe.class);
+            networkConnectionProbe = gson.fromJson(new JsonObject(), NetworkConnectionProbe.class);
 
             // Initialize the pipeline
             funfManager.registerPipeline(PIPELINE_NAME, pipeline);
@@ -134,6 +137,7 @@ public class MainActivity extends RoboActivity {
         callStateProbe.unregisterPassiveListener(pipeline);
         audioProbe.unregisterPassiveListener(pipeline);
         bluetoothProbe.unregisterListener(pipeline);
+		networkConnectionProbe.unregisterPassiveListener(pipeline);
 
         pipeline.setEnabled(false);
         funfManager.disablePipeline(PIPELINE_NAME);
@@ -156,9 +160,9 @@ public class MainActivity extends RoboActivity {
         callStateProbe.registerPassiveListener(pipeline);
         audioProbe.registerPassiveListener(pipeline);
         bluetoothProbe.registerListener(pipeline);
+        networkConnectionProbe.registerPassiveListener(pipeline);
     }
 
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 

@@ -42,6 +42,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
         Log.i(TAG, "BluetoothProbe enabled.");
 
+        sendInitialData();
     }
 
     public class BluetoothInformationReceiver extends BroadcastReceiver {
@@ -241,4 +242,42 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
         return intent;
     }
+
+    private void sendInitialData(){
+
+        Intent intent = new Intent();
+
+        intent.putExtra(TAG, "Initial Probe!");
+        intent.putExtra("State: ", getBluetoothState());
+        intent.putExtra("Address: ", bluetoothAdapter.getAddress());
+        intent.putExtra("Name: ", bluetoothAdapter.getName());
+        intent.putExtra("Bonded devices: ", bluetoothAdapter.getBondedDevices().toString());
+
+        sendData(intent);
+
+        Log.i(TAG, "Initial state sent");
+    }
+
+    private String getBluetoothState(){
+        String result;
+        switch (bluetoothAdapter.getState()) {
+            case BluetoothAdapter.STATE_OFF:
+                result = "off.";
+                break;
+            case BluetoothAdapter.STATE_ON:
+                result = "on";
+                break;
+            case BluetoothAdapter.STATE_TURNING_ON:
+                result = "turning on.";
+                break;
+            case BluetoothAdapter.STATE_TURNING_OFF:
+                result = "turning off.";
+                break;
+            default:
+                result = "Something went wrong.";
+                break;
+        }
+        return result;
+    }
 }
+
