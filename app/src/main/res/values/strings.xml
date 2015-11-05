@@ -15,5 +15,5 @@
     <string name="deviceIdText">Device ID: %1$s</string>
     <string name="uploadResultText">Last upload result: %1$s</string>
     <string name="sendButtonText">Upload data now</string>
-    <string name="footnoteText">This application uses the Funf Open Sensing Framework licensed under the GNU Lesser GPL.\n\n This application was developed by the Fraunhofer CESE. For any questions, email llayman@cese.fraunhofer.org.</string>
+    <string name="footnoteText"> This application was developed by the Fraunhofer CESE. For any questions, email llayman@cese.fraunhofer.org.\n\nThis application uses the Funf Open Sensing Framework licensed under the GNU Lesser GPL.</string>
 </resources>

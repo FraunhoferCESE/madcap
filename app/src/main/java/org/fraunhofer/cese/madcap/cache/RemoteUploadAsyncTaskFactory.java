@@ -67,7 +67,7 @@ public class RemoteUploadAsyncTaskFactory {
                 databaseHelper.getDao().iterator();
                 long offset = 0;
                 while (offset < numCachedEntries && result.getException() == null) {
-                    long limit = offset + BUFFER_SIZE > numCachedEntries ? numCachedEntries : offset + BUFFER_SIZE;
+                    long limit = offset + BUFFER_SIZE > numCachedEntries ? numCachedEntries - offset : BUFFER_SIZE;
                     try {
                         List<ProbeEntry> toUpload = Lists.transform(
                                 databaseHelper.getDao().queryBuilder().offset(offset).limit(limit).query(),
