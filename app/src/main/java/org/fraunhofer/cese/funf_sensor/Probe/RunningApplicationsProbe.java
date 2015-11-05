@@ -14,9 +14,9 @@ import edu.mit.media.funf.probe.Probe;
 /**
  *
  */
-public class MyRunningApplicationsProbe extends Probe.Base implements Probe.ContinuousProbe {
+public class RunningApplicationsProbe extends Probe.Base implements Probe.ContinuousProbe {
 
-    private static final String TAG = "Fraunhofer." + MyRunningApplicationsProbe.class.getSimpleName();
+    private static final String TAG = "Fraunhofer." + RunningApplicationsProbe.class.getSimpleName();
     private static Thread runningApplicationsDeliverer;
 
 

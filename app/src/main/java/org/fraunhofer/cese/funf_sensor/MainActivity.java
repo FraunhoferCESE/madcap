@@ -20,13 +20,13 @@ import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
 import org.fraunhofer.cese.funf_sensor.Probe.AccelerometerProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.NetworkConnectionProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.AudioProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.BluetoothProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.CallStateProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.ForegroundProbe;
-import org.fraunhofer.cese.funf_sensor.Probe.MyRunningApplicationsProbe;
+import org.fraunhofer.cese.funf_sensor.Probe.NetworkConnectionProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.PowerProbe;
+import org.fraunhofer.cese.funf_sensor.Probe.RunningApplicationsProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.SMSProbe;
 import org.fraunhofer.cese.funf_sensor.Probe.StateProbe;
 import org.fraunhofer.cese.funf_sensor.appengine.GoogleAppEnginePipeline;
@@ -43,7 +43,6 @@ import java.util.regex.Pattern;
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
-import edu.mit.media.funf.probe.builtin.WifiProbe;
 import roboguice.activity.RoboActivity;
 
 public class MainActivity extends RoboActivity {
@@ -61,18 +60,18 @@ public class MainActivity extends RoboActivity {
 
     //probes
     private AccelerometerProbe accelerometerProbe;
-    private ForegroundProbe foregroundProbe;
-    private MyRunningApplicationsProbe myRunningApplicationsProbe;
-    private ScreenProbe screenProbe;
-    private SimpleLocationProbe locationProbe;
-    private WifiProbe wifiProbe;
-    private SMSProbe sMSProbe;
-    private PowerProbe powerProbe;
-    private StateProbe stateProbe;
-    private CallStateProbe callStateProbe;
     private AudioProbe audioProbe;
     private BluetoothProbe bluetoothProbe;
+    private CallStateProbe callStateProbe;
+    private ForegroundProbe foregroundProbe;
     private NetworkConnectionProbe networkConnectionProbe;
+    private PowerProbe powerProbe;
+    private RunningApplicationsProbe runningApplicationsProbe;
+    private ScreenProbe screenProbe;
+    private SimpleLocationProbe locationProbe;
+    private SMSProbe sMSProbe;
+    private StateProbe stateProbe;
+
 
     // UI elements
     private TextView dataCountView;
@@ -92,24 +91,23 @@ public class MainActivity extends RoboActivity {
             Gson gson = funfManager.getGson();
 
             accelerometerProbe = gson.fromJson(new JsonObject(), AccelerometerProbe.class);
-            foregroundProbe = gson.fromJson(new JsonObject(), ForegroundProbe.class);
-            locationProbe = gson.fromJson(getString(R.string.probe_location), SimpleLocationProbe.class);
-            wifiProbe = gson.fromJson(new JsonObject(), WifiProbe.class);
-            myRunningApplicationsProbe = gson.fromJson(new JsonObject(), MyRunningApplicationsProbe.class);
-            screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
-            sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
-            powerProbe = gson.fromJson(new JsonObject(), PowerProbe.class);
-            stateProbe = gson.fromJson(new JsonObject(), StateProbe.class);
-            callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
             audioProbe = gson.fromJson(new JsonObject(), AudioProbe.class);
             bluetoothProbe = gson.fromJson(new JsonObject(), BluetoothProbe.class);
+            callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
+            foregroundProbe = gson.fromJson(new JsonObject(), ForegroundProbe.class);
+            locationProbe = gson.fromJson(getString(R.string.probe_location), SimpleLocationProbe.class);
             networkConnectionProbe = gson.fromJson(new JsonObject(), NetworkConnectionProbe.class);
+            powerProbe = gson.fromJson(new JsonObject(), PowerProbe.class);
+            runningApplicationsProbe = gson.fromJson(new JsonObject(), RunningApplicationsProbe.class);
+            screenProbe = gson.fromJson(new JsonObject(), ScreenProbe.class);
+            sMSProbe = gson.fromJson(new JsonObject(), SMSProbe.class);
+            stateProbe = gson.fromJson(new JsonObject(), StateProbe.class);
 
             // Initialize the pipeline
             funfManager.registerPipeline(PIPELINE_NAME, pipeline);
             pipeline = (GoogleAppEnginePipeline) funfManager.getRegisteredPipeline(PIPELINE_NAME);
 
-            if(isCollectingData)
+            if (isCollectingData)
                 enablePipelines();
         }
 
@@ -126,18 +124,18 @@ public class MainActivity extends RoboActivity {
         Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
 
         accelerometerProbe.unregisterPassiveListener(pipeline);
-        foregroundProbe.unregisterPassiveListener(pipeline);
-        locationProbe.unregisterPassiveListener(pipeline);
-        wifiProbe.unregisterPassiveListener(pipeline);
-        myRunningApplicationsProbe.unregisterPassiveListener(pipeline);
-        screenProbe.unregisterPassiveListener(pipeline);
-        sMSProbe.unregisterPassiveListener(pipeline);
-        powerProbe.unregisterPassiveListener(pipeline);
-        stateProbe.unregisterPassiveListener(pipeline);
-        callStateProbe.unregisterPassiveListener(pipeline);
         audioProbe.unregisterPassiveListener(pipeline);
         bluetoothProbe.unregisterListener(pipeline);
-		networkConnectionProbe.unregisterPassiveListener(pipeline);
+        callStateProbe.unregisterPassiveListener(pipeline);
+        foregroundProbe.unregisterPassiveListener(pipeline);
+        locationProbe.unregisterPassiveListener(pipeline);
+        networkConnectionProbe.unregisterPassiveListener(pipeline);
+        powerProbe.unregisterPassiveListener(pipeline);
+        runningApplicationsProbe.unregisterPassiveListener(pipeline);
+        screenProbe.unregisterPassiveListener(pipeline);
+        sMSProbe.unregisterPassiveListener(pipeline);
+        stateProbe.unregisterPassiveListener(pipeline);
+
 
         pipeline.setEnabled(false);
         funfManager.disablePipeline(PIPELINE_NAME);
@@ -149,18 +147,18 @@ public class MainActivity extends RoboActivity {
         pipeline.setEnabled(true);
 
         accelerometerProbe.registerPassiveListener(pipeline);
-        foregroundProbe.registerPassiveListener(pipeline);
-        locationProbe.registerPassiveListener(pipeline);
-        wifiProbe.registerPassiveListener(pipeline);
-        myRunningApplicationsProbe.registerPassiveListener(pipeline);
-        screenProbe.registerPassiveListener(pipeline);
-        sMSProbe.registerPassiveListener(pipeline);
-        powerProbe.registerPassiveListener(pipeline);
-        stateProbe.registerPassiveListener(pipeline);
-        callStateProbe.registerPassiveListener(pipeline);
         audioProbe.registerPassiveListener(pipeline);
         bluetoothProbe.registerListener(pipeline);
+        callStateProbe.registerPassiveListener(pipeline);
+        foregroundProbe.registerPassiveListener(pipeline);
+        locationProbe.registerPassiveListener(pipeline);
         networkConnectionProbe.registerPassiveListener(pipeline);
+        powerProbe.registerPassiveListener(pipeline);
+        runningApplicationsProbe.registerPassiveListener(pipeline);
+        screenProbe.registerPassiveListener(pipeline);
+        sMSProbe.registerPassiveListener(pipeline);
+        stateProbe.registerPassiveListener(pipeline);
+
     }
 
     public void onCreate(Bundle savedInstanceState) {

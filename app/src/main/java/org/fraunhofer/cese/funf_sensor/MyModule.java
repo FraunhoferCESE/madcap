@@ -54,7 +54,7 @@ public class MyModule extends AbstractModule {
         config.setUploadInterval(900000); // 15 minute minimum
 
         config.setUploadWifiOnly(true);
-        config.setWriteToFile(true);
+        config.setWriteToFile(false);
 
         return config;
     }
