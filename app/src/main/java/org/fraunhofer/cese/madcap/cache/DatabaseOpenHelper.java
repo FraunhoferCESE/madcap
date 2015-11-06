@@ -30,7 +30,7 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
     private RuntimeExceptionDao<CacheEntry,String> dao = null;
 
     public DatabaseOpenHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlite_config);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlist_config);
     }
 
     /**

@@ -1,31 +1,29 @@
 package org.fraunhofer.cese.funf_sensor.backend.servlets;
 
+import com.google.appengine.tools.cloudstorage.GcsFileOptions;
+import com.google.appengine.tools.cloudstorage.GcsFilename;
+import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
+import com.google.appengine.tools.cloudstorage.GcsService;
+import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
+import com.google.appengine.tools.cloudstorage.RetryParams;
+import com.opencsv.CSVWriter;
+
 import org.fraunhofer.cese.funf_sensor.backend.models.ProbeEntry;
+
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.channels.Channels;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import static org.fraunhofer.cese.funf_sensor.backend.OfyService.ofy;
-
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.PrintWriter;
-import java.nio.channels.Channels;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import com.google.appengine.tools.cloudstorage.GcsFileOptions;
-import com.google.appengine.tools.cloudstorage.GcsFilename;
-import com.google.appengine.tools.cloudstorage.GcsOutputChannel;
-import com.google.appengine.tools.cloudstorage.RetryParams;
-
-import com.google.appengine.tools.cloudstorage.GcsService;
-import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 
 
 /**
@@ -34,9 +32,7 @@ import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 public class HttpsGetServlet extends HttpServlet {
 
     private static final String BUCKETNAME = "c3s3d4t4dump";
-    private static final String COMMA_DELIMITER = ",";
-    private static final String NEW_LINE_SEPARATOR = "\n";
-    private static final String FILE_HEADER = "id,timestamp,probeType,sensorData,userID";
+    private static final String[] FILE_HEADER = {"id", "userID", "timestamp", "probeType", "sensorData"};
     private static final Logger logger = Logger.getLogger(HttpsGetServlet.class.getName());
 
     @Override
@@ -44,7 +40,7 @@ public class HttpsGetServlet extends HttpServlet {
 
         logger.warning("Something reached the Servlet. Fly, you fools!");
 
-        if(request.getParameter("password").equals("swordfish")) {
+        if (request.getParameter("password") != null && request.getParameter("password").equals("swordfish")) {
 
             //Getting the timestamps out of the request
             String fromTimestampString = request.getParameter("fromTimestamp");
@@ -61,9 +57,14 @@ public class HttpsGetServlet extends HttpServlet {
             }
 
             //Getting the required entries using Objectify. CURRENTLY NOT WORKING
-            List<ProbeEntry> entries = ofy().load().type(ProbeEntry.class).filter("timestamp >=", fromTimestamp).list();
-            entries.removeAll(ofy().load().type(ProbeEntry.class).filter("timestamp >", toTimestamp).list());
-            Collections.sort(entries);
+//            List<ProbeEntry> entries = ofy().load().type(ProbeEntry.class).filter("timestamp >=", fromTimestamp).list();
+//            entries.removeAll(ofy().load().type(ProbeEntry.class).filter("timestamp >", toTimestamp).list());
+//            Collections.sort(entries);
+
+            List<ProbeEntry> entries = ofy().load().type(ProbeEntry.class)
+                    .filter("timestamp >=", fromTimestamp)
+                    .filter("timestamp <", toTimestamp)
+                    .list();
 
             //using dummy entries
 //        entries.addAll(getDummyEntries());
@@ -78,33 +79,24 @@ public class HttpsGetServlet extends HttpServlet {
             GcsOutputChannel outputChannel = gcsService.createOrReplace(filename, GcsFileOptions.getDefaultInstance());
             ZipOutputStream zipOutputStream = new ZipOutputStream(Channels.newOutputStream(outputChannel));
             zipOutputStream.putNextEntry(new ZipEntry("From" + fromTimestamp + "To" + toTimestamp + ".csv"));
-            PrintWriter writer = new PrintWriter(zipOutputStream);
+//            PrintWriter writer = new PrintWriter(zipOutputStream);
 //        PrintWriter writer = new PrintWriter(Channels.newOutputStream(outputChannel));
 
-            //writing the file
-            writer.append(FILE_HEADER);
-            writer.append(NEW_LINE_SEPARATOR);
+
+            CSVWriter writer = new CSVWriter(new OutputStreamWriter(zipOutputStream));
+            writer.writeNext(FILE_HEADER);
             for (ProbeEntry entry : entries) {
-                writer.append(entry.getId());
-                writer.append(COMMA_DELIMITER);
-                writer.append(entry.getTimestamp().toString());
-                writer.append(COMMA_DELIMITER);
-                writer.append(entry.getProbeType());
-                writer.append(COMMA_DELIMITER);
-                writer.append(entry.getSensorData());
-                writer.append(COMMA_DELIMITER);
-                writer.append(entry.getUserID());
-                writer.append(NEW_LINE_SEPARATOR);
+                writer.writeNext(new String[]{entry.getId(), entry.getUserID(), entry.getTimestamp().toString(), entry.getProbeType(), entry.getSensorData()});
             }
 
             //closing stuff. data is send when stream/channel is closed
+            writer.flush();
             writer.close();
             zipOutputStream.close();
             outputChannel.close();
 
-
             response.getWriter().println("Seems like it worked");
-        }else{
+        } else {
             response.getWriter().println("Request has not been executed. Guess why!");
         }
     }

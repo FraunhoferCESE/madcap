@@ -331,7 +331,7 @@ public class MainActivity extends RoboActivity {
                             exceptionMessage = result.getException().toString();
                         else
                             exceptionMessage = "Unspecified error";
-                        
+
                         text += "Result: Upload failed due to " + (exceptionMessage.length() > 20 ? exceptionMessage.substring(0, 19) : exceptionMessage);
                     } else if (result.getSaveResult() == null) {
                         text += "Result: An error occurred on the remote server.";

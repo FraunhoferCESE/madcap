@@ -362,7 +362,7 @@ public class Cache {
             @Nullable
             @Override
             public String[] apply(CacheEntry cacheEntry) {
-                return new String[]{cacheEntry.getId(), cacheEntry.getTimestamp().toString(), cacheEntry.getProbeType(), cacheEntry.getSensorData()};
+                return new String[]{cacheEntry.getId(), cacheEntry.getUserID(), cacheEntry.getTimestamp().toString(), cacheEntry.getProbeType(), cacheEntry.getSensorData()};
             }
         });
 
