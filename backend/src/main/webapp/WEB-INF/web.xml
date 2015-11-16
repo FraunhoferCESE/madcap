@@ -44,7 +44,28 @@
     </servlet-mapping>
 
 
+    <servlet>
+        <servlet-name>writeQueue</servlet-name>
+        <servlet-class>org.fraunhofer.cese.funf_sensor.backend.servlets.WriteQueue</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>writeQueue</servlet-name>
+        <url-pattern>/enqueue</url-pattern>
+    </servlet-mapping>
+
+
     <welcome-file-list>
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
+
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>admin</web-resource-name>
+            <url-pattern>/download.html</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+
 </web-app>

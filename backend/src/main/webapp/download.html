@@ -63,29 +63,35 @@
                                autofocus/>
                         <input type="number" id="toTimestamp" placeholder="toTimestamp"
                                name="toTimestamp"/>
-                        <input type="password" id="password" placeholder="password" name="password"/>
+                        <input type="password" id="password" placeholder="password"
+                               name="password"/>
                         <input type="submit" value="Save Data to Bucket" formmethod="get">
                         <!--In case you wanted to use AJAX <input type="button" onclick="initiateSaving()" value="Save Data to bucket">-->
                     </div>
 
                 </form>
-                <br/>
 
                 <p>
-                    <small>
-                        For more information about Google App Engine for Java, check out the <a
-                            href="https://developers.google.com/appengine/docs/java/">App Engine
-                        documentation</a>.<br/>
-                        To learn more about Google Cloud Endpoints, see <a
-                            href="https://developers.google.com/appengine/docs/java/endpoints/">Cloud
-                        Endpoints documentation</a>.<br/>
-                        If you'd like to access your generated Google Cloud Endpoints APIs directly,
-                        see the <a href="/_ah/api/explorer">Cloud Endpoints API Explorer</a>.
-                    </small>
+                    This button will download all of the data to zipped CSV files in a new folder in
+                    Google Cloud Storage. This task executes asynchronously in the Task Queue and
+                    will take a long time and consume a lot of resources. Please use only if
+                    absolutely necessary.
                 </p>
+                <ul>
+                    <li>Task Queue: <a href="https://console.developers.google.com/appengine/taskqueues/default?project=funfcese&moduleId=default">https://console.developers.google.com/appengine/taskqueues/default?project=funfcese&moduleId=default</a></li>
+                    <li>Cloud Storage location: <a href="https://console.developers.google.com/storage/browser/c3s3d4t4dump/?project=funfcese">https://console.developers.google.com/storage/browser/c3s3d4t4dump/?project=funfcese</a></li>
+                    <li>Datastore home: <a href="https://console.developers.google.com/datastore/stats?project=funfcese">https://console.developers.google.com/datastore/stats?project=funfcese</a></li>
+                    <li>Log files: <a href="https://console.developers.google.com/logs?project=funfcese">https://console.developers.google.com/logs?project=funfcese</a></li>
+                </ul>
+
+
+                <form action="enqueue" method="get">
+                    <div class="input-group">
+                        <input type="submit" value="Save ALL Data to Bucket" formmethod="get">
+                    </div>
+                </form>
                 <br/>
-                <br/>
-                <br/>
+
 
                 <h2>Santa's little helper to calculate timestamps</h2>
 
@@ -156,6 +162,7 @@
       }
       gapi.client.load(apiName, apiVersion, callback, apiRoot);
     }
+
 
 
 
