@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.3"
 
     defaultConfig {
         applicationId "org.fraunhofer.cese.madcap"
@@ -41,7 +41,7 @@ dependencies {
 //    testCompile 'com.google.appengine:appengine-testing:1.9.27'
 //    testCompile 'com.google.appengine:appengine-endpoints:1.9.27'
     provided 'org.roboguice:roboblender:3.0.1'
-    compile 'com.google.android.gms:play-services-identity:8.1.0'
+    compile 'com.google.android.gms:play-services-identity:9.0.2'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'org.roboguice:roboguice:3.0.1'
     compile 'com.opencsv:opencsv:3.5'
