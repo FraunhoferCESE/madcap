@@ -1,9 +1,9 @@
 package org.fraunhofer.cese.madcap.appengine;
 
 import android.content.Context;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.google.android.gms.iid.InstanceID;
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
 
@@ -28,13 +28,13 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     private boolean enabled = false;
 
     private final Cache cache;
-    private final String deviceID;
+    private final String instanceId;
 
 
     @Inject
     public GoogleAppEnginePipeline(Cache cache, Context context) {
         this.cache = cache;
-        this.deviceID = ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId();
+        this.instanceId = InstanceID.getInstance(context).getId();
     }
 
     /**
@@ -69,7 +69,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         probeEntry.setTimestamp(timestamp);
         probeEntry.setProbeType(key);
         probeEntry.setSensorData(data.toString());
-        probeEntry.setUserID(deviceID);
+        probeEntry.setUserID(instanceId);
 
         cache.add(probeEntry);
     }

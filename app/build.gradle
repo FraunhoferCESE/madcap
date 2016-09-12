@@ -32,6 +32,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/gson-2.1.funf.jar')
     compile files('libs/funf-0.4.2.jar')
+    compile 'com.google.android.gms:play-services:9.4.0'
     compile project(path: ':backend', configuration: 'android-endpoints')
     testCompile 'junit:junit:4.12'
     testCompile 'org.jmockit:jmockit:1.20'
