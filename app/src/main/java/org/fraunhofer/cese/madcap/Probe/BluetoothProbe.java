@@ -23,6 +23,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
     static private final String TAG = "BluetoothProbe: ";
     static private final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
+
     protected void onEnable() {
 
         super.onStart();
@@ -30,19 +31,23 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         receiver = new BluetoothInformationReceiver(this);
 
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        intentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-        intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-        getContext().registerReceiver(receiver, intentFilter);
 
-        Log.i(TAG, "BluetoothProbe enabled.");
+        if(bluetoothAdapter != null){
+            intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+            intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+            intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+            intentFilter.addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED);
+            intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            intentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+            intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+            getContext().registerReceiver(receiver, intentFilter);
 
-        sendInitialData();
+            Log.i(TAG, "BluetoothProbe enabled.");
+
+            sendInitialData();
+        }
+
     }
 
     public class BluetoothInformationReceiver extends BroadcastReceiver {
@@ -69,46 +74,48 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 //                }
 //            }
 //            intent.putExtra("Connected devices:", devices);
-
-            switch (intent.getAction()) {
-                case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED:
-                    intent = getConnectionStateChangedInformation(intent);
-                    callback.sendData(intent);
-                    break;
-                case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
-                    intent.putExtra(TAG, "searching for remote devices.");
-                    callback.sendData(intent);
-                    break;
-                case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
-                    intent.putExtra(TAG, "search for devices finished.");
-                    callback.sendData(intent);
-                    break;
-                case BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED:
-                    intent.putExtra(TAG, "adapter name changed");
-                    intent.putExtra("new name: ", bluetoothAdapter.getName());
-                    callback.sendData(intent);
-                    break;
-                case BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE:
-                    intent.putExtra(TAG, "discoverability requested.");
-                    callback.sendData(intent);
-                    break;
-                case BluetoothAdapter.ACTION_REQUEST_ENABLE:
-                    intent.putExtra(TAG, "user asked to enable Bluetooth");
-                    callback.sendData(intent);
-                    break;
-                case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
-                    intent = getScanModeChangeInformation(intent);
-                    callback.sendData(intent);
-                    break;
-                case BluetoothAdapter.ACTION_STATE_CHANGED:
-                    intent = getStateChangeInformation(intent);
-                    callback.sendData(intent);
-                    break;
-                default:
-                    intent.putExtra(TAG, intent.getAction());
-                    callback.sendData(intent);
-                    break;
+            if(bluetoothAdapter != null){
+                switch (intent.getAction()) {
+                    case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED:
+                        intent = getConnectionStateChangedInformation(intent);
+                        callback.sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
+                        intent.putExtra(TAG, "searching for remote devices.");
+                        callback.sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
+                        intent.putExtra(TAG, "search for devices finished.");
+                        callback.sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED:
+                        intent.putExtra(TAG, "adapter name changed");
+                        intent.putExtra("new name: ", bluetoothAdapter.getName());
+                        callback.sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE:
+                        intent.putExtra(TAG, "discoverability requested.");
+                        callback.sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_REQUEST_ENABLE:
+                        intent.putExtra(TAG, "user asked to enable Bluetooth");
+                        callback.sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
+                        intent = getScanModeChangeInformation(intent);
+                        callback.sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_STATE_CHANGED:
+                        intent = getStateChangeInformation(intent);
+                        callback.sendData(intent);
+                        break;
+                    default:
+                        intent.putExtra(TAG, intent.getAction());
+                        callback.sendData(intent);
+                        break;
+                }
             }
+
 
         }
     }
@@ -130,129 +137,129 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
     }
 
     private Intent getConnectionStateChangedInformation(Intent intent) {
+        if(bluetoothAdapter != null) {
+            intent.putExtra(TAG, "ConnectionState changed");
 
-        intent.putExtra(TAG, "ConnectionState changed");
+            final int intExtra = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, 0);
+            switch (intExtra) {
+                case BluetoothAdapter.STATE_CONNECTED:
+                    intent.putExtra("new ConnectionState: ", "connected");
+                    intent.putExtra("connected device:", getDeviceName(intent));
+                    break;
+                case BluetoothAdapter.STATE_CONNECTING:
+                    intent.putExtra("new ConnectionState: ", "connecting");
+                    break;
+                case BluetoothAdapter.STATE_DISCONNECTED:
+                    intent.putExtra("new ConnectionState: ", "disconnected");
+                    intent.putExtra("disconnected device:", getDeviceName(intent));
+                    break;
+                case BluetoothAdapter.STATE_DISCONNECTING:
+                    intent.putExtra("new ConnectionState: ", "cacheClosing");
+                    break;
+                default:
+                    intent.putExtra("new ConnectionState: ", intExtra);
+                    break;
+            }
 
-        final int intExtra = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, 0);
-        switch (intExtra) {
-            case BluetoothAdapter.STATE_CONNECTED:
-                intent.putExtra("new ConnectionState: ", "connected");
-                intent.putExtra("connected device:", getDeviceName(intent));
-                break;
-            case BluetoothAdapter.STATE_CONNECTING:
-                intent.putExtra("new ConnectionState: ", "connecting");
-                break;
-            case BluetoothAdapter.STATE_DISCONNECTED:
-                intent.putExtra("new ConnectionState: ", "disconnected");
-                intent.putExtra("disconnected device:", getDeviceName(intent));
-                break;
-            case BluetoothAdapter.STATE_DISCONNECTING:
-                intent.putExtra("new ConnectionState: ", "cacheClosing");
-                break;
-            default:
-                intent.putExtra("new ConnectionState: ", intExtra);
-                break;
+            int extraPrevious = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_CONNECTION_STATE, 0);
+            switch (extraPrevious) {
+                case BluetoothAdapter.STATE_CONNECTED:
+                    intent.putExtra("previous ConnectionState: ", "connected");
+                    break;
+                case BluetoothAdapter.STATE_CONNECTING:
+                    intent.putExtra("previous ConnectionState: ", "connecting");
+                    break;
+                case BluetoothAdapter.STATE_DISCONNECTED:
+                    intent.putExtra("previous ConnectionState: ", "disconnected");
+                    break;
+                case BluetoothAdapter.STATE_DISCONNECTING:
+                    intent.putExtra("previous ConnectionState: ", "cacheClosing");
+                    break;
+                default:
+                    intent.putExtra("previous ConnectionState: ", extraPrevious);
+                    break;
+            }
         }
-
-        int extraPrevious = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_CONNECTION_STATE, 0);
-        switch (extraPrevious) {
-            case BluetoothAdapter.STATE_CONNECTED:
-                intent.putExtra("previous ConnectionState: ", "connected");
-                break;
-            case BluetoothAdapter.STATE_CONNECTING:
-                intent.putExtra("previous ConnectionState: ", "connecting");
-                break;
-            case BluetoothAdapter.STATE_DISCONNECTED:
-                intent.putExtra("previous ConnectionState: ", "disconnected");
-                break;
-            case BluetoothAdapter.STATE_DISCONNECTING:
-                intent.putExtra("previous ConnectionState: ", "cacheClosing");
-                break;
-            default:
-                intent.putExtra("previous ConnectionState: ", extraPrevious);
-                break;
-        }
-
         return intent;
     }
 
     private Intent getScanModeChangeInformation(Intent intent) {
+        if(bluetoothAdapter != null) {
+            intent.putExtra(TAG, "ScanMode changed");
 
-        intent.putExtra(TAG, "ScanMode changed");
+            switch (intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0)) {
+                case BluetoothAdapter.SCAN_MODE_NONE:
+                    intent.putExtra("new ScanMode: ", "invisible");
+                    break;
+                case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
+                    intent.putExtra("new ScanMode: ", "invisible, but connectable");
+                    break;
+                case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
+                    intent.putExtra("new ScanMode: ", "visible and connectable");
+                    break;
+                default:
+                    intent.putExtra("new ScanMode: ", intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0));
+                    break;
+            }
 
-        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0)) {
-            case BluetoothAdapter.SCAN_MODE_NONE:
-                intent.putExtra("new ScanMode: ", "invisible");
-                break;
-            case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                intent.putExtra("new ScanMode: ", "invisible, but connectable");
-                break;
-            case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                intent.putExtra("new ScanMode: ", "visible and connectable");
-                break;
-            default:
-                intent.putExtra("new ScanMode: ", intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0));
-                break;
+            switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, 0)) {
+                case BluetoothAdapter.SCAN_MODE_NONE:
+                    intent.putExtra("previous ScanMode: ", "invisible");
+                    break;
+                case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
+                    intent.putExtra("previous ScanMode: ", "invisible, but connectable");
+                    break;
+                case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
+                    intent.putExtra("previous ScanMode: ", "visible and connectable");
+                    break;
+                default:
+                    intent.putExtra("previous ScandMode: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, 0));
+                    break;
+            }
         }
-
-        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, 0)) {
-            case BluetoothAdapter.SCAN_MODE_NONE:
-                intent.putExtra("previous ScanMode: ", "invisible");
-                break;
-            case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                intent.putExtra("previous ScanMode: ", "invisible, but connectable");
-                break;
-            case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                intent.putExtra("previous ScanMode: ", "visible and connectable");
-                break;
-            default:
-                intent.putExtra("previous ScandMode: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, 0));
-                break;
-        }
-
         return intent;
     }
 
     private Intent getStateChangeInformation(Intent intent) {
+        if(bluetoothAdapter != null) {
+            intent.putExtra(TAG, "State changed.");
 
-        intent.putExtra(TAG, "State changed.");
+            switch (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
+                case BluetoothAdapter.STATE_OFF:
+                    intent.putExtra("new State: ", "OFF");
+                    break;
+                case BluetoothAdapter.STATE_ON:
+                    intent.putExtra("new State: ", "ON");
+                    break;
+                case BluetoothAdapter.STATE_TURNING_OFF:
+                    intent.putExtra("new State: ", "Turning OFF");
+                    break;
+                case BluetoothAdapter.STATE_TURNING_ON:
+                    intent.putExtra("new State: ", "Turning ON");
+                    break;
+                default:
+                    intent.putExtra("new State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0));
+                    break;
+            }
 
-        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
-            case BluetoothAdapter.STATE_OFF:
-                intent.putExtra("new State: ", "OFF");
-                break;
-            case BluetoothAdapter.STATE_ON:
-                intent.putExtra("new State: ", "ON");
-                break;
-            case BluetoothAdapter.STATE_TURNING_OFF:
-                intent.putExtra("new State: ", "Turning OFF");
-                break;
-            case BluetoothAdapter.STATE_TURNING_ON:
-                intent.putExtra("new State: ", "Turning ON");
-                break;
-            default:
-                intent.putExtra("new State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0));
-                break;
+            switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0)) {
+                case BluetoothAdapter.STATE_OFF:
+                    intent.putExtra("previous State: ", "OFF");
+                    break;
+                case BluetoothAdapter.STATE_ON:
+                    intent.putExtra("previous State: ", "ON");
+                    break;
+                case BluetoothAdapter.STATE_TURNING_OFF:
+                    intent.putExtra("previous State: ", "Turning OFF");
+                    break;
+                case BluetoothAdapter.STATE_TURNING_ON:
+                    intent.putExtra("previous State: ", "Turning ON");
+                    break;
+                default:
+                    intent.putExtra("previous State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0));
+                    break;
+            }
         }
-
-        switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0)) {
-            case BluetoothAdapter.STATE_OFF:
-                intent.putExtra("previous State: ", "OFF");
-                break;
-            case BluetoothAdapter.STATE_ON:
-                intent.putExtra("previous State: ", "ON");
-                break;
-            case BluetoothAdapter.STATE_TURNING_OFF:
-                intent.putExtra("previous State: ", "Turning OFF");
-                break;
-            case BluetoothAdapter.STATE_TURNING_ON:
-                intent.putExtra("previous State: ", "Turning ON");
-                break;
-            default:
-                intent.putExtra("previous State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0));
-                break;
-        }
-
         return intent;
     }
 
@@ -260,40 +267,44 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
         Intent intent = new Intent();
 
-        intent.putExtra(TAG, "Initial Probe!");
-        intent.putExtra("State: ", getBluetoothState());
-        intent.putExtra("Address: ", bluetoothAdapter.getAddress());
-        intent.putExtra("Name: ", bluetoothAdapter.getName());
-        Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
-        List<String> bondedDeviceNames = new ArrayList<>();
-        for (BluetoothDevice device : bondedDevices) {
-            bondedDeviceNames.add(device.getName());
+        if(bluetoothAdapter != null) {
+            intent.putExtra(TAG, "Initial Probe!");
+            intent.putExtra("State: ", getBluetoothState());
+            intent.putExtra("Address: ", bluetoothAdapter.getAddress());
+            intent.putExtra("Name: ", bluetoothAdapter.getName());
+            Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
+            List<String> bondedDeviceNames = new ArrayList<>();
+            for (BluetoothDevice device : bondedDevices) {
+                bondedDeviceNames.add(device.getName());
+            }
+            intent.putExtra("Bonded devices: ", bondedDeviceNames.toString());
+
+            sendData(intent);
+
+            Log.i(TAG, "Initial state sent");
         }
-        intent.putExtra("Bonded devices: ", bondedDeviceNames.toString());
-
-        sendData(intent);
-
-        Log.i(TAG, "Initial state sent");
     }
 
     private String getBluetoothState() {
-        String result;
-        switch (bluetoothAdapter.getState()) {
-            case BluetoothAdapter.STATE_OFF:
-                result = "off.";
-                break;
-            case BluetoothAdapter.STATE_ON:
-                result = "on";
-                break;
-            case BluetoothAdapter.STATE_TURNING_ON:
-                result = "turning on.";
-                break;
-            case BluetoothAdapter.STATE_TURNING_OFF:
-                result = "turning off.";
-                break;
-            default:
-                result = Integer.toString(bluetoothAdapter.getState());
-                break;
+        String result = "";
+        if(bluetoothAdapter != null) {
+            switch (bluetoothAdapter.getState()) {
+                case BluetoothAdapter.STATE_OFF:
+                    result = "off.";
+                    break;
+                case BluetoothAdapter.STATE_ON:
+                    result = "on";
+                    break;
+                case BluetoothAdapter.STATE_TURNING_ON:
+                    result = "turning on.";
+                    break;
+                case BluetoothAdapter.STATE_TURNING_OFF:
+                    result = "turning off.";
+                    break;
+                default:
+                    result = Integer.toString(bluetoothAdapter.getState());
+                    break;
+            }
         }
         return result;
     }

@@ -15,6 +15,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.android.gms.iid.InstanceID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
@@ -178,7 +179,7 @@ public class MainActivity extends RoboActivity {
         uploadResultView = (TextView) findViewById(R.id.uploadResult);
         Switch collectDataSwitch = (Switch) findViewById(R.id.switch1);
 
-        ((TextView) findViewById(R.id.deviceIdText)).setText(getString(R.string.deviceIdText, ((TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE)).getDeviceId()));
+        ((TextView) findViewById(R.id.instanceIdText)).setText(getString(R.string.instanceIdText, InstanceID.getInstance(this.getApplicationContext()).getId()));
         collectDataSwitch.setChecked(this.isCollectingData);
         collectDataSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
