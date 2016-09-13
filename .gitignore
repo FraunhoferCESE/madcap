@@ -40,3 +40,6 @@ captures/
 
 # keystore config files
 debug.properties
+
+# PRevent this from being added to VCS
+backend/src/main/java/org/fraunhofer/cese/madcap/backend/Constants.java
