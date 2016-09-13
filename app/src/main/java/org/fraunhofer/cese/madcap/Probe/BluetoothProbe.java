@@ -19,10 +19,22 @@ import edu.mit.media.funf.probe.Probe;
  */
 public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
+    public static final String OFF = "off.";
+
     static private BroadcastReceiver receiver;
     static private final String TAG = "BluetoothProbe: ";
-    static private final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    private final BluetoothAdapter bluetoothAdapter;
+    private Intent lastSentIntent;
 
+
+    public BluetoothProbe(BluetoothAdapter bluetoothAdapter, Context context){
+        super(context);
+        this.bluetoothAdapter = bluetoothAdapter;
+    }
+
+    public BluetoothProbe(){
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    }
 
     protected void onEnable() {
 
@@ -45,9 +57,27 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
             Log.i(TAG, "BluetoothProbe enabled.");
 
-            sendInitialData();
+            Intent intent = new Intent();
+            intent.putExtra(TAG, "Initial Probe!");
+            intent.putExtra("State: ", getBluetoothState());
+            intent.putExtra("Address: ", bluetoothAdapter.getAddress());
+            intent.putExtra("Name: ", bluetoothAdapter.getName());
+            Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
+            List<String> bondedDeviceNames = new ArrayList<>();
+            for (BluetoothDevice device : bondedDevices) {
+                bondedDeviceNames.add(device.getName());
+            }
+            intent.putExtra("Bonded devices: ", bondedDeviceNames.toString());
+
+            sendData(intent);
+
+            Log.i(TAG, "Initial state sent");
         }
 
+    }
+
+    public Intent getLastSentIntent() {
+        return lastSentIntent;
     }
 
     public class BluetoothInformationReceiver extends BroadcastReceiver {
@@ -126,6 +156,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
     }
 
     private void sendData(Intent intent) {
+        lastSentIntent = intent;
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
     }
 
@@ -263,34 +294,13 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         return intent;
     }
 
-    private void sendInitialData() {
-
-        Intent intent = new Intent();
-
-        if(bluetoothAdapter != null) {
-            intent.putExtra(TAG, "Initial Probe!");
-            intent.putExtra("State: ", getBluetoothState());
-            intent.putExtra("Address: ", bluetoothAdapter.getAddress());
-            intent.putExtra("Name: ", bluetoothAdapter.getName());
-            Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
-            List<String> bondedDeviceNames = new ArrayList<>();
-            for (BluetoothDevice device : bondedDevices) {
-                bondedDeviceNames.add(device.getName());
-            }
-            intent.putExtra("Bonded devices: ", bondedDeviceNames.toString());
-
-            sendData(intent);
-
-            Log.i(TAG, "Initial state sent");
-        }
-    }
 
     private String getBluetoothState() {
         String result = "";
         if(bluetoothAdapter != null) {
             switch (bluetoothAdapter.getState()) {
                 case BluetoothAdapter.STATE_OFF:
-                    result = "off.";
+                    result = OFF;
                     break;
                 case BluetoothAdapter.STATE_ON:
                     result = "on";
