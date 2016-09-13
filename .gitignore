@@ -37,3 +37,5 @@ captures/
 *.iws
 *.ipr
 *.swp
+
+debug.properties
