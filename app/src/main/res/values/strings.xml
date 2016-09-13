@@ -12,7 +12,7 @@
     <string name="introText">The MADCAP (Mobile Application Data CAPture) app collects data for research on mobile device security. Please visit https://www.fc-md.umd.edu/madcap for more information.</string>
     <string name="collectDataSwitchText">Collect Data</string>
     <string name="dataCountText">Data count: %1$s</string>
-    <string name="deviceIdText">Device ID: %1$s</string>
+    <string name="instanceIdText">Insatnce ID: %1$s</string>
     <string name="uploadResultText">Last upload result: %1$s</string>
     <string name="sendButtonText">Upload data now</string>
     <string name="footnoteText">Developed by Fraunhofer USA, Inc.\nContact: llayman@cese.fraunhofer.org.\nFunf Open Sensing Framework licensed under the GNU Lesser GPL.</string>

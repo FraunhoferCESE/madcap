@@ -22,12 +22,12 @@
             android:textColor="#000" />
 
         <TextView
-            android:id="@+id/deviceIdText"
+            android:id="@+id/instanceIdText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textIsSelectable="true"
             android:layout_marginTop="15dp"
-            android:text="@string/deviceIdText"
+            android:text="@string/instanceIdText"
             android:textSize="15sp" />
 
         <TextView
