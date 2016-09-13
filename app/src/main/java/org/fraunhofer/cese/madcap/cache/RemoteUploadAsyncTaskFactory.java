@@ -9,10 +9,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
-import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.ProbeDataSetApi;
-import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeDataSet;
-import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeEntry;
-import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeSaveResult;
+import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
+
+import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeDataSet;
+import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeEntry;
+import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeSaveResult;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -39,7 +40,7 @@ public class RemoteUploadAsyncTaskFactory {
      * @return a new instance of an asynchronous remote upload task
      * @see RemoteUploadResult
      */
-    AsyncTask<Void, Integer, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeDataSetApi appEngineApi, final List<UploadStatusListener> listeners) {
+    AsyncTask<Void, Integer, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeEndpoint appEngineApi, final List<UploadStatusListener> listeners) {
         return new AsyncTask<Void, Integer, RemoteUploadResult>() {
             private final String TAG = "Fraunhofer.UploadTask";
             private static final int BUFFER_SIZE = 250;
@@ -84,7 +85,7 @@ public class RemoteUploadAsyncTaskFactory {
                         dataSet.setEntryList(toUpload);
                         result.setUploadAttempted(true);
 
-                        ProbeSaveResult remoteResult = appEngineApi.insertSensorDataSet(dataSet).execute();
+                        ProbeSaveResult remoteResult = appEngineApi.insertProbeDataset(dataSet).execute();
                         if (remoteResult.getSaved() != null) {
                             saveResult.getSaved().addAll(ImmutableList.copyOf(remoteResult.getSaved()));
                         }

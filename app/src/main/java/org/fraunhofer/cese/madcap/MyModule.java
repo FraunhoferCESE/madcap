@@ -6,7 +6,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 
 import org.fraunhofer.cese.madcap.appengine.GoogleAppEnginePipeline;
-import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.ProbeDataSetApi;
+import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.DatabaseAsyncTaskFactory;
@@ -85,11 +85,11 @@ public class MyModule extends AbstractModule {
 //    }
 
     @Provides
-    ProbeDataSetApi provideProbeDataSetApi() {
-        ProbeDataSetApi.Builder builder = new ProbeDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
+    ProbeEndpoint provideProbeDataSetApi() {
+        ProbeEndpoint.Builder builder = new ProbeEndpoint.Builder(AndroidHttp.newCompatibleTransport(),
                 new AndroidJsonFactory(), null)
                 .setApplicationName("Fraunhofer MADCAP")
-                .setRootUrl("https://funfcese.appspot.com/_ah/api/");
+                .setRootUrl("https://madcap-dev1.appspot.com/_ah/api/");
 //                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
 //                    @Override
 //                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {

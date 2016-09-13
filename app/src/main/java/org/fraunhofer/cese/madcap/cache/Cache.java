@@ -14,7 +14,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.opencsv.CSVWriter;
 
-import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.ProbeDataSetApi;
+import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -107,7 +107,7 @@ public class Cache {
     /**
      * The app engine api for remote upload.
      */
-    private final ProbeDataSetApi appEngineApi;
+    private final ProbeEndpoint appEngineApi;
 
     @Inject
     public Cache(Context context,
@@ -115,7 +115,7 @@ public class Cache {
                  CacheConfig config,
                  DatabaseAsyncTaskFactory dbWriteTaskFactory,
                  RemoteUploadAsyncTaskFactory uploadTaskFactory,
-                 ProbeDataSetApi appEngineApi) {
+                 ProbeEndpoint appEngineApi) {
         this.context = context;
         this.connManager = connManager;
         this.config = config;

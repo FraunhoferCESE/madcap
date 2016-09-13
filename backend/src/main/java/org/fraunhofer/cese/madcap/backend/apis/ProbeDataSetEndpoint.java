@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor.backend.apis;
+package org.fraunhofer.cese.madcap.backend.apis;
 
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
@@ -6,10 +6,9 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ConflictException;
 
-import org.fraunhofer.cese.funf_sensor.backend.models.ProbeDataSet;
-import org.fraunhofer.cese.funf_sensor.backend.models.ProbeEntry;
-import org.fraunhofer.cese.funf_sensor.backend.models.ProbeSaveResult;
-import org.fraunhofer.cese.funf_sensor.backend.servlets.HttpsGetServlet;
+import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
+import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
+import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,19 +17,18 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.fraunhofer.cese.funf_sensor.backend.OfyService.ofy;
+import static org.fraunhofer.cese.madcap.backend.OfyService.ofy;
 
 /**
  * An endpoint class we are exposing
  */
 @Api(
-        name = "probeDataSetApi",
+        name = "probeEndpoint",
         version = "v1",
-        resource = "probeDataSet",
         namespace = @ApiNamespace(
-                ownerDomain = "models.backend.funf_sensor.cese.fraunhofer.org",
-                ownerName = "models.backend.funf_sensor.cese.fraunhofer.org",
-                packagePath = ""
+                ownerDomain = "madcap.cese.fraunhofer.org",
+                ownerName = "madcap.cese.fraunhofer.org",
+                packagePath="backend"
         )
 )
 public class ProbeDataSetEndpoint {
@@ -43,7 +41,7 @@ public class ProbeDataSetEndpoint {
      * @param probeDataSet The object to be added.
      * @return The object to be added.
      */
-    @ApiMethod(name = "insertSensorDataSet")
+    @ApiMethod(name = "insertProbeDataset")
     public ProbeSaveResult insertSensorDataSet(HttpServletRequest req, ProbeDataSet probeDataSet) throws ConflictException, BadRequestException {
         long startTime = System.currentTimeMillis();
         logger.info("Upload request received from " + req.getRemoteAddr());
@@ -73,7 +71,6 @@ public class ProbeDataSetEndpoint {
         for (ProbeEntry entry : entryList) {
             if (ids.get(entry.getId()) == null) {
                 saved.add(entry.getId());
-                ResponseDataSetEndpoint.addToKeys(entry.getId());
                 toSave.add(entry);
             } else {
                 alreadyExists.add(entry.getId());

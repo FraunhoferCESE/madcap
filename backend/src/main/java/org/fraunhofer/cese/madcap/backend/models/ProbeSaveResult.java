@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.funf_sensor.backend.models;
+package org.fraunhofer.cese.madcap.backend.models;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -1,9 +1,10 @@
 package org.fraunhofer.cese.madcap.cache;
 
+import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeEntry;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import org.fraunhofer.cese.funf_sensor.backend.models.probeDataSetApi.model.ProbeEntry;
 
 /**
  * Local cache entry for Probe data. This holds the same data as ProbeEntry, but this data needs to be duplicated locally within the app

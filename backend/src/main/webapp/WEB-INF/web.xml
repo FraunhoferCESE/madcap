@@ -6,7 +6,7 @@
     </filter>
     <filter-mapping>
         <filter-name>ObjectifyFilter</filter-name>
-        <url-pattern>/goToOfy</url-pattern>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
 
     <servlet>
@@ -21,8 +21,7 @@
              I changed it so it would match the example
              -Frederik-         -->
             <param-value>
-                org.fraunhofer.cese.funf_sensor.backend.apis.ProbeDataSetEndpoint,
-                org.fraunhofer.cese.funf_sensor.backend.apis.ResponseDataSetEndpoint
+                org.fraunhofer.cese.madcap.backend.apis.ProbeDataSetEndpoint,
             </param-value>
         </init-param>
     </servlet>
@@ -31,26 +30,6 @@
 
 
         <url-pattern>/_ah/spi/*</url-pattern>
-    </servlet-mapping>
-
-
-    <servlet>
-        <servlet-name>myServlet</servlet-name>
-        <servlet-class>org.fraunhofer.cese.funf_sensor.backend.servlets.HttpsGetServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>myServlet</servlet-name>
-        <url-pattern>/putDataToBucket</url-pattern>
-    </servlet-mapping>
-
-
-    <servlet>
-        <servlet-name>writeQueue</servlet-name>
-        <servlet-class>org.fraunhofer.cese.funf_sensor.backend.servlets.WriteQueue</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>writeQueue</servlet-name>
-        <url-pattern>/enqueue</url-pattern>
     </servlet-mapping>
 
 

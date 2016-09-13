@@ -1,7 +1,7 @@
-package org.fraunhofer.cese.funf_sensor.backend;
+package org.fraunhofer.cese.madcap.backend;
 
-import org.fraunhofer.cese.funf_sensor.backend.models.*;
-import org.fraunhofer.cese.funf_sensor.backend.models.ResponseDataSet;
+import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
+import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 
 import com.googlecode.objectify.*;
 /**
@@ -11,7 +11,6 @@ public class OfyService {
     static {
         ObjectifyService.register(ProbeDataSet.class);
         ObjectifyService.register(ProbeEntry.class);
-        ObjectifyService.register(ResponseDataSet.class);
     }
 
     /**

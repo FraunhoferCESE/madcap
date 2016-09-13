@@ -6,14 +6,14 @@ import com.google.appengine.api.users.User;
 import com.googlecode.objectify.Key;
 import com.googlecode.objectify.Objectify;
 
-import org.fraunhofer.cese.funf_sensor.backend.OfyService;
-import org.fraunhofer.cese.funf_sensor.backend.models.ProbeDataSet;
-import org.fraunhofer.cese.funf_sensor.backend.models.ProbeEntry;
+import org.fraunhofer.cese.madcap.backend.OfyService;
+import org.fraunhofer.cese.madcap.backend.apis.ProbeDataSetEndpoint;
+import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
+import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +25,6 @@ import mockit.MockUp;
 import mockit.Mocked;
 import mockit.NonStrictExpectations;
 import mockit.Tested;
-import mockit.Verifications;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
