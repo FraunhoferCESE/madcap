@@ -51,3 +51,10 @@ dependencies {
     compile 'com.google.android.gms:play-services-ads:9.4.0'
     compile 'com.google.android.gms:play-services-analytics:9.4.0'
 }
+
+def props = new Properties()
+props.load(new FileInputStream(rootProject.file("debug.properties")))
+android.signingConfigs.debug.storeFile rootProject.file(props.keyStore)
+android.signingConfigs.debug.storePassword props.keyStorePassword
+android.signingConfigs.debug.keyAlias props.keyAlias
+android.signingConfigs.debug.keyPassword props.keyAliasPassword

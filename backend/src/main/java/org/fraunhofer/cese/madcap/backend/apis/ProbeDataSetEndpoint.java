@@ -1,11 +1,14 @@
 package org.fraunhofer.cese.madcap.backend.apis;
 
+import com.google.api.server.spi.auth.common.User;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ConflictException;
+import com.google.appengine.api.oauth.OAuthRequestException;
 
+import org.fraunhofer.cese.madcap.backend.Constants;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
@@ -22,6 +25,7 @@ import static org.fraunhofer.cese.madcap.backend.OfyService.ofy;
 /**
  * An endpoint class we are exposing
  */
+@SuppressWarnings("ResourceParameter")
 @Api(
         name = "probeEndpoint",
         version = "v1",
@@ -41,8 +45,11 @@ public class ProbeDataSetEndpoint {
      * @param probeDataSet The object to be added.
      * @return The object to be added.
      */
-    @ApiMethod(name = "insertProbeDataset")
-    public ProbeSaveResult insertSensorDataSet(HttpServletRequest req, ProbeDataSet probeDataSet) throws ConflictException, BadRequestException {
+    @ApiMethod(
+            name = "insertProbeDataset"
+    )
+    public ProbeSaveResult insertSensorDataSet(HttpServletRequest req, ProbeDataSet probeDataSet) throws OAuthRequestException, ConflictException, BadRequestException {
+
         long startTime = System.currentTimeMillis();
         logger.info("Upload request received from " + req.getRemoteAddr());
         if (probeDataSet == null) {
