@@ -1,0 +1,8 @@
+# replace with keystore information for the debugging keystore
+keyStore=release.keystore
+
+keyStorePassword=mysecretpassword
+
+keyAlias=myapp-release
+
+keyAliasPassword=mysecretpassword

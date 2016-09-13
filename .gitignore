@@ -37,3 +37,6 @@ captures/
 *.iws
 *.ipr
 *.swp
+
+# keystore config files
+debug.properties
