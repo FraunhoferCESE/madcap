@@ -42,11 +42,30 @@ public class BluetoothProbeTest extends AbstractTest{
     }
 
     @Test
+    public void testConstructor() throws Exception {
+        Context context = RuntimeEnvironment.application.getApplicationContext();
+        JsonObjectFactory jsonObjectFactory = spy(JsonObjectFactory.class);
+
+        BluetoothProbe bluetoothProbe_no_param = new BluetoothProbe();
+        assertEquals(bluetoothProbe_no_param.getBluetoothAdapter(), BluetoothAdapter.getDefaultAdapter());
+
+        BluetoothProbe bluetoothProbe_two_param = new BluetoothProbe(mockBluetoothAdapter, context);
+        assertEquals(context, bluetoothProbe_two_param.getContext());
+        assertEquals(mockBluetoothAdapter, bluetoothProbe_two_param.getBluetoothAdapter());
+        BroadcastReceiver receiver = new BluetoothInformationReceiver(bluetoothProbe_no_param, bluetoothProbe_no_param);
+
+        BluetoothProbe bluetoothProbe_four_param = new BluetoothProbe(mockBluetoothAdapter, context, jsonObjectFactory, receiver);
+        assertEquals(context, bluetoothProbe_two_param.getContext());
+        assertEquals(mockBluetoothAdapter, bluetoothProbe_two_param.getBluetoothAdapter());
+        //assertEquals(jsonObjectFactory, bluetoothProbe_two_param.getJsonObjectFactory());
+        //assertEquals(receiver, bluetoothProbe_four_param.getReceiver());
+
+    }
+
+    @Test
     public void testOnEnable() throws Exception {
 //        Context context = mock(Context.class);
         Context context = RuntimeEnvironment.application.getApplicationContext();
-
-
         JsonObjectFactory jsonObjectFactory = mock(JsonObjectFactory.class);
         when(jsonObjectFactory.createJsonObject(any(Intent.class))).thenReturn(new JsonObject());
 

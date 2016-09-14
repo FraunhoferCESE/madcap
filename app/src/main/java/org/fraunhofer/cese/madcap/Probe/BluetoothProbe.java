@@ -27,8 +27,8 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
     public static final String TURNING_ON = "Turning ON";
     static private BroadcastReceiver receiver;
     static private final String TAG = "BluetoothProbe: ";
-
     private final BluetoothAdapter bluetoothAdapter;
+
     private JsonObjectFactory jsonObjectFactory;
     private Intent lastSentIntent;
 
@@ -47,6 +47,10 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
     public BluetoothProbe() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+    }
+
+    public Context getContext(){
+        return super.getContext();
     }
 
     protected void onEnable() {
@@ -91,6 +95,10 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
     public Intent getLastSentIntent() {
         return lastSentIntent;
+    }
+
+    public JsonObjectFactory getJsonObjectFactory() {
+        return jsonObjectFactory;
     }
 
     public static BroadcastReceiver getReceiver() {
