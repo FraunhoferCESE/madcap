@@ -11,7 +11,7 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 /**
  *
  */
-@SuppressWarnings("UtilityClass")
+@SuppressWarnings({"UtilityClass", "UtilityClassCanBeEnum", "NonFinalUtilityClass", "UtilityClassWithoutPrivateConstructor"})
 public class OfyService {
     static {
         ObjectifyService.register(ProbeDataSet.class);
