@@ -8,7 +8,7 @@ import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.appengine.api.oauth.OAuthRequestException;
 
-import org.fraunhofer.cese.madcap.backend.Constants;
+//import org.fraunhofer.cese.madcap.backend.Constants;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;

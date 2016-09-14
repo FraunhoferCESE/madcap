@@ -12,6 +12,7 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -35,25 +36,32 @@ dependencies {
     compile files('libs/gson-2.1.funf.jar')
     compile files('libs/funf-0.4.2.jar')
     compile project(path: ':backend', configuration: 'android-endpoints')
+    testCompile 'org.robolectric:robolectric:3.0'
     testCompile 'junit:junit:4.12'
-    testCompile 'org.jmockit:jmockit:1.20'
-    //    testCompile 'com.google.appengine:appengine-api-labs:1.9.27'
-    //    testCompile 'com.google.appengine:appengine-api-stubs:1.9.27'
-    //    testCompile 'com.google.appengine:appengine-tools-sdk:1.9.27'
-    //    testCompile 'com.google.appengine:appengine-testing:1.9.27'
-    //    testCompile 'com.google.appengine:appengine-endpoints:1.9.27'
+    testCompile 'org.mockito:mockito-core:1.+'
+//    testCompile 'com.google.appengine:appengine-api-labs:1.9.27'
+//    testCompile 'com.google.appengine:appengine-api-stubs:1.9.27'
+//    testCompile 'com.google.appengine:appengine-tools-sdk:1.9.27'
+//    testCompile 'com.google.appengine:appengine-testing:1.9.27'
+//    testCompile 'com.google.appengine:appengine-endpoints:1.9.27'
     provided 'org.roboguice:roboblender:3.0.1'
     compile 'com.google.android.gms:play-services:9.4.0'
     compile 'com.google.android.gms:play-services-identity:9.0.2'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'org.roboguice:roboguice:3.0.1'
     compile 'com.opencsv:opencsv:3.5'
+
     compile 'com.google.android.gms:play-services-ads:9.4.0'
     compile 'com.google.android.gms:play-services-analytics:9.4.0'
+
+    androidTestCompile 'com.android.support:support-annotations:23.0.0'
+    androidTestCompile 'com.android.support.test:runner:0.3'
+    androidTestCompile 'com.android.support.test:rules:0.3'
+
 }
 
 def props = new Properties()
-props.load(new FileInputStream(rootProject.file("debug.properties")))
+props.load(new FileInputStream(rootProject.file("debug.properties.sample")))
 android.signingConfigs.debug.storeFile rootProject.file(props.keyStore)
 android.signingConfigs.debug.storePassword props.keyStorePassword
 android.signingConfigs.debug.keyAlias props.keyAlias
