@@ -53,8 +53,6 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
                 boolean run = true;
                 while (run && !(foregroundProbeDeliverer.isInterrupted())) {
                     ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
-                    String foregroundTaskPackageName = foregroundTaskInfo.topActivity.getPackageName();
-                    //Log.wtf("ForegroundProbe","Package name" + foregroundTaskPackageName);
                     sendData(gson.toJsonTree(foregroundTaskInfo).getAsJsonObject());
                     try {
                         Thread.sleep(15000l);

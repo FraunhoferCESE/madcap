@@ -1,6 +1,5 @@
 package org.fraunhofer.cese.madcap.backend.apis;
 
-import com.google.api.server.spi.auth.common.User;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -14,6 +13,7 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -99,11 +99,12 @@ public class ProbeDataSetEndpoint {
      * @param si    use si units or not
      * @return a human readable string of the byte size
      */
+    @SuppressWarnings("NonReproducibleMathCall")
     public static String humanReadableByteCount(long bytes, boolean si) {
         int unit = si ? 1000 : 1024;
         if (bytes < unit) return bytes + " B";
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
+        return String.format(Locale.ENGLISH,"%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }

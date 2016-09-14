@@ -177,7 +177,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         BluetoothDevice device = intent
                 .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-        return device == null ? "N/A" : device.getName();
+        return (device == null) ? "N/A" : device.getName();
     }
 
     private Intent getConnectionStateChangedInformation(Intent intent) {

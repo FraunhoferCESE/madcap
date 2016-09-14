@@ -25,7 +25,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
     private static final String TAG = "Fraunhofer." + GoogleAppEnginePipeline.class.getSimpleName();
 
-    private boolean enabled = false;
+    private boolean enabled;
 
     private final Cache cache;
     private final String instanceId;
@@ -60,7 +60,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         final Long timestamp = timestampDouble.longValue();
 
         if (timestamp == 0L) {
-            Log.d(TAG, "Invalid timestamp for probe data: " + timestamp);
+            Log.d(TAG, "Invalid timestamp for probe data: " + 0L);
             return;
         }
 
