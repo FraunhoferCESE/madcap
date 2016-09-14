@@ -58,6 +58,7 @@ dependencies {
     androidTestCompile 'com.android.support.test:runner:0.3'
     androidTestCompile 'com.android.support.test:rules:0.3'
 
+    testCompile 'org.jmockit:jmockit:1.19'
 }
 
 def props = new Properties()
