@@ -61,7 +61,7 @@ dependencies {
 }
 
 def props = new Properties()
-props.load(new FileInputStream(rootProject.file("debug.properties.sample")))
+props.load(new FileInputStream(rootProject.file("debug.properties")))
 android.signingConfigs.debug.storeFile rootProject.file(props.keyStore)
 android.signingConfigs.debug.storePassword props.keyStorePassword
 android.signingConfigs.debug.keyAlias props.keyAlias
