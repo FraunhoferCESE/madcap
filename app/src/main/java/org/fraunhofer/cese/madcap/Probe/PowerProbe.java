@@ -18,7 +18,7 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
      * the internal class PowerInform... is on the bottom of this class
      */
     private BroadcastReceiver receiver;
-    private static int powerLevel=0;
+    private static int powerLevel;
 
     /**
      * Sets up the IntentFilter for the PowerProbe and sends an initial power status
@@ -98,8 +98,7 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
                     if ((intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)) != powerLevel) {
                         int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
                         powerLevel = level;
-                        float batteryPct = level;
-                        intent.putExtra("PowerProbe: ", "Battery at " + batteryPct + " %");
+                        intent.putExtra("PowerProbe: ", "Battery at " + level + " %");
                         callback.sendData(intent);
                     }
                     break;
@@ -119,10 +118,15 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
         Intent intent = new Intent();
 
         Intent batteryIntent = getContext().registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int level = -1;
+        int plugged = -1;
+        if(batteryIntent != null) {
+            level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+            plugged = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+        }
         intent.putExtra("Initial PowerLevel: ", level + " %");
 
-        int plugged = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+
         switch (plugged){
             case 0:
                 intent.putExtra("Initial PlugState: ", "not plugged");

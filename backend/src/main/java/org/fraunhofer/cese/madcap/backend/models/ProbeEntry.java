@@ -100,7 +100,7 @@ public class ProbeEntry implements Comparable<ProbeEntry>{
     public int compareTo(ProbeEntry other) {
         if(this.getTimestamp()>other.getTimestamp())
                 return 1;
-        else if ((this.getTimestamp()) == other.getTimestamp())
+        else if (this.getTimestamp().equals(other.getTimestamp()))
                 return 0;
         else
                 return -1;

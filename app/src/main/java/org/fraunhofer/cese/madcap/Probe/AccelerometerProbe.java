@@ -11,12 +11,13 @@ import android.util.Log;
 
 import java.util.List;
 
-import edu.mit.media.funf.probe.Probe;
+import edu.mit.media.funf.probe.Probe.Base;
+import edu.mit.media.funf.probe.Probe.ContinuousProbe;
 
 /**
  *
  */
-public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousProbe, SensorEventListener {
+public class AccelerometerProbe extends Base implements ContinuousProbe, SensorEventListener {
 
     private static final String TAG = "Fraunhofer.AccelPr";
     private SensorManager sensorManager;
@@ -74,7 +75,7 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
         long now = System.currentTimeMillis();
 
         if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-            if ((now - lastProbeStart) > (measureInterval - measureDuration)) {
+            if (now - lastProbeStart > measureInterval - measureDuration) {
                 Intent intent = new Intent();
                 intent.putExtra("type", "linear accelerometer");
                 intent.putExtra("x", event.values[0]);
@@ -88,9 +89,9 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
             }
         }
         else if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            gravity[0] = alpha * gravity[0] + (1 - alpha) * event.values[0];
-            gravity[1] = alpha * gravity[1] + (1 - alpha) * event.values[1];
-            gravity[2] = alpha * gravity[2] + (1 - alpha) * event.values[2];
+            gravity[0] = (alpha * gravity[0]) + ((1 - alpha) * event.values[0]);
+            gravity[1] = (alpha * gravity[1]) + ((1 - alpha) * event.values[1]);
+            gravity[2] = (alpha * gravity[2]) + ((1 - alpha) * event.values[2]);
 
             if ((now - lastProbeStart) > (measureInterval - measureDuration)) {
 

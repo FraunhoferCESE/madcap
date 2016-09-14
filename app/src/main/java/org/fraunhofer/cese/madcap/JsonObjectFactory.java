@@ -10,5 +10,5 @@ import com.google.gson.JsonObject;
 public interface JsonObjectFactory {
 
 
-    public JsonObject createJsonObject(Intent intent);
+    JsonObject createJsonObject(Intent intent);
 }

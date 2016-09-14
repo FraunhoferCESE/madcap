@@ -77,7 +77,7 @@ public class Cache {
      *
      * @see OrmLiteSqliteOpenHelper
      */
-    private DatabaseOpenHelper databaseHelper = null;
+    private DatabaseOpenHelper databaseHelper;
 
     /**
      * The application context

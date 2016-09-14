@@ -24,7 +24,6 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Bundle bundle = intent.getExtras();
             SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
             long timestamp = 0;
             for (SmsMessage message : messages) {
