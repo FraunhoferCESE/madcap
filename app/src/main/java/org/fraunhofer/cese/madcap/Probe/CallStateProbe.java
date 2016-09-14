@@ -54,7 +54,7 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
 
         public CallStateProbe callback;
 
-        public CallStateReceiver(CallStateProbe callback) {
+        CallStateReceiver(CallStateProbe callback) {
             this.callback = callback;
         }
 

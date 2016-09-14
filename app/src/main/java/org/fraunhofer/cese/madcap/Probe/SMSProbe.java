@@ -107,6 +107,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
 //            }
         }
 
+        @SuppressWarnings("MethodReturnAlwaysConstant")
         @Override
         public boolean deliverSelfNotifications() {
             return false;
@@ -158,6 +159,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
 //            }
         }
 
+        @SuppressWarnings("MethodReturnAlwaysConstant")
         @Override
         public boolean deliverSelfNotifications() {
             return false;

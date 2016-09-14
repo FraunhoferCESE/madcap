@@ -19,11 +19,7 @@ public class RemoteUploadResult {
     private ProbeSaveResult saveResult;
     private Throwable exception;
 
-    public RemoteUploadResult() {
-        this.saveResult = null;
-        this.exception = null;
-        this.uploadAttempted = false;
-    }
+    public RemoteUploadResult() {  }
 
     public boolean isUploadAttempted() {
         return uploadAttempted;

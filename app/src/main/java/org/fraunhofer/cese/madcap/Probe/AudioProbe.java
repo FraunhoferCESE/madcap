@@ -15,10 +15,11 @@ import edu.mit.media.funf.probe.Probe;
  */
 public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
 
+    private static final long SLEEP_DURATION = 15000;
     private static final String TAG = "AudioProbe: ";
     private static Thread audioProbeDeliverer;
-    private static int oldMode = 42;
-    private static int oldRingtoneMode = 42;
+    private static int oldMode = -1;
+    private static int oldRingtoneMode = -1;
     private static boolean oldMic;
     private static boolean oldMusic;
     private static boolean oldHeadset;
@@ -132,7 +133,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
                     }
 
                     try {
-                        Thread.sleep(15000l);
+                        Thread.sleep(SLEEP_DURATION);
                     } catch (InterruptedException e) {
                         run = false;
                         Log.i(TAG, "AudioProbe interrupted.");

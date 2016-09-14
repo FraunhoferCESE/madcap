@@ -11,6 +11,7 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 /**
  *
  */
+@SuppressWarnings("UtilityClass")
 public class OfyService {
     static {
         ObjectifyService.register(ProbeDataSet.class);
