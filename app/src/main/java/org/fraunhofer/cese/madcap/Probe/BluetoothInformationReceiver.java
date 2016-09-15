@@ -37,7 +37,7 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
         if (bluetoothProbe.getBluetoothAdapter() != null) {
             switch (intent.getAction()) {
                 case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED:
-                    intent = bluetoothProbe.getConnectionStateCInformation(intent);
+                    intent = BluetoothProbe.getConnectionStateCInformation(intent);
                     callback.sendData(intent);
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
@@ -62,7 +62,7 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
                     callback.sendData(intent);
                     break;
                 case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
-                    intent = bluetoothProbe.getScanModeChangeInformation(intent);
+                    intent = BluetoothProbe.getScanModeChangeInformation(intent);
                     callback.sendData(intent);
                     break;
                 case BluetoothAdapter.ACTION_STATE_CHANGED:

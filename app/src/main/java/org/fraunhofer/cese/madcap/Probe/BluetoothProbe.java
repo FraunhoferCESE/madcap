@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
-import edu.mit.media.funf.probe.Probe;
 import edu.mit.media.funf.probe.Probe.Base;
 import edu.mit.media.funf.probe.Probe.PassiveProbe;
 
@@ -28,7 +27,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
     public static final String TURNING_OFF = "Turning OFF";
     public static final String TURNING_ON = "Turning ON";
     private static final String TAG = "BluetoothProbe: ";
-    private static BroadcastReceiver receiver = null;
+    private static BroadcastReceiver receiver;
     private final BluetoothAdapter bluetoothAdapter;
 
     private JsonObjectFactory jsonObjectFactory;
@@ -55,7 +54,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
         return receiver;
     }
 
-    public final void setReceiver(BluetoothInformationReceiver receiver) {
+    public static void setReceiver(BluetoothInformationReceiver receiver) {
         BluetoothProbe.receiver = receiver;
     }
 
@@ -63,7 +62,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
         BluetoothDevice device = intent
                 .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-        return device == null ? "N/A" : device.getName();
+        return (device == null) ? "N/A" : device.getName();
     }
 
     protected static String getTAG() {
@@ -138,7 +137,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
 
     }
 
-    protected final Intent getConnectionStateCInformation(Intent intent) {
+    protected static Intent getConnectionStateCInformation(Intent intent) {
         intent.putExtra(TAG, "ConnectionState changed");
 
         int intExtra = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, 0);
@@ -183,7 +182,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
         return intent;
     }
 
-    protected final Intent getScanModeChangeInformation(Intent intent) {
+    protected static Intent getScanModeChangeInformation(Intent intent) {
         intent.putExtra(TAG, "ScanMode changed");
 
         switch (intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0)) {

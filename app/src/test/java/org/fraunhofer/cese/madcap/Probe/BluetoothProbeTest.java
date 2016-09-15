@@ -375,7 +375,7 @@ public class BluetoothProbeTest extends AbstractTest{
         assertEquals("OFF", argument.getValue().getStringExtra("State: "));
         assertEquals("127.0.0.1", argument.getValue().getStringExtra("Address: "));
         assertEquals("this is my mock adapter!", argument.getValue().getStringExtra("Name: "));
-        assertEquals("[Ear piece, speaker]", argument.getValue().getStringExtra("Bonded devices: ")); // this is what an empty list.toString looks like
+        assertEquals("[speaker, Ear piece]", argument.getValue().getStringExtra("Bonded devices: ")); // this is what an empty list.toString looks like
     }
 
 }
