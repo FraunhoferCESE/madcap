@@ -109,7 +109,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
          *
          * @param callback
          */
-        public ConnectionInfoReceiver(NetworkConnectionProbe callback) {
+        ConnectionInfoReceiver(NetworkConnectionProbe callback) {
             this.callback = callback;
         }
 

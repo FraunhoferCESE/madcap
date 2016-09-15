@@ -77,7 +77,7 @@ public class Cache {
      *
      * @see OrmLiteSqliteOpenHelper
      */
-    private DatabaseOpenHelper databaseHelper = null;
+    private DatabaseOpenHelper databaseHelper;
 
     /**
      * The application context
@@ -263,6 +263,15 @@ public class Cache {
     public static final int UPLOAD_ALREADY_IN_PROGRESS = 1 << 5;
 
     /**
+     * Number of db entries before upload in "immediate" configuration
+     */
+    private static final int IMMEDIATE_MAX_DB_ENTRIES = 1;
+
+    /**
+     * Wait interval in millis between successfive upload attempts in "immediate" configuration
+     */
+    private static final int IMMEDIATE_UPLOAD_INTERVAL = 5000;
+    /**
      * This method checks if the conditions are met to trigger a remote upload, and then starts an asynchronous task to perform
      * the upload if so
      *
@@ -295,9 +304,10 @@ public class Cache {
         long uploadInterval;
         boolean wifiOnly = config.isUploadWifiOnly();
 
+
         if (strategy == UploadStrategy.IMMEDIATE) {
-            maxDbEntries = 1;
-            uploadInterval = 5000;
+            maxDbEntries = IMMEDIATE_MAX_DB_ENTRIES;
+            uploadInterval = IMMEDIATE_UPLOAD_INTERVAL;
         } else {
             maxDbEntries = config.getMaxDbEntries();
             uploadInterval = config.getUploadInterval();

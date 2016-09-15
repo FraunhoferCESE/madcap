@@ -111,13 +111,14 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
      * Sends the initial State when a StateProbe object is set up.
      * Should only be called from within the onEnable().
      */
+
     private void sendInitialProbe() {
         Intent intent = new Intent();
         boolean airplaneMode = isAirplaneModeOn(getContext());
         intent.putExtra("Initial AirplaneMode: ", airplaneMode);
 
         AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
-        boolean headsetPlugged = audioManager.isWiredHeadsetOn();
+        @SuppressWarnings("deprecation") boolean headsetPlugged = audioManager.isWiredHeadsetOn();
         intent.putExtra("Initial HeadsetState: ", headsetPlugged);
 
         sendData(intent);

@@ -7,7 +7,6 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -221,11 +220,7 @@ public class MainActivity extends RoboActivity {
                             if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
                                 errorText += "\n- No entries to upload";
 
-                            if (!errorText.isEmpty()) {
-                                text += "Error:" + errorText;
-                            } else {
-                                text += "No status to report. Please wait.";
-                            }
+                            text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
                         }
                         uploadResultText = text;
                         uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));

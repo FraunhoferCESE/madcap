@@ -44,7 +44,7 @@ public class ProbeDataSet implements Serializable {
         this.timestamp = timestamp;
     }
 
-    public void setEntryList(List<ProbeEntry> entries) {
+    public void setEntryList(Collection<ProbeEntry> entries) {
         this.entries = entries;
     }
 

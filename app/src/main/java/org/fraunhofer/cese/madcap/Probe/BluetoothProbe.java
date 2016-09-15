@@ -11,7 +11,7 @@ import android.util.Log;
 import org.fraunhofer.cese.madcap.JsonObjectFactory;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Set;
 
 import edu.mit.media.funf.probe.Probe;
@@ -80,7 +80,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
             intent.putExtra("Address: ", bluetoothAdapter.getAddress());
             intent.putExtra("Name: ", bluetoothAdapter.getName());
             Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
-            List<String> bondedDeviceNames = new ArrayList<>();
+            Collection<String> bondedDeviceNames = new ArrayList<>();
             for (BluetoothDevice device : bondedDevices) {
                 bondedDeviceNames.add(device.getName());
             }
@@ -125,7 +125,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         BluetoothDevice device = intent
                 .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-        return device == null ? "N/A" : device.getName();
+        return (device == null) ? "N/A" : device.getName();
     }
 
     protected Intent getConnectionStateChangedInformation(Intent intent) {

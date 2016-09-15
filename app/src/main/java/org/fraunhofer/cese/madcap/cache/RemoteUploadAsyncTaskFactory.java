@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -40,7 +41,7 @@ public class RemoteUploadAsyncTaskFactory {
      * @return a new instance of an asynchronous remote upload task
      * @see RemoteUploadResult
      */
-    AsyncTask<Void, Integer, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeEndpoint appEngineApi, final List<UploadStatusListener> listeners) {
+    AsyncTask<Void, Integer, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeEndpoint appEngineApi, final Collection<UploadStatusListener> listeners) {
         return new AsyncTask<Void, Integer, RemoteUploadResult>() {
             private final String TAG = "Fraunhofer.UploadTask";
             private static final int BUFFER_SIZE = 250;

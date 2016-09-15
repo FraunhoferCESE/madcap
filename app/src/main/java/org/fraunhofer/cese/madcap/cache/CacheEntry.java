@@ -16,8 +16,6 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "probedata")
 public class CacheEntry {
 
-    public CacheEntry() { }
-
     @DatabaseField(id = true)
     private String id;
     static final String ID_FIELD_NAME = "id";

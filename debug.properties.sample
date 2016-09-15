@@ -1,4 +1,5 @@
 # replace with keystore information for the debugging keystore
+# this path must be relative to the project root, e.g., keyStore=../../my.keystore
 keyStore=release.keystore
 
 keyStorePassword=mysecretpassword

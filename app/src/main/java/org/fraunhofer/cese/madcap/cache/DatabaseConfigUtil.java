@@ -21,7 +21,7 @@ public class DatabaseConfigUtil extends OrmLiteConfigUtil {
 
     private static final Class<?> [] classes = new Class[] {CacheEntry.class};
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String... args) throws Exception {
         writeConfigFile("ormlite_config.txt", classes);
     }
 }

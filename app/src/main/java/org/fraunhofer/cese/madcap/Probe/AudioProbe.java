@@ -15,11 +15,14 @@ import edu.mit.media.funf.probe.Probe;
  */
 public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
 
+    private static final long SLEEP_DURATION = 15000;
     private static final String TAG = "AudioProbe: ";
     private static Thread audioProbeDeliverer;
-    private static int oldMode = 42;
-    private static int oldRingtoneMode = 42;
-    private static boolean oldMic, oldMusic, oldHeadset;
+    private static int oldMode = -1;
+    private static int oldRingtoneMode = -1;
+    private static boolean oldMic;
+    private static boolean oldMusic;
+    private static boolean oldHeadset;
 
     @Override
     protected void onEnable() {
@@ -40,6 +43,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
 
 
         audioProbeDeliverer = new Thread(new Runnable() {
+            @SuppressWarnings("deprecation")
             @Override
             public void run() {
                 boolean run = true;
@@ -113,11 +117,11 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
                     intent.putExtra(TAG, audioInfo.toString());
 
                     
-                    if (       audioManager.getMode() != oldMode
-                            || audioManager.getRingerMode() != oldRingtoneMode
-                            || audioManager.isMicrophoneMute() != oldMic
-                            || audioManager.isMusicActive() != oldMusic
-                            || audioManager.isWiredHeadsetOn() != oldHeadset) {
+                    if ((audioManager.getMode() != oldMode)
+                            || (audioManager.getRingerMode() != oldRingtoneMode)
+                            || (audioManager.isMicrophoneMute() != oldMic)
+                            || (audioManager.isMusicActive() != oldMusic)
+                            || (audioManager.isWiredHeadsetOn() != oldHeadset)) {
 
                         oldMode = audioManager.getMode();
                         oldRingtoneMode = audioManager.getRingerMode();
@@ -129,7 +133,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
                     }
 
                     try {
-                        Thread.sleep(15000l);
+                        Thread.sleep(SLEEP_DURATION);
                     } catch (InterruptedException e) {
                         run = false;
                         Log.i(TAG, "AudioProbe interrupted.");

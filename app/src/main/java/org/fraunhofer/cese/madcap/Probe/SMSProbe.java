@@ -24,7 +24,6 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Bundle bundle = intent.getExtras();
             SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
             long timestamp = 0;
             for (SmsMessage message : messages) {
@@ -108,6 +107,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
 //            }
         }
 
+        @SuppressWarnings("MethodReturnAlwaysConstant")
         @Override
         public boolean deliverSelfNotifications() {
             return false;
@@ -159,6 +159,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
 //            }
         }
 
+        @SuppressWarnings("MethodReturnAlwaysConstant")
         @Override
         public boolean deliverSelfNotifications() {
             return false;
