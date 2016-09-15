@@ -266,7 +266,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
         return bluetoothAdapter;
     }
 
-    private String getBluetoothState() {
+    protected final String getBluetoothState() {
         String result = "";
         if (bluetoothAdapter != null) {
             switch (bluetoothAdapter.getState()) {
@@ -274,13 +274,13 @@ public class BluetoothProbe extends Base implements PassiveProbe {
                     result = OFF;
                     break;
                 case BluetoothAdapter.STATE_ON:
-                    result = "on";
+                    result = ON;
                     break;
                 case BluetoothAdapter.STATE_TURNING_ON:
-                    result = "turning on.";
+                    result = TURNING_ON;
                     break;
                 case BluetoothAdapter.STATE_TURNING_OFF:
-                    result = "turning off.";
+                    result = TURNING_OFF;
                     break;
                 default:
                     result = Integer.toString(bluetoothAdapter.getState());

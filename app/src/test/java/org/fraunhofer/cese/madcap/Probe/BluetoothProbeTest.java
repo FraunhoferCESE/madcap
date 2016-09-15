@@ -1,9 +1,11 @@
 package org.fraunhofer.cese.madcap.Probe;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 
 import com.google.gson.JsonObject;
 
@@ -14,6 +16,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -65,6 +72,12 @@ public class BluetoothProbeTest extends AbstractTest{
         when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_OFF);
         when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_OFF);
         when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_OFF);
+
+        Set<BluetoothDevice> mockBondDevices = new HashSet<>();
+        BluetoothDevice mockDevice = spy(BluetoothDevice.class);
+        mockBondDevices.add(mockDevice);
+
+        when(mockBluetoothAdapter.getBondedDevices()).thenReturn(mockBondDevices);
 
         BluetoothProbe bluetoothProbe = new BluetoothProbe(mockBluetoothAdapter, context, jsonObjectFactory, null);
         bluetoothProbe.onEnable();
@@ -237,6 +250,31 @@ public class BluetoothProbeTest extends AbstractTest{
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0)).thenReturn(BluetoothAdapter.ERROR);
         bluetoothProbe.getStateChangeInformation(intent);
         verify(intent, atLeastOnce()).putExtra("previous State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0));
+    }
+
+    @Test
+    public final void testGetBluetoothState() throws Exception {
+        Intent intent = spy(Intent.class);
+        Context context = spy(RuntimeEnvironment.application.getApplicationContext());
+        JsonObjectFactory jsonObjectFactory = mock(JsonObjectFactory.class);
+        when(jsonObjectFactory.createJsonObject(any(Intent.class))).thenReturn(new JsonObject());
+
+        BluetoothProbe bluetoothProbe = new BluetoothProbe(mockBluetoothAdapter, context, jsonObjectFactory, null);
+
+        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_OFF);
+        Assert.assertEquals("Unmachted return values", bluetoothProbe.OFF, bluetoothProbe.getBluetoothState());
+
+        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_ON);
+        Assert.assertEquals("Unmachted return values", bluetoothProbe.ON, bluetoothProbe.getBluetoothState());
+
+        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_TURNING_ON);
+        Assert.assertEquals("Unmachted return values", bluetoothProbe.TURNING_ON, bluetoothProbe.getBluetoothState());
+
+        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_TURNING_OFF);
+        Assert.assertEquals("Unmachted return values", bluetoothProbe.TURNING_OFF, bluetoothProbe.getBluetoothState());
+
+        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.ERROR);
+        Assert.assertEquals("Unmachted return values", Integer.toString(mockBluetoothAdapter.getState()), bluetoothProbe.getBluetoothState());
     }
 
 }
