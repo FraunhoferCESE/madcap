@@ -125,7 +125,7 @@ public class MainActivity extends RoboActivity {
     private void disablePipelines() {
         Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
 
-        accelerometerProbe.unregisterPassiveListener(pipeline);
+        activityProbe.unregisterPassiveListener(pipeline);
         accelerometerProbe.unregisterPassiveListener(pipeline);
         audioProbe.unregisterPassiveListener(pipeline);
         bluetoothProbe.unregisterListener(pipeline);

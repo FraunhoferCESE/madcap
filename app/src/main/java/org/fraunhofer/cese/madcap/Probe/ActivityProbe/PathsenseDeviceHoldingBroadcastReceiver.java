@@ -29,6 +29,7 @@ public class PathsenseDeviceHoldingBroadcastReceiver extends PathsenseDeviceHold
 		// broadcast device holding
 		Intent deviceHoldingIntent = new Intent("deviceHolding");
 		deviceHoldingIntent.putExtra("deviceHolding", deviceHolding);
-		LocalBroadcastManager.getInstance(context).sendBroadcast(deviceHoldingIntent);
+		callback.sendData(deviceHoldingIntent);
+		//LocalBroadcastManager.getInstance(context).sendBroadcast(deviceHoldingIntent);
 	}
 }

@@ -20,6 +20,7 @@ public class PathsenseActivityChangeBroadcastReceiver extends PathsenseActivityR
 		this.callback = callback;
 		this.localBroadcastManager = localBroadcastManager;
 	}
+
 	@Override
 	protected void onDetectedActivities(Context context, PathsenseDetectedActivities detectedActivities)
 	{
@@ -27,6 +28,7 @@ public class PathsenseActivityChangeBroadcastReceiver extends PathsenseActivityR
 		// broadcast detected activities
 		Intent detectedActivitiesIntent = new Intent("activityChange");
 		detectedActivitiesIntent.putExtra("detectedActivities", detectedActivities);
-		localBroadcastManager.sendBroadcast(detectedActivitiesIntent);
+		callback.sendData(detectedActivitiesIntent);
+		//localBroadcastManager.sendBroadcast(detectedActivitiesIntent);
 	}
 }

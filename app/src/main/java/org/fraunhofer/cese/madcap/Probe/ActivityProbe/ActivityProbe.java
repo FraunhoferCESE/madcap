@@ -90,16 +90,16 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
 
         // location api
         mApi = PathsenseLocationProviderApi.getInstance(mainActivity);
-        localBroadcastManager = LocalBroadcastManager.getInstance(mainActivity);
+        //localBroadcastManager = LocalBroadcastManager.getInstance(mainActivity);
 
         pActivityChangeReceiver = new PathsenseActivityChangeBroadcastReceiver(this, localBroadcastManager);
-        localBroadcastManager.registerReceiver(pActivityChangeReceiver, new IntentFilter("activityChange"));
+        //localBroadcastManager.registerReceiver(pActivityChangeReceiver, new IntentFilter("activityChange"));
 
         pActivityUpdateReceiver = new PathsenseActivityUpdateBroadcastReceiver(this, localBroadcastManager);
-        localBroadcastManager.registerReceiver(pActivityUpdateReceiver, new IntentFilter("activityUpdate"));
+        //localBroadcastManager.registerReceiver(pActivityUpdateReceiver, new IntentFilter("activityUpdate"));
 
         pDeviceHoldingReceiver = new PathsenseDeviceHoldingBroadcastReceiver(this, localBroadcastManager);
-        localBroadcastManager.registerReceiver(pDeviceHoldingReceiver, new IntentFilter("deviceHolding"));
+        //localBroadcastManager.registerReceiver(pDeviceHoldingReceiver, new IntentFilter("deviceHolding"));
 
         /*
         // receivers old
@@ -113,7 +113,7 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
         */
     }
 
-    private void sendData(Intent intent) {
+    protected void sendData(Intent intent) {
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
     }
 

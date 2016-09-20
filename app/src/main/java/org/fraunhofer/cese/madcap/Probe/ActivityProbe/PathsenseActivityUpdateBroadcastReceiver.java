@@ -30,6 +30,7 @@ public class PathsenseActivityUpdateBroadcastReceiver extends PathsenseActivityR
 		// broadcast detected activities
 		Intent detectedActivitiesIntent = new Intent("activityUpdate");
 		detectedActivitiesIntent.putExtra("detectedActivities", detectedActivities);
-		LocalBroadcastManager.getInstance(context).sendBroadcast(detectedActivitiesIntent);
+		callback.sendData(detectedActivitiesIntent);
+		//LocalBroadcastManager.getInstance(context).sendBroadcast(detectedActivitiesIntent);
 	}
 }
