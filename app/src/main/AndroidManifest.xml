@@ -53,10 +53,10 @@
         <!-- This section is for the PathsenseAcrivityRecognition -->
         <meta-data
             android:name="com.pathsense.android.sdk.CLIENT_ID"
-            android:value="uCCdzHtaCIpb0zUyHuS1sPv9qlrthKcs7Jm9M09T" />
+            android:value="@string/pathsenseClientID" />
         <meta-data
             android:name="com.pathsense.android.sdk.API_KEY"
-            android:value="7Rnr1N27ab7yNaNqWH8w21eI8K0LdlqaKGyEp0Pf" />
+            android:value="@string/pathsenseAPIKEY" />
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityChangeBroadcastReceiver" />
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityUpdateBroadcastReceiver" />
         <receiver android:name=".Probe.ActivityProbe.PathsenseDeviceHoldingBroadcastReceiver" />

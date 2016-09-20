@@ -15,6 +15,8 @@ public class PathsenseDeviceHoldingBroadcastReceiver extends PathsenseDeviceHold
 	private ActivityProbe callback;
 	private LocalBroadcastManager localBroadcastManager;
 
+	public PathsenseDeviceHoldingBroadcastReceiver(){}
+
 	public PathsenseDeviceHoldingBroadcastReceiver(ActivityProbe callback, LocalBroadcastManager localBroadcastManager){
 		this.callback = callback;
 		this.localBroadcastManager = localBroadcastManager;

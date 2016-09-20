@@ -18,6 +18,10 @@ public class PathsenseActivityUpdateBroadcastReceiver extends PathsenseActivityR
 	static final String TAG = PathsenseActivityUpdateBroadcastReceiver.class.getName();
 	//
 
+	public PathsenseActivityUpdateBroadcastReceiver(){
+
+	}
+
 	public PathsenseActivityUpdateBroadcastReceiver(ActivityProbe callback, LocalBroadcastManager localBroadcastManager){
 		this.callback = callback;
 		this.localBroadcastManager = localBroadcastManager;
