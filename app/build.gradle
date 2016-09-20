@@ -4,8 +4,8 @@ android {
     signingConfigs {
         debug
     }
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId "org.fraunhofer.cese.madcap"
         minSdkVersion 19
@@ -25,10 +25,10 @@ android {
             //noinspection GroovyAssignabilityCheck
             signingConfig signingConfigs.debug
         }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_7
-        targetCompatibility = JavaVersion.VERSION_1_7
+//        compileOptions {
+//            targetCompatibility = '1.7'
+//            sourceCompatibility = '1.7'
+//        }
     }
 }
 

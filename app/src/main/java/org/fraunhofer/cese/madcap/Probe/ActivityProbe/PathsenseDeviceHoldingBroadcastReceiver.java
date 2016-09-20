@@ -13,11 +13,9 @@ import com.pathsense.android.sdk.location.PathsenseDeviceHoldingReceiver;
 
 public class PathsenseDeviceHoldingBroadcastReceiver extends PathsenseDeviceHoldingReceiver {
 	private ActivityProbe callback;
-	private LocalBroadcastManager localBroadcastManager;
 
-	public PathsenseDeviceHoldingBroadcastReceiver(ActivityProbe callback, LocalBroadcastManager localBroadcastManager){
+	public PathsenseDeviceHoldingBroadcastReceiver(ActivityProbe callback){
 		this.callback = callback;
-		this.localBroadcastManager = localBroadcastManager;
 	}
 
 	static final String TAG = PathsenseActivityChangeBroadcastReceiver.class.getName();
@@ -30,6 +28,5 @@ public class PathsenseDeviceHoldingBroadcastReceiver extends PathsenseDeviceHold
 		Intent deviceHoldingIntent = new Intent("deviceHolding");
 		deviceHoldingIntent.putExtra("deviceHolding", deviceHolding);
 		callback.sendData(deviceHoldingIntent);
-		//LocalBroadcastManager.getInstance(context).sendBroadcast(deviceHoldingIntent);
 	}
 }

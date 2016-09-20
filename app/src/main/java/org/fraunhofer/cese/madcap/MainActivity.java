@@ -149,7 +149,7 @@ public class MainActivity extends RoboActivity {
         funfManager.enablePipeline(PIPELINE_NAME);
         pipeline.setEnabled(true);
 
-        accelerometerProbe.registerPassiveListener(pipeline);
+        activityProbe.registerPassiveListener(pipeline);
         accelerometerProbe.registerPassiveListener(pipeline);
         audioProbe.registerPassiveListener(pipeline);
         bluetoothProbe.registerListener(pipeline);

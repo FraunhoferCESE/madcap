@@ -35,9 +35,9 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
             Intent myIntent = new Intent();
             myIntent.putExtra("SMSProbe Timestamp: ", timestamp);
 
-            if (Telephony.Sms.Intents.SMS_EMERGENCY_CB_RECEIVED_ACTION.equals(intent.getAction())) {
+            if (Telephony.Sms.Intents.SMS_CB_RECEIVED_ACTION.equals(intent.getAction())) {
                 for (SmsMessage smsMessage : Telephony.Sms.Intents.getMessagesFromIntent(intent)) {
-                    myIntent.putExtra("SMS Action", "SMS emergency received");
+                    myIntent.putExtra("SMS Action", "SMS cell broadcast received");
                 }
 
             } else if (Telephony.Sms.Intents.SMS_RECEIVED_ACTION.equals(intent.getAction())) {

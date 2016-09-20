@@ -22,3 +22,6 @@
     public static *** v(...);
     public static *** i(...);
 }
+
+-keepattributes InnerClasses
+-dontoptimize

@@ -13,14 +13,12 @@ import com.pathsense.android.sdk.location.PathsenseDetectedActivities;
 
 public class PathsenseActivityUpdateBroadcastReceiver extends PathsenseActivityRecognitionReceiver {
 	private ActivityProbe callback;
-	private LocalBroadcastManager localBroadcastManager;
 
 	static final String TAG = PathsenseActivityUpdateBroadcastReceiver.class.getName();
 	//
 
-	public PathsenseActivityUpdateBroadcastReceiver(ActivityProbe callback, LocalBroadcastManager localBroadcastManager){
+	public PathsenseActivityUpdateBroadcastReceiver(ActivityProbe callback){
 		this.callback = callback;
-		this.localBroadcastManager = localBroadcastManager;
 	}
 
 	@Override
@@ -31,6 +29,5 @@ public class PathsenseActivityUpdateBroadcastReceiver extends PathsenseActivityR
 		Intent detectedActivitiesIntent = new Intent("activityUpdate");
 		detectedActivitiesIntent.putExtra("detectedActivities", detectedActivities);
 		callback.sendData(detectedActivitiesIntent);
-		//LocalBroadcastManager.getInstance(context).sendBroadcast(detectedActivitiesIntent);
 	}
 }
