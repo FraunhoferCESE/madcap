@@ -9,28 +9,22 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.google.inject.Inject;
 import com.pathsense.android.sdk.location.PathsenseDeviceHolding;
 import com.pathsense.android.sdk.location.PathsenseDeviceHoldingReceiver;
 
 public class PathsenseDeviceHoldingBroadcastReceiver extends PathsenseDeviceHoldingReceiver {
+    @Inject
     private ActivityProbe callback;
-
-    public PathsenseDeviceHoldingBroadcastReceiver() {
-    }
-
-    public PathsenseDeviceHoldingBroadcastReceiver(ActivityProbe callback) {
-        this.callback = callback;
-    }
 
     static final String TAG = PathsenseActivityChangeBroadcastReceiver.class.getName();
 
     //
     @Override
     protected void onDeviceHolding(Context context, PathsenseDeviceHolding deviceHolding) {
-        Log.i(TAG, "deviceHolding = " + deviceHolding);
         // broadcast device holding
         Intent deviceHoldingIntent = new Intent("deviceHolding");
         deviceHoldingIntent.putExtra("deviceHolding", deviceHolding);
-        callback.sendData(deviceHoldingIntent);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(deviceHoldingIntent);
     }
 }

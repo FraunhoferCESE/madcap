@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.Probe.ActivityProbe;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,29 +26,33 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
     static final int MESSAGE_ON_DEVICE_HOLDING = 3;
 
     // Registration of internal receivers
-    private PathsenseActivityChangeBroadcastReceiver pActivityChangeReceiver;
-    private PathsenseActivityUpdateBroadcastReceiver pActivityUpdateReceiver;
-    private PathsenseDeviceHoldingBroadcastReceiver pDeviceHoldingReceiver;
 
     PathsenseLocationProviderApi mApi;
+
+    private class LocalBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            sendData(intent);
+        }
+    }
 
     @Override
     public void onEnable(){
         super.onStart();
-        Log.d("ActivityPRobe", "onEnable()");
         // location api
         localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
 
-        pActivityChangeReceiver = new PathsenseActivityChangeBroadcastReceiver(this);
-        localBroadcastManager.registerReceiver(pActivityChangeReceiver, new IntentFilter("activityChange"));
+        localBroadcastManager.registerReceiver(new LocalBroadcastReceiver(), new IntentFilter("activityChange"));
 
-        pActivityUpdateReceiver = new PathsenseActivityUpdateBroadcastReceiver(this);
-        localBroadcastManager.registerReceiver(pActivityUpdateReceiver, new IntentFilter("activityUpdate"));
+        localBroadcastManager.registerReceiver(new LocalBroadcastReceiver(), new IntentFilter("activityUpdate"));
 
-        pDeviceHoldingReceiver = new PathsenseDeviceHoldingBroadcastReceiver(this);
-        localBroadcastManager.registerReceiver(pDeviceHoldingReceiver, new IntentFilter("deviceHolding"));
+        localBroadcastManager.registerReceiver(new LocalBroadcastReceiver(), new IntentFilter("deviceHolding"));
 
         mApi = PathsenseLocationProviderApi.getInstance(getContext());
+        mApi.requestActivityChanges(PathsenseActivityChangeBroadcastReceiver.class);
+        mApi.requestActivityUpdates(PathsenseActivityUpdateBroadcastReceiver.class);
+        mApi.requestDeviceHolding(PathsenseDeviceHoldingBroadcastReceiver.class);
         /*
         // receivers old
         localBroadcastManager = LocalBroadcastManager.getInstance(mainActivity);
@@ -61,12 +66,16 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
     }
 
     protected void sendData(Intent intent) {
-        Log.d("ActivityProbe", "sendData()");
         sendData(getGson().toJsonTree(intent).getAsJsonObject());
     }
 
     @Override
     protected void onDisable() {
+        mApi.removeActivityChanges();
+        mApi.removeActivityUpdates();
+        mApi.removeDeviceHolding();
+
+
         super.onStop();
         //getContext().unregisterReceiver(receiver);
     }
