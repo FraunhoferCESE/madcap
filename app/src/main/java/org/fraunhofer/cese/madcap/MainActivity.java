@@ -20,6 +20,7 @@ import com.google.gson.JsonObject;
 import com.google.inject.Inject;
 
 import org.fraunhofer.cese.madcap.Probe.AccelerometerProbe;
+import org.fraunhofer.cese.madcap.Probe.ActivityProbe.ActivityProbe;
 import org.fraunhofer.cese.madcap.Probe.AudioProbe;
 import org.fraunhofer.cese.madcap.Probe.BluetoothProbe;
 import org.fraunhofer.cese.madcap.Probe.CallStateProbe;
@@ -58,6 +59,7 @@ public class MainActivity extends RoboActivity {
     private GoogleAppEnginePipeline pipeline;
 
     //probes
+    private ActivityProbe activityProbe;
     private AccelerometerProbe accelerometerProbe;
     private AudioProbe audioProbe;
     private BluetoothProbe bluetoothProbe;
@@ -89,6 +91,7 @@ public class MainActivity extends RoboActivity {
             funfManager = ((FunfManager.LocalBinder) service).getManager();
             Gson gson = funfManager.getGson();
 
+            activityProbe = gson.fromJson(new JsonObject(), ActivityProbe.class);
             accelerometerProbe = gson.fromJson(new JsonObject(), AccelerometerProbe.class);
             audioProbe = gson.fromJson(new JsonObject(), AudioProbe.class);
             bluetoothProbe = gson.fromJson(new JsonObject(), BluetoothProbe.class);
@@ -123,6 +126,7 @@ public class MainActivity extends RoboActivity {
         Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
 
         accelerometerProbe.unregisterPassiveListener(pipeline);
+        accelerometerProbe.unregisterPassiveListener(pipeline);
         audioProbe.unregisterPassiveListener(pipeline);
         bluetoothProbe.unregisterListener(pipeline);
         callStateProbe.unregisterPassiveListener(pipeline);
@@ -145,6 +149,7 @@ public class MainActivity extends RoboActivity {
         funfManager.enablePipeline(PIPELINE_NAME);
         pipeline.setEnabled(true);
 
+        accelerometerProbe.registerPassiveListener(pipeline);
         accelerometerProbe.registerPassiveListener(pipeline);
         audioProbe.registerPassiveListener(pipeline);
         bluetoothProbe.registerListener(pipeline);

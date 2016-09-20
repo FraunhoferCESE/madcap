@@ -50,6 +50,17 @@
             android:name="roboguice.modules"
             android:value="org.fraunhofer.cese.madcap.MyModule" />
 
+        <!-- This section is for the PathsenseAcrivityRecognition -->
+        <meta-data
+            android:name="com.pathsense.android.sdk.CLIENT_ID"
+            android:value="uCCdzHtaCIpb0zUyHuS1sPv9qlrthKcs7Jm9M09T" />
+        <meta-data
+            android:name="com.pathsense.android.sdk.API_KEY"
+            android:value="7Rnr1N27ab7yNaNqWH8w21eI8K0LdlqaKGyEp0Pf" />
+        <receiver android:name=".Probe.ActivityProbe.PathsenseActivityChangeBroadcastReceiver" />
+        <receiver android:name=".Probe.ActivityProbe.PathsenseActivityUpdateBroadcastReceiver" />
+        <receiver android:name=".Probe.ActivityProbe.PathsenseDeviceHoldingBroadcastReceiver" />
+
         <service android:name="edu.mit.media.funf.FunfManager" />
 
         <receiver
@@ -63,6 +74,7 @@
                 <action android:name="android.intent.action.USER_PRESENT" />
             </intent-filter>
         </receiver>
+
 
         <activity
             android:name=".MainActivity"
