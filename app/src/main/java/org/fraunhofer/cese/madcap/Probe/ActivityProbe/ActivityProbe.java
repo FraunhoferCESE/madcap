@@ -23,7 +23,6 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
     // Messages
     static final int MESSAGE_ON_ACTIVITY_CHANGE = 1;
     static final int MESSAGE_ON_ACTIVITY_UPDATE = 2;
-    static final int MESSAGE_ON_DEVICE_HOLDING = 3;
 
     // Registration of internal receivers
 
@@ -47,12 +46,9 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
 
         localBroadcastManager.registerReceiver(new LocalBroadcastReceiver(), new IntentFilter("activityUpdate"));
 
-        localBroadcastManager.registerReceiver(new LocalBroadcastReceiver(), new IntentFilter("deviceHolding"));
-
         mApi = PathsenseLocationProviderApi.getInstance(getContext());
         mApi.requestActivityChanges(PathsenseActivityChangeBroadcastReceiver.class);
         mApi.requestActivityUpdates(PathsenseActivityUpdateBroadcastReceiver.class);
-        mApi.requestDeviceHolding(PathsenseDeviceHoldingBroadcastReceiver.class);
         /*
         // receivers old
         localBroadcastManager = LocalBroadcastManager.getInstance(mainActivity);
@@ -73,7 +69,6 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
     protected void onDisable() {
         mApi.removeActivityChanges();
         mApi.removeActivityUpdates();
-        mApi.removeDeviceHolding();
 
 
         super.onStop();

@@ -45,8 +45,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/gson-2.1.funf.jar')
     compile files('libs/funf-0.4.2.jar')
-    compile(name:'pathsense-android-sdk-bundle-release-2.2.1.0', ext:'aar')
-    //compile(name:'pathsense-android-sdk-bundle-release-2.3.0.0-beta', ext:'aar')
+    //compile(name:'pathsense-android-sdk-bundle-release-2.2.1.0', ext:'aar')
+    compile(name:'pathsense-android-sdk-bundle-release-2.3.0.0-beta', ext:'aar')
     compile project(path: ':backend', configuration: 'android-endpoints')
     //testCompile 'org.robolectric:robolectric:3.0'
     //testCompile "org.robolectric:robolectric:3.1.2"
