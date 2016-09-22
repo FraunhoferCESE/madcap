@@ -17,12 +17,11 @@ import org.fraunhofer.cese.madcap.factories.IntentFilterFactoryReal;
 /**
  * Created by Lucas on 10/6/2015.
  */
-public class MyModule extends AbstractModule {
+public class MyModuleForTest extends AbstractModule {
 
-
-//    public void bind() {
-//        bind(IntentFilterFactory.class).to(IntentFilterFactoryReal.class);
-//    }
+    public void bind() {
+        bind(IntentFilterFactory.class).to(IntentFilterFactoryReal.class);
+    }
 
     @Override
     protected void configure() {

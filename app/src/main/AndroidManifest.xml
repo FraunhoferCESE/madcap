@@ -46,6 +46,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
+        <!-- configuration of dependency instruction -->
         <meta-data
             android:name="roboguice.modules"
             android:value="org.fraunhofer.cese.madcap.MyModule" />

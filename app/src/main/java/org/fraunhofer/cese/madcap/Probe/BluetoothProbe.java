@@ -8,7 +8,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
+import com.google.inject.Inject;
+
 import org.fraunhofer.cese.madcap.JsonObjectFactory;
+import org.fraunhofer.cese.madcap.factories.IntentFilterFactory;
+import org.fraunhofer.cese.madcap.factories.IntentFilterFactoryReal;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +35,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
     private final BluetoothAdapter bluetoothAdapter;
     private JsonObjectFactory jsonObjectFactory;
     private Intent lastSentIntent;
+
 
     /**
      * Constructor only for testing purposes.
@@ -163,6 +168,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
             intent.putExtra("Bonded devices: ", bondedDeviceNames.toString());
 
             sendData(intent);
+            lastSentIntent = intent;
 
             Log.i(TAG, "Initial state sent");
         }
