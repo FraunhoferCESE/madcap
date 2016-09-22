@@ -14,8 +14,8 @@ import dagger.Component;
 
 @Component( modules = {GoogleAppEnginePipelineModule.class})
 public interface GoogleAppEnginePipelineComponent {
-    CacheConfig provideCacheConfig();
-    DatabaseAsyncTaskFactory provideDatabaseWriteAsyncTaskFactory();
-    RemoteUploadAsyncTaskFactory provideRemoteUploadAsyncTaskFactory();
-    ProbeEndpoint provideProbeDataSetApi();
+//    CacheConfig provideCacheConfig();
+//    DatabaseAsyncTaskFactory provideDatabaseWriteAsyncTaskFactory();
+//    RemoteUploadAsyncTaskFactory provideRemoteUploadAsyncTaskFactory();
+//    ProbeEndpoint provideProbeDataSetApi();
 }
