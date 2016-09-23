@@ -5,13 +5,14 @@ import android.util.Log;
 
 import com.google.android.gms.iid.InstanceID;
 import com.google.gson.JsonElement;
-import com.google.inject.Inject;
 
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheEntry;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 
 import java.util.UUID;
+
+import javax.inject.Inject;
 
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.config.RuntimeTypeAdapterFactory;
@@ -31,6 +32,10 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     private final String instanceId;
 
 
+
+    /**
+     * The @Inject annotation tells Dagger2 to use this constructor to create new instances of this class.
+     */
     @Inject
     public GoogleAppEnginePipeline(Cache cache, Context context) {
         this.cache = cache;

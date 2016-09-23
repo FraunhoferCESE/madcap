@@ -47,12 +47,9 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
 
         localBroadcastManager.registerReceiver(new LocalBroadcastReceiver(), new IntentFilter("activityUpdate"));
 
-        localBroadcastManager.registerReceiver(new LocalBroadcastReceiver(), new IntentFilter("deviceHolding"));
-
         mApi = PathsenseLocationProviderApi.getInstance(getContext());
         mApi.requestActivityChanges(PathsenseActivityChangeBroadcastReceiver.class);
         mApi.requestActivityUpdates(PathsenseActivityUpdateBroadcastReceiver.class);
-        mApi.requestDeviceHolding(PathsenseDeviceHoldingBroadcastReceiver.class);
         /*
         // receivers old
         localBroadcastManager = LocalBroadcastManager.getInstance(mainActivity);
@@ -73,7 +70,6 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
     protected void onDisable() {
         mApi.removeActivityChanges();
         mApi.removeActivityUpdates();
-        mApi.removeDeviceHolding();
 
 
         super.onStop();

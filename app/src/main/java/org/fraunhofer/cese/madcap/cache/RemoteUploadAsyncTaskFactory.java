@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 /**
  * Factory for creating asynchronous remote data storage tasks.
@@ -31,6 +32,15 @@ import javax.annotation.Nullable;
  * @see Cache
  */
 public class RemoteUploadAsyncTaskFactory {
+
+    /**
+     * Default no-arg constructor.
+     * The @Inject annotation tells Dagger2 to use this constructor to create new instances of this class.
+     */
+    @Inject
+    RemoteUploadAsyncTaskFactory() {
+
+    }
 
     /**
      * Creates an asynchronous task for uploading entries from the local database to the remote store. The results of the task

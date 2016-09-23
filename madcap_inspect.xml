@@ -255,6 +255,7 @@
     </option>
     <option name="ignoreClassWithParameterization" value="false" />
     <option name="ignoreThrowables" value="true" />
+    <option name="commentsAreContent" value="true" />
   </inspection_tool>
   <inspection_tool class="EmptyDirectory" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="EmptyInitializer" enabled="true" level="ERROR" enabled_by_default="true" />
@@ -436,9 +437,6 @@
   <inspection_tool class="LabeledStatement" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="LambdaParameterHidingMemberVariable" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="LambdaParameterNamingConvention" enabled="true" level="WARNING" enabled_by_default="true" />
-  <inspection_tool class="LawOfDemeter" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="ignoreLibraryCalls" value="true" />
-  </inspection_tool>
   <inspection_tool class="LengthOneStringInIndexOf" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="LengthOneStringsInConcatenation" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="LimitedScopeInnerClass" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -448,6 +446,10 @@
   </inspection_tool>
   <inspection_tool class="LiteralAsArgToStringEquals" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="LoadLibraryWithNonConstantString" enabled="true" level="WARNING" enabled_by_default="true" />
+  <inspection_tool class="LocalCanBeFinal" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="REPORT_VARIABLES" value="true" />
+    <option name="REPORT_PARAMETERS" value="true" />
+  </inspection_tool>
   <inspection_tool class="LocalVariableHidingMemberVariable" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="m_ignoreInvisibleFields" value="true" />
     <option name="m_ignoreStaticMethods" value="true" />
@@ -512,7 +514,6 @@
     <option name="ignoreObjectMethods" value="true" />
     <option name="ignoreAnonymousClassMethods" value="false" />
   </inspection_tool>
-  <inspection_tool class="MissingPackageInfo" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="MissortedModifiers" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="m_requireAnnotationsFirst" value="true" />
   </inspection_tool>
@@ -622,9 +623,7 @@
   </inspection_tool>
   <inspection_tool class="OverridableMethodCallDuringObjectConstruction" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="OverriddenMethodCallDuringObjectConstruction" enabled="true" level="WARNING" enabled_by_default="true" />
-  <inspection_tool class="PackageDotHtmlMayBePackageInfo" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="PackageInMultipleModules" enabled="true" level="WARNING" enabled_by_default="true" />
-  <inspection_tool class="PackageInfoWithoutPackage" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="PackageNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="m_regex" value="[a-z]*" />
     <option name="m_minLength" value="3" />
@@ -755,7 +754,6 @@
   <inspection_tool class="SimplifiableEqualsExpression" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="SimplifiableIfStatement" enabled="false" level="WARNING" enabled_by_default="false" />
   <inspection_tool class="SimplifiableJUnitAssertion" enabled="true" level="WARNING" enabled_by_default="true" />
-  <inspection_tool class="Since15" enabled="true" level="ERROR" enabled_by_default="true" />
   <inspection_tool class="Singleton" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="SizeReplaceableByIsEmpty" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="SleepWhileHoldingLock" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -944,6 +942,11 @@
   <inspection_tool class="UnnecessaryInheritDoc" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UnnecessaryJavaDocLink" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="ignoreInlineLinkToSuper" value="false" />
+  </inspection_tool>
+  <inspection_tool class="UnnecessaryParentheses" enabled="true" level="WARNING" enabled_by_default="true">
+    <option name="ignoreClarifyingParentheses" value="false" />
+    <option name="ignoreParenthesesOnConditionals" value="false" />
+    <option name="ignoreParenthesesOnLambdaParameter" value="false" />
   </inspection_tool>
   <inspection_tool class="UnnecessaryQualifierForThis" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UnnecessarySuperConstructor" enabled="true" level="WARNING" enabled_by_default="true" />

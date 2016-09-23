@@ -8,11 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-import com.google.inject.Inject;
-
 import org.fraunhofer.cese.madcap.JsonObjectFactory;
-import org.fraunhofer.cese.madcap.factories.IntentFilterFactory;
-import org.fraunhofer.cese.madcap.factories.IntentFilterFactoryReal;
 
 import java.util.ArrayList;
 import java.util.Collection;

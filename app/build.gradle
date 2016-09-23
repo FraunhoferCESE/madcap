@@ -48,8 +48,8 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/gson-2.1.funf.jar')
     compile files('libs/funf-0.4.2.jar')
-    compile(name:'pathsense-android-sdk-bundle-release-2.2.1.0', ext:'aar')
-    //compile(name:'pathsense-android-sdk-bundle-release-2.3.0.0-beta', ext:'aar')
+    //compile(name:'pathsense-android-sdk-bundle-release-2.2.1.0', ext:'aar')
+    compile(name:'pathsense-android-sdk-bundle-release-2.3.0.0-beta', ext:'aar')
     compile project(path: ':backend', configuration: 'android-endpoints')
     //testCompile 'org.robolectric:robolectric:3.0'
     //testCompile "org.robolectric:robolectric:3.1.2"
@@ -61,11 +61,11 @@ dependencies {
 //    testCompile 'com.google.appengine:appengine-tools-sdk:1.9.27'
 //    testCompile 'com.google.appengine:appengine-testing:1.9.27'
 //    testCompile 'com.google.appengine:appengine-endpoints:1.9.27'
-    provided 'org.roboguice:roboblender:3.0.1'
+    //provided 'org.roboguice:roboblender:3.0.1'
     compile 'com.google.android.gms:play-services:9.4.0'
     compile 'com.google.android.gms:play-services-identity:9.4.0'
     compile 'com.j256.ormlite:ormlite-android:4.48'
-    compile 'org.roboguice:roboguice:3.0.1'
+    //compile 'org.roboguice:roboguice:3.0.1'
     compile 'com.opencsv:opencsv:3.5'
 
     compile 'com.google.android.gms:play-services-ads:9.4.0'

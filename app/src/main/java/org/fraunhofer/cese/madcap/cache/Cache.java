@@ -9,7 +9,6 @@ import android.util.Log;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.opencsv.CSVWriter;
@@ -27,8 +26,9 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-import roboguice.inject.ContextSingleton;
 
 /**
  * Implementation of a two-stage cache for ProbeEntry data. The cache first stores objects in memory, and flushes them to a backing
@@ -43,7 +43,7 @@ import roboguice.inject.ContextSingleton;
  *
  * @author Lucas
  */
-@ContextSingleton
+@Singleton
 public class Cache {
 
     private static final String TAG = "Fraunhofer." + Cache.class.getSimpleName();

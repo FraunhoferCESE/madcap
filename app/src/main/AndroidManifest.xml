@@ -40,17 +40,13 @@
 
     <!-- The used actions are defined here. -->
     <application
+        android:name=".MyApplication"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
-        <!-- configuration of dependency instruction -->
-        <meta-data
-            android:name="roboguice.modules"
-            android:value="org.fraunhofer.cese.madcap.MyModule" />
 
         <!-- This section is for the PathsenseAcrivityRecognition -->
         <meta-data
@@ -61,7 +57,6 @@
             android:value="@string/pathsenseAPIKEY" />
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityChangeBroadcastReceiver" />
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityUpdateBroadcastReceiver" />
-        <receiver android:name=".Probe.ActivityProbe.PathsenseDeviceHoldingBroadcastReceiver" />
 
         <service android:name="edu.mit.media.funf.FunfManager" />
 
