@@ -27,9 +27,9 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
     @Override
     protected void onEnable() {
 
-        super.onStart();
-        final Gson gson = getGson();
-        final AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
+        onStart();
+        Gson gson = getGson();
+        AudioManager audioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);
 
         audioProbeDeliverer = createAudioProbeDeliverer(gson, audioManager);
 
@@ -39,7 +39,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
     }
 
 
-    private Thread createAudioProbeDeliverer(final Gson gson, final AudioManager audioManager) {
+    private Thread createAudioProbeDeliverer(Gson gson, final AudioManager audioManager) {
 
 
         audioProbeDeliverer = new Thread(new Runnable() {
@@ -47,7 +47,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
             @Override
             public void run() {
                 boolean run = true;
-                while (run && !(audioProbeDeliverer.isInterrupted())) {
+                while (run && !audioProbeDeliverer.isInterrupted()) {
 
                     StringBuilder audioInfo = new StringBuilder("");
 

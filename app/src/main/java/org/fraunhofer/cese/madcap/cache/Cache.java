@@ -68,7 +68,7 @@ public class Cache {
     /**
      * In-memory representation of the cache. Entries are held here prior to being written to the persistent database.
      */
-    private Map<String, CacheEntry> memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>());
+    private final Map<String, CacheEntry> memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>());
 
     /**
      * Main object for accessing the SQLite database.
@@ -119,14 +119,14 @@ public class Cache {
         this.context = context;
         this.connManager = connManager;
         this.config = config;
-        this.dbTaskFactory = dbWriteTaskFactory;
+        dbTaskFactory = dbWriteTaskFactory;
         this.uploadTaskFactory = uploadTaskFactory;
         this.appEngineApi = appEngineApi;
 
         last_db_write_attempt = System.currentTimeMillis();
         last_upload_attempt = 0;
 
-        if (checkUploadConditions(UploadStrategy.NORMAL) == UPLOAD_READY)
+        if (checkUploadConditions(Cache.UploadStrategy.NORMAL) == UPLOAD_READY)
             upload();
     }
 
@@ -141,7 +141,7 @@ public class Cache {
 
         memcache.put(entry.getId(), entry);
         if (memcache.size() > config.getMaxMemEntries() && System.currentTimeMillis() - last_db_write_attempt > config.getDbWriteInterval()) {
-            flush(UploadStrategy.NORMAL);
+            flush(Cache.UploadStrategy.NORMAL);
         }
     }
 
@@ -150,7 +150,7 @@ public class Cache {
      *
      * @param uploadStrategy The upload strategy to use
      */
-    public void flush(UploadStrategy uploadStrategy) {
+    public void flush(Cache.UploadStrategy uploadStrategy) {
         last_db_write_attempt = System.currentTimeMillis();
         //noinspection unchecked
         dbTaskFactory.createWriteTask(context, this, uploadStrategy).execute(ImmutableMap.copyOf(memcache));
@@ -163,7 +163,7 @@ public class Cache {
      * @param result         object containing information on successfully saved entries (if any) and errors that occured
      * @param uploadStrategy the upload strategy to use
      */
-    void doPostDatabaseWrite(DatabaseWriteResult result, UploadStrategy uploadStrategy) {
+    void doPostDatabaseWrite(DatabaseWriteResult result, Cache.UploadStrategy uploadStrategy) {
 
         // 1. Remove ids written to DB from memory
         if (result.getSavedEntries() != null && !result.getSavedEntries().isEmpty()) {
@@ -277,7 +277,7 @@ public class Cache {
      *
      * @param strategy the upload strategy to use
      */
-    public int checkUploadConditions(UploadStrategy strategy) {
+    public int checkUploadConditions(Cache.UploadStrategy strategy) {
         // 1. Check preconditions
         if (appEngineApi == null) {
             Log.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
@@ -305,7 +305,7 @@ public class Cache {
         boolean wifiOnly = config.isUploadWifiOnly();
 
 
-        if (strategy == UploadStrategy.IMMEDIATE) {
+        if (strategy == Cache.UploadStrategy.IMMEDIATE) {
             maxDbEntries = IMMEDIATE_MAX_DB_ENTRIES;
             uploadInterval = IMMEDIATE_UPLOAD_INTERVAL;
         } else {
@@ -316,7 +316,7 @@ public class Cache {
         int status = UPLOAD_READY;
         try {
             long numEntries = getHelper().getDao().countOf();
-            if (strategy == UploadStrategy.IMMEDIATE)
+            if (strategy == Cache.UploadStrategy.IMMEDIATE)
                 numEntries += memcache.size();
 
             if (numEntries < maxDbEntries) {
@@ -423,7 +423,7 @@ public class Cache {
      * Should be called when the app is destroyed, or other events when the cache is no longer needed.
      */
     public void close() {
-        flush(UploadStrategy.NORMAL);
+        flush(Cache.UploadStrategy.NORMAL);
         if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;

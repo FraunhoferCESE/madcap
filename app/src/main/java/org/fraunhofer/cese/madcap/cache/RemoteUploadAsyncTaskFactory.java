@@ -139,7 +139,7 @@ public class RemoteUploadAsyncTaskFactory {
                     if (ids != null && !ids.isEmpty() && databaseHelper.isOpen()) {
                         int cursor = 0;
                         while (cursor < ids.size()) {
-                            result += databaseHelper.getDao().deleteIds(ids.subList(cursor, (cursor + BUFFER_SIZE > ids.size() ? ids.size() : cursor + BUFFER_SIZE)));
+                            result += databaseHelper.getDao().deleteIds(ids.subList(cursor, cursor + BUFFER_SIZE > ids.size() ? ids.size() : cursor + BUFFER_SIZE));
                             cursor += BUFFER_SIZE;
                         }
                     }

@@ -83,7 +83,7 @@ public class ProbeEntry implements Comparable<ProbeEntry>{
             return false;
         if (probeType != null ? !probeType.equals(that.probeType) : that.probeType != null)
             return false;
-        return !(sensorData != null ? !sensorData.equals(that.sensorData) : that.sensorData != null);
+        return sensorData != null ? sensorData.equals(that.sensorData) : that.sensorData == null;
 
     }
 
@@ -98,9 +98,9 @@ public class ProbeEntry implements Comparable<ProbeEntry>{
 
     @Override
     public int compareTo(ProbeEntry other) {
-        if(this.getTimestamp()>other.getTimestamp())
+        if(getTimestamp()>other.getTimestamp())
                 return 1;
-        else if (this.getTimestamp().equals(other.getTimestamp()))
+        else if (getTimestamp().equals(other.getTimestamp()))
                 return 0;
         else
                 return -1;

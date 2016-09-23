@@ -39,7 +39,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     @Inject
     public GoogleAppEnginePipeline(Cache cache, Context context) {
         this.cache = cache;
-        this.instanceId = InstanceID.getInstance(context).getId();
+        instanceId = InstanceID.getInstance(context).getId();
     }
 
     /**
@@ -51,7 +51,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     public void onDataReceived(IJsonObject probeConfig, IJsonObject data) {
         // This is the method to write data received from a probe. This should probably be handled in a separate thread.
 
-        final String key = probeConfig.get(RuntimeTypeAdapterFactory.TYPE).toString();
+        String key = probeConfig.get(RuntimeTypeAdapterFactory.TYPE).toString();
 
         Log.d(TAG, "(onDataReceived) key: " + key + ", data: " + data);
 
@@ -61,8 +61,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         }
 
 //        Getting millis as timestamp. If you change that, change it as well within the webapp.
-        final Double timestampDouble = (data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsDouble()) * 1000;
-        final Long timestamp = timestampDouble.longValue();
+        Double timestampDouble = data.get(ProbeKeys.BaseProbeKeys.TIMESTAMP).getAsDouble() * 1000;
+        Long timestamp = timestampDouble.longValue();
 
         if (timestamp == 0L) {
             Log.d(TAG, "Invalid timestamp for probe data: " + 0L);
@@ -89,6 +89,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      * @param completeProbeUri the probe which has finished sending data
      * @param checkpoint       a checkpoint indicating the leave off point for probes that support it
      */
+    @Override
     public void onDataCompleted(IJsonObject completeProbeUri, JsonElement checkpoint) {
         Log.d(TAG, "(onDataCompleted) completeProbeUri: " + completeProbeUri + ", checkpoint: " + checkpoint);
         cache.flush(Cache.UploadStrategy.NORMAL);
@@ -100,9 +101,10 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      *
      * @param manager the FunfManager the pipeline is attached to
      */
+    @Override
     public void onCreate(FunfManager manager) {
         Log.d(TAG, "(onCreate)");
-        this.enabled = true;
+        enabled = true;
     }
 
     /**
@@ -111,6 +113,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      * @param action The action to perform.
      * @param config The object to perform the action on.
      */
+    @Override
     public void onRun(String action, JsonElement config) {
         // Method which is called to tell the Pipeline to do something, like save the data locally or upload to the cloud
         Log.d(TAG, "(onRun)");
@@ -134,16 +137,17 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      * @param isEnabled the boolean value to set
      */
     public void setEnabled(boolean isEnabled) {
-        this.enabled = isEnabled;
+        enabled = isEnabled;
     }
 
     /**
      * The teardown method called once when the pipeline should shut down.
      */
+    @Override
     public void onDestroy() {
         // Any closeout or disconnect operations
         Log.d(TAG, "onDestroy");
-        this.enabled = false;
+        enabled = false;
         cache.close();
     }
 
@@ -151,6 +155,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      * Returns true if this pipeline is enabled, meaning onCreate has been called
      * and onDestroy has not yet been called.
      */
+    @Override
     public boolean isEnabled() {
         // Determines whether the pipeline is enabled. The "enabled" flag should be toggled in the OnCreate and OnDestroy operations
         return enabled;

@@ -11,13 +11,12 @@ import android.util.Log;
 
 import java.util.List;
 
-import edu.mit.media.funf.probe.Probe.Base;
-import edu.mit.media.funf.probe.Probe.ContinuousProbe;
+import edu.mit.media.funf.probe.Probe;
 
 /**
  *
  */
-public class AccelerometerProbe extends Base implements ContinuousProbe, SensorEventListener {
+public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousProbe, SensorEventListener {
 
     private static final String TAG = "Fraunhofer.AccelPr";
     private SensorManager sensorManager;
@@ -36,7 +35,7 @@ public class AccelerometerProbe extends Base implements ContinuousProbe, SensorE
 
     @Override
     protected void onEnable() {
-        super.onStart();
+        onStart();
         sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
 
         boolean hasLinearAccelerometer = false;

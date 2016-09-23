@@ -90,7 +90,7 @@ public class MainActivity extends Activity {
     private String dataCountText;
     private boolean isCollectingData;
 
-    private ServiceConnection funfManagerConn = new ServiceConnection() {
+    private final ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             funfManager = ((FunfManager.LocalBinder) service).getManager();
@@ -170,18 +170,19 @@ public class MainActivity extends Activity {
 
     }
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((MyApplication) getApplication()).getComponent().inject(this);
 
         if (savedInstanceState != null) {
-            this.dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
-            this.uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
-            this.isCollectingData = savedInstanceState.getBoolean(STATE_COLLECTING_DATA);
+            dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
+            uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
+            isCollectingData = savedInstanceState.getBoolean(STATE_COLLECTING_DATA);
         } else {
-            this.dataCountText = "Computing...";
-            this.uploadResultText = "None.";
-            this.isCollectingData = true;
+            dataCountText = "Computing...";
+            uploadResultText = "None.";
+            isCollectingData = true;
         }
 
         setContentView(R.layout.main);
@@ -189,8 +190,8 @@ public class MainActivity extends Activity {
         uploadResultView = (TextView) findViewById(R.id.uploadResult);
         Switch collectDataSwitch = (Switch) findViewById(R.id.switch1);
 
-        ((TextView) findViewById(R.id.instanceIdText)).setText(getString(R.string.instanceIdText, InstanceID.getInstance(this.getApplicationContext()).getId()));
-        collectDataSwitch.setChecked(this.isCollectingData);
+        ((TextView) findViewById(R.id.instanceIdText)).setText(getString(R.string.instanceIdText, InstanceID.getInstance(getApplicationContext()).getId()));
+        collectDataSwitch.setChecked(isCollectingData);
         collectDataSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -255,6 +256,7 @@ public class MainActivity extends Activity {
         uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
     }
 
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 

@@ -174,7 +174,7 @@ public class DatabaseAsyncTaskFactory {
 
                         int cursor = 0;
                         while (cursor < toDeleteIds.size()) {
-                            dao.deleteIds(toDeleteIds.subList(cursor, (cursor + 250 > toDeleteIds.size() ? toDeleteIds.size() : cursor + 250)));
+                            dao.deleteIds(toDeleteIds.subList(cursor, cursor + 250 > toDeleteIds.size() ? toDeleteIds.size() : cursor + 250));
                             cursor += 250;
                         }
 

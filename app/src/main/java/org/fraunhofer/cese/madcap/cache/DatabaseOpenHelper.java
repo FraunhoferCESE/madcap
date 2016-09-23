@@ -27,7 +27,7 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 1;
 
-    private RuntimeExceptionDao<CacheEntry,String> dao = null;
+    private RuntimeExceptionDao<CacheEntry,String> dao;
 
     public DatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlist_config);
