@@ -10,6 +10,7 @@ import edu.mit.media.funf.probe.Probe;
 
 
 public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe {
+    private static final long SLEEP_TIME = 15000;
     private static final String TAG = "Fraunhofer." + ForegroundProbe.class.getSimpleName();
 
 
@@ -55,7 +56,7 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
                     ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
                     sendData(gson.toJsonTree(foregroundTaskInfo).getAsJsonObject());
                     try {
-                        Thread.sleep(15000l);
+                        Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
                         run = false;
                         Log.i("ForegroundProbe.Class", "ForegroundProbe interrupted.");

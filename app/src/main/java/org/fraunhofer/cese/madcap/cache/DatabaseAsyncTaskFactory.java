@@ -126,6 +126,7 @@ public class DatabaseAsyncTaskFactory {
 
     public AsyncTask<Void, Void, Void> createCleanupTask(final Context context, final Cache cache, final long dbEntryLimit) {
         return new AsyncTask<Void, Void, Void>() {
+            private static final int CURSOR_INCREMENT = 250;
             private static final String TAG = "Fraunhofer.DBCleanup";
 
             @Override
@@ -164,8 +165,8 @@ public class DatabaseAsyncTaskFactory {
 
                         int cursor = 0;
                         while (cursor < toDeleteIds.size()) {
-                            dao.deleteIds(toDeleteIds.subList(cursor, (cursor + 250 > toDeleteIds.size() ? toDeleteIds.size() : cursor + 250)));
-                            cursor += 250;
+                            dao.deleteIds(toDeleteIds.subList(cursor, (cursor + CURSOR_INCREMENT > toDeleteIds.size() ? toDeleteIds.size() : cursor + CURSOR_INCREMENT)));
+                            cursor += CURSOR_INCREMENT;
                         }
 
                         Log.i(TAG, "Cleanup completed. New database size: " + dao.countOf());

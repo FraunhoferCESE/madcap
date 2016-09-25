@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -48,11 +49,12 @@ public class Cache {
 
     private static final String TAG = "Fraunhofer." + Cache.class.getSimpleName();
 
-    private List<UploadStatusListener> uploadStatusListeners = new ArrayList<>();
+    private Collection<UploadStatusListener> uploadStatusListeners = new ArrayList<>();
 
     /**
      * Background task holder for the remote upload task. Stored to query for uploads in progress.
      */
+    @android.support.annotation.Nullable
     private AsyncTask<Void, Integer, RemoteUploadResult> uploadTask;
 
     /**
@@ -77,6 +79,7 @@ public class Cache {
      *
      * @see OrmLiteSqliteOpenHelper
      */
+    @android.support.annotation.Nullable
     private DatabaseOpenHelper databaseHelper;
 
     /**

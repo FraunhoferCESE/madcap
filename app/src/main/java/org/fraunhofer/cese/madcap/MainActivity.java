@@ -7,6 +7,7 @@ import android.content.ServiceConnection;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -52,7 +53,11 @@ public class MainActivity extends RoboActivity {
     private static final String STATE_DATA_COUNT = "dataCount";
     private static final String STATE_COLLECTING_DATA = "isCollectingData";
 
+    private static final long CACHE_UPDATE_UI_DELAY = 5000;
+    private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
 
+
+    @Nullable
     private FunfManager funfManager;
 
     @Inject
@@ -288,7 +293,7 @@ public class MainActivity extends RoboActivity {
                         try {
                             if (pipeline != null)
                                 publishProgress(pipeline.getCacheSize());
-                            Thread.sleep(5000);
+                            Thread.sleep(CACHE_UPDATE_UI_DELAY);
                         } catch (InterruptedException e) {
                             Log.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
                         }
@@ -326,14 +331,14 @@ public class MainActivity extends RoboActivity {
                         text += "Result: No entries to upload.";
                     } else if (result.getException() != null) {
                         String exceptionMessage;
-                        if(result.getException().getMessage() != null)
+                        if (result.getException().getMessage() != null)
                             exceptionMessage = result.getException().getMessage();
-                        else if(result.getException().toString() != null)
+                        else if (result.getException().toString() != null)
                             exceptionMessage = result.getException().toString();
                         else
                             exceptionMessage = "Unspecified error";
 
-                        text += "Result: Upload failed due to " + (exceptionMessage.length() > 20 ? exceptionMessage.substring(0, 19) : exceptionMessage);
+                        text += "Result: Upload failed due to " + (exceptionMessage.length() > MAX_EXCEPTION_MESSAGE_LENGTH ? exceptionMessage.substring(0, MAX_EXCEPTION_MESSAGE_LENGTH - 1) : exceptionMessage);
                     } else if (result.getSaveResult() == null) {
                         text += "Result: An error occurred on the remote server.";
                     } else {

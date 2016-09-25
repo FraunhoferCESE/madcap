@@ -59,8 +59,8 @@
         <meta-data
             android:name="com.pathsense.android.sdk.API_KEY"
             android:value="@string/pathsenseAPIKEY" />
-        <receiver android:name=".Probe.ActivityProbe.PathsenseActivityChangeBroadcastReceiver" />
-        <receiver android:name=".Probe.ActivityProbe.PathsenseActivityUpdateBroadcastReceiver" />
+        <receiver android:name=".Probe$ActivityProbe$PathsenseActivityChangeBroadcastReceiver" />
+        <receiver android:name=".Probe$ActivityProbe$PathsenseActivityUpdateBroadcastReceiver" />
 
         <service android:name="edu.mit.media.funf.FunfManager" />
 
