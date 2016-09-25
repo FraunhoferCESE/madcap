@@ -30,7 +30,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
 
     @Override
     protected void onEnable() {
-        super.onStart();
+        onStart();
         receiver = new ConnectionInfoReceiver(this);
         IntentFilter intentFilter = new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
         intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
@@ -50,7 +50,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
 
     @Override
     protected void onDisable() {
-        super.onStop();
+        onStop();
         getContext().unregisterReceiver(receiver);
     }
 

@@ -25,7 +25,7 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
      */
     @Override
     protected void onEnable() {
-        super.onStart();
+        onStart();
         receiver = new PowerInformationReceiver(this);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.intent.action.ACTION_POWER_CONNECTED");
@@ -47,7 +47,7 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
 
     @Override
     protected void onDisable() {
-        super.onStop();
+        onStop();
         getContext().unregisterReceiver(receiver);
     }
 
@@ -95,7 +95,7 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
                     callback.sendData(intent);
                     break;
                 case Intent.ACTION_BATTERY_CHANGED:
-                    if ((intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)) != powerLevel) {
+                    if (intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) != powerLevel) {
                         int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
                         powerLevel = level;
                         intent.putExtra("PowerProbe: ", "Battery at " + level + " %");

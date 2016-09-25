@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 
 /**
  * Factory for creating aysnchronous database related tasks.
@@ -23,6 +24,15 @@ import javax.annotation.Nullable;
  * @see Cache
  */
 public class DatabaseAsyncTaskFactory {
+
+    /**
+     * Default no-arg constructor.
+     * The @Inject annotation tells Dagger2 to use this constructor to create new instances of this class.
+     */
+    @Inject
+    DatabaseAsyncTaskFactory() {
+
+    }
 
     /**
      * Create an asynchronous task which supports asynchronous writing of cache entries to a persistent SQLite database.
@@ -164,7 +174,7 @@ public class DatabaseAsyncTaskFactory {
 
                         int cursor = 0;
                         while (cursor < toDeleteIds.size()) {
-                            dao.deleteIds(toDeleteIds.subList(cursor, (cursor + 250 > toDeleteIds.size() ? toDeleteIds.size() : cursor + 250)));
+                            dao.deleteIds(toDeleteIds.subList(cursor, cursor + 250 > toDeleteIds.size() ? toDeleteIds.size() : cursor + 250));
                             cursor += 250;
                         }
 

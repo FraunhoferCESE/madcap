@@ -32,9 +32,9 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
     protected void onEnable() {
 
         Log.d(TAG, "ForegroundProbe starting");
-        super.onStart();
-        final Gson gson = getGson();
-        final ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        onStart();
+        Gson gson = getGson();
+        ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
 
         foregroundProbeDeliverer = createForegroundProbeDeliverer(gson, am);
         foregroundProbeDeliverer.start();
@@ -51,7 +51,7 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
             @Override
             public void run() {
                 boolean run = true;
-                while (run && !(foregroundProbeDeliverer.isInterrupted())) {
+                while (run && !foregroundProbeDeliverer.isInterrupted()) {
                     ActivityManager.RunningTaskInfo foregroundTaskInfo = am.getRunningTasks(1).get(0);
                     sendData(gson.toJsonTree(foregroundTaskInfo).getAsJsonObject());
                     try {

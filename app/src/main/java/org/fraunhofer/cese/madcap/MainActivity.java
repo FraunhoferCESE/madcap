@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +18,6 @@ import android.widget.TextView;
 import com.google.android.gms.iid.InstanceID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.inject.Inject;
 
 import org.fraunhofer.cese.madcap.Probe.AccelerometerProbe;
 import org.fraunhofer.cese.madcap.Probe.ActivityProbe.ActivityProbe;
@@ -40,12 +40,13 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
-import roboguice.activity.RoboActivity;
 
-public class MainActivity extends RoboActivity {
+public class MainActivity extends Activity {
     private static final String TAG = "Fraunhofer." + MainActivity.class.getSimpleName();
     public static final String PIPELINE_NAME = "appengine";
     private static final String STATE_UPLOAD_STATUS = "uploadStatus";
@@ -55,8 +56,12 @@ public class MainActivity extends RoboActivity {
 
     private FunfManager funfManager;
 
+    /**
+     * Pipeline used to manage probes and store data.
+     * The @Inject annotation on this field indicates that the instance should be injected.
+     */
     @Inject
-    private GoogleAppEnginePipeline pipeline;
+    GoogleAppEnginePipeline pipeline;
 
     //probes
     private ActivityProbe activityProbe;
@@ -85,7 +90,7 @@ public class MainActivity extends RoboActivity {
     private String dataCountText;
     private boolean isCollectingData;
 
-    private ServiceConnection funfManagerConn = new ServiceConnection() {
+    private final ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             funfManager = ((FunfManager.LocalBinder) service).getManager();
@@ -165,17 +170,19 @@ public class MainActivity extends RoboActivity {
 
     }
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MyApplication) getApplication()).getComponent().inject(this);
 
         if (savedInstanceState != null) {
-            this.dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
-            this.uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
-            this.isCollectingData = savedInstanceState.getBoolean(STATE_COLLECTING_DATA);
+            dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
+            uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
+            isCollectingData = savedInstanceState.getBoolean(STATE_COLLECTING_DATA);
         } else {
-            this.dataCountText = "Computing...";
-            this.uploadResultText = "None.";
-            this.isCollectingData = true;
+            dataCountText = "Computing...";
+            uploadResultText = "None.";
+            isCollectingData = true;
         }
 
         setContentView(R.layout.main);
@@ -183,8 +190,8 @@ public class MainActivity extends RoboActivity {
         uploadResultView = (TextView) findViewById(R.id.uploadResult);
         Switch collectDataSwitch = (Switch) findViewById(R.id.switch1);
 
-        ((TextView) findViewById(R.id.instanceIdText)).setText(getString(R.string.instanceIdText, InstanceID.getInstance(this.getApplicationContext()).getId()));
-        collectDataSwitch.setChecked(this.isCollectingData);
+        ((TextView) findViewById(R.id.instanceIdText)).setText(getString(R.string.instanceIdText, InstanceID.getInstance(getApplicationContext()).getId()));
+        collectDataSwitch.setChecked(isCollectingData);
         collectDataSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
@@ -249,6 +256,7 @@ public class MainActivity extends RoboActivity {
         uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
     }
 
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 

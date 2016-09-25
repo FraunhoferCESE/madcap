@@ -8,30 +8,25 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-import com.google.inject.Inject;
-
 import org.fraunhofer.cese.madcap.JsonObjectFactory;
-import org.fraunhofer.cese.madcap.factories.IntentFilterFactory;
-import org.fraunhofer.cese.madcap.factories.IntentFilterFactoryReal;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 
-import edu.mit.media.funf.probe.Probe.Base;
-import edu.mit.media.funf.probe.Probe.PassiveProbe;
+import edu.mit.media.funf.probe.Probe;
 
 /**
  *
  */
-public class BluetoothProbe extends Base implements PassiveProbe {
+public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
     public static final String OFF = "OFF";
     public static final String ON = "ON";
     public static final String TURNING_OFF = "Turning OFF";
     public static final String TURNING_ON = "Turning ON";
     private static final String TAG = "BluetoothProbe: ";
-    private static BroadcastReceiver receiver;
+    private BroadcastReceiver receiver;
     private final BluetoothAdapter bluetoothAdapter;
     private JsonObjectFactory jsonObjectFactory;
     private Intent lastSentIntent;
@@ -39,22 +34,24 @@ public class BluetoothProbe extends Base implements PassiveProbe {
 
     /**
      * Constructor only for testing purposes.
-     * @param bluetoothAdapter BluetoothAdapter being used.
-     * @param context Context being used.
+     *
+     * @param bluetoothAdapter  BluetoothAdapter being used.
+     * @param context           Context being used.
      * @param jsonObjectFactory jsonObjectFactory being used.
-     * @param receiver Receiver being used.
+     * @param receiver          Receiver being used.
      */
     public BluetoothProbe(BluetoothAdapter bluetoothAdapter, Context context, JsonObjectFactory jsonObjectFactory, BroadcastReceiver receiver) {
         super(context);
         this.bluetoothAdapter = bluetoothAdapter;
         this.jsonObjectFactory = jsonObjectFactory;
-        BluetoothProbe.receiver = receiver;
+        this.receiver = receiver;
     }
 
     /**
      * Constructor only for testing purposes.
+     *
      * @param bluetoothAdapter BluetoothAdapter being used.
-     * @param context Context being used.
+     * @param context          Context being used.
      */
     public BluetoothProbe(BluetoothAdapter bluetoothAdapter, Context context) {
         this(bluetoothAdapter, context, null, null);
@@ -64,28 +61,30 @@ public class BluetoothProbe extends Base implements PassiveProbe {
      * Constructor actually in use. Takes the default bluetooth adapter of the device as bluetoothadapter.
      */
     public BluetoothProbe() {
-        super();
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     /**
      * Getter for Receiver.
+     *
      * @return current bond receiver.
      */
-    public static BroadcastReceiver getReceiver() {
+    public BroadcastReceiver getReceiver() {
         return receiver;
     }
 
     /**
      * Setter for receiver.
+     *
      * @param receiver BluetoothInformationReceiver to be set.
      */
-    public static void setReceiver(BluetoothInformationReceiver receiver) {
-        BluetoothProbe.receiver = receiver;
+    public void setReceiver(BluetoothInformationReceiver receiver) {
+        this.receiver = receiver;
     }
 
     /**
      * Gets tje current device name for intent.
+     *
      * @param intent to get the device name from.
      * @return "N/A" if no device bond, else the devices name.
      */
@@ -93,22 +92,18 @@ public class BluetoothProbe extends Base implements PassiveProbe {
         BluetoothDevice device = intent
                 .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 
-        return (device == null) ? "N/A" : device.getName();
+        return (device == null) ? "NA" : device.getName();
     }
 
     /**
      * Getter for the TAG
+     *
      * @return TAG
      */
     protected static String getTAG() {
         return TAG;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return context.
-     */
     @Override
     public final Context getContext() {
         return super.getContext();
@@ -161,7 +156,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
             intent.putExtra("Address: ", bluetoothAdapter.getAddress());
             intent.putExtra("Name: ", bluetoothAdapter.getName());
             Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
-            Collection<String> bondedDeviceNames = new ArrayList<>();
+            Collection<String> bondedDeviceNames = new ArrayList<>(3);
             for (BluetoothDevice device : bondedDevices) {
                 bondedDeviceNames.add(device.getName());
             }
@@ -177,6 +172,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
 
     /**
      * Getter for cached intent.
+     *
      * @return the last sent intent.
      */
     public final Intent getLastSentIntent() {
@@ -189,14 +185,13 @@ public class BluetoothProbe extends Base implements PassiveProbe {
     @Override
     protected final void onDisable() {
         onStop();
-        if(bluetoothAdapter != null){
-            getContext().unregisterReceiver(receiver);
-        }
+        getContext().unregisterReceiver(receiver);
 
     }
 
     /**
      * Calls inherited funf method for sending data.
+     *
      * @param intent with the data to be send.
      */
     protected final void sendData(Intent intent) {
@@ -214,6 +209,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
     /**
      * Gets connection state changed information.
      * Collects them and adds them to the intent
+     *
      * @param intent to get the connection state changed information from.
      * @return intent with additional connection state
      * changed information.
@@ -265,6 +261,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
     /**
      * Gets scan state changed information.
      * Collects them and adds them to the intent
+     *
      * @param intent to get the scan state changed information from.
      * @return intent with additional information
      * about the scan change.
@@ -308,11 +305,12 @@ public class BluetoothProbe extends Base implements PassiveProbe {
     /**
      * Gets  state changed information.
      * Collects them and adds them to the intent.
+     *
      * @param intent to get the state changed information from.
      * @return intent with additional state
      * changed information.
      */
-    protected final Intent getStateChangeInformation(Intent intent) {
+    static Intent getStateChangeInformation(Intent intent) {
         intent.putExtra(TAG, "State changed.");
 
         switch (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
@@ -356,6 +354,7 @@ public class BluetoothProbe extends Base implements PassiveProbe {
 
     /**
      * Getter for the current bond bluetoot adapter.
+     *
      * @return current bond bluetoot adapter
      */
     protected final BluetoothAdapter getBluetoothAdapter() {

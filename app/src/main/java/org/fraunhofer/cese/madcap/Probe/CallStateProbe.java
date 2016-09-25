@@ -20,7 +20,7 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
 
     @Override
     protected void onEnable() {
-        super.onStart();
+        onStart();
 
         TelephonyManager telephony = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
         telephony.listen(phoneListener, PhoneStateListener.LISTEN_CALL_STATE);
@@ -42,7 +42,7 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
     @Override
     protected void onDisable() {
 
-        super.onStop();
+        onStop();
         getContext().unregisterReceiver(receiver);
     }
 

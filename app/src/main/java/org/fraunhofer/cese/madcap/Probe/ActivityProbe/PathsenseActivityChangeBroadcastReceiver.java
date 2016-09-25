@@ -9,12 +9,11 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.google.inject.Inject;
 import com.pathsense.android.sdk.location.PathsenseActivityRecognitionReceiver;
 import com.pathsense.android.sdk.location.PathsenseDetectedActivities;
 
 public class PathsenseActivityChangeBroadcastReceiver extends PathsenseActivityRecognitionReceiver {
-    @Inject
+
     private ActivityProbe callback;
 
     static final String TAG = PathsenseActivityChangeBroadcastReceiver.class.getName();

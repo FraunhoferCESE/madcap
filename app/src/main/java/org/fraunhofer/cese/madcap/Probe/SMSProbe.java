@@ -19,7 +19,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
 
     private static final String TAG = "Fraunhofer." + SMSProbe.class.getSimpleName();
 
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
+    private final BroadcastReceiver receiver = new BroadcastReceiver() {
         @TargetApi(Build.VERSION_CODES.KITKAT)
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -53,7 +53,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
     };
 
 
-    private ContentObserver smsOutgoingObserver = new ContentObserver(new Handler()) {
+    private final ContentObserver smsOutgoingObserver = new ContentObserver(new Handler()) {
         @Override
         public void onChange(boolean selfChange, Uri uri) {
             super.onChange(selfChange, uri);
@@ -114,7 +114,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
         }
     };
 
-    private ContentObserver mmsOutgoingObserver = new ContentObserver(new Handler()) {
+    private final ContentObserver mmsOutgoingObserver = new ContentObserver(new Handler()) {
 
         @Override
         public void onChange(boolean selfChange) {
@@ -173,7 +173,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
 
     @Override
     protected void onEnable() {
-        super.onStart();
+        onStart();
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
         filter.addAction("android.provider.Telephony.SMS_EMERGENCY_CB_RECEIVED");
@@ -190,7 +190,7 @@ public class SMSProbe extends Probe.Base implements Probe.PassiveProbe {
 
         getContext().getContentResolver().unregisterContentObserver(smsOutgoingObserver);
         getContext().getContentResolver().unregisterContentObserver(mmsOutgoingObserver);
-        super.onStop();
+        onStop();
     }
 
 

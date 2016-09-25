@@ -24,9 +24,9 @@ public class RunningApplicationsProbe extends Probe.Base implements Probe.Contin
     protected void onEnable() {
 
         Log.d(TAG, "RunningApplicationsProbe starting");
-        super.onStart();
-        final Gson gson = getGson();
-        final ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        onStart();
+        Gson gson = getGson();
+        ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
 
         runningApplicationsDeliverer = createRunningApplicationsDeliverer(gson, am);
         runningApplicationsDeliverer.start();
@@ -46,7 +46,7 @@ public class RunningApplicationsProbe extends Probe.Base implements Probe.Contin
 
                 boolean isInterrupted = false;
 
-                while (!isInterrupted && !(runningApplicationsDeliverer.isInterrupted())) {
+                while (!isInterrupted && !runningApplicationsDeliverer.isInterrupted()) {
                     List<ActivityManager.RunningAppProcessInfo> runningAppProcessInfoList = am.getRunningAppProcesses();
                     JsonObject allApps = new JsonObject();
                     int i = 1;

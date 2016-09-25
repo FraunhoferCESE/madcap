@@ -38,7 +38,7 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
 
     @Override
     public void onEnable(){
-        super.onStart();
+        onStart();
         // location api
         localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
 
@@ -71,7 +71,7 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
         mApi.removeActivityUpdates();
 
 
-        super.onStop();
+        onStop();
         //getContext().unregisterReceiver(receiver);
     }
 

@@ -58,7 +58,7 @@ public class BluetoothProbeTest{
         BluetoothProbe bluetoothProbe_four_param = new BluetoothProbe(mockBluetoothAdapter, context, jsonObjectFactory, receiver);
         assertEquals("Unmatched", context, bluetoothProbe_four_param.getContext());
         assertEquals("Unmatched", mockBluetoothAdapter, bluetoothProbe_four_param.getBluetoothAdapter());
-        assertEquals("Unmatched", receiver, BluetoothProbe.getReceiver());
+        assertEquals("Unmatched", receiver, bluetoothProbe_four_param.getReceiver());
 
     }
 

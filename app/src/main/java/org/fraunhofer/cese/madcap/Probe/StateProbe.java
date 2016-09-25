@@ -25,7 +25,7 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
     @Override
     protected void onEnable() {
 
-        super.onStart();
+        onStart();
 
         receiver = new StateInformationReceiver(this);
         IntentFilter filter = new IntentFilter();

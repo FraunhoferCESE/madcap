@@ -10,7 +10,7 @@ import android.content.Intent;
  */
 public class BluetoothInformationReceiver extends BroadcastReceiver {
 
-    private BluetoothProbe bluetoothProbe;
+    private final BluetoothProbe bluetoothProbe;
     public BluetoothProbe callback;
 
     public BluetoothInformationReceiver(BluetoothProbe bluetoothProbe, BluetoothProbe callback) {
@@ -66,7 +66,7 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
                     callback.sendData(intent);
                     break;
                 case BluetoothAdapter.ACTION_STATE_CHANGED:
-                    intent = bluetoothProbe.getStateChangeInformation(intent);
+                    intent = BluetoothProbe.getStateChangeInformation(intent);
                     callback.sendData(intent);
                     break;
                 default:

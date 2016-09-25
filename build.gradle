@@ -3,6 +3,7 @@
 buildscript {
     repositories {
         jcenter()
+
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0'
@@ -11,6 +12,7 @@ buildscript {
 //        apply plugin: 'java'
 //        sourceCompatibility = 1.7
 //        targetCompatibility = 1.7
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
 
     }
 
@@ -27,3 +29,4 @@ allprojects {
         targetCompatibility = 1.7
     }
 }
+
