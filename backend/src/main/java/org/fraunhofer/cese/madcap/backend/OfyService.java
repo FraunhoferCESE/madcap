@@ -22,6 +22,7 @@ public class OfyService {
      * Returns the Objectify service wrapper.
      * @return The Objectify service wrapper.
      */
+    @SuppressWarnings("StaticMethodOnlyUsedInOneClass")
     public static Objectify ofy() {
         return ObjectifyService.ofy();
     }

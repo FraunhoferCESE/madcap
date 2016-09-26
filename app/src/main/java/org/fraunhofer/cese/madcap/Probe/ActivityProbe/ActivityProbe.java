@@ -23,7 +23,6 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
     // Messages
     static final int MESSAGE_ON_ACTIVITY_CHANGE = 1;
     static final int MESSAGE_ON_ACTIVITY_UPDATE = 2;
-    static final int MESSAGE_ON_DEVICE_HOLDING = 3;
 
     // Registration of internal receivers
 

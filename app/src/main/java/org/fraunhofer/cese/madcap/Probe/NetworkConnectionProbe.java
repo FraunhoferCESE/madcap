@@ -160,6 +160,40 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
                     break;
             }
         }
+
+        /**
+         * Returns the wifi state from before a change as a String for adding that information to an intent object.
+         *
+         * @param intent
+         * @return previous wifi state
+         */
+        private String getPreviousWifiState(Intent intent) {
+
+            String result;
+
+            switch (intent.getIntExtra(WifiManager.EXTRA_PREVIOUS_WIFI_STATE, 0)) {
+                case WifiManager.WIFI_STATE_ENABLED:
+                    result = "enabled.";
+                    break;
+                case WifiManager.WIFI_STATE_DISABLED:
+                    result = "disabled.";
+                    break;
+                case WifiManager.WIFI_STATE_ENABLING:
+                    result = "enabling.";
+                    break;
+                case WifiManager.WIFI_STATE_DISABLING:
+                    result = "disabling";
+                    break;
+                case WifiManager.WIFI_STATE_UNKNOWN:
+                    result = "unknown.";
+                    break;
+                default:
+                    result = "Something went wrong";
+                    break;
+            }
+
+            return result;
+        }
     }
 
     /**
@@ -227,38 +261,5 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         return result;
     }
 
-    /**
-     * Returns the wifi state from before a change as a String for adding that information to an intent object.
-     *
-     * @param intent
-     * @return previous wifi state
-     */
-    private String getPreviousWifiState(Intent intent) {
-
-        String result;
-
-        switch (intent.getIntExtra(WifiManager.EXTRA_PREVIOUS_WIFI_STATE, 0)) {
-            case WifiManager.WIFI_STATE_ENABLED:
-                result = "enabled.";
-                break;
-            case WifiManager.WIFI_STATE_DISABLED:
-                result = "disabled.";
-                break;
-            case WifiManager.WIFI_STATE_ENABLING:
-                result = "enabling.";
-                break;
-            case WifiManager.WIFI_STATE_DISABLING:
-                result = "disabling";
-                break;
-            case WifiManager.WIFI_STATE_UNKNOWN:
-                result = "unknown.";
-                break;
-            default:
-                result = "Something went wrong";
-                break;
-        }
-
-        return result;
-    }
 
 }
