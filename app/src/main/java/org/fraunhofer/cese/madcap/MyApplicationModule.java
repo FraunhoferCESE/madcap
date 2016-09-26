@@ -1,6 +1,8 @@
 package org.fraunhofer.cese.madcap;
 
 import android.app.Application;
+import android.bluetooth.BluetoothAdapter;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.res.Resources;
@@ -119,5 +121,17 @@ class MyApplicationModule {
 //                });
         return builder.build();
     }
+
+    @Provides
+    BluetoothAdapter provideBluetoothAdapter(){
+        return BluetoothAdapter.getDefaultAdapter();
+    }
+
+    @Provides
+    JsonObjectFactory provideJsonObjectFactory(){
+        return null;
+    }
+
+
 
 }

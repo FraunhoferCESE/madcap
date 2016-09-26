@@ -61,13 +61,14 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
      * @param bluetoothAdapter  BluetoothAdapter being used.
      * @param context           Context being used.
      * @param jsonObjectFactory jsonObjectFactory being used.
-     * @param receiver          Receiver being used.
      */
-    public BluetoothProbe(BluetoothAdapter bluetoothAdapter, Context context, JsonObjectFactory jsonObjectFactory, BroadcastReceiver receiver) {
+    @Inject
+    public BluetoothProbe(BluetoothAdapter bluetoothAdapter, Context context, JsonObjectFactory jsonObjectFactory, IntentFilterFactory intentFilterFactory, IntentFactory intentFactory) {
         super(context);
         this.bluetoothAdapter = bluetoothAdapter;
         this.jsonObjectFactory = jsonObjectFactory;
-        this.receiver = receiver;
+        this.intentFactory = intentFactory;
+        this.intentFilterFactory = intentFilterFactory;
     }
 
     /**
@@ -77,7 +78,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
      * @param context          Context being used.
      */
     public BluetoothProbe(BluetoothAdapter bluetoothAdapter, Context context) {
-        this(bluetoothAdapter, context, null, null);
+        this(bluetoothAdapter, context, null, null, null);
     }
 
     /**
@@ -156,7 +157,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
     protected final void onEnable() {
         onStart();
 
-        receiver = new BluetoothInformationReceiver(this, this);
+        receiver = new BluetoothInformationReceiver(this);
 
         IntentFilter intentFilter = intentFilterFactory.getNew();
 
@@ -406,6 +407,76 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
             }
         }
         return result;
+    }
+
+    class BluetoothInformationReceiver extends BroadcastReceiver {
+
+        private final BluetoothProbe bluetoothProbe;
+
+        public BluetoothInformationReceiver(BluetoothProbe bluetoothProbe) {
+            this.bluetoothProbe = bluetoothProbe;
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+
+//            List<BluetoothDevice> deviceList = ((BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE)).getConnectedDevices(BluetoothProfile.GATT);
+//            deviceList.addAll(((BluetoothManager)context.getSystemService(Context.BLUETOOTH_SERVICE)).getConnectedDevices(BluetoothProfile.GATT_SERVER));
+//            String devices = "";
+//            if(deviceList.isEmpty()){
+//                devices = "no devices.";
+//            }
+//            else {
+//                for (BluetoothDevice bluetoothDevice : deviceList) {
+//                    devices = devices + bluetoothDevice.getName() + ";; ";
+//                }
+//            }
+//            intent.putExtra("Connected devices:", devices);
+            if (bluetoothProbe.getBluetoothAdapter() != null) {
+                switch (intent.getAction()) {
+                    case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED:
+                        intent = BluetoothProbe.getConnectionStateCInformation(intent);
+                        sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
+                        intent.putExtra(BluetoothProbe.getTAG(), "searching for remote devices.");
+                        sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
+                        intent.putExtra(BluetoothProbe.getTAG(), "search for devices finished.");
+                        sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED:
+                        intent.putExtra(BluetoothProbe.getTAG(), "adapter name changed");
+                        intent.putExtra("new name: ", bluetoothProbe.getBluetoothAdapter().getName());
+                        sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE:
+                        intent.putExtra(BluetoothProbe.getTAG(), "discoverability requested.");
+                        sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_REQUEST_ENABLE:
+                        intent.putExtra(BluetoothProbe.getTAG(), "user asked to enable Bluetooth");
+                        sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
+                        intent = BluetoothProbe.getScanModeChangeInformation(intent);
+                        sendData(intent);
+                        break;
+                    case BluetoothAdapter.ACTION_STATE_CHANGED:
+                        intent = BluetoothProbe.getStateChangeInformation(intent);
+                        sendData(intent);
+                        break;
+                    default:
+                        intent.putExtra(BluetoothProbe.getTAG(), intent.getAction());
+                        sendData(intent);
+                        break;
+                }
+            }
+
+
+        }
     }
 }
 
