@@ -1,6 +1,7 @@
 package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,6 +17,7 @@ public class DatabaseWriteResult {
 
     private Collection<String> savedEntries;
     private long databaseSize;
+    @Nullable
     private Exception error;
 
     /**
