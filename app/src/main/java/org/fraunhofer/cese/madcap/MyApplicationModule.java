@@ -2,6 +2,7 @@ package org.fraunhofer.cese.madcap;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 
@@ -11,6 +12,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
+import org.fraunhofer.cese.madcap.factories.IntentFilterFactory;
 
 import javax.inject.Singleton;
 

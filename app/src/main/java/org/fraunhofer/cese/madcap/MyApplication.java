@@ -26,7 +26,7 @@ public class MyApplication extends Application {
      *
      * @return the Dagger2 {@link dagger.Component} that can be used to initialize the dependency injection.
      */
-    final MyComponent getComponent() {
+    public final MyComponent getComponent() {
         return component;
     }
 

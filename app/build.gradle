@@ -27,6 +27,7 @@ android {
             debuggable true
             //noinspection GroovyAssignabilityCheck
             signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
 //        compileOptions {
 //            targetCompatibility = '1.7'
@@ -57,6 +58,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:9.6.1'
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.27'
     compile 'org.apache.commons:commons-collections4:4.1'
+
 
     //Dagger
     apt 'com.google.dagger:dagger-compiler:2.5'

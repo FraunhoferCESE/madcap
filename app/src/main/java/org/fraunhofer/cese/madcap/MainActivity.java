@@ -104,7 +104,10 @@ public class MainActivity extends Activity {
             activityProbe = gson.fromJson(new JsonObject(), ActivityProbe.class);
             accelerometerProbe = gson.fromJson(new JsonObject(), AccelerometerProbe.class);
             audioProbe = gson.fromJson(new JsonObject(), AudioProbe.class);
+
             bluetoothProbe = gson.fromJson(new JsonObject(), BluetoothProbe.class);
+            ((MyApplication) getApplication()).getComponent().inject(bluetoothProbe);
+
             callStateProbe = gson.fromJson(new JsonObject(), CallStateProbe.class);
             foregroundProbe = gson.fromJson(new JsonObject(), ForegroundProbe.class);
             locationProbe = gson.fromJson(getString(R.string.probe_location), SimpleLocationProbe.class);
@@ -151,12 +154,15 @@ public class MainActivity extends Activity {
 
 
         pipeline.setEnabled(false);
+        assert funfManager != null;
         funfManager.disablePipeline(PIPELINE_NAME);
     }
 
     private void enablePipelines() {
         Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
+        assert funfManager != null;
         funfManager.enablePipeline(PIPELINE_NAME);
+
         pipeline.setEnabled(true);
 
         activityProbe.registerPassiveListener(pipeline);
@@ -178,6 +184,8 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Performs dependency injection
         ((MyApplication) getApplication()).getComponent().inject(this);
 
         if (savedInstanceState != null) {

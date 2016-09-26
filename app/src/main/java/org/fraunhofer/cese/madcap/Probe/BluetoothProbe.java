@@ -9,10 +9,15 @@ import android.content.IntentFilter;
 import android.util.Log;
 
 import org.fraunhofer.cese.madcap.JsonObjectFactory;
+import org.fraunhofer.cese.madcap.MainActivity;
+import org.fraunhofer.cese.madcap.factories.IntentFactory;
+import org.fraunhofer.cese.madcap.factories.IntentFilterFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+
+import javax.inject.Inject;
 
 import edu.mit.media.funf.probe.Probe;
 
@@ -26,10 +31,28 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
     public static final String TURNING_OFF = "Turning OFF";
     public static final String TURNING_ON = "Turning ON";
     private static final String TAG = "BluetoothProbe: ";
+    public static final String CONNECTED = "connected";
+    public static final String CONNECTING = "connecting";
+    public static final String DISCONNECTED = "disconnected";
+    public static final String CACHE_CLOSING = "cacheClosing";
+    public static final String NEW_CONNECTION_STATE = "new ConnectionState: ";
+    public static final String PREVIOUS_CONNECTION_STATE = "previous ConnectionState: ";
+    public static final String NEW_SCAN_MODE = "new ScanMode: ";
+    public static final String PREVIOUS_SCAN_MODE = "previous ScanMode: ";
+    public static final String INVISIBLE = "invisible";
+    public static final String INVISIBLE_BUT_CONNECTABLE = "invisible, but connectable";
+    public static final String VISIBLE_AND_CONNECTABLE = "visible and connectable";
     private BroadcastReceiver receiver;
+
+    // Injection of factories
+    @Inject IntentFactory intentFactory;
+
+    @Inject IntentFilterFactory intentFilterFactory;
+
     private final BluetoothAdapter bluetoothAdapter;
     private JsonObjectFactory jsonObjectFactory;
     private Intent lastSentIntent;
+
 
 
     /**
@@ -135,7 +158,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
         receiver = new BluetoothInformationReceiver(this, this);
 
-        IntentFilter intentFilter = new IntentFilter();
+        IntentFilter intentFilter = intentFilterFactory.getNew();
 
         if (bluetoothAdapter != null) {
             intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
@@ -150,7 +173,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
             Log.i(TAG, "BluetoothProbe enabled.");
 
-            Intent intent = new Intent();
+            Intent intent = intentFactory.getNew();
             intent.putExtra(TAG, "Initial Probe!");
             intent.putExtra("State: ", getBluetoothState());
             intent.putExtra("Address: ", bluetoothAdapter.getAddress());
@@ -219,40 +242,40 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
         int intExtra = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, 0);
         switch (intExtra) {
             case BluetoothAdapter.STATE_CONNECTED:
-                intent.putExtra("new ConnectionState: ", "connected");
+                intent.putExtra(NEW_CONNECTION_STATE, CONNECTED);
                 intent.putExtra("connected device:", getDeviceName(intent));
                 break;
             case BluetoothAdapter.STATE_CONNECTING:
-                intent.putExtra("new ConnectionState: ", "connecting");
+                intent.putExtra(NEW_CONNECTION_STATE, CONNECTING);
                 break;
             case BluetoothAdapter.STATE_DISCONNECTED:
-                intent.putExtra("new ConnectionState: ", "disconnected");
+                intent.putExtra(NEW_CONNECTION_STATE, DISCONNECTED);
                 intent.putExtra("disconnected device:", getDeviceName(intent));
                 break;
             case BluetoothAdapter.STATE_DISCONNECTING:
-                intent.putExtra("new ConnectionState: ", "cacheClosing");
+                intent.putExtra(NEW_CONNECTION_STATE, CACHE_CLOSING);
                 break;
             default:
-                intent.putExtra("new ConnectionState: ", intExtra);
+                intent.putExtra(NEW_CONNECTION_STATE, intExtra);
                 break;
         }
 
         int extraPrevious = intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_CONNECTION_STATE, 0);
         switch (extraPrevious) {
             case BluetoothAdapter.STATE_CONNECTED:
-                intent.putExtra("previous ConnectionState: ", "connected");
+                intent.putExtra(PREVIOUS_CONNECTION_STATE, CONNECTED);
                 break;
             case BluetoothAdapter.STATE_CONNECTING:
-                intent.putExtra("previous ConnectionState: ", "connecting");
+                intent.putExtra(PREVIOUS_CONNECTION_STATE, CONNECTING);
                 break;
             case BluetoothAdapter.STATE_DISCONNECTED:
-                intent.putExtra("previous ConnectionState: ", "disconnected");
+                intent.putExtra(PREVIOUS_CONNECTION_STATE, DISCONNECTED);
                 break;
             case BluetoothAdapter.STATE_DISCONNECTING:
-                intent.putExtra("previous ConnectionState: ", "cacheClosing");
+                intent.putExtra(PREVIOUS_CONNECTION_STATE, CACHE_CLOSING);
                 break;
             default:
-                intent.putExtra("previous ConnectionState: ", extraPrevious);
+                intent.putExtra(PREVIOUS_CONNECTION_STATE, extraPrevious);
                 break;
         }
         return intent;
@@ -271,31 +294,31 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
         switch (intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0)) {
             case BluetoothAdapter.SCAN_MODE_NONE:
-                intent.putExtra("new ScanMode: ", "invisible");
+                intent.putExtra(NEW_SCAN_MODE, "invisible");
                 break;
             case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                intent.putExtra("new ScanMode: ", "invisible, but connectable");
+                intent.putExtra(NEW_SCAN_MODE, "invisible, but connectable");
                 break;
             case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                intent.putExtra("new ScanMode: ", "visible and connectable");
+                intent.putExtra(NEW_SCAN_MODE, "visible and connectable");
                 break;
             default:
-                intent.putExtra("new ScanMode: ", intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0));
+                intent.putExtra(NEW_SCAN_MODE, intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0));
                 break;
         }
 
         switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, 0)) {
             case BluetoothAdapter.SCAN_MODE_NONE:
-                intent.putExtra("previous ScanMode: ", "invisible");
+                intent.putExtra(PREVIOUS_SCAN_MODE, INVISIBLE);
                 break;
             case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
-                intent.putExtra("previous ScanMode: ", "invisible, but connectable");
+                intent.putExtra(PREVIOUS_SCAN_MODE, INVISIBLE_BUT_CONNECTABLE);
                 break;
             case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
-                intent.putExtra("previous ScanMode: ", "visible and connectable");
+                intent.putExtra(PREVIOUS_SCAN_MODE, VISIBLE_AND_CONNECTABLE);
                 break;
             default:
-                intent.putExtra("previous ScandMode: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, 0));
+                intent.putExtra(PREVIOUS_SCAN_MODE, intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_SCAN_MODE, 0));
                 break;
         }
 
