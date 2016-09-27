@@ -16,6 +16,7 @@ android {
         versionCode 1
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -45,6 +46,12 @@ repositories {
     }
 }
 
+configurations {
+    all*.exclude group: 'commons-logging', module: 'commons-logging'
+    all*.exclude group: 'com.google.code.findbugs'
+    all*.exclude group: 'javax.inject', module: 'javax.inject'
+}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/gson-2.1.funf.jar')
@@ -53,17 +60,19 @@ dependencies {
     compile(name:'pathsense-android-sdk-bundle-release-2.3.0.0-beta', ext:'aar')
     compile project(path: ':backend', configuration: 'android-endpoints')
 
+
     compile 'com.j256.ormlite:ormlite-android:5.0'
     compile 'com.opencsv:opencsv:3.8'
-    compile 'com.google.android.gms:play-services:9.6.1'
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.27'
-    compile 'org.apache.commons:commons-collections4:4.1'
 
+    compile 'com.google.android.gms:play-services-location:9.6.1'
+    compile 'com.google.android.gms:play-services-iid:9.6.1'
+    compile 'com.android.support:multidex:1.0.1'
 
     //Dagger
     apt 'com.google.dagger:dagger-compiler:2.5'
     compile 'com.google.dagger:dagger:2.5'
-    provided 'javax.annotation:jsr250-api:1.0'
+//    provided 'javax.annotation:jsr250-api:1.0'
 
     testCompile 'junit:junit:4.12'
     testCompile 'org.mockito:mockito-core:1.10.19'

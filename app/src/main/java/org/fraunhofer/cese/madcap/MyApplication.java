@@ -1,6 +1,7 @@
 package org.fraunhofer.cese.madcap;
 
 import android.app.Application;
+import android.support.multidex.MultiDexApplication;
 
 
 /**
@@ -8,7 +9,7 @@ import android.app.Application;
  * <p>
  * Created by llayman on 9/23/2016.
  */
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
     private MyComponent component;
 
     @Override
