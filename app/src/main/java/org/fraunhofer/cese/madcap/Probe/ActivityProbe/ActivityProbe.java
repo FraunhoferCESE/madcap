@@ -24,8 +24,6 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
     static final int MESSAGE_ON_ACTIVITY_CHANGE = 1;
     static final int MESSAGE_ON_ACTIVITY_UPDATE = 2;
 
-    // Registration of internal receivers
-
     PathsenseLocationProviderApi mApi;
 
     private class LocalBroadcastReceiver extends BroadcastReceiver {
@@ -40,25 +38,16 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
     public void onEnable(){
         onStart();
         // location api
-        localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+        if(localBroadcastManager == null){
+            localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+        }
 
         localBroadcastManager.registerReceiver(new LocalBroadcastReceiver(), new IntentFilter("activityChange"));
-
         localBroadcastManager.registerReceiver(new LocalBroadcastReceiver(), new IntentFilter("activityUpdate"));
 
         mApi = PathsenseLocationProviderApi.getInstance(getContext());
         mApi.requestActivityChanges(PathsenseActivityChangeBroadcastReceiver.class);
         mApi.requestActivityUpdates(PathsenseActivityUpdateBroadcastReceiver.class);
-        /*
-        // receivers old
-        localBroadcastManager = LocalBroadcastManager.getInstance(mainActivity);
-        pActivityChangeReceiver = new InternalActivityChangeReceiver(this);
-        localBroadcastManager.registerReceiver(pActivityChangeReceiver, new IntentFilter("activityChange"));
-        pActivityUpdateReceiver = new InternalActivityUpdateReceiver(this);
-        localBroadcastManager.registerReceiver(pActivityUpdateReceiver, new IntentFilter("activityUpdate"));
-        pDeviceHoldingReceiver = new InternalDeviceHoldingReceiver(this);
-        localBroadcastManager.registerReceiver(pDeviceHoldingReceiver, new IntentFilter("deviceHolding"));
-        */
     }
 
     protected void sendData(Intent intent) {
@@ -69,8 +58,6 @@ public class ActivityProbe extends Probe.Base implements Probe.PassiveProbe {
     protected void onDisable() {
         mApi.removeActivityChanges();
         mApi.removeActivityUpdates();
-
-
         onStop();
         //getContext().unregisterReceiver(receiver);
     }

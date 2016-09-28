@@ -14,6 +14,10 @@ public class IntentFilterFactory implements MadcapFactory {
         return new IntentFilter();
     }
 
+    public IntentFilter getNew(String s) {
+        return new IntentFilter(s);
+    }
+
     @Inject
     public IntentFilterFactory(){
 

@@ -11,6 +11,7 @@ import android.test.mock.MockContext;
 
 import com.google.gson.JsonObject;
 
+import org.apache.commons.collections.functors.SwitchTransformer;
 import org.fraunhofer.cese.madcap.JsonObjectFactory;
 import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
@@ -23,6 +24,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockitoAnnotations;
 
+import java.net.SocketPermission;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -34,17 +36,23 @@ import static org.mockito.Mockito.*;
  */
 public class BluetoothProbeTest{
     BluetoothProbe cut;
-    BluetoothAdapter mockBluetoothAdapter = spy(BluetoothAdapter.class);
-    Context mockContext = spy(Context.class);
-    JsonObjectFactory mockJsonObjectFactory = spy(JsonObjectFactory.class);
-    IntentFilterFactory mockIntentFilterFactory = spy(IntentFilterFactory.class);
-    IntentFactory mockIntentFactory = spy(IntentFactory.class);
+    BluetoothAdapter mockBluetoothAdapter;
+    Context mockContext;
+    JsonObjectFactory mockJsonObjectFactory;
+    IntentFilterFactory mockIntentFilterFactory;
+    IntentFactory mockIntentFactory;
 
     @Before
     public final void setUp() throws Exception {
         //super.setUp();
-        BluetoothProbe cut = new BluetoothProbe(mockBluetoothAdapter, mockContext, mockJsonObjectFactory, mockIntentFilterFactory, mockIntentFactory);
+        mockBluetoothAdapter = spy(BluetoothAdapter.class);
+        mockContext = spy(Context.class);
+        mockJsonObjectFactory = spy(JsonObjectFactory.class);
+        mockIntentFilterFactory = spy(IntentFilterFactory.class);
+        mockIntentFactory = spy(IntentFactory.class);
+
         MockitoAnnotations.initMocks(this);
+
 
     }
 
@@ -76,13 +84,11 @@ public class BluetoothProbeTest{
         //assertEquals("Unmatched", receiver, bluetoothProbe_four_param.getReceiver());
 
     }
+    */
 
     @Test
     public final void testOnEnable() throws Exception {
-        //Context context = spy(Context.class);
-        Context context = new MockContext();
-        JsonObjectFactory jsonObjectFactory = mock(JsonObjectFactory.class);
-        when(jsonObjectFactory.createJsonObject(any(Intent.class))).thenReturn(new JsonObject());
+        when(mockJsonObjectFactory.createJsonObject(any(Intent.class))).thenReturn(new JsonObject());
 
         when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_OFF);
         when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_OFF);
@@ -94,10 +100,21 @@ public class BluetoothProbeTest{
 
         when(mockBluetoothAdapter.getBondedDevices()).thenReturn(mockBondDevices);
 
-        BluetoothProbe bluetoothProbe = new BluetoothProbe(mockBluetoothAdapter, context, jsonObjectFactory, null);
-        bluetoothProbe.onEnable();
-        assertEquals("Unmatched", BluetoothProbe.OFF, bluetoothProbe.getLastSentIntent().getStringExtra("State: "));
+        Intent mockIntent = spy(Intent.class);
+        when(mockIntentFactory.getNew()).thenReturn(mockIntent);
+
+        //System.out.println(mockIntentFactory);
+        cut = new BluetoothProbe(mockBluetoothAdapter, mockContext, mockJsonObjectFactory, mockIntentFilterFactory, mockIntentFactory);
+        cut.onEnable();
+
+        BluetoothProbe spyCut = spy(cut);
+        verify(mockIntentFactory, atLeastOnce()).getNew();
+        verify(mockIntent, atLeastOnce()).putExtra(BluetoothProbe.getTAG(), "Initial Probe!");
+        verify(mockIntent, atLeastOnce()).putExtra("State: ", BluetoothProbe.OFF);
+        assertEquals("Unmatched", mockIntent, cut.getLastSentIntent());
     }
+
+    /*
 
     @Test
     public final void testOnDisable() throws Exception {

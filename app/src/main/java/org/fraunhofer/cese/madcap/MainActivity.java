@@ -102,6 +102,8 @@ public class MainActivity extends Activity {
             Gson gson = funfManager.getGson();
 
             activityProbe = gson.fromJson(new JsonObject(), ActivityProbe.class);
+            //((MyApplication) getApplication()).getComponent().inject(activityProbe);
+
             accelerometerProbe = gson.fromJson(new JsonObject(), AccelerometerProbe.class);
             audioProbe = gson.fromJson(new JsonObject(), AudioProbe.class);
 

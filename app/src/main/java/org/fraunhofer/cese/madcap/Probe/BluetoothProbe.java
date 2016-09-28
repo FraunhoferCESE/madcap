@@ -187,7 +187,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
             intent.putExtra("Bonded devices: ", bondedDeviceNames.toString());
 
             sendData(intent);
-            lastSentIntent = intent;
+            //lastSentIntent = intent;
 
             Log.i(TAG, "Initial state sent");
         }

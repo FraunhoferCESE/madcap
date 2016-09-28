@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap;
 
+import org.fraunhofer.cese.madcap.Probe.ActivityProbe.ActivityProbe;
 import org.fraunhofer.cese.madcap.Probe.BluetoothProbe;
 
 import javax.inject.Singleton;
@@ -17,4 +18,5 @@ import dagger.Component;
 interface MyComponent {
     void inject(MainActivity activity);
     void inject(BluetoothProbe bluetoothProbe);
+    void inject(ActivityProbe activityProbe);
 }
