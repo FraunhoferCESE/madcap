@@ -16,6 +16,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.iid.InstanceID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -189,6 +190,7 @@ public class MainActivity extends Activity {
 
         //Performs dependency injection
         ((MyApplication) getApplication()).getComponent().inject(this);
+
 
         if (savedInstanceState != null) {
             dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);

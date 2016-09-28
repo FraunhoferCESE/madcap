@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "611425056989",
+    "project_id": "madcap-dev1"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611425056989:android:fa92d1c910721c3f",
+        "android_client_info": {
+          "package_name": "org.fraunhofer.cese.madcap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "611425056989-0p8i89b6hmo5vmc278b9lu3no0hv7psu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.fraunhofer.cese.madcap",
+            "certificate_hash": "66C664310589F6232EB67903C10D24B2E0C79D67"
+          }
+        },
+        {
+          "client_id": "611425056989-hite66at9jhshdgi8phr62hu66ipo9eg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArmM7uK0aUnq7-k4wGHm3rgHrmt3fFMvE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
