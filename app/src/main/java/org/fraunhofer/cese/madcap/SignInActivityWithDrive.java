@@ -39,7 +39,7 @@ public class SignInActivityWithDrive extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.signinactivity);
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);

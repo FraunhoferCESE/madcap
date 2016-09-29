@@ -1,0 +1,37 @@
+package org.fraunhofer.cese.madcap.authentification;
+
+import android.content.Intent;
+
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.Status;
+
+/**
+ * Created by MMueller on 9/29/2016.
+ */
+
+public interface MadcapAuthEventHandler {
+
+    /**
+     * Specifies what the class is expected to do, when the silent login was sucessfull.
+     */
+    void onSilentLoginSuccessfull(OptionalPendingResult<GoogleSignInResult> opr);
+
+    void onSignInIntnet(Intent intent, int requestCode);
+
+    /**
+     * Specifies what the clas is expected to do, when the silent login was not successfull.
+     */
+    void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr);
+
+    /**
+     * Specifies what the app is expected to do when the Signout was sucessfull.
+     */
+    void onSignOutResults(Status status);
+
+    /**
+     * Specifies what the class is expected to do, when disconnected.
+     * @param status
+     */
+    void onRevokeAccess(Status status);
+}

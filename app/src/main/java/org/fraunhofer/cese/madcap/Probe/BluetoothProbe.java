@@ -210,7 +210,6 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
     protected final void onDisable() {
         onStop();
         getContext().unregisterReceiver(receiver);
-
     }
 
     /**
