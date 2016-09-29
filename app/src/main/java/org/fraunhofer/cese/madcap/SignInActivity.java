@@ -149,6 +149,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void proceedToMainActivity(){
         Log.d(TAG, "No going to the MainActivity");
         Intent intent = new Intent(this, MainActivity.class);
+        //intent.putExtra("Madcap Auth Manager", madcapAuthManager);
         startActivity(intent);
     }
 

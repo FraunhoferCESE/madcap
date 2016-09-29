@@ -15,12 +15,14 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 
+import java.io.Serializable;
+
 /**
  * Created by MMueller on 9/29/2016.
  */
-public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedListener {
+public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedListener, Serializable {
 
-    private final String TAG = "MADCAP SignIn Manager";
+    private static final String TAG = "MADCAP Auth Manager";
     private static final int RC_SIGN_IN = 9001;
 
     private static GoogleApiClient mGoogleApiClient;
@@ -48,7 +50,10 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
         this.callbackClass = callbackClass;
     }
 
-    public void silentLogin(){
+    /**
+     * Performs a silent login with cached credentials
+     */
+    public static void silentLogin(){
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
             callbackClass.onSilentLoginSuccessfull(opr);
@@ -57,7 +62,10 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
         }
     }
 
-    public void signIn(){
+    /**
+     * Performs a regualr login with an intent.
+     */
+    public static void signIn(){
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         Log.d(TAG,signInIntent.toString());
 
@@ -65,7 +73,10 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
 
     }
 
-    public void signOut(){
+    /**
+     * Sign out from Google Account. Calls callbackClass.onSignOutResults.
+     */
+    public static void signOut(){
         Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
@@ -75,7 +86,10 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
                 });
     }
 
-    public void revokeAccess(){
+    /**
+     * Should be called to disconnect Google Account.
+     */
+    public static void revokeAccess(){
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
@@ -85,10 +99,13 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
                 });
     }
 
-    public Scope[] getGsoScopeArray(){
+    /**
+     * Getter for Options
+     * @return Scope Accaray
+     */
+    public static Scope[] getGsoScopeArray(){
         return gso.getScopeArray();
     }
-
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
