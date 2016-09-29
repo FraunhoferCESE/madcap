@@ -50,7 +50,7 @@
     <string name="contacts_permission_rationale">Contacts access is needed in order to retrieve your email address.</string>
 
     <!-- Activity Names and Descriptions -->
-    <string name="name_sign_in_activity">SignInActivity</string>
+    <string name="name_sign_in_activity">MADCAP Login</string>
     <string name="desc_sign_in_activity">Signing in, signing out, and revoking access.</string>
     <string name="desc_sign_in_activity_scopes">Signing in, signing out, and revoking access with Google Drive permissions.</string>
     <string name="name_id_token_activity">IdTokenActivity</string>
