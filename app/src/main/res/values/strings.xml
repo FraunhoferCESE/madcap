@@ -15,6 +15,7 @@
     <string name="instanceIdText">Insatnce ID: %1$s</string>
     <string name="uploadResultText">Last upload result: %1$s</string>
     <string name="sendButtonText">Upload data now</string>
+    <string name="signOutButtonText">Log out</string>
     <string name="footnoteText">Developed by Fraunhofer USA, Inc.\nContact: llayman@cese.fraunhofer.org.\nFunf Open Sensing Framework licensed under the GNU Lesser GPL.</string>
     <string name="title_activity_login">Sign in</string>
 
