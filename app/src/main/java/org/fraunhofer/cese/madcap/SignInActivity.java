@@ -34,7 +34,7 @@ public class SignInActivity extends AppCompatActivity implements
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
 
-    private MadcapAuthManager madcapAuthManager;
+
     //private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
     private ProgressDialog mProgressDialog;
@@ -44,9 +44,11 @@ public class SignInActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signinactivity);
 
-        madcapAuthManager = new MadcapAuthManager(this, this);
+        MadcapAuthManager.setCallbackClass(this);
+        MadcapAuthManager.setContext(this);
 
         Log.d(TAG, "CREATED");
+        Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext().toString());
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
@@ -69,7 +71,7 @@ public class SignInActivity extends AppCompatActivity implements
         // difference.
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setScopes(madcapAuthManager.getGsoScopeArray());
+        signInButton.setScopes(MadcapAuthManager.getGsoScopeArray());
         // [END customize_button]
     }
 
@@ -77,8 +79,9 @@ public class SignInActivity extends AppCompatActivity implements
     public void onStart() {
         super.onStart();
 
+        Log.d(TAG, "On start being called, now trying to silently log in");
         // Try the silent login. After that callbacks are called.
-        madcapAuthManager.silentLogin();
+        MadcapAuthManager.silentLogin();
     }
 
     // [START onActivityResult]
@@ -103,6 +106,7 @@ public class SignInActivity extends AppCompatActivity implements
             GoogleSignInAccount acct = result.getSignInAccount();
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             updateUI(true);
+            proceedToMainActivity();
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);
@@ -147,7 +151,7 @@ public class SignInActivity extends AppCompatActivity implements
      * Starts the transition to the main activity
      */
     public void proceedToMainActivity(){
-        Log.d(TAG, "No going to the MainActivity");
+        Log.d(TAG, "Now going to the MainActivity");
         Intent intent = new Intent(this, MainActivity.class);
         //intent.putExtra("Madcap Auth Manager", madcapAuthManager);
         startActivity(intent);
@@ -158,15 +162,15 @@ public class SignInActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.sign_in_button:
                 Log.d(TAG, "pressed sign in");
-                madcapAuthManager.signIn();
+                MadcapAuthManager.signIn();
                 break;
             case R.id.sign_out_button:
                 Log.d(TAG, "pressed sign ou");
-                madcapAuthManager.signOut();
+                MadcapAuthManager.signOut();
                 break;
             case R.id.disconnect_button:
                 Log.d(TAG, "pressed disconnect");
-                madcapAuthManager.revokeAccess();
+                MadcapAuthManager.revokeAccess();
                 break;
         }
     }
@@ -181,13 +185,11 @@ public class SignInActivity extends AppCompatActivity implements
      * Specifies what the class is expected to do, when the silent login was sucessfull.
      */
     @Override
-    public void onSilentLoginSuccessfull(OptionalPendingResult<GoogleSignInResult> opr) {
+    public void onSilentLoginSuccessfull(GoogleSignInResult result) {
         // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
         // and the GoogleSignInResult will be available instantly.
         Log.d(TAG, "Got cached sign-in");
-        GoogleSignInResult result = opr.get();
         handleSignInResult(result);
-        proceedToMainActivity();
     }
 
     /**
@@ -206,6 +208,15 @@ public class SignInActivity extends AppCompatActivity implements
                 handleSignInResult(googleSignInResult);
             }
         });
+    }
+
+    /**
+     * Specifies what the class is expected to do, when the regular sign in was successful.
+     */
+    @Override
+    public void onSignInSucessfull() {
+        Log.d(TAG, "onSignInSuccessfull");
+        proceedToMainActivity();
     }
 
     @Override
@@ -230,4 +241,6 @@ public class SignInActivity extends AppCompatActivity implements
     public void onRevokeAccess(Status status) {
         updateUI(false);
     }
+
+
 }

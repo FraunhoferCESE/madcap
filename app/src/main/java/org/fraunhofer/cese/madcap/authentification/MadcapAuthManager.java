@@ -2,10 +2,13 @@ package org.fraunhofer.cese.madcap.authentification;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -15,39 +18,64 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 
+import org.fraunhofer.cese.madcap.App;
+
 import java.io.Serializable;
+
+import javax.inject.Singleton;
+
+import static android.os.Build.VERSION_CODES.N;
 
 /**
  * Created by MMueller on 9/29/2016.
+ * @Singleton due to Google requirments
  */
-public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedListener, Serializable {
+public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedListener, Serializable{
+    private static MadcapAuthManager instance = null;
 
     private static final String TAG = "MADCAP Auth Manager";
     private static final int RC_SIGN_IN = 9001;
 
-    private static GoogleApiClient mGoogleApiClient;
-    private static GoogleSignInOptions gso;
     private static Context context;
     private static MadcapAuthEventHandler callbackClass;
 
+    private static GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestEmail()
+            .requestProfile()
+            .build();
+
+    private static GoogleApiClient mGoogleApiClient = App.getmGoogleApiClient();
+    private static GoogleSignInResult lastSignInResult;
+
+
+    public static Context getContext() {
+        return context;
+    }
+
+    private MadcapAuthManager(){
+    }
+
     /**
-     * Configure initial sign-in to request the user's ID, email address, and basic
-     * profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-     * @param context Context of the interacting activity.
-     * @param callbackClass the Class which should execute the callback actions.
+     * Sets to contexts from an activity. Needs to be called
+     * every time the activity/service acessing the class changes.
+     * @param context
      */
-    public MadcapAuthManager(Context context, MadcapAuthEventHandler callbackClass){
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
+    public static void setContext(Context context){
+        MadcapAuthManager.context = context;
 
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 //.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
+    }
 
-        this.context = context;
-        this.callbackClass = callbackClass;
+    /**
+     * Sets the callback class. Needed every time, when the interacting
+     * class changes.
+     * @param callbackClass
+     */
+    public static void setCallbackClass(MadcapAuthEventHandler callbackClass){
+        MadcapAuthManager.callbackClass = callbackClass;
     }
 
     /**
@@ -56,10 +84,18 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
     public static void silentLogin(){
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
         if (opr.isDone()) {
-            callbackClass.onSilentLoginSuccessfull(opr);
+            lastSignInResult = opr.get();
+            callbackClass.onSilentLoginSuccessfull(lastSignInResult);
         } else {
             callbackClass.onSilentLoginFailed(opr);
         }
+    }
+
+    public static MadcapAuthManager getInstance(){
+        if(instance == null){
+            instance = new MadcapAuthManager();
+        }
+        return instance;
     }
 
     /**
@@ -105,6 +141,27 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
      */
     public static Scope[] getGsoScopeArray(){
         return gso.getScopeArray();
+    }
+
+    public static GoogleSignInAccount getSignInAccount(){
+        return lastSignInResult.getSignInAccount();
+    }
+
+    /**
+     * Makes the Signed in User accessable.
+     * @return Given an last name
+     */
+    public static String getSignedInUsersLastName(){
+        if(lastSignInResult != null){
+            String givenName = lastSignInResult.getSignInAccount().getGivenName();
+            String lastName = lastSignInResult.getSignInAccount().getFamilyName();
+            StringBuilder nameBuilder = new StringBuilder();
+            nameBuilder.append(givenName);
+            nameBuilder.append(" ");
+            nameBuilder.append(lastName);
+            return nameBuilder.toString();
+        }else return null;
+
     }
 
     @Override

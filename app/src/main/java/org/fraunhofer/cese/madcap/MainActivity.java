@@ -17,6 +17,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.iid.InstanceID;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -33,6 +36,8 @@ import org.fraunhofer.cese.madcap.Probe.RunningApplicationsProbe;
 import org.fraunhofer.cese.madcap.Probe.SMSProbe;
 import org.fraunhofer.cese.madcap.Probe.StateProbe;
 import org.fraunhofer.cese.madcap.appengine.GoogleAppEnginePipeline;
+import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
+import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
@@ -48,7 +53,9 @@ import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
 
-public class MainActivity extends Activity {
+import static com.pathsense.locationengine.lib.detectionLogic.b.t;
+
+public class MainActivity extends Activity implements MadcapAuthEventHandler{
     private static final String TAG = "Fraunhofer." + MainActivity.class.getSimpleName();
     public static final String PIPELINE_NAME = "appengine";
     private static final String STATE_UPLOAD_STATUS = "uploadStatus";
@@ -88,6 +95,7 @@ public class MainActivity extends Activity {
     // UI elements
     private TextView dataCountView;
     private TextView uploadResultView;
+    private TextView usernameTextview;
 
     private UploadStatusListener uploadStatusListener;
     private AsyncTask<Void, Long, Void> cacheCountUpdater;
@@ -191,6 +199,13 @@ public class MainActivity extends Activity {
         //Performs dependency injection
         ((MyApplication) getApplication()).getComponent().inject(this);
 
+        //Manage the MadcapAuthManager
+        MadcapAuthManager.setCallbackClass(this);
+        //MadcapAuthManager.setContext(this);
+
+        Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext().toString());
+
+
 
         if (savedInstanceState != null) {
             dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
@@ -205,7 +220,13 @@ public class MainActivity extends Activity {
         setContentView(R.layout.main);
         dataCountView = (TextView) findViewById(R.id.dataCountText);
         uploadResultView = (TextView) findViewById(R.id.uploadResult);
+        usernameTextview = (TextView) findViewById(R.id.usernameTextview);
         Switch collectDataSwitch = (Switch) findViewById(R.id.switch1);
+
+        if(MadcapAuthManager.getSignedInUsersLastName() != null){
+            usernameTextview.setText(MadcapAuthManager.getSignedInUsersLastName());
+        }
+
 
         ((TextView) findViewById(R.id.instanceIdText)).setText(getString(R.string.instanceIdText, InstanceID.getInstance(getApplicationContext()).getId()));
         collectDataSwitch.setChecked(isCollectingData);
@@ -223,6 +244,20 @@ public class MainActivity extends Activity {
                     }
                 }
         );
+
+        Button logoutButton = (Button) findViewById(R.id.SignOut);
+        logoutButton.setOnClickListener(new View.OnClickListener(){
+            /**
+             * Called when a view has been clicked.
+             *
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Logout clicked");
+                MadcapAuthManager.signOut();
+            }
+        });
 
         Button instantSendButton = (Button) findViewById(R.id.SendButton);
         instantSendButton.setOnClickListener(
@@ -400,6 +435,11 @@ public class MainActivity extends Activity {
         return uploadStatusListener;
     }
 
+    private void goBackToSignIn(){
+        Intent intent = new Intent(this, SignInActivity.class);
+        startActivity(intent);
+    }
+
     private void updateDataCount(long count) {
         dataCountText = count < 0 ? "Computing..." : Long.toString(count);
 
@@ -409,4 +449,60 @@ public class MainActivity extends Activity {
     }
 
 
+    /**
+     * Specifies what the class is expected to do, when the silent login was sucessfull.
+     *
+     * @param result
+     */
+    @Override
+    public void onSilentLoginSuccessfull(GoogleSignInResult result) {
+        if(MadcapAuthManager.getSignedInUsersLastName() != null){
+            usernameTextview.setText(MadcapAuthManager.getSignedInUsersLastName());
+        }
+    }
+
+    /**
+     * Specifies what the class is expected to do, when the silent login was not successfull.
+     *
+     * @param opr
+     */
+    @Override
+    public void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr) {
+
+    }
+
+    /**
+     * Specifies what the class is expected to do, when the regular sign in was successful.
+     */
+    @Override
+    public void onSignInSucessfull() {
+        if(MadcapAuthManager.getSignedInUsersLastName() != null){
+            usernameTextview.setText(MadcapAuthManager.getSignedInUsersLastName());
+        }
+    }
+
+    /**
+     * Specifies what the app is expected to do when the Signout was sucessfull.
+     *
+     * @param status
+     */
+    @Override
+    public void onSignOutResults(Status status) {
+        goBackToSignIn();
+    }
+
+    /**
+     * Specifies what the class is expected to do, when disconnected.
+     *
+     * @param status
+     */
+    @Override
+    public void onRevokeAccess(Status status) {
+
+    }
+
+    @Override
+    public void onSignInIntnet(Intent intent, int requestCode) {
+
+    }
 }

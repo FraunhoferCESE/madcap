@@ -15,14 +15,17 @@ public interface MadcapAuthEventHandler {
     /**
      * Specifies what the class is expected to do, when the silent login was sucessfull.
      */
-    void onSilentLoginSuccessfull(OptionalPendingResult<GoogleSignInResult> opr);
-
-    void onSignInIntnet(Intent intent, int requestCode);
+    void onSilentLoginSuccessfull(GoogleSignInResult result);
 
     /**
-     * Specifies what the clas is expected to do, when the silent login was not successfull.
+     * Specifies what the class is expected to do, when the silent login was not successfull.
      */
     void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr);
+
+    /**
+     * Specifies what the class is expected to do, when the regular sign in was successful.
+     */
+    void onSignInSucessfull();
 
     /**
      * Specifies what the app is expected to do when the Signout was sucessfull.
@@ -34,4 +37,6 @@ public interface MadcapAuthEventHandler {
      * @param status
      */
     void onRevokeAccess(Status status);
+
+    void onSignInIntnet(Intent intent, int requestCode);
 }
