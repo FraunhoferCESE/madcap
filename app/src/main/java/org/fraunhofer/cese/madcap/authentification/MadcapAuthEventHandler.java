@@ -38,5 +38,11 @@ public interface MadcapAuthEventHandler {
      */
     void onRevokeAccess(Status status);
 
-    void onSignInIntnet(Intent intent, int requestCode);
+    /**
+     * There the sign in intent has to be sent.
+     * @param intent
+     * @param requestCode
+     */
+    void onSignInIntent(Intent intent, int requestCode);
+
 }

@@ -2,9 +2,7 @@ package org.fraunhofer.cese.madcap.authentification;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
@@ -19,10 +17,6 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 
 import java.io.Serializable;
-
-import javax.inject.Singleton;
-
-import static android.os.Build.VERSION_CODES.N;
 
 /**
  * Created by MMueller on 9/29/2016.
@@ -96,7 +90,7 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         Log.d(TAG,signInIntent.toString());
 
-        callbackClass.onSignInIntnet(signInIntent, RC_SIGN_IN);
+        callbackClass.onSignInIntent(signInIntent, RC_SIGN_IN);
 
     }
 
@@ -140,9 +134,10 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
 
     /**
      * Makes the Signed in User accessable.
-     * @return Given an last name
+     * @return the last users name.
      */
-    public static String getSignedInUsersLastName(){
+    public static String getLastSignedInUsersName(){
+
         if(lastSignInResult != null){
             String givenName = lastSignInResult.getSignInAccount().getGivenName();
             String lastName = lastSignInResult.getSignInAccount().getFamilyName();
@@ -151,8 +146,27 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
             nameBuilder.append(" ");
             nameBuilder.append(lastName);
             return nameBuilder.toString();
-        }else return null;
+        }else{
+            Log.e(TAG, "No last user cached");
+            return null;
+        }
+    }
 
+    /**
+     * Handles the sign in result, being called from the activity
+     * which is implmenting AdcapAuthEventHandler
+     * @param result
+     */
+    public static void handleSignInResult(GoogleSignInResult result){
+        lastSignInResult = result;
+    }
+
+    /**
+     * Connects the Google Api client.
+     * Needs to be called whenever the Activity changes.
+     */
+    public void connect(){
+        mGoogleApiClient.connect();
     }
 
     @Override

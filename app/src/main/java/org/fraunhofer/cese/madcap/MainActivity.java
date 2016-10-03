@@ -16,7 +16,6 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.Status;
@@ -52,8 +51,6 @@ import javax.inject.Inject;
 import edu.mit.media.funf.FunfManager;
 import edu.mit.media.funf.probe.builtin.ScreenProbe;
 import edu.mit.media.funf.probe.builtin.SimpleLocationProbe;
-
-import static com.pathsense.locationengine.lib.detectionLogic.b.t;
 
 public class MainActivity extends Activity implements MadcapAuthEventHandler{
     private static final String TAG = "Fraunhofer." + MainActivity.class.getSimpleName();
@@ -222,8 +219,8 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
         usernameTextview = (TextView) findViewById(R.id.usernameTextview);
         Switch collectDataSwitch = (Switch) findViewById(R.id.switch1);
 
-        if(MadcapAuthManager.getSignedInUsersLastName() != null){
-            usernameTextview.setText(MadcapAuthManager.getSignedInUsersLastName());
+        if(MadcapAuthManager.getLastSignedInUsersName() != null){
+            usernameTextview.setText(MadcapAuthManager.getLastSignedInUsersName());
         }
 
 
@@ -455,8 +452,8 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
      */
     @Override
     public void onSilentLoginSuccessfull(GoogleSignInResult result) {
-        if(MadcapAuthManager.getSignedInUsersLastName() != null){
-            usernameTextview.setText(MadcapAuthManager.getSignedInUsersLastName());
+        if(MadcapAuthManager.getLastSignedInUsersName() != null){
+            usernameTextview.setText(MadcapAuthManager.getLastSignedInUsersName());
         }
     }
 
@@ -475,8 +472,8 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
      */
     @Override
     public void onSignInSucessfull() {
-        if(MadcapAuthManager.getSignedInUsersLastName() != null){
-            usernameTextview.setText(MadcapAuthManager.getSignedInUsersLastName());
+        if(MadcapAuthManager.getLastSignedInUsersName() != null){
+            usernameTextview.setText(MadcapAuthManager.getLastSignedInUsersName());
         }
     }
 
@@ -501,7 +498,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
     }
 
     @Override
-    public void onSignInIntnet(Intent intent, int requestCode) {
+    public void onSignInIntent(Intent intent, int requestCode) {
 
     }
 }

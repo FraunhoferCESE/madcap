@@ -23,6 +23,8 @@ import com.google.android.gms.common.api.Status;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
+import static com.pathsense.locationengine.lib.detectionLogic.b.o;
+
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
  * profile.
@@ -81,7 +83,7 @@ public class SignInActivity extends AppCompatActivity implements
 
         Log.d(TAG, "On start being called, now trying to silently log in");
         // Try the silent login. After that callbacks are called.
-        MadcapAuthManager.silentLogin();
+        //MadcapAuthManager.silentLogin();
     }
 
     // [START onActivityResult]
@@ -96,8 +98,7 @@ public class SignInActivity extends AppCompatActivity implements
         }
     }
 
-
-    private void handleSignInResult(GoogleSignInResult result) {
+    public void handleSignInResult(GoogleSignInResult result) {
         //From the result we can retrieve some credentials
 
         Log.d(TAG, "handleSignInResult:" + result.isSuccess());
@@ -105,6 +106,7 @@ public class SignInActivity extends AppCompatActivity implements
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            MadcapAuthManager.handleSignInResult(result);
             updateUI(true);
             proceedToMainActivity();
         } else {
@@ -220,7 +222,7 @@ public class SignInActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onSignInIntnet(Intent intent, int requestCode) {
+    public void onSignInIntent(Intent intent, int requestCode) {
         startActivityForResult(intent, requestCode);
         Log.d(TAG,"Now starting the signing procedure with intnet");
     }
