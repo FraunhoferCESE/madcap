@@ -18,6 +18,8 @@ import com.google.android.gms.common.api.Status;
 
 import java.io.Serializable;
 
+import static com.pathsense.locationengine.lib.detectionLogic.b.p;
+
 /**
  * Created by MMueller on 9/29/2016.
  * @Singleton due to Google requirments
@@ -68,11 +70,22 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
      */
     public static void silentLogin(){
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        Log.d(TAG, "First silent sign in result: "+opr.isDone());
+
         if (opr.isDone()) {
+            // In Case there is a result available intermediately.
+            Log.d(TAG, "Immediate result available ");
             lastSignInResult = opr.get();
             callbackClass.onSilentLoginSuccessfull(lastSignInResult);
         } else {
-            callbackClass.onSilentLoginFailed(opr);
+            // In case no immediate result available.
+            Log.d(TAG, "Immediate result NOT available ");
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(@NonNull GoogleSignInResult result) {
+                    callbackClass.onSilentLoginSuccessfull(lastSignInResult);
+                }
+            });
         }
     }
 
@@ -165,7 +178,7 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
      * Connects the Google Api client.
      * Needs to be called whenever the Activity changes.
      */
-    public void connect(){
+    public static void connect(){
         mGoogleApiClient.connect();
     }
 

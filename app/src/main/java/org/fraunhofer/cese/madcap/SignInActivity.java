@@ -83,7 +83,7 @@ public class SignInActivity extends AppCompatActivity implements
 
         Log.d(TAG, "On start being called, now trying to silently log in");
         // Try the silent login. After that callbacks are called.
-        //MadcapAuthManager.silentLogin();
+        MadcapAuthManager.silentLogin(); //TODO here is a probleme somewhere
     }
 
     // [START onActivityResult]
@@ -180,7 +180,6 @@ public class SignInActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        mProgressDialog.dismiss();
     }
 
     /**
