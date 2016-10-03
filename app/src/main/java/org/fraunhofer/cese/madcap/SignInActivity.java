@@ -44,11 +44,11 @@ public class SignInActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signinactivity);
 
+
         MadcapAuthManager.setCallbackClass(this);
-        MadcapAuthManager.setContext(this);
 
         Log.d(TAG, "CREATED");
-        Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext().toString());
+        //Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext());
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);

@@ -201,9 +201,8 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
 
         //Manage the MadcapAuthManager
         MadcapAuthManager.setCallbackClass(this);
-        //MadcapAuthManager.setContext(this);
 
-        Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext().toString());
+        //Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext().toString());
 
 
 

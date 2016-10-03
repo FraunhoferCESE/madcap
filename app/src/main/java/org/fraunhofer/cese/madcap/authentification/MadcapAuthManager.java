@@ -18,8 +18,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 
-import org.fraunhofer.cese.madcap.App;
-
 import java.io.Serializable;
 
 import javax.inject.Singleton;
@@ -39,12 +37,9 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
     private static Context context;
     private static MadcapAuthEventHandler callbackClass;
 
-    private static GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestEmail()
-            .requestProfile()
-            .build();
+    private static GoogleSignInOptions gso;
 
-    private static GoogleApiClient mGoogleApiClient = App.getmGoogleApiClient();
+    private static GoogleApiClient mGoogleApiClient;
     private static GoogleSignInResult lastSignInResult;
 
 
@@ -55,18 +50,14 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
     private MadcapAuthManager(){
     }
 
-    /**
-     * Sets to contexts from an activity. Needs to be called
-     * every time the activity/service acessing the class changes.
-     * @param context
-     */
-    public static void setContext(Context context){
-        MadcapAuthManager.context = context;
+    public static void setUp(GoogleSignInOptions gso, GoogleApiClient mGoogleApiClient){
+        if(MadcapAuthManager.gso == null && MadcapAuthManager.mGoogleApiClient == null){
+            MadcapAuthManager.gso = gso;
+            MadcapAuthManager.mGoogleApiClient = mGoogleApiClient;
+        }else{
+            Log.e(TAG, "Static class already set up. Not possible to do it twice");
+        }
 
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
-                //.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
     }
 
     /**
