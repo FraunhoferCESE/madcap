@@ -23,6 +23,7 @@ import com.google.android.gms.common.api.Status;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
+import static android.R.attr.data;
 import static com.pathsense.locationengine.lib.detectionLogic.b.o;
 
 /**
@@ -83,7 +84,11 @@ public class SignInActivity extends AppCompatActivity implements
 
         Log.d(TAG, "On start being called, now trying to silently log in");
         // Try the silent login. After that callbacks are called.
-        MadcapAuthManager.silentLogin(); //TODO here is a probleme somewhere
+        Intent intent = getIntent();
+        if(!intent.hasExtra("distractfromsilentlogin")){
+            MadcapAuthManager.silentLogin();
+        }
+
     }
 
     // [START onActivityResult]
@@ -155,7 +160,6 @@ public class SignInActivity extends AppCompatActivity implements
     public void proceedToMainActivity(){
         Log.d(TAG, "Now going to the MainActivity");
         Intent intent = new Intent(this, MainActivity.class);
-        //intent.putExtra("Madcap Auth Manager", madcapAuthManager);
         startActivity(intent);
     }
 

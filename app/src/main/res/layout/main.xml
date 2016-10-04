@@ -9,7 +9,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -90,6 +91,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/holo_red_light"
             android:layout_marginTop="10dp" />
+
     </LinearLayout>
 
     <TextView

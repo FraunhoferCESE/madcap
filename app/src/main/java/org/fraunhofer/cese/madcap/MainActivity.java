@@ -434,6 +434,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
 
     private void goBackToSignIn(){
         Intent intent = new Intent(this, SignInActivity.class);
+        intent.putExtra("distractfromsilentlogin", true);
         startActivity(intent);
     }
 
@@ -485,6 +486,14 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
      */
     @Override
     public void onSignOutResults(Status status) {
+        //Exit Application
+        /**
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+         */
+
         goBackToSignIn();
     }
 

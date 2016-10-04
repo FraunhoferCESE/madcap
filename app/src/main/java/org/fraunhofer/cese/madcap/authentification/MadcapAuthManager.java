@@ -3,6 +3,7 @@ package org.fraunhofer.cese.madcap.authentification;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
@@ -19,6 +20,7 @@ import com.google.android.gms.common.api.Status;
 import java.io.Serializable;
 
 import static com.pathsense.locationengine.lib.detectionLogic.b.p;
+import static org.fraunhofer.cese.madcap.R.id.status;
 
 /**
  * Created by MMueller on 9/29/2016.
@@ -115,6 +117,8 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
+                        Log.e(TAG, "Logout status "+status);
+                        revokeAccess();
                         callbackClass.onSignOutResults(status);
                     }
                 });
@@ -149,6 +153,7 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
      * Makes the Signed in User accessable.
      * @return the last users name.
      */
+    @Nullable
     public static String getLastSignedInUsersName(){
 
         if(lastSignInResult != null){
