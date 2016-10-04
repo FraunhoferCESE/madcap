@@ -32,19 +32,39 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
     private static final String TAG = "MADCAP Auth Manager";
     private static final int RC_SIGN_IN = 9001;
 
-    private static Context context;
     private static MadcapAuthEventHandler callbackClass;
 
     private static GoogleSignInOptions gso;
-
     private static GoogleApiClient mGoogleApiClient;
     private static GoogleSignInResult lastSignInResult;
 
-
-    public static Context getContext() {
-        return context;
+    /**
+     * Getter for the API Client.
+     * @return Bond Api client.
+     */
+    public static GoogleApiClient getMGoogleApiClient() {
+        return mGoogleApiClient;
     }
 
+    /**
+     * Getter for the Sign in Options
+     * @return Bond Sign In Options.
+     */
+    public static GoogleSignInOptions getGso() {
+        return gso;
+    }
+
+    /**
+     * Getter for the callback class.
+     * @return Callback class which needs to implement MadcapAuthEventHandler
+     */
+    public static MadcapAuthEventHandler getCallbackClass() {
+        return callbackClass;
+    }
+
+    /**
+     * Empty private Constructor making sure that it is a singleton.
+     */
     private MadcapAuthManager(){
     }
 
@@ -91,6 +111,10 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
         }
     }
 
+    /**
+     * Sometimes needed for getting the explicit instance of the singleton.
+     * @return The singleton instance.
+     */
     public static MadcapAuthManager getInstance(){
         if(instance == null){
             instance = new MadcapAuthManager();
@@ -118,10 +142,19 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
                     @Override
                     public void onResult(Status status) {
                         Log.e(TAG, "Logout status "+status);
-                        revokeAccess();
+                        lastSignInResult = null;
+                        //revokeAccess();
                         callbackClass.onSignOutResults(status);
                     }
                 });
+    }
+
+    /**
+     * Retrieves the currently logged in User Id.
+     * @return User ID.
+     */
+    public static String getUserId(){
+        return lastSignInResult.getSignInAccount().getId();
     }
 
     /**
@@ -135,7 +168,10 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
                     callbackClass.onRevokeAccess(status);
                     }
                 });
+
     }
+
+
 
     /**
      * Getter for Options
