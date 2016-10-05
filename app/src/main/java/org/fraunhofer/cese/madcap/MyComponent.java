@@ -2,6 +2,7 @@ package org.fraunhofer.cese.madcap;
 
 import org.fraunhofer.cese.madcap.Probe.ActivityProbe.ActivityProbe;
 import org.fraunhofer.cese.madcap.Probe.BluetoothProbe;
+import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
 import javax.inject.Singleton;
 

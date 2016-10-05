@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -18,8 +19,8 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.common.api.Status;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
-import static com.pathsense.locationengine.lib.detectionLogic.b.p;
 import static org.fraunhofer.cese.madcap.R.id.status;
 
 /**
@@ -30,13 +31,15 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
     private static MadcapAuthManager instance = null;
 
     private static final String TAG = "MADCAP Auth Manager";
-    private static final int RC_SIGN_IN = 9001;
+    public static final int RC_SIGN_IN = 9001;
 
     private static MadcapAuthEventHandler callbackClass;
 
     private static GoogleSignInOptions gso;
     private static GoogleApiClient mGoogleApiClient;
+
     private static GoogleSignInResult lastSignInResult;
+    private static GoogleSignInApi googleSignInApi = Auth.GoogleSignInApi;
 
     /**
      * Getter for the API Client.
@@ -73,7 +76,7 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
             MadcapAuthManager.gso = gso;
             MadcapAuthManager.mGoogleApiClient = mGoogleApiClient;
         }else{
-            Log.e(TAG, "Static class already set up. Not possible to do it twice");
+            Log.e(TAG, "Setup failed, because it is already set up");
         }
 
     }
@@ -91,7 +94,7 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
      * Performs a silent login with cached credentials
      */
     public static void silentLogin(){
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
+        OptionalPendingResult<GoogleSignInResult> opr = googleSignInApi.silentSignIn(mGoogleApiClient);
         Log.d(TAG, "First silent sign in result: "+opr.isDone());
 
         if (opr.isDone()) {
@@ -126,7 +129,7 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
      * Performs a regualr login with an intent.
      */
     public static void signIn(){
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        Intent signInIntent = googleSignInApi.getSignInIntent(mGoogleApiClient);
         Log.d(TAG,signInIntent.toString());
 
         callbackClass.onSignInIntent(signInIntent, RC_SIGN_IN);
@@ -137,7 +140,7 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
      * Sign out from Google Account. Calls callbackClass.onSignOutResults.
      */
     public static void signOut(){
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+        googleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
@@ -154,21 +157,26 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
      * @return User ID.
      */
     public static String getUserId(){
-        return lastSignInResult.getSignInAccount().getId();
+        if(lastSignInResult != null){
+            return lastSignInResult.getSignInAccount().getId();
+        }else{
+            return null;
+        }
+
     }
 
     /**
      * Should be called to disconnect Google Account.
      */
     public static void revokeAccess(){
-        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
-                new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                    callbackClass.onRevokeAccess(status);
-                    }
-                });
+       ResultCallback<Status> resultCallback = new ResultCallback<Status>() {
+           @Override
+           public void onResult(Status status) {
+               callbackClass.onRevokeAccess(status);
+           }
+       };
 
+        googleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(resultCallback);
     }
 
 
@@ -177,12 +185,18 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
      * Getter for Options
      * @return Scope Accaray
      */
+    @Nullable
     public static Scope[] getGsoScopeArray(){
         return gso.getScopeArray();
     }
 
     public static GoogleSignInAccount getSignInAccount(){
-        return lastSignInResult.getSignInAccount();
+        if(lastSignInResult != null){
+            return lastSignInResult.getSignInAccount();
+        }else{
+            return null;
+        }
+
     }
 
     /**
@@ -207,6 +221,27 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
     }
 
     /**
+     * Gets the last Sign in Result.
+     * For testing purposes only.
+     * @deprecated
+     * @return The last cached SignInResult.
+     */
+    public static GoogleSignInResult getLastSignInResult() {
+        return lastSignInResult;
+    }
+
+    /**
+     * Sets the last Sign in result.
+     * For testing purposes only.
+     * @deprecated
+     * @param googleSignInResult The last SignInResult to be set.
+     */
+    protected static void setLastSignInResult(GoogleSignInResult googleSignInResult){
+        lastSignInResult = googleSignInResult;
+    }
+
+
+    /**
      * Handles the sign in result, being called from the activity
      * which is implmenting AdcapAuthEventHandler
      * @param result
@@ -221,6 +256,26 @@ public class MadcapAuthManager implements GoogleApiClient.OnConnectionFailedList
      */
     public static void connect(){
         mGoogleApiClient.connect();
+    }
+
+    /**
+     * Sets the google SignInApi to a custom SignIn Api.
+     * @deprecated for testing use only
+     * @param googleSignInApi
+     */
+    protected static void setGoogleSignInApi(GoogleSignInApi googleSignInApi){
+        MadcapAuthManager.googleSignInApi = googleSignInApi;
+    }
+
+    /**
+     * For testing purposes only. Should never be called in code,
+     * would cause lots of errors otherway, because the objects should
+     * only be set once.
+     * @deprecated
+     */
+    protected static void reset(){
+        MadcapAuthManager.gso = null;
+        MadcapAuthManager.mGoogleApiClient = null;
     }
 
     @Override
