@@ -11,16 +11,25 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.common.api.Status;
 
 import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import static com.pathsense.locationengine.lib.detectionLogic.b.m;
+import static org.fraunhofer.cese.madcap.R.id.status;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -71,7 +80,20 @@ public class MadcapAuthManagerTest {
 
     @Test
     public void testConstructor(){
-        //How to test that?
+        //Testing with reflection
+        try {
+            Constructor<MadcapAuthManager> c = MadcapAuthManager.class.getDeclaredConstructor();
+            c.setAccessible(true);
+            MadcapAuthManager madcapAuthManager = c.newInstance();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -179,20 +201,22 @@ public class MadcapAuthManagerTest {
         PendingResult mockOpr = spy(PendingResult.class);
         when(mockGoogleSignInApi.revokeAccess(mockMGoogleApiClient)).thenReturn(mockOpr);
 
+        mockGoogleSignInApi.revokeAccess().
+
         MadcapAuthManager.revokeAccess();
         verify(mockGoogleSignInApi, times(1)).revokeAccess(mockMGoogleApiClient);
     }
 
     @Test
     public void testGetGsoScopeArray(){
+        MadcapAuthManager.setUp(null, mockMGoogleApiClient);
+        Assert.assertNull(MadcapAuthManager.getGsoScopeArray());
+
+        MadcapAuthManager.reset();
         MadcapAuthManager.setUp(mockGso, mockMGoogleApiClient);
 
         //Due to the fact that scopes cannot be mocked because they are final
         // we have to verify that the statement is called exactly one time.
-
-        //TODO: for some reason this does not work. Not traceable nullpointer exception
-
-        /*
         Scope scope1 = new Scope("a");
         Scope scope2 = new Scope("b");
         Scope[] scopeArray = new Scope[2];
@@ -201,7 +225,7 @@ public class MadcapAuthManagerTest {
         when(mockGso.getScopeArray()).thenReturn(scopeArray);
         MadcapAuthManager.getGsoScopeArray();
         verify(mockGso, times(1)).getScopeArray();
-        */
+
     }
 
     @Test
@@ -252,9 +276,8 @@ public class MadcapAuthManagerTest {
     public void testConnect(){
         MadcapAuthManager.setUp(mockGso, mockMGoogleApiClient);
 
-        // TODO: why nullpointer?
-        //MadcapAuthManager.connect();
-        //verify(mockMGoogleApiClient, atLeastOnce()).connect();
+        MadcapAuthManager.connect();
+        verify(mockMGoogleApiClient, atLeastOnce()).connect();
     }
 
     @Test
