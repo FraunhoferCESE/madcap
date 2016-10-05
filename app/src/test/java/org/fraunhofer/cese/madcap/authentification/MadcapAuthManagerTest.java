@@ -201,8 +201,6 @@ public class MadcapAuthManagerTest {
         PendingResult mockOpr = spy(PendingResult.class);
         when(mockGoogleSignInApi.revokeAccess(mockMGoogleApiClient)).thenReturn(mockOpr);
 
-        mockGoogleSignInApi.revokeAccess().
-
         MadcapAuthManager.revokeAccess();
         verify(mockGoogleSignInApi, times(1)).revokeAccess(mockMGoogleApiClient);
     }
