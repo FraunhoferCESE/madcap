@@ -8,13 +8,23 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
-
+import org.acra.*;
+import org.acra.annotation.*;
 
 /**
  * Class used to handle lifecycle events for the entire application
  * <p>
  * Created by llayman on 9/23/2016.
  */
+@ReportsCrashes(
+        formUri = "https://mmueller.cloudant.com/acra-madcap/_design/acra-storage/_update/report",
+        reportType = org.acra.sender.HttpSender.Type.JSON,
+        httpMethod = org.acra.sender.HttpSender.Method.PUT,
+        formUriBasicAuthLogin="gentytookildsolodyincenc",
+        formUriBasicAuthPassword="1ae5f5f9e483e4b1beffda898b5a5ef02ffdfd65",
+        mode = ReportingInteractionMode.TOAST,
+        resToastText = R.string.crash_toast_text
+)
 public class MyApplication extends Application {
     private MyComponent component;
 
@@ -26,6 +36,9 @@ public class MyApplication extends Application {
     @Override
     public final void onCreate() {
         super.onCreate();
+
+        //Initialize Acra
+        ACRA.init(this);
 
         //Initializations for the Google Authentification
         context = getApplicationContext();

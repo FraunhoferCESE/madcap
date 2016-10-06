@@ -59,6 +59,7 @@ dependencies {
     compile files('libs/funf-0.4.2.jar')
     //compile(name:'pathsense-android-sdk-bundle-release-2.2.1.0', ext:'aar')
     compile(name: 'pathsense-android-sdk-bundle-release-2.3.0.0-beta', ext: 'aar')
+    compile(name: 'acra-4.9.0', ext: 'aar')
     compile project(path: ':backend', configuration: 'android-endpoints')
 
     compile 'com.j256.ormlite:ormlite-android:5.0'

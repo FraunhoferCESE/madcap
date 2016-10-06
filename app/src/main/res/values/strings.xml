@@ -19,6 +19,8 @@
     <string name="footnoteText">Developed by Fraunhofer USA, Inc.\nContact: llayman@cese.fraunhofer.org.\nFunf Open Sensing Framework licensed under the GNU Lesser GPL.</string>
     <string name="title_activity_login">Sign in</string>
 
+    <string name="crash_toast_text">MADCAP crash has been reported. No worries</string>
+
     <string name="title_text">MADCAP</string>
 
     <!-- Sign-in status messages -->
