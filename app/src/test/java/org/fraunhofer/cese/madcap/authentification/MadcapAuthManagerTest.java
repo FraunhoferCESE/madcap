@@ -20,16 +20,16 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.MockitoAnnotations;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import static com.pathsense.locationengine.lib.detectionLogic.b.m;
-import static org.fraunhofer.cese.madcap.R.id.status;
+import static org.fraunhofer.cese.madcap.authentification.MadcapAuthManager.getCallbackClass;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -44,6 +44,12 @@ public class MadcapAuthManagerTest {
     GoogleSignInOptions mockGso;
     GoogleApiClient mockMGoogleApiClient;
 
+    @Captor
+    ArgumentCaptor<ResultCallback<Status>> resultCallbackStatusCaptor;
+
+    @Captor
+    ArgumentCaptor<ResultCallback<GoogleSignInResult>> resultCallbackGoogleSignInResultCaptor;
+
     @Before
     public void setUp(){
         mockGso = spy(new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -51,6 +57,8 @@ public class MadcapAuthManagerTest {
                 .requestProfile()
                 .build());
         mockMGoogleApiClient = spy(GoogleApiClient.class);
+
+        MockitoAnnotations.initMocks(this);
     }
 
     @After
@@ -75,7 +83,7 @@ public class MadcapAuthManagerTest {
         MadcapAuthManager.setUp(mockGso, mockMGoogleApiClient);
         MadcapAuthEventHandler mockMadcapAuthEventHandler= spy(MadcapAuthEventHandler.class);
         MadcapAuthManager.setCallbackClass(mockMadcapAuthEventHandler);
-        Assert.assertEquals("Callback class should return the same value ", mockMadcapAuthEventHandler,MadcapAuthManager.getCallbackClass());
+        Assert.assertEquals("Callback class should return the same value ", mockMadcapAuthEventHandler, getCallbackClass());
     }
 
     @Test
@@ -130,12 +138,19 @@ public class MadcapAuthManagerTest {
         verify(mockGoogleSignInApi, atLeastOnce()).silentSignIn(mockMGoogleApiClient);
         verify(mockMadcapAuthEventHandler, atLeastOnce()).onSilentLoginSuccessfull(MadcapAuthManager.getLastSignInResult());
 
-
         //In Case the credentials are not cached.
         when(mockOpr.isDone()).thenReturn(false);
         MadcapAuthManager.silentLogin();
         verify(mockGoogleSignInApi, atLeastOnce()).silentSignIn(mockMGoogleApiClient);
         verify(mockMadcapAuthEventHandler, atLeastOnce()).onSilentLoginSuccessfull(MadcapAuthManager.getLastSignInResult());
+
+        verify(mockOpr).setResultCallback(resultCallbackGoogleSignInResultCaptor.capture());
+        //Status mockStatus = spy(Status.class);
+
+        ResultCallback<GoogleSignInResult> capturedCallback = resultCallbackGoogleSignInResultCaptor.getValue();
+        capturedCallback.onResult(any(GoogleSignInResult.class));
+        // Verify that the method you want called from onResult is actually called
+        verify(mockMadcapAuthEventHandler, atLeastOnce()).onSilentLoginSuccessfull(any(GoogleSignInResult.class));
     }
 
     @Test
@@ -174,7 +189,13 @@ public class MadcapAuthManagerTest {
         MadcapAuthManager.signOut();
         verify(mockGoogleSignInApi, atLeastOnce()).signOut(mockMGoogleApiClient);
 
-        //TODO: Don't know how to handle the callback
+        verify(mockOpr).setResultCallback(resultCallbackStatusCaptor.capture());
+        //Status mockStatus = spy(Status.class);
+
+        ResultCallback<Status> capturedCallback = resultCallbackStatusCaptor.getValue();
+        capturedCallback.onResult(any(Status.class));
+        // Verify that the method you want called from onResult is actually called
+        verify(mockMadcapAuthEventHandler).onSignOutResults(any(Status.class));
     }
 
     @Test
@@ -201,8 +222,19 @@ public class MadcapAuthManagerTest {
         PendingResult mockOpr = spy(PendingResult.class);
         when(mockGoogleSignInApi.revokeAccess(mockMGoogleApiClient)).thenReturn(mockOpr);
 
+        MadcapAuthEventHandler mockMadcapAuthEventHandler= spy(MadcapAuthEventHandler.class);
+        MadcapAuthManager.setCallbackClass(mockMadcapAuthEventHandler);
+
         MadcapAuthManager.revokeAccess();
         verify(mockGoogleSignInApi, times(1)).revokeAccess(mockMGoogleApiClient);
+
+        verify(mockOpr).setResultCallback(resultCallbackStatusCaptor.capture());
+        //Status mockStatus = spy(Status.class);
+
+        ResultCallback<Status> capturedCallback = resultCallbackStatusCaptor.getValue();
+        capturedCallback.onResult(any(Status.class));
+        // Verify that the method you want called from onResult is actually called
+        verify(mockMadcapAuthEventHandler).onRevokeAccess(any(Status.class));
     }
 
     @Test
