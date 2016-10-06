@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.fraunhofer.cese.madcap" >
+    package="org.fraunhofer.cese.madcap">
 
     <!--
         The permissions for the app are defined here.
@@ -37,8 +37,8 @@
     <uses-permission android:name="android.permission.WRITE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-
-    <!-- The used actions are defined here. -->
+    <uses-permission android:name="android.permission.READ_PROFILE" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" /> <!-- The used actions are defined here. -->
     <application
         android:name=".MyApplication"
         android:allowBackup="false"
@@ -63,7 +63,7 @@
 
         <receiver
             android:name="edu.mit.media.funf.Launcher"
-            android:enabled="true" >
+            android:enabled="true">
             <intent-filter>
                 <action android:name="android.intent.action.BATTERY_CHANGED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -73,21 +73,33 @@
             </intent-filter>
         </receiver>
 
-
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="portrait"
+            android:theme="@style/ThemeOverlay.MyNoTitleActivity">
+        </activity>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+
+        <activity
+            android:name=".SignInActivity"
+            android:label="@string/name_sign_in_activity"
+            android:theme="@style/ThemeOverlay.MyNoTitleActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+        <activity
+            android:name=".IdTokenActivity"
+            android:label="@string/name_id_token_activity"
+            android:theme="@style/ThemeOverlay.MyNoTitleActivity">
+        </activity>
     </application>
 
 </manifest>

@@ -9,7 +9,28 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="Hi, "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp" />
+
+            <TextView
+                android:text="Mister User"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/usernameTextview"
+                android:layout_weight="1" />
+
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
@@ -52,6 +73,25 @@
             android:textIsSelectable="true"
             android:text="@string/uploadResultText"
             android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/SendButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:text="@string/sendButtonText"
+            android:background="@android:color/holo_blue_dark"
+            android:layout_marginTop="10dp" />
+
+        <Button
+            android:id="@+id/SignOut"
+            android:text="@string/signOutButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/holo_red_light"
+            android:layout_marginTop="10dp" />
+
     </LinearLayout>
 
     <TextView
@@ -65,14 +105,5 @@
         android:gravity="center"
         android:text="@string/footnoteText"
         android:textSize="12sp" />
-
-    <Button
-        android:id="@+id/SendButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/footnote"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center"
-        android:text="@string/sendButtonText" />
 
 </RelativeLayout>
