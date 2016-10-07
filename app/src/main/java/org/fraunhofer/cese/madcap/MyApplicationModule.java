@@ -2,22 +2,17 @@ package org.fraunhofer.cese.madcap;
 
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
-import org.fraunhofer.cese.madcap.factories.IntentFilterFactory;
+import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
 
 import javax.inject.Singleton;
 

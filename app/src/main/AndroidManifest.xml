@@ -60,13 +60,14 @@
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityChangeBroadcastReceiver" />
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityUpdateBroadcastReceiver" />
 
-        <receiver android:name=".broadcastreceivers.MadcaponBootCompleteBoardcastReceiver">
+        <receiver android:name=".broadcastreceivers.OnBootCompleteBoardcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:enabled="true" android:name=".services.MadcapOnBootService" />
+        <service android:enabled="true" android:name=".services.OnBootService" />
+        <service android:enabled="true" android:name=".services.LoginService" />
 
         <service android:name="edu.mit.media.funf.FunfManager" />
 

@@ -5,15 +5,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import org.fraunhofer.cese.madcap.services.MadcapOnBootService;
+import org.fraunhofer.cese.madcap.services.OnBootService;
 
 /**
  * Created by MMueller on 10/7/2016.
  * This Receiver listrens to the ON_BOOT_COMPLETE intent.
  */
-public class MadcaponBootCompleteBoardcastReceiver extends BroadcastReceiver {
+public class OnBootCompleteBoardcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent arg1){
-        Intent intent = new Intent(context, MadcapOnBootService.class);
+        Intent intent = new Intent(context, OnBootService.class);
         context.startService(intent);
         Log.i("Madcap", "BootCompletetBroadcastReceiver received on boot");
     }

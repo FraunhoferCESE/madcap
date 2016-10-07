@@ -1,30 +1,20 @@
 package org.fraunhofer.cese.madcap.Probe;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.test.mock.MockContext;
 
 import com.google.gson.JsonObject;
 
-import org.apache.commons.collections.functors.SwitchTransformer;
-import org.fraunhofer.cese.madcap.JsonObjectFactory;
-import org.fraunhofer.cese.madcap.MainActivity;
-import org.fraunhofer.cese.madcap.MyApplication;
+import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
 import org.fraunhofer.cese.madcap.factories.IntentFactory;
 import org.fraunhofer.cese.madcap.factories.IntentFilterFactory;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.MockitoAnnotations;
 
-import java.net.SocketPermission;
 import java.util.HashSet;
 import java.util.Set;
 

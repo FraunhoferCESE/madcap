@@ -108,12 +108,43 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
         } else {
             // In case no immediate result available.
             Log.d(TAG, "Immediate result NOT available ");
+            silentLogin(0);
+            /*
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
                 public void onResult(@NonNull GoogleSignInResult r) {
                     callbackClass.onSilentLoginSuccessfull(lastSignInResult);
                 }
             });
+            */
+        }
+    }
+
+    /**
+     * Tries the silent login again, recursively maximum of 10 times with 1 second
+     * pause in between.
+     * @param attempt current attempt number.
+     */
+    private static void silentLogin(int attempt){
+        int maxAttempt = 10;
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        OptionalPendingResult<GoogleSignInResult> opr = googleSignInApi.silentSignIn(mGoogleApiClient);
+        if(attempt < maxAttempt){
+           if(opr.isDone()){
+               Log.d(TAG, "Result in attempt "+attempt+" available ");
+               lastSignInResult = opr.get();
+               callbackClass.onSilentLoginSuccessfull(lastSignInResult);
+           }else{
+               Log.d(TAG, "Result in attempt "+attempt+" not available. Trying again ");
+               silentLogin(attempt+1);
+           }
+        }else{
+            Log.d(TAG, "Result for Login could not be retrieved. Need to log in manually");
+            callbackClass.onSilentLoginFailed(opr);
         }
     }
 

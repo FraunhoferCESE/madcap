@@ -8,8 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
 
-import org.fraunhofer.cese.madcap.JsonObjectFactory;
-import org.fraunhofer.cese.madcap.MainActivity;
+import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
 import org.fraunhofer.cese.madcap.factories.IntentFactory;
 import org.fraunhofer.cese.madcap.factories.IntentFilterFactory;
 

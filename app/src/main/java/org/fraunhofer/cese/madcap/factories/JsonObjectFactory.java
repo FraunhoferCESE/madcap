@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.madcap;
+package org.fraunhofer.cese.madcap.factories;
 
 import android.content.Intent;
 

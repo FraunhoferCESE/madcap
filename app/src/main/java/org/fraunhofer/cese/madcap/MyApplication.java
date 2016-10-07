@@ -2,6 +2,7 @@ package org.fraunhofer.cese.madcap;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -26,6 +27,7 @@ import org.acra.annotation.*;
         resToastText = R.string.crash_toast_text
 )
 public class MyApplication extends Application {
+    public static final String TAG = "Madcap My Application";
     private MyComponent component;
 
     private static GoogleApiClient mGoogleApiClient;
@@ -36,6 +38,8 @@ public class MyApplication extends Application {
     @Override
     public final void onCreate() {
         super.onCreate();
+
+        Log.e(TAG, "on create of My application has been called");
 
         //Initialize Acra
         ACRA.init(this);
