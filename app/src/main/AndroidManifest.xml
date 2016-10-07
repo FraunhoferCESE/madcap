@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="org.fraunhofer.cese.madcap">
+    package="org.fraunhofer.cese.madcap"
+    android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
 
     <!--
         The permissions for the app are defined here.
@@ -59,6 +60,14 @@
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityChangeBroadcastReceiver" />
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityUpdateBroadcastReceiver" />
 
+        <receiver android:name=".broadcastreceivers.MadcaponBootCompleteBoardcastReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:enabled="true" android:name=".services.MadcapOnBootService" />
+
         <service android:name="edu.mit.media.funf.FunfManager" />
 
         <receiver
@@ -101,5 +110,6 @@
             android:theme="@style/ThemeOverlay.MyNoTitleActivity">
         </activity>
     </application>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 
 </manifest>
