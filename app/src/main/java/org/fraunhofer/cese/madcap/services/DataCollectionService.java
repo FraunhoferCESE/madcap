@@ -6,14 +6,11 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.Status;
 
-import org.fraunhofer.cese.madcap.MainActivity;
-import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
@@ -21,9 +18,8 @@ import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
  * Created by MMueller on 10/7/2016.
  */
 
-public class LoginService extends Service implements MadcapAuthEventHandler {
-    private static final String TAG = "Madcap Login Service";
-
+public class DataCollectionService extends Service implements MadcapAuthEventHandler {
+    private static final String TAG = "Madcap DataColl Service";
     /**
      * Return the communication channel to the service.  May return null if
      * clients can not bind to the service.  The returned
@@ -50,17 +46,10 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
         return null;
     }
 
-    public void onDestroy() {
-        //Toast.makeText(this, "Login Service Stopped", Toast.LENGTH_LONG).show();
-        Log.d(TAG, "onDestroy");
-    }
-
     @Override
     public void onCreate(){
-        Log.d(TAG, "onCreate Login Service");
+        Log.d(TAG, "onCreate Data collection Service");
         MadcapAuthManager.setCallbackClass(this);
-        Log.d(TAG, "Trying to log in silently");
-        MadcapAuthManager.silentLogin();
     }
 
     /**
@@ -70,10 +59,7 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
      */
     @Override
     public void onSilentLoginSuccessfull(GoogleSignInResult result) {
-        Log.d(TAG, "Silent login was successfull. Logged in as "+MadcapAuthManager.getUserId());
-        
-        Intent intent = new Intent(LoginService.this, DataCollectionService.class);
-        startService(intent);
+
     }
 
     /**
@@ -83,10 +69,7 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
      */
     @Override
     public void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr) {
-        Log.d(TAG, "Silent login failed");
-        Intent intent = new Intent(getBaseContext(),SignInActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+
     }
 
     /**
@@ -94,8 +77,7 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
      */
     @Override
     public void onSignInSucessfull() {
-        Intent intent = new Intent(LoginService.this, DataCollectionService.class);
-        startService(intent);
+
     }
 
     /**

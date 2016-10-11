@@ -68,6 +68,7 @@
 
         <service android:enabled="true" android:name=".services.OnBootService" />
         <service android:enabled="true" android:name=".services.LoginService" />
+        <service android:enabled="true" android:name=".services.DataCollectionService" />
 
         <service android:name="edu.mit.media.funf.FunfManager" />
 

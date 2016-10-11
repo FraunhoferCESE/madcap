@@ -22,6 +22,8 @@ import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.services.LoginService;
 
 import static android.R.attr.data;
 import static com.pathsense.locationengine.lib.detectionLogic.b.o;
@@ -113,6 +115,10 @@ public class SignInActivity extends AppCompatActivity implements
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             MadcapAuthManager.handleSignInResult(result);
             updateUI(true);
+
+            Intent intent = new Intent(this, DataCollectionService.class);
+            startService(intent);
+
             proceedToMainActivity();
         } else {
             // Signed out, show unauthenticated UI.
@@ -220,7 +226,11 @@ public class SignInActivity extends AppCompatActivity implements
      */
     @Override
     public void onSignInSucessfull() {
-        Log.d(TAG, "onSignInSuccessfull");
+        Log.d(TAG, "onSignIn successfull");
+
+        Intent intent = new Intent(this, DataCollectionService.class);
+        startService(intent);
+
         proceedToMainActivity();
     }
 
