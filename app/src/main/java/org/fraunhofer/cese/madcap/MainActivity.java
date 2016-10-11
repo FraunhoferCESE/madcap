@@ -62,6 +62,8 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
     private static final long CACHE_UPDATE_UI_DELAY = 5000;
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
 
+    private MadcapAuthManager madcapAuthManager;
+
 
     @Nullable
     private FunfManager funfManager;
@@ -197,8 +199,9 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
         ((MyApplication) getApplication()).getComponent().inject(this);
 
         //Manage the MadcapAuthManager
-        MadcapAuthManager.setCallbackClass(this);
-        MadcapAuthManager.connect();
+        madcapAuthManager = MadcapAuthManager.getInstance();
+        madcapAuthManager.setCallbackClass(this);
+        madcapAuthManager.connect();
 
         //Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext().toString());
 
@@ -220,8 +223,8 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
         usernameTextview = (TextView) findViewById(R.id.usernameTextview);
         Switch collectDataSwitch = (Switch) findViewById(R.id.switch1);
 
-        if(MadcapAuthManager.getLastSignedInUsersName() != null){
-            usernameTextview.setText(MadcapAuthManager.getLastSignedInUsersName());
+        if(madcapAuthManager.getLastSignedInUsersName() != null){
+            usernameTextview.setText(madcapAuthManager.getLastSignedInUsersName());
         }
 
 
@@ -252,7 +255,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "Logout clicked");
-                MadcapAuthManager.signOut();
+                madcapAuthManager.signOut();
             }
         });
 
@@ -454,8 +457,8 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
      */
     @Override
     public void onSilentLoginSuccessfull(GoogleSignInResult result) {
-        if(MadcapAuthManager.getLastSignedInUsersName() != null){
-            usernameTextview.setText(MadcapAuthManager.getLastSignedInUsersName());
+        if(madcapAuthManager.getLastSignedInUsersName() != null){
+            usernameTextview.setText(madcapAuthManager.getLastSignedInUsersName());
         }
     }
 
@@ -474,8 +477,8 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
      */
     @Override
     public void onSignInSucessfull() {
-        if(MadcapAuthManager.getLastSignedInUsersName() != null){
-            usernameTextview.setText(MadcapAuthManager.getLastSignedInUsersName());
+        if(madcapAuthManager.getLastSignedInUsersName() != null){
+            usernameTextview.setText(madcapAuthManager.getLastSignedInUsersName());
         }
     }
 

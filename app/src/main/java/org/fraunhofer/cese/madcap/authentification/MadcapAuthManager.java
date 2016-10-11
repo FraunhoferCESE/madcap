@@ -45,7 +45,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * Getter for the API Client.
      * @return Bond Api client.
      */
-    public static GoogleApiClient getMGoogleApiClient() {
+    public GoogleApiClient getMGoogleApiClient() {
         return mGoogleApiClient;
     }
 
@@ -54,7 +54,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * @return Bond Sign In Options.
      */
     @Nullable
-    public static GoogleSignInOptions getGso() {
+    public GoogleSignInOptions getGso() {
         return gso;
     }
 
@@ -62,7 +62,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * Getter for the callback class.
      * @return Callback class which needs to implement MadcapAuthEventHandler
      */
-    public static MadcapAuthEventHandler getCallbackClass() {
+    public MadcapAuthEventHandler getCallbackClass() {
         return callbackClass;
     }
 
@@ -73,7 +73,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
         super();
     }
 
-    public static void setUp(GoogleSignInOptions gso, GoogleApiClient mGoogleApiClient){
+    public void setUp(GoogleSignInOptions gso, GoogleApiClient mGoogleApiClient){
         if(MadcapAuthManager.gso == null && MadcapAuthManager.mGoogleApiClient == null){
             MadcapAuthManager.gso = gso;
             MadcapAuthManager.mGoogleApiClient = mGoogleApiClient;
@@ -88,14 +88,14 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * class changes.
      * @param callbackClass The class which implments MadcapAuthEventHandler.
      */
-    public static void setCallbackClass(MadcapAuthEventHandler callbackClass){
+    public void setCallbackClass(MadcapAuthEventHandler callbackClass){
         MadcapAuthManager.callbackClass = callbackClass;
     }
 
     /**
      * Performs a silent login with cached credentials
      */
-    public static void silentLogin(){
+    public void silentLogin(){
         OptionalPendingResult<GoogleSignInResult> opr = googleSignInApi.silentSignIn(mGoogleApiClient);
 
         Log.d(TAG, "First silent sign in result: "+opr.isDone());
@@ -125,7 +125,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * pause in between.
      * @param attempt current attempt number.
      */
-    private static void silentLogin(int attempt){
+    private void silentLogin(int attempt){
         int maxAttempt = 10;
         try {
             Thread.sleep(500);
@@ -162,7 +162,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
     /**
      * Performs a regualr login with an intent.
      */
-    public static void signIn(){
+    public void signIn(){
         Intent signInIntent = googleSignInApi.getSignInIntent(mGoogleApiClient);
         Log.d(TAG,signInIntent.toString());
 
@@ -173,7 +173,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
     /**
      * Sign out from Google Account. Calls callbackClass.onSignOutResults.
      */
-    public static void signOut(){
+    public void signOut(){
         googleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                 new ResultCallback<Status>() {
                     @Override
@@ -190,7 +190,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * Retrieves the currently logged in User Id.
      * @return User ID.
      */
-    public static String getUserId(){
+    public String getUserId(){
         if(lastSignInResult != null){
             return lastSignInResult.getSignInAccount().getId();
         }else{
@@ -202,7 +202,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
     /**
      * Should be called to disconnect Google Account.
      */
-    public static void revokeAccess(){
+    public void revokeAccess(){
         googleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(@NonNull Status r) {
@@ -218,14 +218,14 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * @return Scope Accaray
      */
     @Nullable
-    public static Scope[] getGsoScopeArray(){
+    public Scope[] getGsoScopeArray(){
         if (gso != null) {
             return gso.getScopeArray();
         }
         return null;
     }
 
-    public static GoogleSignInAccount getSignInAccount(){
+    public GoogleSignInAccount getSignInAccount(){
         if(lastSignInResult != null){
             return lastSignInResult.getSignInAccount();
         }else{
@@ -239,7 +239,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * @return the last users name.
      */
     @Nullable
-    public static String getLastSignedInUsersName(){
+    public String getLastSignedInUsersName(){
 
         if(lastSignInResult != null){
             String givenName = lastSignInResult.getSignInAccount().getGivenName();
@@ -262,7 +262,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * @return The last cached SignInResult.
      */
     @Nullable
-    public static GoogleSignInResult getLastSignInResult() {
+    public GoogleSignInResult getLastSignInResult() {
         return lastSignInResult;
     }
 
@@ -272,7 +272,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * @deprecated
      * @param googleSignInResult The last SignInResult to be set.
      */
-    protected static void setLastSignInResult(@Nullable GoogleSignInResult googleSignInResult){
+    protected void setLastSignInResult(@Nullable GoogleSignInResult googleSignInResult){
         lastSignInResult = googleSignInResult;
     }
 
@@ -282,7 +282,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * which is implmenting AdcapAuthEventHandler
      * @param result The result to be parsed.
      */
-    public static void handleSignInResult(GoogleSignInResult result){
+    public void handleSignInResult(GoogleSignInResult result){
         lastSignInResult = result;
     }
 
@@ -290,7 +290,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * Connects the Google Api client.
      * Needs to be called whenever the Activity changes.
      */
-    public static void connect(){
+    public void connect(){
         mGoogleApiClient.connect();
     }
 
@@ -299,7 +299,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * @deprecated for testing use only
      * @param googleSignInApi
      */
-    protected static void setGoogleSignInApi(GoogleSignInApi googleSignInApi){
+    protected void setGoogleSignInApi(GoogleSignInApi googleSignInApi){
         MadcapAuthManager.googleSignInApi = googleSignInApi;
     }
 
@@ -310,13 +310,13 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * @deprecated
      */
     @Deprecated
-    protected static void reset(){
+    protected void reset(){
         gso = null;
         mGoogleApiClient = null;
     }
 
     @Override
-    public final void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e(TAG, "Connection to Google Authenticatin failed");
     }
 }

@@ -20,6 +20,8 @@ import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
 public class DataCollectionService extends Service implements MadcapAuthEventHandler {
     private static final String TAG = "Madcap DataColl Service";
+    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+
     /**
      * Return the communication channel to the service.  May return null if
      * clients can not bind to the service.  The returned
@@ -49,7 +51,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     @Override
     public void onCreate(){
         Log.d(TAG, "onCreate Data collection Service");
-        MadcapAuthManager.setCallbackClass(this);
+        madcapAuthManager.setCallbackClass(this);
     }
 
     /**

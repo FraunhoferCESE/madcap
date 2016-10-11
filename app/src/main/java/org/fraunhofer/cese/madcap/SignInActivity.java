@@ -38,6 +38,7 @@ public class SignInActivity extends AppCompatActivity implements
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
+    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
 
 
     //private GoogleApiClient mGoogleApiClient;
@@ -50,7 +51,7 @@ public class SignInActivity extends AppCompatActivity implements
         setContentView(R.layout.signinactivity);
 
 
-        MadcapAuthManager.setCallbackClass(this);
+        madcapAuthManager.setCallbackClass(this);
 
         Log.d(TAG, "CREATED");
         //Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext());
@@ -76,7 +77,7 @@ public class SignInActivity extends AppCompatActivity implements
         // difference.
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setScopes(MadcapAuthManager.getGsoScopeArray());
+        signInButton.setScopes(madcapAuthManager.getGsoScopeArray());
         // [END customize_button]
     }
 
@@ -88,7 +89,7 @@ public class SignInActivity extends AppCompatActivity implements
         // Try the silent login. After that callbacks are called.
         Intent intent = getIntent();
         if(!intent.hasExtra("distractfromsilentlogin")){
-            MadcapAuthManager.silentLogin();
+            madcapAuthManager.silentLogin();
         }
 
     }
@@ -113,7 +114,7 @@ public class SignInActivity extends AppCompatActivity implements
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            MadcapAuthManager.handleSignInResult(result);
+            madcapAuthManager.handleSignInResult(result);
             updateUI(true);
 
             Intent intent = new Intent(this, DataCollectionService.class);
@@ -174,15 +175,15 @@ public class SignInActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.sign_in_button:
                 Log.d(TAG, "pressed sign in");
-                MadcapAuthManager.signIn();
+                madcapAuthManager.signIn();
                 break;
             case R.id.sign_out_button:
                 Log.d(TAG, "pressed sign ou");
-                MadcapAuthManager.signOut();
+                madcapAuthManager.signOut();
                 break;
             case R.id.disconnect_button:
                 Log.d(TAG, "pressed disconnect");
-                MadcapAuthManager.revokeAccess();
+                madcapAuthManager.revokeAccess();
                 break;
         }
     }

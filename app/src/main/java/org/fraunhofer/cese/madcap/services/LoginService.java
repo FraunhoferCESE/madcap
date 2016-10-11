@@ -29,6 +29,7 @@ import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
 public class LoginService extends Service implements MadcapAuthEventHandler {
     private static final String TAG = "Madcap Login Service";
+    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -64,9 +65,9 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
     @Override
     public void onCreate() {
         Log.d(TAG, "onCreate Login Service");
-        MadcapAuthManager.setCallbackClass(this);
+        madcapAuthManager.setCallbackClass(this);
         Log.d(TAG, "Trying to log in silently");
-        MadcapAuthManager.silentLogin();
+        madcapAuthManager.silentLogin();
     }
 
     /**
@@ -76,7 +77,7 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
      */
     @Override
     public void onSilentLoginSuccessfull(GoogleSignInResult result) {
-        Log.d(TAG, "Silent login was successfull. Logged in as " + MadcapAuthManager.getUserId());
+        Log.d(TAG, "Silent login was successfull. Logged in as " + madcapAuthManager.getUserId());
 
         Intent intent = new Intent(LoginService.this, DataCollectionService.class);
         startService(intent);
@@ -167,5 +168,13 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
     @Override
     public void onSignInIntent(Intent intent, int requestCode) {
 
+    }
+
+    /**
+     * For testing purposes only.
+     * @param madcapAuthManager
+     */
+    protected void setMadcapAuthManager(MadcapAuthManager madcapAuthManager){
+        this.madcapAuthManager = madcapAuthManager;
     }
 }

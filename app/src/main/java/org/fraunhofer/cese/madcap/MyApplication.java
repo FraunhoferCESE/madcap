@@ -29,6 +29,7 @@ import org.acra.annotation.*;
 public class MyApplication extends Application {
     public static final String TAG = "Madcap My Application";
     private MyComponent component;
+    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
 
     private static GoogleApiClient mGoogleApiClient;
     private static GoogleSignInOptions gso;
@@ -57,7 +58,7 @@ public class MyApplication extends Application {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        MadcapAuthManager.setUp(gso, mGoogleApiClient);
+        madcapAuthManager.setUp(gso, mGoogleApiClient);
 
         // Initialize the Component used to inject dependencies.
         component = DaggerMyComponent.builder()
