@@ -1,10 +1,15 @@
 package org.fraunhofer.cese.madcap.services;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,6 +18,7 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.MainActivity;
+import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
@@ -56,7 +62,7 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
     }
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         Log.d(TAG, "onCreate Login Service");
         MadcapAuthManager.setCallbackClass(this);
         Log.d(TAG, "Trying to log in silently");
@@ -70,8 +76,8 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
      */
     @Override
     public void onSilentLoginSuccessfull(GoogleSignInResult result) {
-        Log.d(TAG, "Silent login was successfull. Logged in as "+MadcapAuthManager.getUserId());
-        
+        Log.d(TAG, "Silent login was successfull. Logged in as " + MadcapAuthManager.getUserId());
+
         Intent intent = new Intent(LoginService.this, DataCollectionService.class);
         startService(intent);
     }
@@ -84,9 +90,43 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
     @Override
     public void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr) {
         Log.d(TAG, "Silent login failed");
+
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+        mBuilder.setContentTitle("Madcap Auto Login Failed");
+        mBuilder.setContentText("Madcap could not log you in automatically, please login to continue participating in our study (and to get your money).");
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        mBuilder.setPriority(Notification.PRIORITY_MAX);
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, SignInActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(SignInActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(1, mBuilder.build());
+
+        //Old version directly redirecting to the SignIn Activity
+        /*
         Intent intent = new Intent(getBaseContext(),SignInActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        */
     }
 
     /**
