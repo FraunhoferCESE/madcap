@@ -126,7 +126,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      * @param attempt current attempt number.
      */
     private void silentLogin(int attempt){
-        int maxAttempt = 10;
+        int maxAttempt = 5;
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {

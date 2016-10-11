@@ -34,16 +34,18 @@ public class LoginServiceTest {
     LoginService cut;
     GoogleSignInOptions mockGso;
     GoogleApiClient mockGoogleApiClient;
+    MadcapAuthManager mockMadcapAuthManager;
 
     @Before
     public void setUp() throws Exception {
+        mockMadcapAuthManager = mock(MadcapAuthManager.class);
         mockGso = spy(new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestProfile()
                 .build());
         mockGoogleApiClient = spy(GoogleApiClient.class);
 
-        MadcapAuthManager.setUp(mockGso, mockGoogleApiClient);
+        mockMadcapAuthManager.setUp(mockGso, mockGoogleApiClient);
         cut = new LoginService();
     }
 
@@ -67,7 +69,6 @@ public class LoginServiceTest {
 
     @Test
     public void onCreate() throws Exception {
-        MadcapAuthManager mockMadcapAuthManager = mock(MadcapAuthManager.class);
         cut.setMadcapAuthManager(mockMadcapAuthManager);
 
         cut.onCreate();
