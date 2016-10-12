@@ -137,4 +137,9 @@ public class LoginServiceTest {
         Assert.assertEquals(cut, cutBefore);
     }
 
+    @Test
+    public void testHashCode(){
+        cut.setMadcapAuthManager(mockMadcapAuthManager);
+    }
+
 }

@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static com.pathsense.locationengine.lib.detectionLogic.b.s;
+import static com.pathsense.locationengine.lib.detectionLogic.b.t;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
@@ -48,12 +49,17 @@ public class OnBootServiceTest {
 
     @Test
     public void onDestroy() throws Exception {
-        //cut.onDestroy();
+        OnBootService cutBefore = cut.clone();
+        cut.onDestroy();
+
+        Assert.assertEquals("Should not change the instance", cut, cutBefore);
     }
 
     @Test
-    public void onCreate() throws Exception {
-        //cut.onCreate();
+    public void onCreate(){
+        OnBootService spyCut = spy(cut);
+        spyCut.onCreate();
+        verify(spyCut).startService(any(Intent.class));
     }
 
     @Test
@@ -64,4 +70,26 @@ public class OnBootServiceTest {
         //Assert.assertEquals(cut.onStartCommand(mockIntent, mockFlag, startId), 1);
     }
 
+    @Test
+    public void equals() throws CloneNotSupportedException {
+        OnBootService cutCopy = cut.clone();
+        Assert.assertTrue("Equals should return true for an equal object", cut.equals(cutCopy));
+
+        Context mockContext = spy(Context.class);
+        OnBootService cutDifferentContext = cut.clone();
+        cutDifferentContext.setContext(mockContext);
+        Assert.assertFalse("Should not return true, when different parameter", cut.equals(cutDifferentContext));
+
+        Object mockObject = mock(Object.class);
+        Assert.assertFalse("Should return false if some other type is passed in", cut.equals(mockObject));
+    }
+
+    @Test
+    public void testHashCode(){
+        Context mockContext = spy(Context.class);
+
+        cut.setContext(mockContext);
+
+        Assert.assertEquals("Should return the only parameters hash code ", cut.hashCode(), mockContext.hashCode());
+    }
 }
