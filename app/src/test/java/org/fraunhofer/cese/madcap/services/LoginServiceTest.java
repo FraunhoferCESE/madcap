@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import junit.framework.Assert;
@@ -63,8 +64,6 @@ public class LoginServiceTest {
     @Test
     public void onDestroy() throws Exception {
         cut.onDestroy();
-        Log mockLog = mock(Log.class);
-
     }
 
     @Test
@@ -73,16 +72,20 @@ public class LoginServiceTest {
 
         cut.onCreate();
         verify(mockMadcapAuthManager).setCallbackClass(cut);
+        verify(mockMadcapAuthManager).silentLogin();
     }
 
     @Test
     public void onSilentLoginSuccessfull() throws Exception {
+        cut.setMadcapAuthManager(mockMadcapAuthManager);
+        GoogleSignInResult mockResult = mock(GoogleSignInResult.class);
 
+        cut.onSilentLoginSuccessfull(mockResult);
     }
 
     @Test
     public void onSilentLoginFailed() throws Exception {
-
+        
     }
 
     @Test
