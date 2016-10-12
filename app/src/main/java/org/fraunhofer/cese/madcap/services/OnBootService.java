@@ -40,6 +40,7 @@ public class OnBootService extends Service implements Cloneable{
         Log.d(TAG, "onCreate Boot Service");
         Intent intent = new Intent(this, LoginService.class);
         startService(intent);
+        this.stopSelf();
     }
 
     /**
