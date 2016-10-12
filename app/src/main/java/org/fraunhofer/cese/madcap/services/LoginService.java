@@ -23,13 +23,18 @@ import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
+import java.util.Stack;
+
+import static com.pathsense.locationengine.lib.detectionLogic.b.C;
+
 /**
  * Created by MMueller on 10/7/2016.
  */
 
-public class LoginService extends Service implements MadcapAuthEventHandler {
+public class LoginService extends Service implements Cloneable, MadcapAuthEventHandler {
     private static final String TAG = "Madcap Login Service";
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+    private TaskStackBuilder stackBuilder;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -92,7 +97,6 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
     public void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr) {
         Log.d(TAG, "Silent login failed");
 
-
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
         mBuilder.setContentTitle("Madcap Auto Login Failed");
@@ -106,7 +110,9 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
         // started Activity.
         // This ensures that navigating backward from the Activity leads out of
         // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        if(stackBuilder == null){
+            stackBuilder = TaskStackBuilder.create(this);
+        }
         // Adds the back stack for the Intent (but not the Intent itself)
         stackBuilder.addParentStack(SignInActivity.class);
         // Adds the Intent that starts the Activity to the top of the stack
@@ -121,13 +127,6 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
         mNotificationManager.notify(1, mBuilder.build());
-
-        //Old version directly redirecting to the SignIn Activity
-        /*
-        Intent intent = new Intent(getBaseContext(),SignInActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        */
     }
 
     /**
@@ -176,5 +175,52 @@ public class LoginService extends Service implements MadcapAuthEventHandler {
      */
     protected void setMadcapAuthManager(MadcapAuthManager madcapAuthManager){
         this.madcapAuthManager = madcapAuthManager;
+    }
+
+    /**
+     * Clone Method used by testing classes.
+     * @return The cloned object.
+     */
+    @Override
+    public LoginService clone() throws CloneNotSupportedException {
+        final LoginService result = (LoginService) super.clone();
+        // copy fields that need to be copied here!
+        return result;
+
+    }
+
+    /**
+     * For testing purposes
+     * @param o Object to be checked if equals.
+     * @return True, if objects are same reference or from same Type.
+     */
+    @Override
+    public boolean equals(Object o){
+        if(o.getClass() == LoginService.class){
+            //Return true, due to no real mutable class variables.
+            return true;
+        }else{
+            return super.equals(o);
+        }
+    }
+
+    /**
+     * Hash code method.
+     * @return the hash code.
+     */
+    @Override
+    public int hashCode() {
+        int result = madcapAuthManager != null ? madcapAuthManager.hashCode() : 0;
+        result = 31 * result + stackBuilder.hashCode();
+        return result;
+    }
+
+    /**
+     * Setter for the TaskStack Builder, for testing purposes only.
+     * @deprecated
+     * @param stackBuilder
+     */
+    public void setStackBuilder(TaskStackBuilder stackBuilder){
+        this.stackBuilder = stackBuilder;
     }
 }

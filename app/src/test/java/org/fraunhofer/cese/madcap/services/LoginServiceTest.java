@@ -1,11 +1,14 @@
 package org.fraunhofer.cese.madcap.services;
 
+import android.content.Context;
+import android.support.v4.app.TaskStackBuilder;
 import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.OptionalPendingResult;
 
 import junit.framework.Assert;
 
@@ -77,35 +80,61 @@ public class LoginServiceTest {
 
     @Test
     public void onSilentLoginSuccessfull() throws Exception {
-        cut.setMadcapAuthManager(mockMadcapAuthManager);
+        LoginService spyCut = spy(cut);
+        spyCut.setMadcapAuthManager(mockMadcapAuthManager);
         GoogleSignInResult mockResult = mock(GoogleSignInResult.class);
 
-        cut.onSilentLoginSuccessfull(mockResult);
+        spyCut.onSilentLoginSuccessfull(mockResult);
+        verify(spyCut).startService(any(Intent.class));
     }
 
     @Test
     public void onSilentLoginFailed() throws Exception {
-        
+        cut.setMadcapAuthManager(mockMadcapAuthManager);
+
+//        Context mockContext = spy(Context.class);
+//        TaskStackBuilder mockStackBuilder = spy(TaskStackBuilder.create(mockContext));
+//        cut.setStackBuilder(mockStackBuilder);
+//        OptionalPendingResult<GoogleSignInResult> mockOpr = (OptionalPendingResult<GoogleSignInResult>) spy(OptionalPendingResult.class);
+//        cut.onSilentLoginFailed(mockOpr);
     }
 
     @Test
     public void onSignInSucessfull() throws Exception {
+        LoginService spyCut = spy(cut);
+        spyCut.setMadcapAuthManager(mockMadcapAuthManager);
 
+        spyCut.onSignInSucessfull();
+        verify(spyCut).startService(any(Intent.class));
     }
 
     @Test
     public void onSignOutResults() throws Exception {
+        cut.setMadcapAuthManager(mockMadcapAuthManager);
 
+        LoginService cutBefore = cut.clone();
+        cut.onSignOutResults(null);
+        Assert.assertEquals(cut, cutBefore);
     }
 
     @Test
     public void onRevokeAccess() throws Exception {
+        cut.setMadcapAuthManager(mockMadcapAuthManager);
 
+        LoginService cutBefore = cut.clone();
+        cut.onRevokeAccess(null);
+        Assert.assertEquals(cut, cutBefore);
     }
 
     @Test
     public void onSignInIntent() throws Exception {
+        cut.setMadcapAuthManager(mockMadcapAuthManager);
 
+        Intent mockIntent = spy(Intent.class);
+
+        LoginService cutBefore = cut.clone();
+        cut.onSignInIntent(mockIntent, 2);
+        Assert.assertEquals(cut, cutBefore);
     }
 
 }
