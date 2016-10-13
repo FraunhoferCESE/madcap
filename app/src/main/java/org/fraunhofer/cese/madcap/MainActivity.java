@@ -238,9 +238,13 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             isCollectingData = true;
+//                            Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
+//                            startService(intent);
                             enablePipelines();
                         } else {
                             isCollectingData = false;
+//                            Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
+//                            stopService(intent);
                             disablePipelines();
                         }
                     }
@@ -441,6 +445,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
     }
 
     private void goBackToSignIn(){
+        Log.d(TAG, "Now going back to SignInActivity");
         Intent intent = new Intent(this, SignInActivity.class);
         intent.putExtra("distractfromsilentlogin", true);
         startActivity(intent);
