@@ -40,6 +40,8 @@ import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
+import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.services.LoginService;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -256,6 +258,9 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
             public void onClick(View v) {
                 Log.d(TAG, "Logout clicked");
                 madcapAuthManager.signOut();
+
+                Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
+                stopService(intent);
             }
         });
 

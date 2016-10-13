@@ -1,16 +1,23 @@
 package org.fraunhofer.cese.madcap.services;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.Status;
 
+import org.fraunhofer.cese.madcap.R;
+import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
@@ -20,7 +27,9 @@ import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
 public class DataCollectionService extends Service implements MadcapAuthEventHandler {
     private static final String TAG = "Madcap DataColl Service";
+    private final int RUN_CODE = 1;
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+    private NotificationManager mNotificationManager;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -52,6 +61,37 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     public void onCreate(){
         Log.d(TAG, "onCreate Data collection Service");
         madcapAuthManager.setCallbackClass(this);
+        showRunNotification();
+    }
+
+    @Override
+    public void onDestroy() {
+        hideRunNotification();
+    }
+
+    /**
+     * Shows the madcap logo in the notification bar,
+     * to signal the user that madcap is collecting data.
+     */
+    private void showRunNotification(){
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+        mBuilder.setContentTitle("Madcap Running in Background");
+        mBuilder.setContentText("Thank you for your participation.");
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        mBuilder.setPriority(Notification.PRIORITY_LOW);
+
+        mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        Notification note =  mBuilder.build();
+        note.flags |= Notification.FLAG_NO_CLEAR;
+
+        mNotificationManager.notify(RUN_CODE, note);
+    }
+
+    private void hideRunNotification(){
+        mNotificationManager.cancel(RUN_CODE);
     }
 
     /**

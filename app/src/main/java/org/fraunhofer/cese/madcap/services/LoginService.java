@@ -103,6 +103,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         mBuilder.setContentText("Madcap could not log you in automatically, please login to continue participating in our study (and to get your money).");
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setPriority(Notification.PRIORITY_MAX);
+        mBuilder.setAutoCancel(true);
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, SignInActivity.class);
 
