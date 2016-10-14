@@ -18,11 +18,11 @@ import org.acra.annotation.*;
  * Created by llayman on 9/23/2016.
  */
 @ReportsCrashes(
-        formUri = "https://mmueller.cloudant.com/acra-madcap/_design/acra-storage/_update/report",
+        formUri = "https://madcap.cloudant.com/acra-madcap/_design/acra-storage/_update/report",
         reportType = org.acra.sender.HttpSender.Type.JSON,
         httpMethod = org.acra.sender.HttpSender.Method.PUT,
-        formUriBasicAuthLogin="gentytookildsolodyincenc",
-        formUriBasicAuthPassword="1ae5f5f9e483e4b1beffda898b5a5ef02ffdfd65",
+        formUriBasicAuthLogin="agioneciellacenclichasem",
+        formUriBasicAuthPassword="69f1b42d55cdfb9d7e1dc3f0a9deccb0750a64fe",
         mode = ReportingInteractionMode.TOAST,
         resToastText = R.string.crash_toast_text
 )
