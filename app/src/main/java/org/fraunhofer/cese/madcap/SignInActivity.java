@@ -3,7 +3,9 @@ package org.fraunhofer.cese.madcap;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -118,7 +120,10 @@ public class SignInActivity extends AppCompatActivity implements
             updateUI(true);
 
             Intent intent = new Intent(this, DataCollectionService.class);
-            startService(intent);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
+                startService(intent);
+            }
 
             proceedToMainActivity();
         } else {
@@ -230,7 +235,10 @@ public class SignInActivity extends AppCompatActivity implements
         Log.d(TAG, "onSignIn successfull");
 
         Intent intent = new Intent(this, DataCollectionService.class);
-        startService(intent);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
+            startService(intent);
+        }
 
         proceedToMainActivity();
     }

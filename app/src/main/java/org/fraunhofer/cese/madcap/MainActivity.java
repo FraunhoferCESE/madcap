@@ -5,9 +5,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
@@ -212,12 +214,15 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
         if (savedInstanceState != null) {
             dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
             uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
-            isCollectingData = savedInstanceState.getBoolean(STATE_COLLECTING_DATA);
         } else {
             dataCountText = "Computing...";
             uploadResultText = "None.";
             isCollectingData = true;
         }
+
+        //Set the toggle button on the last set preference configuration
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
 
         setContentView(R.layout.main);
         dataCountView = (TextView) findViewById(R.id.dataCountText);
@@ -231,6 +236,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
 
 
         ((TextView) findViewById(R.id.instanceIdText)).setText(getString(R.string.instanceIdText, InstanceID.getInstance(getApplicationContext()).getId()));
+
         collectDataSwitch.setChecked(isCollectingData);
         collectDataSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
@@ -238,13 +244,25 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             isCollectingData = true;
-//                            Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
-//                            startService(intent);
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean(getString(R.string.data_collection_pref), true);
+                            editor.commit();
+                            boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
+                            Log.d(TAG, "Current data collection preference is now "+currentCollectionState);
+                            Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
+                            startService(intent);
                             enablePipelines();
                         } else {
                             isCollectingData = false;
-//                            Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
-//                            stopService(intent);
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean(getString(R.string.data_collection_pref), false);
+                            editor.commit();
+                            boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
+                            Log.d(TAG, "Current data collection preference is now "+currentCollectionState);
+                            Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
+                            stopService(intent);
                             disablePipelines();
                         }
                     }
@@ -265,6 +283,8 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
 
                 Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
                 stopService(intent);
+
+                goBackToSignIn();
             }
         });
 

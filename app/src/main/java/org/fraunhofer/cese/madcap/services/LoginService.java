@@ -6,7 +6,9 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -85,7 +87,10 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         Log.d(TAG, "Silent login was successfull. Logged in as " + madcapAuthManager.getUserId());
 
         Intent intent = new Intent(LoginService.this, DataCollectionService.class);
-        startService(intent);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
+            startService(intent);
+        }
     }
 
     /**
@@ -136,7 +141,12 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
     @Override
     public void onSignInSucessfull() {
         Intent intent = new Intent(LoginService.this, DataCollectionService.class);
-        startService(intent);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
+            startService(intent);
+        }
+
     }
 
     /**
