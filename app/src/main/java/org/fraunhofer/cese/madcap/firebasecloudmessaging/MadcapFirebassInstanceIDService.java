@@ -12,10 +12,12 @@ import com.google.firebase.iid.FirebaseInstanceIdService;
  * The handling of creation, rotation and updating the registration of Firebase Tokens.
  */
 public class MadcapFirebassInstanceIDService extends FirebaseInstanceIdService {
-    public MadcapFirebassInstanceIDService() {
-    }
 
     private static final String TAG = "MFirebaseIIDService";
+
+    public MadcapFirebassInstanceIDService() {
+
+    }
 
     /**
      * Called if InstanceID token is updated. This may occur if the security of
