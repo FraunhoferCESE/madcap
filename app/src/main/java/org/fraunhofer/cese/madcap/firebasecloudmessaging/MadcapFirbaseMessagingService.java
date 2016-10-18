@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.firebasecloudmessaging;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -9,6 +10,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -16,6 +18,9 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.R;
+import org.fraunhofer.cese.madcap.SignInActivity;
+
+import java.util.Map;
 
 /**
  * This class does to Firebase message handling.
@@ -47,12 +52,14 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            processIncomingMessage(remoteMessage.getData());
         }
 
         // Check if message contains a notification payload.
-        if (remoteMessage.getNotification() != null) {
-            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-        }
+        // Deprecated
+//        if (remoteMessage.getNotification() != null) {
+//            Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
+//        }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated. See sendNotification method below.
@@ -63,24 +70,70 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String messageBody) {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+//    private void sendNotification(String messageBody) {
+//        Intent intent = new Intent(this, MainActivity.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
+//                PendingIntent.FLAG_ONE_SHOT);
+//
+//        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+//                .setSmallIcon(R.drawable.madcaplogo2)
+//                .setContentTitle("FCM Message")
+//                .setContentText(messageBody)
+//                .setAutoCancel(true)
+//                .setSound(defaultSoundUri)
+//                .setContentIntent(pendingIntent);
+//
+//        NotificationManager notificationManager =
+//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//
+//        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+//    }
 
-        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.madcaplogo2)
-                .setContentTitle("FCM Message")
-                .setContentText(messageBody)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent);
+    private void processIncomingMessage(Map<String, String> map){
+        String type = map.get("type");
+        switch(type){
+            case "notification":
+                String name = map.get("name");
+                String text = map.get("text");
+                showUiNotification(name, text);
+                break;
+            default:
+                break;
+        }
+    }
 
-        NotificationManager notificationManager =
+    private void showUiNotification(String title, String text){
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+        mBuilder.setContentTitle(title);
+        mBuilder.setContentText(text);
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        mBuilder.setPriority(Notification.PRIORITY_MAX);
+        mBuilder.setAutoCancel(true);
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, SignInActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(SignInActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        // mId allows you to update the notification later on.
+        mNotificationManager.notify(2, mBuilder.build());
     }
 }
