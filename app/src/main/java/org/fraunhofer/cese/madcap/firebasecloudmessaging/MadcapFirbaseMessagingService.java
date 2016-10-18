@@ -101,6 +101,8 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
                 break;
             default:
                 break;
+
+            //TODO: introduce new types according to David Maimons requirements
         }
     }
 
