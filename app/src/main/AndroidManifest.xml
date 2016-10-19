@@ -39,12 +39,15 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" /> <!-- The used actions are defined here. -->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!-- The used actions are defined here. -->
     <application
         android:name=".MyApplication"
         android:allowBackup="false"
         android:fullBackupContent="false"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/madcaplogo2"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
@@ -59,17 +62,21 @@
 
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityChangeBroadcastReceiver" />
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityUpdateBroadcastReceiver" />
-
         <receiver android:name=".broadcastreceivers.OnBootCompleteBoardcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:enabled="true" android:name=".services.OnBootService" />
-        <service android:enabled="true" android:name=".services.LoginService" />
-        <service android:enabled="true" android:name=".services.DataCollectionService" />
-
+        <service
+            android:name=".services.OnBootService"
+            android:enabled="true" />
+        <service
+            android:name=".services.LoginService"
+            android:enabled="true" />
+        <service
+            android:name=".services.DataCollectionService"
+            android:enabled="true" />
         <service android:name="edu.mit.media.funf.FunfManager" />
 
         <receiver
@@ -88,13 +95,11 @@
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
-            android:theme="@style/ThemeOverlay.MyNoTitleActivity">
-        </activity>
+            android:theme="@style/ThemeOverlay.MyNoTitleActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
 
         <activity
             android:name=".SignInActivity"
@@ -109,9 +114,19 @@
         <activity
             android:name=".IdTokenActivity"
             android:label="@string/name_id_token_activity"
-            android:theme="@style/ThemeOverlay.MyNoTitleActivity">
-        </activity>
+            android:theme="@style/ThemeOverlay.MyNoTitleActivity" />
+
+        <service android:name=".firebasecloudmessaging.MadcapFirbaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".firebasecloudmessaging.MadcapFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 
 </manifest>
