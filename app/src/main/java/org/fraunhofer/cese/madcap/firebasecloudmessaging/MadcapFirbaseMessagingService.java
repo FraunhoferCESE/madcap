@@ -19,6 +19,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
+import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import java.util.Map;
 public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MFirebaseMsgService";
+    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
 
     /**
      * Called when message is received.
@@ -52,7 +54,9 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            processIncomingMessage(remoteMessage.getData());
+            if(madcapAuthManager.getUserId()!=null){
+                processIncomingMessage(remoteMessage.getData());
+            }
         }
 
         // Check if message contains a notification payload.
