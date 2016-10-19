@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
@@ -52,6 +53,8 @@ public class SignInActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signinactivity);
 
+        //Debug
+        Log.d(TAG, "Firebase token "+ FirebaseInstanceId.getInstance().getToken());
 
         madcapAuthManager.setCallbackClass(this);
 

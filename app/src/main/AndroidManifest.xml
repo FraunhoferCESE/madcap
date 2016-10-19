@@ -47,7 +47,7 @@
         android:name=".MyApplication"
         android:allowBackup="false"
         android:fullBackupContent="false"
-        android:icon="@drawable/madcaplogo2"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
