@@ -6,9 +6,11 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -54,7 +56,8 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-            if(madcapAuthManager.getUserId()!=null){
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+            if(madcapAuthManager.getUserId()!=null && prefs.getBoolean(getString(R.string.data_collection_pref), true)){
                 processIncomingMessage(remoteMessage.getData());
             }
         }
@@ -72,7 +75,6 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
     /**
      * Create and show a simple notification containing the received FCM message.
      *
-     * @param messageBody FCM message body received.
      */
 //    private void sendNotification(String messageBody) {
 //        Intent intent = new Intent(this, MainActivity.class);
