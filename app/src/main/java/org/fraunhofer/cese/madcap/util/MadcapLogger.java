@@ -7,19 +7,18 @@ import android.util.Log;
  */
 
 public class MadcapLogger {
-    private static int logLevel = 6;
-    private static boolean ASSERT = logLevel >= 1;
-    private static boolean ERROR = logLevel >= 2;
-    private static boolean WARNING = logLevel >= 3;
-    private static boolean INFO = logLevel >= 4;
-    private static boolean DEBUG = logLevel >=5;
-    private static boolean VERBOSE = logLevel >=6;
+    private static int logLevel = 5;
+    private static boolean ERROR = logLevel >= 1;
+    private static boolean WARNING = logLevel >= 2;
+    private static boolean INFO = logLevel >= 3;
+    private static boolean DEBUG = logLevel >=4;
+    private static boolean VERBOSE = logLevel >=5;
 
     public static void setLogLevel(int logLevel){
-        if(logLevel >= 0 && logLevel <=1){
+        if(logLevel >= 0 && logLevel <=5){
             MadcapLogger.logLevel = logLevel;
         }else{
-            throw new IllegalArgumentException("Loglevel has to be between 0 and 6");
+            throw new IllegalArgumentException("Loglevel has to be between 0 and 5");
         }
     }
 
