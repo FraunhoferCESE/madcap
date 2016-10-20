@@ -1,14 +1,16 @@
 package org.fraunhofer.cese.madcap.appengine;
 
 import android.content.Context;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.android.gms.iid.InstanceID;
 import com.google.gson.JsonElement;
 
+import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheEntry;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
+import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 import java.util.UUID;
 
@@ -53,10 +55,11 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
         String key = probeConfig.get(RuntimeTypeAdapterFactory.TYPE).toString();
 
-        Log.d(TAG, "(onDataReceived) key: " + key + ", data: " + data);
+
+        MyApplication.madcapLogger.d(TAG, "(onDataReceived) key: " + key + ", data: " + data);
 
         if (key == null || data == null) {
-            Log.d(TAG, "(onDataReceived) Exiting due to null key or data.");
+            MyApplication.madcapLogger.d(TAG, "(onDataReceived) Exiting due to null key or data.");
             return;
         }
 
@@ -65,7 +68,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         Long timestamp = timestampDouble.longValue();
 
         if (timestamp == 0L) {
-            Log.d(TAG, "Invalid timestamp for probe data: " + 0L);
+            MyApplication.madcapLogger.d(TAG, "Invalid timestamp for probe data: " + 0L);
             return;
         }
 
@@ -91,7 +94,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      */
     @Override
     public void onDataCompleted(IJsonObject completeProbeUri, JsonElement checkpoint) {
-        Log.d(TAG, "(onDataCompleted) completeProbeUri: " + completeProbeUri + ", checkpoint: " + checkpoint);
+        MyApplication.madcapLogger.d(TAG, "(onDataCompleted) completeProbeUri: " + completeProbeUri + ", checkpoint: " + checkpoint);
         cache.flush(Cache.UploadStrategy.NORMAL);
     }
 
@@ -103,7 +106,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      */
     @Override
     public void onCreate(FunfManager manager) {
-        Log.d(TAG, "(onCreate)");
+        MyApplication.madcapLogger.d(TAG, "(onCreate)");
         enabled = true;
     }
 
@@ -116,7 +119,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     @Override
     public void onRun(String action, JsonElement config) {
         // Method which is called to tell the Pipeline to do something, like save the data locally or upload to the cloud
-        Log.d(TAG, "(onRun)");
+        MyApplication.madcapLogger.d(TAG, "(onRun)");
     }
 
     /**
@@ -146,7 +149,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     @Override
     public void onDestroy() {
         // Any closeout or disconnect operations
-        Log.d(TAG, "onDestroy");
+        MyApplication.madcapLogger.d(TAG, "onDestroy");
         enabled = false;
         cache.close();
     }

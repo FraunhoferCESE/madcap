@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import edu.mit.media.funf.probe.Probe;
 
@@ -34,7 +34,7 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
 
         getContext().registerReceiver(receiver, filter);
 
-        Log.i("CallStateProbe: ", "CallStateProbe enabled");
+        MyApplication.madcapLogger.i("CallStateProbe: ", "CallStateProbe enabled");
 
         sendInitialState();
     }
@@ -116,7 +116,7 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
 
         sendData(intent);
 
-        Log.i(TAG, "initial Probe sent");
+        MyApplication.madcapLogger.i(TAG, "initial Probe sent");
     }
 
     private String getDataState(TelephonyManager telephonyManager){

@@ -2,7 +2,7 @@ package org.fraunhofer.cese.madcap.Probe;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -23,7 +23,7 @@ public class RunningApplicationsProbe extends Probe.Base implements Probe.Contin
     @Override
     protected void onEnable() {
 
-        Log.d(TAG, "RunningApplicationsProbe starting");
+        MyApplication.madcapLogger.d(TAG, "RunningApplicationsProbe starting");
         onStart();
         Gson gson = getGson();
         ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);

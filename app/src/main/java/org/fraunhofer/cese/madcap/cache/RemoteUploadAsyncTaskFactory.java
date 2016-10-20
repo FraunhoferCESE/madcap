@@ -2,7 +2,7 @@ package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
@@ -70,7 +70,7 @@ public class RemoteUploadAsyncTaskFactory {
                 if (numCachedEntries == 0)
                     return result;
 
-                Log.i(TAG, "Attempting to upload " + numCachedEntries + " to " + appEngineApi.getRootUrl());
+                MyApplication.madcapLogger.i(TAG, "Attempting to upload " + numCachedEntries + " to " + appEngineApi.getRootUrl());
 
                 ProbeSaveResult saveResult = new ProbeSaveResult();
                 saveResult.setSaved(new ArrayList<String>());
@@ -104,7 +104,7 @@ public class RemoteUploadAsyncTaskFactory {
                         if (remoteResult.getAlreadyExists() != null) {
                             saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
                         }
-                        Log.i(TAG, "Uploaded chunk " + ((offset / BUFFER_SIZE) + 1) + " (" + offset + "-" + (offset + BUFFER_SIZE > numCachedEntries ? numCachedEntries : offset + BUFFER_SIZE) + ") - " +
+                        MyApplication.madcapLogger.i(TAG, "Uploaded chunk " + ((offset / BUFFER_SIZE) + 1) + " (" + offset + "-" + (offset + BUFFER_SIZE > numCachedEntries ? numCachedEntries : offset + BUFFER_SIZE) + ") - " +
                                 "Saved: " + (remoteResult.getSaved() == null ? 0 : remoteResult.getSaved().size()) +
                                 ", Already existed: " + (remoteResult.getAlreadyExists() == null ? 0 : remoteResult.getAlreadyExists().size()));
                         offset += BUFFER_SIZE;
@@ -112,21 +112,21 @@ public class RemoteUploadAsyncTaskFactory {
 
                     } catch (IOException | SQLException e) {
                         result.setException(e);
-                        Log.w(TAG, "Upload failed", e);
+                        MyApplication.madcapLogger.w(TAG, "Upload failed", e);
                     }
                 }
                 result.setSaveResult(saveResult);
-                Log.i(TAG, "Upload finished. Saved: " + saveResult.getSaved().size() + " entries, Already existed: " + saveResult.getAlreadyExists().size()
+                MyApplication.madcapLogger.i(TAG, "Upload finished. Saved: " + saveResult.getSaved().size() + " entries, Already existed: " + saveResult.getAlreadyExists().size()
                         + ", Exception: " + (result.getException() != null));
 
 
                 // Remove uploaded entries from the database
                 if (saveResult.getAlreadyExists().isEmpty() && saveResult.getSaved().isEmpty()) {
-                    Log.i(TAG, "No save results to remove from database.");
+                    MyApplication.madcapLogger.i(TAG, "No save results to remove from database.");
                 } else {
-                    Log.d(TAG, "Removing entries from database.");
+                    MyApplication.madcapLogger.d(TAG, "Removing entries from database.");
                     @SuppressWarnings("unchecked") int numRemovedEntries = removeIds(databaseHelper, saveResult.getSaved(), saveResult.getAlreadyExists());
-                    Log.d(TAG, "Database entries removed: " + numRemovedEntries);
+                    MyApplication.madcapLogger.d(TAG, "Database entries removed: " + numRemovedEntries);
                 }
 
                 return result;

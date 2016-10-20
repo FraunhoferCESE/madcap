@@ -7,7 +7,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import java.util.List;
 
@@ -50,22 +50,22 @@ public class AccelerometerProbe extends Probe.Base implements Probe.ContinuousPr
 
         if (hasLinearAccelerometer) {
             acclerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
-            Log.i(TAG, "using linear accelerometer");
+            MyApplication.madcapLogger.i(TAG, "using linear accelerometer");
         } else {
             acclerometerSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            Log.i(TAG, "using regular accelerometer");
+            MyApplication.madcapLogger.i(TAG, "using regular accelerometer");
         }
 
         sensorManager.registerListener(this, acclerometerSensor, SensorManager.SENSOR_DELAY_NORMAL);
         lastProbeStart = System.currentTimeMillis();
-        Log.i(TAG, " enabled");
+        MyApplication.madcapLogger.i(TAG, " enabled");
     }
 
     @Override
     protected void onDisable() {
         super.onDisable();
         sensorManager.unregisterListener(this, acclerometerSensor);
-        Log.i(TAG, "disabled.");
+        MyApplication.madcapLogger.i(TAG, "disabled.");
     }
 
     @Override

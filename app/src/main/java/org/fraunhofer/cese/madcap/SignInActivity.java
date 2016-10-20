@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 import android.view.View;
 import android.widget.TextView;
 
@@ -54,12 +54,12 @@ public class SignInActivity extends AppCompatActivity implements
         setContentView(R.layout.signinactivity);
 
         //Debug
-        Log.d(TAG, "Firebase token "+ FirebaseInstanceId.getInstance().getToken());
+        MyApplication.madcapLogger.d(TAG, "Firebase token "+ FirebaseInstanceId.getInstance().getToken());
 
         madcapAuthManager.setCallbackClass(this);
 
-        Log.d(TAG, "CREATED");
-        //Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext());
+        MyApplication.madcapLogger.d(TAG, "CREATED");
+        //MyApplication.madcapLogger.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext());
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
@@ -90,7 +90,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void onStart() {
         super.onStart();
 
-        Log.d(TAG, "On start being called, now trying to silently log in");
+        MyApplication.madcapLogger.d(TAG, "On start being called, now trying to silently log in");
         // Try the silent login. After that callbacks are called.
         Intent intent = getIntent();
         if(!intent.hasExtra("distractfromsilentlogin")){
@@ -114,7 +114,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void handleSignInResult(GoogleSignInResult result) {
         //From the result we can retrieve some credentials
 
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        MyApplication.madcapLogger.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
@@ -139,7 +139,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        MyApplication.madcapLogger.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
     private void showProgressDialog() {
@@ -173,7 +173,7 @@ public class SignInActivity extends AppCompatActivity implements
      * Starts the transition to the main activity
      */
     public void proceedToMainActivity(){
-        Log.d(TAG, "Now going to the MainActivity");
+        MyApplication.madcapLogger.d(TAG, "Now going to the MainActivity");
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
@@ -182,15 +182,15 @@ public class SignInActivity extends AppCompatActivity implements
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
-                Log.d(TAG, "pressed sign in");
+                MyApplication.madcapLogger.d(TAG, "pressed sign in");
                 madcapAuthManager.signIn();
                 break;
             case R.id.sign_out_button:
-                Log.d(TAG, "pressed sign ou");
+                MyApplication.madcapLogger.d(TAG, "pressed sign ou");
                 madcapAuthManager.signOut();
                 break;
             case R.id.disconnect_button:
-                Log.d(TAG, "pressed disconnect");
+                MyApplication.madcapLogger.d(TAG, "pressed disconnect");
                 madcapAuthManager.revokeAccess();
                 break;
         }
@@ -208,7 +208,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void onSilentLoginSuccessfull(GoogleSignInResult result) {
         // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
         // and the GoogleSignInResult will be available instantly.
-        Log.d(TAG, "Got cached sign-in");
+        MyApplication.madcapLogger.d(TAG, "Got cached sign-in");
         handleSignInResult(result);
     }
 
@@ -235,7 +235,7 @@ public class SignInActivity extends AppCompatActivity implements
      */
     @Override
     public void onSignInSucessfull() {
-        Log.d(TAG, "onSignIn successfull");
+        MyApplication.madcapLogger.d(TAG, "onSignIn successfull");
 
         Intent intent = new Intent(this, DataCollectionService.class);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -249,7 +249,7 @@ public class SignInActivity extends AppCompatActivity implements
     @Override
     public void onSignInIntent(Intent intent, int requestCode) {
         startActivityForResult(intent, requestCode);
-        Log.d(TAG,"Now starting the signing procedure with intnet");
+        MyApplication.madcapLogger.d(TAG,"Now starting the signing procedure with intnet");
     }
 
     /**

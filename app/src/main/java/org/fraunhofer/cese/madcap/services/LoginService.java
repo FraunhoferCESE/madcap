@@ -12,7 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -66,14 +66,14 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
 
     public void onDestroy() {
         //Toast.makeText(this, "Login Service Stopped", Toast.LENGTH_LONG).show();
-        Log.d(TAG, "onDestroy");
+        MyApplication.madcapLogger.d(TAG, "onDestroy");
     }
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate Login Service");
+        MyApplication.madcapLogger.d(TAG, "onCreate Login Service");
         madcapAuthManager.setCallbackClass(this);
-        Log.d(TAG, "Trying to log in silently");
+        MyApplication.madcapLogger.d(TAG, "Trying to log in silently");
         madcapAuthManager.silentLogin();
     }
 
@@ -84,7 +84,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
      */
     @Override
     public void onSilentLoginSuccessfull(GoogleSignInResult result) {
-        Log.d(TAG, "Silent login was successfull. Logged in as " + madcapAuthManager.getUserId());
+        MyApplication.madcapLogger.d(TAG, "Silent login was successfull. Logged in as " + madcapAuthManager.getUserId());
 
         Intent intent = new Intent(LoginService.this, DataCollectionService.class);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -100,7 +100,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
      */
     @Override
     public void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr) {
-        Log.d(TAG, "Silent login failed");
+        MyApplication.madcapLogger.d(TAG, "Silent login failed");
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);

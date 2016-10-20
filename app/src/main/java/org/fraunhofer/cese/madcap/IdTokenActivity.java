@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -116,7 +116,7 @@ public class IdTokenActivity extends AppCompatActivity implements
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        Log.d(TAG, "signOut:onResult:" + status);
+                        MyApplication.madcapLogger.d(TAG, "signOut:onResult:" + status);
                         updateUI(false);
                     }
                 });
@@ -127,7 +127,7 @@ public class IdTokenActivity extends AppCompatActivity implements
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(Status status) {
-                        Log.d(TAG, "revokeAccess:onResult:" + status);
+                        MyApplication.madcapLogger.d(TAG, "revokeAccess:onResult:" + status);
                         updateUI(false);
                     }
                 });
@@ -140,7 +140,7 @@ public class IdTokenActivity extends AppCompatActivity implements
         if (requestCode == RC_GET_TOKEN) {
             // [START get_id_token]
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            Log.d(TAG, "onActivityResult:GET_TOKEN:success:" + result.getStatus().isSuccess());
+            MyApplication.madcapLogger.d(TAG, "onActivityResult:GET_TOKEN:success:" + result.getStatus().isSuccess());
 
             if (result.isSuccess()) {
                 String idToken = result.getSignInAccount().getIdToken();
@@ -156,7 +156,7 @@ public class IdTokenActivity extends AppCompatActivity implements
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        MyApplication.madcapLogger.d(TAG, "onConnectionFailed:" + connectionResult);
     }
 
     private void updateUI(boolean signedIn) {
@@ -186,7 +186,7 @@ public class IdTokenActivity extends AppCompatActivity implements
         if (!serverClientId.trim().endsWith(suffix)) {
             String message = "Invalid server client ID in strings.xml, must end with " + suffix;
 
-            Log.w(TAG, message);
+            MyApplication.madcapLogger.w(TAG, message);
             Toast.makeText(this, message, Toast.LENGTH_LONG).show();
         }
     }

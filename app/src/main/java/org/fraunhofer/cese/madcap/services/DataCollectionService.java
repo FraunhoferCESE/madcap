@@ -10,7 +10,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.OptionalPendingResult;
@@ -59,7 +59,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public void onCreate(){
-        Log.d(TAG, "onCreate Data collection Service");
+        MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service");
         madcapAuthManager.setCallbackClass(this);
         showRunNotification();
     }

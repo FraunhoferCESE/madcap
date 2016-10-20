@@ -2,7 +2,7 @@ package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -96,7 +96,7 @@ class DatabaseAsyncTaskFactory {
                                         skippedCount++;
                                     }
                                 }
-                                Log.d(TAG, "{doInBackground} Skipped " + skippedCount + " entries already in database.");
+                                MyApplication.madcapLogger.d(TAG, "{doInBackground} Skipped " + skippedCount + " entries already in database.");
                             }
                         }
                     }
@@ -141,7 +141,7 @@ class DatabaseAsyncTaskFactory {
 
             @Override
             protected Void doInBackground(Void... voids) {
-                Log.d(TAG, "Running task to determine if database is still within size limits");
+                MyApplication.madcapLogger.d(TAG, "Running task to determine if database is still within size limits");
 
                 if (dbEntryLimit < 0 || cache == null)
                     return null;
@@ -153,9 +153,9 @@ class DatabaseAsyncTaskFactory {
                 RuntimeExceptionDao<CacheEntry, String> dao = databaseHelper.getDao();
                 long size = dao.countOf();
                 if (size < dbEntryLimit) {
-                    Log.i(TAG, "No cleanup needed. Database limit: " + dbEntryLimit + " > Database size: " + size);
+                    MyApplication.madcapLogger.i(TAG, "No cleanup needed. Database limit: " + dbEntryLimit + " > Database size: " + size);
                 } else {
-                    Log.i(TAG, "Attempting cleanup. Database limit: " + dbEntryLimit + " <= Database size: " + size);
+                    MyApplication.madcapLogger.i(TAG, "Attempting cleanup. Database limit: " + dbEntryLimit + " <= Database size: " + size);
                     long numToDelete = size - (dbEntryLimit / 2);
 
                     try {
@@ -180,9 +180,9 @@ class DatabaseAsyncTaskFactory {
                             cursor += CURSOR_INCREMENT;
                         }
 
-                        Log.i(TAG, "Cleanup completed. New database size: " + dao.countOf());
+                        MyApplication.madcapLogger.i(TAG, "Cleanup completed. New database size: " + dao.countOf());
                     } catch (Exception e) {
-                        Log.e(TAG, "Unable to delete entries from database", e);
+                        MyApplication.madcapLogger.e(TAG, "Unable to delete entries from database", e);
                     }
                 }
                 return null;
