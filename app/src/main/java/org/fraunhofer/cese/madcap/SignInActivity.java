@@ -67,7 +67,7 @@ public class SignInActivity extends AppCompatActivity implements
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
+        findViewById(R.id.to_control_button).setOnClickListener(this);
 
 
         // [END build_client]
@@ -189,9 +189,9 @@ public class SignInActivity extends AppCompatActivity implements
                 MyApplication.madcapLogger.d(TAG, "pressed sign ou");
                 madcapAuthManager.signOut();
                 break;
-            case R.id.disconnect_button:
-                MyApplication.madcapLogger.d(TAG, "pressed disconnect");
-                madcapAuthManager.revokeAccess();
+            case R.id.to_control_button:
+                MyApplication.madcapLogger.d(TAG, "pressed to proceed to Control App");
+                proceedToMainActivity();
                 break;
         }
     }

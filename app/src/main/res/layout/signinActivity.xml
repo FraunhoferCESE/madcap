@@ -100,14 +100,18 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/sign_out" />
+                android:text="@string/sign_out"
+                android:background="@android:color/background_light"
+                android:layout_margin="2dp" />
 
             <Button
-                android:id="@+id/disconnect_button"
+                android:id="@+id/to_control_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/disconnect"/>
+                android:text="@string/proceedToMain"
+                android:background="@android:color/holo_orange_light"
+                android:layout_margin="2dp" />
         </LinearLayout>
 
     </RelativeLayout>

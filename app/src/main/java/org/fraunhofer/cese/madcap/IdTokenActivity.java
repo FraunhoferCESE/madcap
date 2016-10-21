@@ -46,7 +46,7 @@ public class IdTokenActivity extends AppCompatActivity implements
         // Button click listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
+        findViewById(R.id.to_control_button).setOnClickListener(this);
         mRefreshButton.setOnClickListener(this);
 
         // For sample only: make sure there is a valid server client ID.
@@ -200,7 +200,7 @@ public class IdTokenActivity extends AppCompatActivity implements
             case R.id.sign_out_button:
                 signOut();
                 break;
-            case R.id.disconnect_button:
+            case R.id.to_control_button:
                 revokeAccess();
                 break;
             case R.id.button_optional_action:
