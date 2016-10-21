@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -140,6 +141,8 @@ public class SignInActivity extends AppCompatActivity implements
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
         MyApplication.madcapLogger.d(TAG, "onConnectionFailed:" + connectionResult);
+        mStatusTextView.setText("Login failed, please try again");
+        Toast.makeText(this, "Login failed, pleas try again", Toast.LENGTH_SHORT);
     }
 
     private void showProgressDialog() {
@@ -183,6 +186,7 @@ public class SignInActivity extends AppCompatActivity implements
         switch (v.getId()) {
             case R.id.sign_in_button:
                 MyApplication.madcapLogger.d(TAG, "pressed sign in");
+                mStatusTextView.setText("Attempting now to Sign in");
                 madcapAuthManager.signIn();
                 break;
             case R.id.sign_out_button:
@@ -248,8 +252,8 @@ public class SignInActivity extends AppCompatActivity implements
 
     @Override
     public void onSignInIntent(Intent intent, int requestCode) {
-        startActivityForResult(intent, requestCode);
         MyApplication.madcapLogger.d(TAG,"Now starting the signing procedure with intnet");
+        startActivityForResult(intent, requestCode);
     }
 
     /**
