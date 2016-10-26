@@ -24,20 +24,6 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-//        ProgressDialog dialog = new ProgressDialog(this);
-//        dialog.setMessage("Loading");
-//        dialog.setIndeterminate(true);
-//        dialog.setCancelable(true);
-//
-//        DialogInterface.OnCancelListener onCancelListener = new DialogInterface.OnCancelListener() {
-//            @Override
-//            public void onCancel(DialogInterface dialog) {
-//                onStart();
-//            }
-//        };
-//
-//        dialog.setOnCancelListener(onCancelListener);
-//        dialog.show();
     }
 
     @Override
@@ -71,13 +57,4 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-//        if (keyCode == KeyEvent.KEYCODE_BACK ) {
-//            finish();
-//            return true;
-//        }
-//
-//        return super.onKeyDown(keyCode, event);
-//    }
 }

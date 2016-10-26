@@ -12,10 +12,13 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import org.fraunhofer.cese.madcap.MyApplication;
 import android.widget.Toast;
 
+import org.fraunhofer.cese.madcap.MyApplication;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.Status;
 
@@ -25,10 +28,7 @@ import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
-import java.util.Stack;
-
-import static com.pathsense.locationengine.lib.detectionLogic.b.C;
-import static com.pathsense.locationengine.lib.detectionLogic.b.t;
+import static org.fraunhofer.cese.madcap.R.id.status;
 
 /**
  * Created by MMueller on 10/7/2016.
@@ -80,17 +80,63 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         madcapAuthManager.setCallbackClass(this);
-        MyApplication.madcapLogger.d(TAG, "onStartCommand Login Service");
-        if(intent.hasExtra("ShowMainAnyway")){
-            showMainAnyway = true;
-        }
+        if(checkGooglePlayServices()){
+            MyApplication.madcapLogger.d(TAG, "onStartCommand Login Service");
+            if(intent.hasExtra("ShowMainAnyway")){
+                showMainAnyway = true;
+            }
 
-        MyApplication.madcapLogger.d(TAG, "Trying to log in silently");
-        madcapAuthManager.silentLogin();
+            MyApplication.madcapLogger.d(TAG, "Trying to log in silently");
+            madcapAuthManager.silentLogin();
+        }
 
         // We want this service to continue running until it is explicitly
         // stopped, so return sticky.
         return START_STICKY;
+    }
+
+    /**
+     * Verifies that Google Play services is installed and enabled on this device,
+     * and that the version installed on this device is no older than the one
+     * required by this client.
+     * @return
+     */
+    private boolean checkGooglePlayServices(){
+        boolean checkSucceeded = false;
+
+        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+
+        switch(resultCode) {
+            case ConnectionResult.SUCCESS:
+                MyApplication.madcapLogger.d(TAG, "Google Play services checked and o.k.");
+                checkSucceeded = true;
+                break;
+            case ConnectionResult.SERVICE_MISSING:
+                MyApplication.madcapLogger.d(TAG, "Play services not available, please install them.");
+                Toast.makeText(this, "Play services not available, please install them.", Toast.LENGTH_SHORT).show();
+                break;
+            case ConnectionResult.SERVICE_UPDATING:
+                MyApplication.madcapLogger.d(TAG, "Play services are currently updating, please wait.");
+                Toast.makeText(this, "Play services are currently updating, please wait.", Toast.LENGTH_SHORT).show();
+                break;
+            case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+                MyApplication.madcapLogger.d(TAG, "Play services not up to date. Please update.");
+                Toast.makeText(this, "Play services not up to date. Please update.", Toast.LENGTH_SHORT).show();
+                break;
+            case ConnectionResult.SERVICE_DISABLED:
+                MyApplication.madcapLogger.d(TAG, "Play services are disabled. Please enable.");
+                Toast.makeText(this, "Play services are disabled. Please enable them.", Toast.LENGTH_SHORT).show();
+                break;
+            case ConnectionResult.SERVICE_INVALID:
+                MyApplication.madcapLogger.d(TAG, "Play services are invalid");
+                Toast.makeText(this, "Play services are invalid. Please reinstall them", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                MyApplication.madcapLogger.d(TAG, "Other error");
+                break;
+        }
+
+        return checkSucceeded;
     }
 
     /**
@@ -158,7 +204,6 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         }else{
             MyApplication.madcapLogger.d(TAG, "Show now Login Activity");
             Intent signInActivityIntent = new Intent(this, SignInActivity.class);
-//            //signInActivityIntent.putExtra("distractfromsilentlogin", true);
             signInActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(signInActivityIntent);
         }
@@ -176,7 +221,6 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
             startService(intent);
         }
-
     }
 
     /**
