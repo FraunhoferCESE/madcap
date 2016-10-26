@@ -12,6 +12,8 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import org.fraunhofer.cese.madcap.MyApplication;
+
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -469,6 +471,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
         Intent intent = new Intent(this, SignInActivity.class);
         intent.putExtra("distractfromsilentlogin", true);
         startActivity(intent);
+        finish();
     }
 
     private void updateDataCount(long count) {
@@ -543,5 +546,15 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
     @Override
     public void onSignInIntent(Intent intent, int requestCode) {
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            finish();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 }

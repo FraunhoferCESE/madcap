@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@color/common_google_signin_btn_text_dark_pressed"/>
+
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/madcaplogo2"/>
+    </item>
+
+</layer-list>

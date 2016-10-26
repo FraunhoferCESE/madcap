@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
+
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -179,6 +181,7 @@ public class SignInActivity extends AppCompatActivity implements
         MyApplication.madcapLogger.d(TAG, "Now going to the MainActivity");
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @Override
@@ -271,6 +274,16 @@ public class SignInActivity extends AppCompatActivity implements
     @Override
     public void onRevokeAccess(Status status) {
         updateUI(false);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            finish();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
 

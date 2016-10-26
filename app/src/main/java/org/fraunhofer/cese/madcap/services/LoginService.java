@@ -37,6 +37,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
     private static final String TAG = "Madcap Login Service";
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
     private TaskStackBuilder stackBuilder;
+    private boolean showMainAnyway = false;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -73,8 +74,22 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
     public void onCreate() {
         MyApplication.madcapLogger.d(TAG, "onCreate Login Service");
         madcapAuthManager.setCallbackClass(this);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        madcapAuthManager.setCallbackClass(this);
+        MyApplication.madcapLogger.d(TAG, "onStartCommand Login Service");
+        if(intent.hasExtra("ShowMainAnyway")){
+            showMainAnyway = true;
+        }
+
         MyApplication.madcapLogger.d(TAG, "Trying to log in silently");
         madcapAuthManager.silentLogin();
+
+        // We want this service to continue running until it is explicitly
+        // stopped, so return sticky.
+        return START_STICKY;
     }
 
     /**
@@ -91,6 +106,12 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
             startService(intent);
         }
+
+        if(showMainAnyway){
+            MyApplication.madcapLogger.d(TAG, "Show now main Activity");
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            startActivity(mainActivityIntent);
+        }
     }
 
     /**
@@ -101,38 +122,44 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
     @Override
     public void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr) {
         MyApplication.madcapLogger.d(TAG, "Silent login failed");
+        if(!showMainAnyway){
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+            mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+            mBuilder.setContentTitle("Madcap Auto Login Failed");
+            mBuilder.setContentText("Madcap could not log you in automatically, please login to continue participating in our study (and to get your money).");
+            mBuilder.setDefaults(Notification.DEFAULT_ALL);
+            mBuilder.setPriority(Notification.PRIORITY_MAX);
+            mBuilder.setAutoCancel(true);
+            // Creates an explicit intent for an Activity in your app
+            Intent resultIntent = new Intent(this, SignInActivity.class);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-        mBuilder.setContentTitle("Madcap Auto Login Failed");
-        mBuilder.setContentText("Madcap could not log you in automatically, please login to continue participating in our study (and to get your money).");
-        mBuilder.setDefaults(Notification.DEFAULT_ALL);
-        mBuilder.setPriority(Notification.PRIORITY_MAX);
-        mBuilder.setAutoCancel(true);
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, SignInActivity.class);
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        if(stackBuilder == null){
-            stackBuilder = TaskStackBuilder.create(this);
+            // The stack builder object will contain an artificial back stack for the
+            // started Activity.
+            // This ensures that navigating backward from the Activity leads out of
+            // your application to the Home screen.
+            if(stackBuilder == null){
+                stackBuilder = TaskStackBuilder.create(this);
+            }
+            // Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(SignInActivity.class);
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent);
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // mId allows you to update the notification later on.
+            mNotificationManager.notify(1, mBuilder.build());
+        }else{
+            MyApplication.madcapLogger.d(TAG, "Show now Login Activity");
+            Intent signInActivityIntent = new Intent(this, SignInActivity.class);
+            startActivity(signInActivityIntent);
         }
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(SignInActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
-        mNotificationManager.notify(1, mBuilder.build());
+
     }
 
     /**
