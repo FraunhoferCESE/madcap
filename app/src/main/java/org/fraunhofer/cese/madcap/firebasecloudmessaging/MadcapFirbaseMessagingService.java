@@ -3,6 +3,7 @@ package org.fraunhofer.cese.madcap.firebasecloudmessaging;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.RemoteInput;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -24,6 +25,8 @@ import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
 import java.util.Map;
+
+import static android.graphics.Color.RED;
 
 /**
  * This class does to Firebase message handling.
@@ -114,11 +117,13 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
 
     private void showUiNotification(String title, String text){
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+        mBuilder.setSmallIcon(android.R.drawable.ic_dialog_alert);
         mBuilder.setContentTitle(title);
         mBuilder.setContentText(text);
+        mBuilder.setContentInfo("Security alert!");
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setPriority(Notification.PRIORITY_MAX);
+        mBuilder.setColor(RED);
         mBuilder.setAutoCancel(true);
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, SignInActivity.class);
@@ -139,6 +144,23 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
+
+//        //For demo purposes
+//        Intent reactIntnet = new Intent();
+//
+//        String reactLabel = "React";
+//        RemoteInput remoteInput = new RemoteInput.Builder("key_text_reply")
+//                .setLabel(reactLabel)
+//                .build();
+//
+//        Notification.Action reactAction =
+//                new Notification.Action.Builder(android.R.drawable.ic_dialog_alert,
+//                        "React now", null)
+//                        .addRemoteInput(remoteInput)
+//                        .build();
+//
+//        mBuilder.addAction(reactAction);
+
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
