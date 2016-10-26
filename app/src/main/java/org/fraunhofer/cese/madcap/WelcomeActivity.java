@@ -24,26 +24,26 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
 
-        ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("Loading");
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(true);
-
-        DialogInterface.OnCancelListener onCancelListener = new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                onStart();
-            }
-        };
-
-        dialog.setOnCancelListener(onCancelListener);
-        dialog.show();
+//        ProgressDialog dialog = new ProgressDialog(this);
+//        dialog.setMessage("Loading");
+//        dialog.setIndeterminate(true);
+//        dialog.setCancelable(true);
+//
+//        DialogInterface.OnCancelListener onCancelListener = new DialogInterface.OnCancelListener() {
+//            @Override
+//            public void onCancel(DialogInterface dialog) {
+//                onStart();
+//            }
+//        };
+//
+//        dialog.setOnCancelListener(onCancelListener);
+//        dialog.show();
     }
 
     @Override
     public void onStart(){
-        MyApplication.madcapLogger.d(TAG, "onStart Welcome");
         super.onStart();
+        MyApplication.madcapLogger.d(TAG, "onStart Welcome");
 
         if(madcapAuthManager.getLastSignedInUsersName() == null){
             new AsyncTask<Void, Void, String>() {
@@ -54,9 +54,9 @@ public class WelcomeActivity extends AppCompatActivity {
                     //Sets a flag that the main activity should be shown never mind if
                     //the silent login failed or succeeded.
                     intent.putExtra("ShowMainAnyway", true);
+                    MyApplication.madcapLogger.d(TAG, "Start now Login Service");
                     startService(intent);
-                    WelcomeActivity.this.finish();
-
+                    //WelcomeActivity.this.finish();
                     return "message";
                 }
                 protected void onPostExecute(String msg) {
@@ -71,13 +71,13 @@ public class WelcomeActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (keyCode == KeyEvent.KEYCODE_BACK ) {
-            finish();
-            return true;
-        }
-
-        return super.onKeyDown(keyCode, event);
-    }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+//        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+//            finish();
+//            return true;
+//        }
+//
+//        return super.onKeyDown(keyCode, event);
+//    }
 }

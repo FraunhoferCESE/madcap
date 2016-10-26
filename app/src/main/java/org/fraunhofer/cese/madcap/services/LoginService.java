@@ -28,6 +28,7 @@ import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import java.util.Stack;
 
 import static com.pathsense.locationengine.lib.detectionLogic.b.C;
+import static com.pathsense.locationengine.lib.detectionLogic.b.t;
 
 /**
  * Created by MMueller on 10/7/2016.
@@ -157,6 +158,8 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         }else{
             MyApplication.madcapLogger.d(TAG, "Show now Login Activity");
             Intent signInActivityIntent = new Intent(this, SignInActivity.class);
+//            //signInActivityIntent.putExtra("distractfromsilentlogin", true);
+            signInActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(signInActivityIntent);
         }
 

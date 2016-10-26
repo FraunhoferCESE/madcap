@@ -93,13 +93,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void onStart() {
         super.onStart();
 
-        MyApplication.madcapLogger.d(TAG, "On start being called, now trying to silently log in");
-        // Try the silent login. After that callbacks are called.
-        Intent intent = getIntent();
-        if(!intent.hasExtra("distractfromsilentlogin")){
-            madcapAuthManager.silentLogin();
-        }
-
+        MyApplication.madcapLogger.d(TAG, "On start being called.");
     }
 
     // [START onActivityResult]
