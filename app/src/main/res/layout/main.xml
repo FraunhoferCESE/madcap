@@ -93,7 +93,7 @@
             android:layout_marginTop="10dp" />
 
         <Button
-            android:id="@+id/Quitbutton"
+            android:id="@+id/QuitButton"
             android:text="@string/quitProjectButtonText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

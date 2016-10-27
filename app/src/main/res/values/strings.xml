@@ -66,4 +66,10 @@
     <string name="server_client_id">611425056989-bu1aq0g9l4qkblo0rpdcud8usehskrq4.apps.googleusercontent.com</string>
 
     <string name="data_collection_pref">datacollectionturnedonoff</string>
+
+    <!-- Quit dialog Fragment -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="quitProjectDialog">Are you shure you want to quiet the Pocket Security Project? You will lose your benefits from the project. This can\'t be undone.</string>
+    <string name="quitProjectDialogQuitButton">Quit</string>
+    <string name="quitProjectDialogCancelButton">Cancel</string>
 </resources>

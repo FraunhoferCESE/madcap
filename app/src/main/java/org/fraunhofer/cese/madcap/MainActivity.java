@@ -109,6 +109,8 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
     private String dataCountText;
     private boolean isCollectingData;
 
+    private QuitProjectDialogFragment quitProjectDialogFragment;
+
     private final ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -270,6 +272,23 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
                     }
                 }
         );
+
+        final Button quitProjcetButton = (Button) findViewById(R.id.QuitButton);
+        quitProjcetButton.setOnClickListener(new View.OnClickListener(){
+            /**
+             * Called when a view has been clicked.
+             *
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+                MyApplication.madcapLogger.d(TAG, "QUIT project clicked");
+
+                quitProjectDialogFragment = new QuitProjectDialogFragment();
+                quitProjectDialogFragment.show(getFragmentManager(), "Quit Dialog");
+
+            }
+        });
 
         Button logoutButton = (Button) findViewById(R.id.SignOut);
         logoutButton.setOnClickListener(new View.OnClickListener(){
