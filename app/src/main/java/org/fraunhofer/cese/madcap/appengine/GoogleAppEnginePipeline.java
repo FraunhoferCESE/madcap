@@ -6,11 +6,10 @@ import org.fraunhofer.cese.madcap.MyApplication;
 import com.google.android.gms.iid.InstanceID;
 import com.google.gson.JsonElement;
 
-import org.fraunhofer.cese.madcap.MyApplication;
+import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheEntry;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
-import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 import java.util.UUID;
 
@@ -31,9 +30,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     private boolean enabled;
 
     private final Cache cache;
-    private final String instanceId;
-
-
+    private final String googleUserId;
+    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
 
     /**
      * The @Inject annotation tells Dagger2 to use this constructor to create new instances of this class.
@@ -41,7 +39,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     @Inject
     public GoogleAppEnginePipeline(Cache cache, Context context) {
         this.cache = cache;
-        instanceId = InstanceID.getInstance(context).getId();
+        googleUserId = madcapAuthManager.getUserId();
+        MyApplication.madcapLogger.d(TAG, "Google User Id is "+googleUserId);
     }
 
     /**
@@ -77,7 +76,7 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
         probeEntry.setTimestamp(timestamp);
         probeEntry.setProbeType(key);
         probeEntry.setSensorData(data.toString());
-        probeEntry.setUserID(instanceId);
+        probeEntry.setUserID(googleUserId);
 
         cache.add(probeEntry);
     }
