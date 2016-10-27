@@ -106,7 +106,8 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
             case "notification":
                 String name = map.get("name");
                 String text = map.get("text");
-                showUiNotification(name, text);
+                String info = map.get("info");
+                showUiNotification(name, text, info);
                 break;
             default:
                 break;
@@ -115,12 +116,12 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void showUiNotification(String title, String text){
+    private void showUiNotification(String title, String text, String info){
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(android.R.drawable.ic_dialog_alert);
         mBuilder.setContentTitle(title);
         mBuilder.setContentText(text);
-        mBuilder.setContentInfo("Security alert!");
+        mBuilder.setContentInfo(info);
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setPriority(Notification.PRIORITY_MAX);
         mBuilder.setColor(RED);
