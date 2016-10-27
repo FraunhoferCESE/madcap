@@ -81,7 +81,7 @@
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:text="@string/sendButtonText"
-            android:background="@android:color/holo_blue_dark"
+            android:background="@android:color/holo_green_dark"
             android:layout_marginTop="10dp" />
 
         <Button
@@ -89,8 +89,17 @@
             android:text="@string/signOutButtonText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/holo_red_light"
+            android:background="?android:attr/colorFocusedHighlight"
             android:layout_marginTop="10dp" />
+
+        <Button
+            android:id="@+id/Quitbutton"
+            android:text="@string/quitProjectButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/red"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/common_google_signin_btn_text_dark_pressed" />
 
     </LinearLayout>
 
