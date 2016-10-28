@@ -2,7 +2,7 @@ package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
@@ -40,11 +40,11 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
         try {
-            Log.i(TAG, "{onCreate}");
+            MyApplication.madcapLogger.i(TAG, "{onCreate}");
             TableUtils.createTable(connectionSource, CacheEntry.class);
 
         } catch (SQLException e) {
-            Log.e(TAG, "Can't create database", e);
+            MyApplication.madcapLogger.e(TAG, "Can't create database", e);
             throw new RuntimeException(e);
         }
     }
@@ -56,12 +56,12 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
-            Log.i(TAG, "{onUpgrade}");
+            MyApplication.madcapLogger.i(TAG, "{onUpgrade}");
             TableUtils.dropTable(connectionSource, CacheEntry.class, true);
             // after we drop the old databases, we create the new ones
             onCreate(db, connectionSource);
         } catch (SQLException e) {
-            Log.e(TAG, "Can't drop databases", e);
+            MyApplication.madcapLogger.e(TAG, "Can't drop databases", e);
             throw new RuntimeException(e);
         }
 

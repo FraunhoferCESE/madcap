@@ -12,10 +12,13 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 import android.widget.Toast;
 
+import org.fraunhofer.cese.madcap.MyApplication;
+
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.Status;
 
@@ -25,9 +28,7 @@ import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
-import java.util.Stack;
-
-import static com.pathsense.locationengine.lib.detectionLogic.b.C;
+import static org.fraunhofer.cese.madcap.R.id.status;
 
 /**
  * Created by MMueller on 10/7/2016.
@@ -37,6 +38,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
     private static final String TAG = "Madcap Login Service";
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
     private TaskStackBuilder stackBuilder;
+    private boolean showMainAnyway = false;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -66,15 +68,75 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
 
     public void onDestroy() {
         //Toast.makeText(this, "Login Service Stopped", Toast.LENGTH_LONG).show();
-        Log.d(TAG, "onDestroy");
+        MyApplication.madcapLogger.d(TAG, "onDestroy");
     }
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate Login Service");
+        MyApplication.madcapLogger.d(TAG, "onCreate Login Service");
         madcapAuthManager.setCallbackClass(this);
-        Log.d(TAG, "Trying to log in silently");
-        madcapAuthManager.silentLogin();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        madcapAuthManager.setCallbackClass(this);
+        if(checkGooglePlayServices()){
+            MyApplication.madcapLogger.d(TAG, "onStartCommand Login Service");
+            if(intent.hasExtra("ShowMainAnyway")){
+                showMainAnyway = true;
+            }
+
+            MyApplication.madcapLogger.d(TAG, "Trying to log in silently");
+            madcapAuthManager.silentLogin();
+        }
+
+        // We want this service to continue running until it is explicitly
+        // stopped, so return sticky.
+        return START_STICKY;
+    }
+
+    /**
+     * Verifies that Google Play services is installed and enabled on this device,
+     * and that the version installed on this device is no older than the one
+     * required by this client.
+     * @return
+     */
+    private boolean checkGooglePlayServices(){
+        boolean checkSucceeded = false;
+
+        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+
+        switch(resultCode) {
+            case ConnectionResult.SUCCESS:
+                MyApplication.madcapLogger.d(TAG, "Google Play services checked and o.k.");
+                checkSucceeded = true;
+                break;
+            case ConnectionResult.SERVICE_MISSING:
+                MyApplication.madcapLogger.d(TAG, "Play services not available, please install them.");
+                Toast.makeText(this, "Play services not available, please install them.", Toast.LENGTH_SHORT).show();
+                break;
+            case ConnectionResult.SERVICE_UPDATING:
+                MyApplication.madcapLogger.d(TAG, "Play services are currently updating, please wait.");
+                Toast.makeText(this, "Play services are currently updating, please wait.", Toast.LENGTH_SHORT).show();
+                break;
+            case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+                MyApplication.madcapLogger.d(TAG, "Play services not up to date. Please update.");
+                Toast.makeText(this, "Play services not up to date. Please update.", Toast.LENGTH_SHORT).show();
+                break;
+            case ConnectionResult.SERVICE_DISABLED:
+                MyApplication.madcapLogger.d(TAG, "Play services are disabled. Please enable.");
+                Toast.makeText(this, "Play services are disabled. Please enable them.", Toast.LENGTH_SHORT).show();
+                break;
+            case ConnectionResult.SERVICE_INVALID:
+                MyApplication.madcapLogger.d(TAG, "Play services are invalid");
+                Toast.makeText(this, "Play services are invalid. Please reinstall them", Toast.LENGTH_SHORT).show();
+                break;
+            default:
+                MyApplication.madcapLogger.d(TAG, "Other error");
+                break;
+        }
+
+        return checkSucceeded;
     }
 
     /**
@@ -84,12 +146,18 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
      */
     @Override
     public void onSilentLoginSuccessfull(GoogleSignInResult result) {
-        Log.d(TAG, "Silent login was successfull. Logged in as " + madcapAuthManager.getUserId());
+        MyApplication.madcapLogger.d(TAG, "Silent login was successfull. Logged in as " + madcapAuthManager.getUserId());
 
         Intent intent = new Intent(LoginService.this, DataCollectionService.class);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
             startService(intent);
+        }
+
+        if(showMainAnyway){
+            MyApplication.madcapLogger.d(TAG, "Show now main Activity");
+            Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            startActivity(mainActivityIntent);
         }
     }
 
@@ -100,39 +168,46 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
      */
     @Override
     public void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr) {
-        Log.d(TAG, "Silent login failed");
+        MyApplication.madcapLogger.d(TAG, "Silent login failed");
+        if(!showMainAnyway){
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+            mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+            mBuilder.setContentTitle("Madcap Auto Login Failed");
+            mBuilder.setContentText("Madcap could not log you in automatically, please login to continue participating in our study (and to get your money).");
+            mBuilder.setDefaults(Notification.DEFAULT_ALL);
+            mBuilder.setPriority(Notification.PRIORITY_MAX);
+            mBuilder.setAutoCancel(true);
+            // Creates an explicit intent for an Activity in your app
+            Intent resultIntent = new Intent(this, SignInActivity.class);
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-        mBuilder.setContentTitle("Madcap Auto Login Failed");
-        mBuilder.setContentText("Madcap could not log you in automatically, please login to continue participating in our study (and to get your money).");
-        mBuilder.setDefaults(Notification.DEFAULT_ALL);
-        mBuilder.setPriority(Notification.PRIORITY_MAX);
-        mBuilder.setAutoCancel(true);
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, SignInActivity.class);
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        if(stackBuilder == null){
-            stackBuilder = TaskStackBuilder.create(this);
+            // The stack builder object will contain an artificial back stack for the
+            // started Activity.
+            // This ensures that navigating backward from the Activity leads out of
+            // your application to the Home screen.
+            if(stackBuilder == null){
+                stackBuilder = TaskStackBuilder.create(this);
+            }
+            // Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(SignInActivity.class);
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent);
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // mId allows you to update the notification later on.
+            mNotificationManager.notify(1, mBuilder.build());
+        }else{
+            MyApplication.madcapLogger.d(TAG, "Show now Login Activity");
+            Intent signInActivityIntent = new Intent(this, SignInActivity.class);
+            signInActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(signInActivityIntent);
         }
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(SignInActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
-        mNotificationManager.notify(1, mBuilder.build());
+
     }
 
     /**
@@ -146,7 +221,6 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
             startService(intent);
         }
-
     }
 
     /**

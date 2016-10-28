@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import edu.mit.media.funf.probe.Probe;
 
@@ -34,10 +34,10 @@ public class PowerProbe extends Probe.Base implements Probe.PassiveProbe {
         intentFilter.addAction("android.intent.action.BATTERY_OKAY");
         intentFilter.addAction("android.intent.action.BATTERY_CHANGED");
         getContext().registerReceiver(receiver, intentFilter);
-        Log.i("PowerProbe.class: ", "PowerProbe enabled");
+        MyApplication.madcapLogger.i("PowerProbe.class: ", "PowerProbe enabled");
 
         sendInitialProbe();
-        Log.i("PowerProbe: ", "Initial PowerProbe sent.");
+        MyApplication.madcapLogger.i("PowerProbe: ", "Initial PowerProbe sent.");
     }
 
 

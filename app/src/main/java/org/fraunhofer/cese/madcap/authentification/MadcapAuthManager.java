@@ -3,7 +3,7 @@ package org.fraunhofer.cese.madcap.authentification;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -78,7 +78,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
             MadcapAuthManager.gso = gso;
             MadcapAuthManager.mGoogleApiClient = mGoogleApiClient;
         }else{
-            Log.e(TAG, "Setup failed, because it is already set up");
+            MyApplication.madcapLogger.e(TAG, "Setup failed, because it is already set up");
         }
 
     }
@@ -98,16 +98,16 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
     public synchronized void silentLogin(){
         OptionalPendingResult<GoogleSignInResult> opr = googleSignInApi.silentSignIn(mGoogleApiClient);
 
-        Log.d(TAG, "First silent sign in result: "+opr.isDone());
+        MyApplication.madcapLogger.d(TAG, "First silent sign in result: "+opr.isDone());
 
         if (opr.isDone()) {
             // In Case there is a result available intermediately.
-            Log.d(TAG, "Immediate result available ");
+            MyApplication.madcapLogger.d(TAG, "Immediate result available ");
             lastSignInResult = opr.get();
             callbackClass.onSilentLoginSuccessfull(lastSignInResult);
         } else {
             // In case no immediate result available.
-            Log.d(TAG, "Immediate result NOT available ");
+            MyApplication.madcapLogger.d(TAG, "Immediate result NOT available ");
             silentLogin(0);
             /*
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
@@ -135,15 +135,15 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
         OptionalPendingResult<GoogleSignInResult> opr = googleSignInApi.silentSignIn(mGoogleApiClient);
         if(attempt < maxAttempt){
            if(opr.isDone()){
-               Log.d(TAG, "Result in attempt "+attempt+" available ");
+               MyApplication.madcapLogger.d(TAG, "Result in attempt "+attempt+" available ");
                lastSignInResult = opr.get();
                callbackClass.onSilentLoginSuccessfull(lastSignInResult);
            }else{
-               Log.d(TAG, "Result in attempt "+attempt+" not available. Trying again ");
+               MyApplication.madcapLogger.d(TAG, "Result in attempt "+attempt+" not available. Trying again ");
                silentLogin(attempt+1);
            }
         }else{
-            Log.d(TAG, "Result for Login could not be retrieved. Need to log in manually");
+            MyApplication.madcapLogger.d(TAG, "Result for Login could not be retrieved. Need to log in manually");
             callbackClass.onSilentLoginFailed(opr);
         }
     }
@@ -164,7 +164,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
      */
     public synchronized void signIn(){
         Intent signInIntent = googleSignInApi.getSignInIntent(mGoogleApiClient);
-        Log.d(TAG,signInIntent.toString());
+        MyApplication.madcapLogger.d(TAG,signInIntent.toString());
 
         callbackClass.onSignInIntent(signInIntent, RC_SIGN_IN);
 
@@ -178,7 +178,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
                 new ResultCallback<Status>() {
                     @Override
                     public void onResult(@NonNull Status r) {
-                        Log.e(TAG, "Logout status "+ r);
+                        MyApplication.madcapLogger.e(TAG, "Logout status "+ r);
                         MadcapAuthManager.lastSignInResult = null;
                         //revokeAccess();
                         callbackClass.onSignOutResults(r);
@@ -250,7 +250,7 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
             nameBuilder.append(lastName);
             return nameBuilder.toString();
         }else{
-            Log.e(TAG, "No last user cached");
+            MyApplication.madcapLogger.e(TAG, "No last user cached");
             return null;
         }
     }
@@ -317,6 +317,6 @@ public class MadcapAuthManager implements OnConnectionFailedListener, Serializab
 
     @Override
     public synchronized void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e(TAG, "Connection to Google Authenticatin failed");
+        MyApplication.madcapLogger.e(TAG, "Connection to Google Authenticatin failed");
     }
 }

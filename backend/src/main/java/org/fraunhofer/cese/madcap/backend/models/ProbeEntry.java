@@ -15,8 +15,10 @@ public class ProbeEntry implements Comparable<ProbeEntry>{
     private String id;
     @Index
     private Long timestamp;
+    @Index
     private String probeType;
     private String sensorData;
+    @Index
     private String userID;
 
     //getters and setters

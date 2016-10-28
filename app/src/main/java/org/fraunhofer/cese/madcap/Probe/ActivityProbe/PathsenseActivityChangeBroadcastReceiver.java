@@ -7,7 +7,7 @@ package org.fraunhofer.cese.madcap.Probe.ActivityProbe;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.pathsense.android.sdk.location.PathsenseActivityRecognitionReceiver;
 import com.pathsense.android.sdk.location.PathsenseDetectedActivities;

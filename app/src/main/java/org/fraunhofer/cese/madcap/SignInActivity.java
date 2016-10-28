@@ -7,9 +7,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
+
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -21,6 +24,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
@@ -52,11 +56,13 @@ public class SignInActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.signinactivity);
 
+        //Debug
+        MyApplication.madcapLogger.d(TAG, "Firebase token "+ FirebaseInstanceId.getInstance().getToken());
 
         madcapAuthManager.setCallbackClass(this);
 
-        Log.d(TAG, "CREATED");
-        //Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext());
+        MyApplication.madcapLogger.d(TAG, "CREATED");
+        //MyApplication.madcapLogger.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext());
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.status);
@@ -64,7 +70,7 @@ public class SignInActivity extends AppCompatActivity implements
         // Button listeners
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.disconnect_button).setOnClickListener(this);
+        findViewById(R.id.to_control_button).setOnClickListener(this);
 
 
         // [END build_client]
@@ -87,13 +93,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void onStart() {
         super.onStart();
 
-        Log.d(TAG, "On start being called, now trying to silently log in");
-        // Try the silent login. After that callbacks are called.
-        Intent intent = getIntent();
-        if(!intent.hasExtra("distractfromsilentlogin")){
-            madcapAuthManager.silentLogin();
-        }
-
+        MyApplication.madcapLogger.d(TAG, "On start being called.");
     }
 
     // [START onActivityResult]
@@ -111,7 +111,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void handleSignInResult(GoogleSignInResult result) {
         //From the result we can retrieve some credentials
 
-        Log.d(TAG, "handleSignInResult:" + result.isSuccess());
+        MyApplication.madcapLogger.d(TAG, "handleSignInResult:" + result.isSuccess());
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
@@ -136,7 +136,9 @@ public class SignInActivity extends AppCompatActivity implements
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // An unresolvable error has occurred and Google APIs (including Sign-In) will not
         // be available.
-        Log.d(TAG, "onConnectionFailed:" + connectionResult);
+        MyApplication.madcapLogger.d(TAG, "onConnectionFailed:" + connectionResult);
+        mStatusTextView.setText("Login failed, please try again");
+        Toast.makeText(this, "Login failed, pleas try again", Toast.LENGTH_SHORT);
     }
 
     private void showProgressDialog() {
@@ -170,25 +172,27 @@ public class SignInActivity extends AppCompatActivity implements
      * Starts the transition to the main activity
      */
     public void proceedToMainActivity(){
-        Log.d(TAG, "Now going to the MainActivity");
+        MyApplication.madcapLogger.d(TAG, "Now going to the MainActivity");
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+        finish();
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.sign_in_button:
-                Log.d(TAG, "pressed sign in");
+                MyApplication.madcapLogger.d(TAG, "pressed sign in");
+                mStatusTextView.setText("Attempting now to Sign in");
                 madcapAuthManager.signIn();
                 break;
             case R.id.sign_out_button:
-                Log.d(TAG, "pressed sign ou");
+                MyApplication.madcapLogger.d(TAG, "pressed sign ou");
                 madcapAuthManager.signOut();
                 break;
-            case R.id.disconnect_button:
-                Log.d(TAG, "pressed disconnect");
-                madcapAuthManager.revokeAccess();
+            case R.id.to_control_button:
+                MyApplication.madcapLogger.d(TAG, "pressed to proceed to Control App");
+                proceedToMainActivity();
                 break;
         }
     }
@@ -205,7 +209,7 @@ public class SignInActivity extends AppCompatActivity implements
     public void onSilentLoginSuccessfull(GoogleSignInResult result) {
         // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
         // and the GoogleSignInResult will be available instantly.
-        Log.d(TAG, "Got cached sign-in");
+        MyApplication.madcapLogger.d(TAG, "Got cached sign-in");
         handleSignInResult(result);
     }
 
@@ -232,7 +236,7 @@ public class SignInActivity extends AppCompatActivity implements
      */
     @Override
     public void onSignInSucessfull() {
-        Log.d(TAG, "onSignIn successfull");
+        MyApplication.madcapLogger.d(TAG, "onSignIn successfull");
 
         Intent intent = new Intent(this, DataCollectionService.class);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -245,8 +249,8 @@ public class SignInActivity extends AppCompatActivity implements
 
     @Override
     public void onSignInIntent(Intent intent, int requestCode) {
+        MyApplication.madcapLogger.d(TAG,"Now starting the signing procedure with intnet");
         startActivityForResult(intent, requestCode);
-        Log.d(TAG,"Now starting the signing procedure with intnet");
     }
 
     /**
@@ -264,6 +268,16 @@ public class SignInActivity extends AppCompatActivity implements
     @Override
     public void onRevokeAccess(Status status) {
         updateUI(false);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            finish();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 
 

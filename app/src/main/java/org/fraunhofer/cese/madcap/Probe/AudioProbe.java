@@ -3,7 +3,7 @@ package org.fraunhofer.cese.madcap.Probe;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.content.Context;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.gson.Gson;
 
@@ -35,7 +35,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
 
         audioProbeDeliverer.start();
 
-        Log.i(TAG, "AudioProbe enabled.");
+        MyApplication.madcapLogger.i(TAG, "AudioProbe enabled.");
     }
 
 
@@ -68,7 +68,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
                             audioInfo.append("MODE_IN_COMMUNICATION; ");
                             break;
                         default:
-                            Log.i(TAG, "Something went wrong; ");
+                            MyApplication.madcapLogger.i(TAG, "Something went wrong; ");
                             break;
                     }
 
@@ -85,7 +85,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
                             audioInfo.append("RINGER_MODE_SILENT; ");
                             break;
                         default:
-                            Log.i(TAG, "Something went wrong; ");
+                            MyApplication.madcapLogger.i(TAG, "Something went wrong; ");
                             break;
                     }
 
@@ -136,7 +136,7 @@ public class AudioProbe extends Probe.Base implements Probe.ContinuousProbe {
                         Thread.sleep(SLEEP_DURATION);
                     } catch (InterruptedException e) {
                         run = false;
-                        Log.i(TAG, "AudioProbe interrupted.");
+                        MyApplication.madcapLogger.i(TAG, "AudioProbe interrupted.");
                     }
                 }
             }

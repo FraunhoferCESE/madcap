@@ -2,9 +2,11 @@ package org.fraunhofer.cese.madcap.Probe;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.gson.Gson;
+
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import edu.mit.media.funf.probe.Probe;
 
@@ -32,7 +34,8 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
     @Override
     protected void onEnable() {
 
-        Log.d(TAG, "ForegroundProbe starting");
+        MyApplication.madcapLogger.d(TAG, "ForegroundProbe starting");
+
         onStart();
         Gson gson = getGson();
         ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
@@ -59,7 +62,7 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
                         Thread.sleep(SLEEP_TIME);
                     } catch (InterruptedException e) {
                         run = false;
-                        Log.i("ForegroundProbe.Class", "ForegroundProbe interrupted.");
+                        MyApplication.madcapLogger.i("ForegroundProbe.Class", "ForegroundProbe interrupted.");
                     }
                 }
             }

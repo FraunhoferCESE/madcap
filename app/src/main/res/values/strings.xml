@@ -16,6 +16,7 @@
     <string name="uploadResultText">Last upload result: %1$s</string>
     <string name="sendButtonText">Upload data now</string>
     <string name="signOutButtonText">Log out</string>
+    <string name="quitProjectButtonText">Quit pocket security</string>
     <string name="footnoteText">Developed by Fraunhofer USA, Inc.\nContact: llayman@cese.fraunhofer.org.\nFunf Open Sensing Framework licensed under the GNU Lesser GPL.</string>
     <string name="title_activity_login">Sign in</string>
 
@@ -44,6 +45,7 @@
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>
     <string name="disconnect">Disconnect</string>
+    <string name="proceedToMain">Control App</string>
     <string name="refresh_token">Get Fresh Token</string>
 
     <!-- Content Description for images -->
@@ -64,4 +66,12 @@
     <string name="server_client_id">611425056989-bu1aq0g9l4qkblo0rpdcud8usehskrq4.apps.googleusercontent.com</string>
 
     <string name="data_collection_pref">datacollectionturnedonoff</string>
+
+    <!-- Quit dialog Fragment -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="quitProjectDialog">Are you shure you want to quiet the Pocket Security Project? You will lose your benefits from the project. This can\'t be undone.</string>
+    <string name="quitProjectDialogQuitButton">Quit</string>
+    <string name="quitProjectDialogCancelButton">Cancel</string>
+    <string name="help">Help</string>
+    <string name="welcome">Welcome</string>
 </resources>

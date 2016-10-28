@@ -6,12 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
+
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -150,7 +153,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
     };
 
     private void disablePipelines() {
-        Log.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
+        MyApplication.madcapLogger.d(TAG, "Disabling pipeline: " + PIPELINE_NAME);
 
         activityProbe.unregisterPassiveListener(pipeline);
         accelerometerProbe.unregisterPassiveListener(pipeline);
@@ -173,7 +176,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
     }
 
     private void enablePipelines() {
-        Log.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
+        MyApplication.madcapLogger.i(TAG, "Enabling pipeline: " + PIPELINE_NAME);
         assert funfManager != null;
         funfManager.enablePipeline(PIPELINE_NAME);
 
@@ -207,7 +210,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
         madcapAuthManager.setCallbackClass(this);
         madcapAuthManager.connect();
 
-        //Log.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext().toString());
+        //MyApplication.madcapLogger.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext().toString());
 
 
 
@@ -249,7 +252,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
                             editor.putBoolean(getString(R.string.data_collection_pref), true);
                             editor.commit();
                             boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
-                            Log.d(TAG, "Current data collection preference is now "+currentCollectionState);
+                            MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
                             Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
                             startService(intent);
                             enablePipelines();
@@ -260,7 +263,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
                             editor.putBoolean(getString(R.string.data_collection_pref), false);
                             editor.commit();
                             boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
-                            Log.d(TAG, "Current data collection preference is now "+currentCollectionState);
+                            MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
                             Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
                             stopService(intent);
                             disablePipelines();
@@ -268,6 +271,25 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
                     }
                 }
         );
+
+        final Button quitProjcetButton = (Button) findViewById(R.id.QuitButton);
+        quitProjcetButton.setOnClickListener(new View.OnClickListener(){
+            /**
+             * Called when a view has been clicked.
+             *
+             * @param v The view that was clicked.
+             */
+            @Override
+            public void onClick(View v) {
+                MyApplication.madcapLogger.d(TAG, "QUIT project clicked");
+
+                String url = "https://www.pocket-security.org/quitting-pocket-security/";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+
+            }
+        });
 
         Button logoutButton = (Button) findViewById(R.id.SignOut);
         logoutButton.setOnClickListener(new View.OnClickListener(){
@@ -278,7 +300,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
              */
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "Logout clicked");
+                MyApplication.madcapLogger.d(TAG, "Logout clicked");
                 madcapAuthManager.signOut();
 
                 Intent intent = new Intent(MainActivity.this, DataCollectionService.class);
@@ -322,9 +344,9 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
         );
 
         // Bind to the service, to create the connection with FunfManager+
-        Log.d(TAG, "Starting FunfManager");
+        MyApplication.madcapLogger.d(TAG, "Starting FunfManager");
         startService(new Intent(this, FunfManager.class));
-        Log.d(TAG, "Binding Funf ServiceConnection to activity");
+        MyApplication.madcapLogger.d(TAG, "Binding Funf ServiceConnection to activity");
         getApplicationContext().bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
         pipeline.addUploadListener(getUploadStatusListener());
         getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -379,7 +401,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
                                 publishProgress(pipeline.getCacheSize());
                             Thread.sleep(CACHE_UPDATE_UI_DELAY);
                         } catch (InterruptedException e) {
-                            Log.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
+                            MyApplication.madcapLogger.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
                         }
                     }
                     return null;
@@ -437,7 +459,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
                         uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
                     if (pipeline != null && pipeline.isEnabled())
                         updateDataCount(-1);
-                    Log.d(TAG, "Upload result received");
+                    MyApplication.madcapLogger.d(TAG, "Upload result received");
                 }
 
                 private final Pattern pattern = Pattern.compile("[0-9]+% completed.");
@@ -457,7 +479,7 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
 
                 @Override
                 public void cacheClosing() {
-                    Log.d(TAG, "Cache is closing");
+                    MyApplication.madcapLogger.d(TAG, "Cache is closing");
                 }
             };
         }
@@ -465,10 +487,11 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
     }
 
     private void goBackToSignIn(){
-        Log.d(TAG, "Now going back to SignInActivity");
+        MyApplication.madcapLogger.d(TAG, "Now going back to SignInActivity");
         Intent intent = new Intent(this, SignInActivity.class);
         intent.putExtra("distractfromsilentlogin", true);
         startActivity(intent);
+        finish();
     }
 
     private void updateDataCount(long count) {
@@ -543,5 +566,15 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
     @Override
     public void onSignInIntent(Intent intent, int requestCode) {
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+            finish();
+            return true;
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 }

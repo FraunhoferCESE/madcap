@@ -3,7 +3,7 @@ package org.fraunhofer.cese.madcap.broadcastreceivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import org.fraunhofer.cese.madcap.services.OnBootService;
 
@@ -15,6 +15,6 @@ public class OnBootCompleteBoardcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent arg1){
         Intent intent = new Intent(context, OnBootService.class);
         context.startService(intent);
-        Log.i("Madcap", "BootCompletetBroadcastReceiver received on boot");
+        MyApplication.madcapLogger.i("Madcap", "BootCompletetBroadcastReceiver received on boot");
     }
 }

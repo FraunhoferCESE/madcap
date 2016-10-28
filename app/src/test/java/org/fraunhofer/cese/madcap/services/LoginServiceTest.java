@@ -3,7 +3,7 @@ package org.fraunhofer.cese.madcap.services;
 import android.content.Context;
 import android.support.v4.app.TaskStackBuilder;
 import android.content.Intent;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;

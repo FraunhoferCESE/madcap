@@ -10,7 +10,9 @@ import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.TelephonyManager;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
+
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -43,7 +45,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
 
         getContext().registerReceiver(receiver, intentFilter);
 
-        Log.i(TAG, "enabled.");
+        MyApplication.madcapLogger.i(TAG, "enabled.");
 
         sendInitialProbe();
     }
@@ -73,7 +75,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
 
         sendData(intent);
 
-        Log.i(TAG, "initial probe sent.");
+        MyApplication.madcapLogger.i(TAG, "initial probe sent.");
     }
 
     private static final boolean isLittleEndian = ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN);
@@ -88,7 +90,7 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
         try {
             ipAddressString = InetAddress.getByAddress(BigInteger.valueOf(ipAddress).toByteArray()).getHostAddress();
         } catch (UnknownHostException ex) {
-            Log.d(TAG, "Unable to get host address.");
+            MyApplication.madcapLogger.d(TAG, "Unable to get host address.");
             ipAddressString = "N/A";
         }
         return ipAddressString;

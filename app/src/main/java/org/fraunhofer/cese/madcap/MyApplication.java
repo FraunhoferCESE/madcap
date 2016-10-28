@@ -2,7 +2,7 @@ package org.fraunhofer.cese.madcap;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -11,6 +11,9 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.acra.*;
 import org.acra.annotation.*;
+import org.fraunhofer.cese.madcap.util.MadcapLogger;
+
+import static android.util.Log.e;
 
 /**
  * Class used to handle lifecycle events for the entire application
@@ -30,6 +33,7 @@ public class MyApplication extends Application {
     public static final String TAG = "Madcap My Application";
     private MyComponent component;
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+    public static MadcapLogger madcapLogger = new MadcapLogger();
 
     private static GoogleApiClient mGoogleApiClient;
     private static GoogleSignInOptions gso;
@@ -40,7 +44,7 @@ public class MyApplication extends Application {
     public final void onCreate() {
         super.onCreate();
 
-        Log.e(TAG, "on create of My application has been called");
+        MyApplication.madcapLogger.e(TAG, "on create of My application has been called");
 
         //Initialize Acra
         ACRA.init(this);

@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.provider.Settings;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import edu.mit.media.funf.probe.Probe;
 
@@ -40,10 +40,10 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
 
 
         getContext().registerReceiver(receiver, filter);
-        Log.i("StateProbe", "StateProbe enabled");
+        MyApplication.madcapLogger.i("StateProbe", "StateProbe enabled");
 
         sendInitialProbe();
-        Log.i("StateProbe: ", "Initial StateProbe sent.");
+        MyApplication.madcapLogger.i("StateProbe: ", "Initial StateProbe sent.");
     }
 
     @Override

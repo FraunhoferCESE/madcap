@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
+import org.fraunhofer.cese.madcap.MyApplication;
+
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -13,6 +15,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.opencsv.CSVWriter;
 
+import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 
 import java.io.File;
@@ -170,16 +173,16 @@ public class Cache {
 
         // 1. Remove ids written to DB from memory
         if (result.getSavedEntries() != null && !result.getSavedEntries().isEmpty()) {
-            Log.d(TAG, "{doPostDatabaseWrite} entries saved to database: " + result.getSavedEntries().size() + ", new database size: " + result.getDatabaseSize());
+            MyApplication.madcapLogger.d(TAG, "{doPostDatabaseWrite} entries saved to database: " + result.getSavedEntries().size() + ", new database size: " + result.getDatabaseSize());
             memcache.keySet().removeAll(result.getSavedEntries());
         }
 
         // 2. Do some sanity checking. If DB writing persistently fails, we may need to drop some items from memory.
         //noinspection ThrowableResultOfMethodCallIgnored
         if (result.getError() != null) {
-            Log.e(TAG, "{doPostDatabaseWrite} Database write failed.", result.getError());
+            MyApplication.madcapLogger.e(TAG, "{doPostDatabaseWrite} Database write failed.", result.getError());
             if (memcache.size() > config.getMemForcedCleanupLimit()) {
-                Log.w(TAG, "{doPostDatabaseWrite} Too many cache entries in memory. Purging oldest entries. LIMIT: "
+                MyApplication.madcapLogger.w(TAG, "{doPostDatabaseWrite} Too many cache entries in memory. Purging oldest entries. LIMIT: "
                         + config.getMemForcedCleanupLimit() + ", memcache size: " + memcache.size());
 
                 // Remove the oldest entries so that config.getMemForcedCleanupLimit() / 2 entries remain
@@ -188,7 +191,7 @@ public class Cache {
                     iterator.next();
                     iterator.remove();
                 }
-                Log.w(TAG, "{doPostDatabaseWrite} New memcache size: " + memcache.size());
+                MyApplication.madcapLogger.w(TAG, "{doPostDatabaseWrite} New memcache size: " + memcache.size());
             }
         }
 
@@ -283,17 +286,17 @@ public class Cache {
     public int checkUploadConditions(Cache.UploadStrategy strategy) {
         // 1. Check preconditions
         if (appEngineApi == null) {
-            Log.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
+            MyApplication.madcapLogger.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
             return INTERNAL_ERROR;
         }
 
         if (getHelper() == null) {
-            Log.w(TAG, "{uploadIfNeeded} No helper found");
+            MyApplication.madcapLogger.w(TAG, "{uploadIfNeeded} No helper found");
             return INTERNAL_ERROR;
         }
 
         if (getHelper().getDao() == null) {
-            Log.w(TAG, "{uploadIfNeeded} getHelper().getDao() is null");
+            MyApplication.madcapLogger.w(TAG, "{uploadIfNeeded} getHelper().getDao() is null");
             return INTERNAL_ERROR;
         }
 
@@ -335,7 +338,7 @@ public class Cache {
                 status |= NO_INTERNET_CONNECTION;
             }
         } catch (Exception e) {
-            Log.e(TAG, "{uploadIfNeeded}  Unable to get count of database entries.", e);
+            MyApplication.madcapLogger.e(TAG, "{uploadIfNeeded}  Unable to get count of database entries.", e);
             status |= INTERNAL_ERROR;
         }
         return status;
@@ -351,7 +354,7 @@ public class Cache {
             try {
                 writeToFile();
             } catch (IOException e) {
-                Log.e(TAG, "Error writing to CSV file", e);
+                MyApplication.madcapLogger.e(TAG, "Error writing to CSV file", e);
             }
         }
         uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi, uploadStatusListeners).execute();
@@ -360,14 +363,14 @@ public class Cache {
     private void writeToFile() throws IOException {
         String state = Environment.getExternalStorageState();
         if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            Log.e(TAG, "External media not mounted for read/write");
+            MyApplication.madcapLogger.e(TAG, "External media not mounted for read/write");
             return;
         }
 
         File dir = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "probeData");
-        Log.d(TAG, "CSV directory " + dir.getAbsolutePath() + " exists: " + dir.exists());
+        MyApplication.madcapLogger.d(TAG, "CSV directory " + dir.getAbsolutePath() + " exists: " + dir.exists());
         if (!dir.exists() && !dir.mkdirs()) {
-            Log.e(TAG, "Probe data directory not created");
+            MyApplication.madcapLogger.e(TAG, "Probe data directory not created");
             return;
         }
 
@@ -382,11 +385,11 @@ public class Cache {
         File f = new File(dir, "probeData.csv");
         if (!f.exists() && f.createNewFile()) {
             CSVWriter writer = new CSVWriter(new FileWriter(f, true));
-            Log.d(TAG, "Writing CSV file to:" + f.getAbsolutePath());
+            MyApplication.madcapLogger.d(TAG, "Writing CSV file to:" + f.getAbsolutePath());
             writer.writeAll(toWrite);
             writer.flush();
             writer.close();
-            Log.d(TAG, "CSV write completed");
+            MyApplication.madcapLogger.d(TAG, "CSV write completed");
         }
     }
 
@@ -409,12 +412,12 @@ public class Cache {
             return;
 
         if (!uploadResult.isUploadAttempted()) {
-            Log.i(TAG, "{doPostUpload} Upload aborted: no entries were sent to be uploaded.");
+            MyApplication.madcapLogger.i(TAG, "{doPostUpload} Upload aborted: no entries were sent to be uploaded.");
             return;
         }
 
         if (uploadResult.getException() != null) {
-            Log.w(TAG, "{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
+            MyApplication.madcapLogger.w(TAG, "{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
             dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).execute();
         }
     }

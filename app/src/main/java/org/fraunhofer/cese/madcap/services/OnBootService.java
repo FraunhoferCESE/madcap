@@ -4,7 +4,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 import java.util.HashMap;
 
 /**
@@ -29,7 +29,7 @@ public class OnBootService extends Service implements Cloneable{
      */
     @Override
     public final void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        MyApplication.madcapLogger.d(TAG, "onDestroy");
     }
 
     /**
@@ -37,7 +37,7 @@ public class OnBootService extends Service implements Cloneable{
      */
     @Override
     public final void onCreate(){
-        Log.d(TAG, "onCreate Boot Service");
+        MyApplication.madcapLogger.d(TAG, "onCreate Boot Service");
         Intent intent = new Intent(this, LoginService.class);
         startService(intent);
     }

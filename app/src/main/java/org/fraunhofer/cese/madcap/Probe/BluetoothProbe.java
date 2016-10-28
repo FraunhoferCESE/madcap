@@ -6,7 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
+import org.fraunhofer.cese.madcap.MyApplication;
 
 import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
 import org.fraunhofer.cese.madcap.factories.IntentFactory;
@@ -171,7 +171,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
             intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
             getContext().registerReceiver(receiver, intentFilter);
 
-            Log.i(TAG, "BluetoothProbe enabled.");
+            MyApplication.madcapLogger.i(TAG, "BluetoothProbe enabled.");
 
             Intent intent = intentFactory.getNew();
             intent.putExtra(TAG, "Initial Probe!");
@@ -188,7 +188,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
             sendData(intent);
             //lastSentIntent = intent;
 
-            Log.i(TAG, "Initial state sent");
+            MyApplication.madcapLogger.i(TAG, "Initial state sent");
         }
 
     }
