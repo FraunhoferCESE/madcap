@@ -18,9 +18,8 @@ public class AccelerometerListener extends SensorListener<AccelerometerState> {
     private static final int ACCELEROMETER_THRESHOLD_PERCENT = 5;
 
     public AccelerometerListener(Context context, StateManager<AccelerometerState> stateManager) {
-        SensorManager sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        Sensor sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        super(sensor, context, stateManager);
+        super(((SensorManager) context.getSystemService(Context.SENSOR_SERVICE))
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), context, stateManager);
     }
 
     /**

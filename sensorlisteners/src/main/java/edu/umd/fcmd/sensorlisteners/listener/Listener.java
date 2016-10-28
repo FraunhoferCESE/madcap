@@ -1,5 +1,6 @@
 package edu.umd.fcmd.sensorlisteners.listener;
 
+import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.model.State;
 
 /**
@@ -8,6 +9,7 @@ import edu.umd.fcmd.sensorlisteners.model.State;
 
 public interface Listener<T extends State> {
     void onUpdate(T state);
-    void startListening();
+    void startListening() throws NoSensorFoundException;
     void stopListening();
 }
+

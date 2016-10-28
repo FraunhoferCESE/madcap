@@ -5,8 +5,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
+import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.model.State;
 import edu.umd.fcmd.sensorlisteners.service.StateManager;
 
@@ -19,7 +21,7 @@ public abstract class SensorListener<T extends State> implements SensorEventList
 
     private T mLastState;
 
-    public SensorListener(Sensor sensor, Context context, StateManager stateManager) {
+    public SensorListener(@Nullable Sensor sensor, Context context, StateManager stateManager) {
         this.mSensor = sensor;
         this.mContext = context;
         this.mStateManager = stateManager;
@@ -27,8 +29,12 @@ public abstract class SensorListener<T extends State> implements SensorEventList
     }
 
     @Override
-    public void startListening() {
-        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    public void startListening() throws NoSensorFoundException {
+        if (mSensor != null){
+            mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        } else {
+            throw new NoSensorFoundException();
+        }
     }
 
     @Override
