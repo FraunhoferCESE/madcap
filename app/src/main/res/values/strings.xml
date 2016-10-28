@@ -72,4 +72,6 @@
     <string name="quitProjectDialog">Are you shure you want to quiet the Pocket Security Project? You will lose your benefits from the project. This can\'t be undone.</string>
     <string name="quitProjectDialogQuitButton">Quit</string>
     <string name="quitProjectDialogCancelButton">Cancel</string>
+    <string name="help">Help</string>
+    <string name="welcome">Welcome</string>
 </resources>
