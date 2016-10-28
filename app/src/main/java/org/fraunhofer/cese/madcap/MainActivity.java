@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -108,8 +109,6 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
     private String uploadResultText;
     private String dataCountText;
     private boolean isCollectingData;
-
-    private QuitProjectDialogFragment quitProjectDialogFragment;
 
     private final ServiceConnection funfManagerConn = new ServiceConnection() {
         @Override
@@ -284,8 +283,10 @@ public class MainActivity extends Activity implements MadcapAuthEventHandler{
             public void onClick(View v) {
                 MyApplication.madcapLogger.d(TAG, "QUIT project clicked");
 
-                quitProjectDialogFragment = new QuitProjectDialogFragment();
-                quitProjectDialogFragment.show(getFragmentManager(), "Quit Dialog");
+                String url = "https://www.pocket-security.org/quitting-pocket-security/";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
 
             }
         });
