@@ -21,4 +21,11 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="MadcapTheme" parent="AppTheme" >
+        <item name="colorPrimary">@color/madcap_main_light</item>
+        <item name="colorPrimaryDark">@color/madcap_main_color</item>
+        <item name="colorAccent">@color/madcap_secondary_color</item>
+        <item name="android:colorForeground">@color/madcap_main_color</item>
+    </style>
+
 </resources>
