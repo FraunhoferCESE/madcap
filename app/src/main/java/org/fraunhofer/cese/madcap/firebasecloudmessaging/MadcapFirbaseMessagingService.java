@@ -3,14 +3,9 @@ package org.fraunhofer.cese.madcap.firebasecloudmessaging;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.RemoteInput;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -19,7 +14,6 @@ import org.fraunhofer.cese.madcap.MyApplication;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
@@ -80,7 +74,7 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
      *
      */
 //    private void sendNotification(String messageBody) {
-//        Intent intent = new Intent(this, MainActivity.class);
+//        Intent intent = new Intent(this, MainActivityOld.class);
 //        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 //        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
 //                PendingIntent.FLAG_ONE_SHOT);

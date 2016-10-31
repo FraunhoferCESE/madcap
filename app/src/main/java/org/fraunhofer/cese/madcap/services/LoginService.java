@@ -14,6 +14,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.widget.Toast;
 
+import org.fraunhofer.cese.madcap.MainActivity;
+import org.fraunhofer.cese.madcap.MainActivityOld;
 import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -22,13 +24,10 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.Status;
 
-import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
-
-import static org.fraunhofer.cese.madcap.R.id.status;
 
 /**
  * Created by MMueller on 10/7/2016.
@@ -48,8 +47,8 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
      * aidl</a>.
      * <p>
      * <p><em>Note that unlike other application components, calls on to the
-     * IBinder interface returned here may not happen on the main thread
-     * of the process</em>.  More information about the main thread can be found in
+     * IBinder interface returned here may not happen on the main_old thread
+     * of the process</em>.  More information about the main_old thread can be found in
      * <a href="{@docRoot}guide/topics/fundamentals/processes-and-threads.html">Processes and
      * Threads</a>.</p>
      *
@@ -155,7 +154,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         }
 
         if(showMainAnyway){
-            MyApplication.madcapLogger.d(TAG, "Show now main Activity");
+            MyApplication.madcapLogger.d(TAG, "Show now main_old Activity");
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
             startActivity(mainActivityIntent);
         }

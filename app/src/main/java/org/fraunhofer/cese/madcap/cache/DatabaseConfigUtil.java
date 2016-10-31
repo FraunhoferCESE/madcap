@@ -10,7 +10,7 @@ import com.j256.ormlite.android.apptools.OrmLiteConfigUtil;
  * This utility must be run every time the database model classes are changed.
  *
  * To run correctly, create a DatabaseConfigUtil run configuration:
- *    1. Change the working directory to \<FULL_PATH_TO_PROJECT_ROOT\>/app/src/main
+ *    1. Change the working directory to \<FULL_PATH_TO_PROJECT_ROOT\>/app/src/main_old
  *    2. In the "Before Launch" section, remove the Make command.
  *
  * The modification for AndroidStudio was found here: http://stackoverflow.com/questions/17298773/android-studio-run-configuration-for-ormlite-config-generation

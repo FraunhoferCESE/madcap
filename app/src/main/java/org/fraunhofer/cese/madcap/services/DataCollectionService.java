@@ -39,8 +39,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      * aidl</a>.
      * <p>
      * <p><em>Note that unlike other application components, calls on to the
-     * IBinder interface returned here may not happen on the main thread
-     * of the process</em>.  More information about the main thread can be found in
+     * IBinder interface returned here may not happen on the main_old thread
+     * of the process</em>.  More information about the main_old thread can be found in
      * <a href="{@docRoot}guide/topics/fundamentals/processes-and-threads.html">Processes and
      * Threads</a>.</p>
      *

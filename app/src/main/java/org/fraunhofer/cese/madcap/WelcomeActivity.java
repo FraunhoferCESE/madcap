@@ -1,28 +1,20 @@
 package org.fraunhofer.cese.madcap;
 
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
-import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.fraunhofer.cese.madcap.services.LoginService;
-
-import static com.pathsense.locationengine.lib.detectionLogic.b.o;
-import static com.pathsense.locationengine.lib.detectionLogic.b.t;
 
 public class WelcomeActivity extends AppCompatActivity {
     private final String TAG = "Welcome Activity";
@@ -69,7 +61,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         // Background Code
                         Intent intent = new Intent(WelcomeActivity.this, LoginService.class);
 
-                        //Sets a flag that the main activity should be shown never mind if
+                        //Sets a flag that the main_old activity should be shown never mind if
                         //the silent login failed or succeeded.
                         intent.putExtra("ShowMainAnyway", true);
                         MyApplication.madcapLogger.d(TAG, "Start now Login Service");

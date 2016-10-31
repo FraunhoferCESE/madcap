@@ -90,7 +90,7 @@
         </receiver>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".MainActivityOld"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait"
             android:theme="@style/MadcapTheme" />
@@ -103,7 +103,7 @@
             android:name=".SignInActivity"
             android:label="@string/name_sign_in_activity"
             android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme"></activity>
+            android:theme="@style/MadcapTheme" />
 
         <service android:name=".firebasecloudmessaging.MadcapFirbaseMessagingService">
             <intent-filter>
@@ -125,6 +125,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_text"
+            android:screenOrientation="portrait"
+            android:theme="@style/MadcapTheme.NoActionBar">
         </activity>
     </application>
 

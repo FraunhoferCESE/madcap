@@ -1,13 +1,11 @@
 package org.fraunhofer.cese.madcap;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
-import org.fraunhofer.cese.madcap.MyApplication;
 
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,23 +14,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
-import org.fraunhofer.cese.madcap.services.LoginService;
-
-import static android.R.attr.data;
-import static com.pathsense.locationengine.lib.detectionLogic.b.o;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -169,7 +161,7 @@ public class SignInActivity extends AppCompatActivity implements
     }
 
     /**
-     * Starts the transition to the main activity
+     * Starts the transition to the main_old activity
      */
     public void proceedToMainActivity(){
         MyApplication.madcapLogger.d(TAG, "Now going to the MainActivity");
