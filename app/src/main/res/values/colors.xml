@@ -9,8 +9,8 @@
     <color name="app_main_color">#009dcb</color>
     <color name="app_secondary_color">#f38c15</color>
     <color name="madcap_black">#000000</color>
-    <color name="madcap_main_color">#009dcb</color>
+    <color name="madcap_main_color">#003b6b</color>
     <color name="madcap_secondary_color">#f38c15</color>
-    <color name="madcap_main_light">#66ccea</color>
+    <color name="madcap_main_light">#0087f3</color>
     <color name="madcap_secondary_light">#f1a650</color>
 </resources>
