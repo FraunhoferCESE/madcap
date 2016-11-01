@@ -14,16 +14,20 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.app.FragmentManager;
 import android.view.MenuItem;
 
+import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         StartFragment.OnFragmentInteractionListener,
-        HelpFragment.OnFragmentInteractionListener{
+        HelpFragment.OnFragmentInteractionListener,
+        LogoutFragment.OnFragmentInteractionListener{
 
     private FragmentManager mainFragmentManager = getSupportFragmentManager();
     private StartFragment startFragment;
     private HelpFragment helpFragment;
+    private LogoutFragment logoutFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,7 @@ public class MainActivity extends AppCompatActivity
         // Section for all fragments being shown in the main activity
         startFragment = new StartFragment();
         helpFragment = new HelpFragment();
+        logoutFragment = new LogoutFragment();
 
         //Initial settign up of the main fragement
         FragmentTransaction ft = mainFragmentManager.beginTransaction();
@@ -75,7 +80,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_help) {
             goToHelpFragment();
         } else if (id == R.id.nav_sign_out) {
-
+            goToLogoutFragment();
         } else if (id == R.id.nav_quit) {
 
         }
@@ -111,6 +116,21 @@ public class MainActivity extends AppCompatActivity
 
             FragmentTransaction ft = mainFragmentManager.beginTransaction();
             ft.add(R.id.fragmentHolder, startFragment);
+            ft.commit();
+        }
+    }
+
+    /**
+     * Sets the main view to logout fragment.
+     */
+    public void goToLogoutFragment(){
+        List<Fragment> fragmentList = getCurrentMainFragments();
+
+        if(!fragmentList.contains(logoutFragment)){
+            clearMainViewFromFragements();
+
+            FragmentTransaction ft = mainFragmentManager.beginTransaction();
+            ft.add(R.id.fragmentHolder, logoutFragment);
             ft.commit();
         }
     }

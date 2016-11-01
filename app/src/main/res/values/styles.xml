@@ -37,4 +37,6 @@
 
     <style name="MadcapTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="logoutButtonText">Log out</style>
+
 </resources>

@@ -210,8 +210,6 @@ public class MainActivityOld extends Activity implements MadcapAuthEventHandler{
 
         //MyApplication.madcapLogger.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext().toString());
 
-
-
         if (savedInstanceState != null) {
             dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
             uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);

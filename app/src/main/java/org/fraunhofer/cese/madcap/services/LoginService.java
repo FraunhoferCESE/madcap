@@ -74,6 +74,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
     public void onCreate() {
         MyApplication.madcapLogger.d(TAG, "onCreate Login Service");
         madcapAuthManager.setCallbackClass(this);
+        madcapAuthManager.connect();
     }
 
     @Override

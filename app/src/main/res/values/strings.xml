@@ -86,4 +86,7 @@
 
     <string name="contactEmail1">mmueller@fc-md.umd.edu</string>
     <string name="contactEmail2">llayman@fc-md.umd.edu</string>
+
+    <string name="logout_text">You can log out from Madcap at any time. During this time Madcap will not collect any data. You can log in again to Madcap at any other time again. If you want to leave the Pocket Security project for ever, please select the Option in the side menu.</string>
+    <string name="logoutButtonText">Log out</string>
 </resources>
