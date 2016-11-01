@@ -73,35 +73,6 @@
             android:text="@string/uploadResultText"
             android:textSize="15sp" />
 
-        <Button
-            android:id="@+id/SendButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:text="@string/sendButtonText"
-            android:background="@color/madcap_main_light"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/madcap_black" />
-
-        <Button
-            android:id="@+id/SignOut"
-            android:text="@string/signOutButtonText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/madcap_main_light"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/madcap_black" />
-
-        <Button
-            android:id="@+id/QuitButton"
-            android:text="@string/quitProjectButtonText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/red"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/common_google_signin_btn_text_dark_default" />
-
     </LinearLayout>
 
 </FrameLayout>

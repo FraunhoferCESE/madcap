@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity
         FragmentTransaction ft = mainFragmentManager.beginTransaction();
         ft.add(R.id.fragmentHolder, startFragment);
         ft.commit();
-
     }
 
     @Override
@@ -101,7 +100,7 @@ public class MainActivity extends AppCompatActivity
      * @param fragment the fragment to switch to.
      */
     public void goToFragment(Fragment fragment){
-        List<Fragment> fragmentList = getCurrentMainFragments();
+        List<Fragment> fragmentList = mainFragmentManager.getFragments();
 
         if(!fragmentList.contains(fragment)){
             clearMainViewFromFragements();
@@ -114,18 +113,10 @@ public class MainActivity extends AppCompatActivity
 
 
     /**
-     * Gets a list of current Fragemnts attached to the main view.
-     * @return a list of Fragments.
-     */
-    private List<Fragment> getCurrentMainFragments(){
-        return mainFragmentManager.getFragments();
-    }
-
-    /**
      * Removes all fragement currently attatched to the main view.
      */
     private void clearMainViewFromFragements(){
-        List<Fragment> fragmentList = getCurrentMainFragments();
+        List<Fragment> fragmentList = mainFragmentManager.getFragments();
 
         for(Fragment f : fragmentList){
             FragmentTransaction ft = mainFragmentManager.beginTransaction();
