@@ -44,7 +44,7 @@ public abstract class SensorListener<T extends State> implements SensorEventList
 
     @Override
     public void onUpdate(T state) {
-        mStateManager.save(state);
+        mStateManager.saveToCache(state);
     }
 
     abstract boolean isSignificant(T newState, T lastState);

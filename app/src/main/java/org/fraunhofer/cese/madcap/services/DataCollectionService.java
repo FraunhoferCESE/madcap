@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.OptionalPendingResult;
@@ -20,6 +21,14 @@ import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.factories.CacheFactory;
+
+import javax.inject.Inject;
+
+import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
+import edu.umd.fcmd.sensorlisteners.listener.AccelerometerListener;
+import edu.umd.fcmd.sensorlisteners.listener.SensorListener;
 
 /**
  * Created by MMueller on 10/7/2016.
@@ -30,6 +39,9 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     private final int RUN_CODE = 1;
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
     private NotificationManager mNotificationManager;
+
+    @Inject
+    Cache cache;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -59,6 +71,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public void onCreate(){
+        ((MyApplication) getApplication()).getComponent().inject(this);
         MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service");
         madcapAuthManager.setCallbackClass(this);
         showRunNotification();
@@ -72,10 +85,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        SensorManager sensorManager = (SensorManager)this.getSystemService(Context.SENSOR_SERVICE);
-//        Sensor a = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-//        SensorListener accelerometerService = new SensorListener(a, this);
-//        accelerometerService.startListening();
+        SensorListener accelerometerService = new AccelerometerListener(this, new CacheFactory(cache));
+        try{
+            accelerometerService.startListening();
+        } catch (NoSensorFoundException nsf) {
+            Log.e(TAG, "onStartCommand: ", nsf);
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 

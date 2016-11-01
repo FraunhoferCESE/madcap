@@ -32,4 +32,14 @@ public class AccelerometerState extends State {
     public void setzAxis(float zAxis) {
         this.zAxis = zAxis;
     }
+
+    @Override
+    public String getData() {
+        StringBuilder dataBuilder = getBaseData();
+        dataBuilder.append(",\n\tXAxis: ").append(xAxis)
+                .append("\n\tYAxis: ").append(yAxis)
+                .append("\n\tZAxis: ").append(zAxis)
+                .append("\n}");
+        return dataBuilder.toString();
+    }
 }

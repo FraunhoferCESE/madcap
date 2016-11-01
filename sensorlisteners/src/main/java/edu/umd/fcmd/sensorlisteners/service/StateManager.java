@@ -1,7 +1,5 @@
 package edu.umd.fcmd.sensorlisteners.service;
 
-import java.util.List;
-
 import edu.umd.fcmd.sensorlisteners.model.State;
 
 /**
@@ -9,6 +7,5 @@ import edu.umd.fcmd.sensorlisteners.model.State;
  */
 
 public interface StateManager<T extends State> {
-    void save(T state);
-    List<T> getAll();
+    void saveToCache(T state);
 }
