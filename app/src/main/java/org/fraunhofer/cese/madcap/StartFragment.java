@@ -1,12 +1,24 @@
 package org.fraunhofer.cese.madcap;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.ProgressBar;
+import android.widget.Switch;
+import android.widget.TextView;
+
+import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.services.DataCollectionService;
+
+import static org.fraunhofer.cese.madcap.R.id.usernameTextview;
 
 
 /**
@@ -18,17 +30,16 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class StartFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    private final String TAG = "Madcap StartFragement";
+    private final String TAG = this.getClass().getSimpleName();
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+    private boolean isCollectingData;
 
     private OnFragmentInteractionListener mListener;
+    private TextView nameTextView;
+    private TextView collectionDataStatusText;
+    private Switch collectDataSwitch;
+    private ProgressBar progressBarSpinner;
 
     public StartFragment() {
         // Required empty public constructor
@@ -38,38 +49,93 @@ public class StartFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment StartFragment.
      */
-    // TODO: Rename and change types and number of parameters
-    public static StartFragment newInstance(String param1, String param2) {
+
+    public static StartFragment newInstance() {
         StartFragment fragment = new StartFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        MyApplication.madcapLogger.d(TAG, "inflate fragment start" );
-        return inflater.inflate(R.layout.fragment_start, container, false);
+        View view = inflater.inflate(R.layout.fragment_start, container, false);
+
+        //Parse the greeting information
+        nameTextView = (TextView) view.findViewById(R.id.usernameTextview);
+        if(madcapAuthManager.getLastSignedInUsersName() != null){
+            nameTextView.setText(madcapAuthManager.getLastSignedInUsersName());
+        }
+
+        collectionDataStatusText = (TextView) view.findViewById(R.id.collectionDataStatusText);
+
+        //Set the toggle button on the last set preference configuration
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
+
+        //Set the spinner
+        progressBarSpinner = (ProgressBar) view.findViewById(R.id.progressBarSpinner);
+        if(isCollectingData){
+            progressBarSpinner.setVisibility(View.VISIBLE);
+            collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
+        }else{
+            collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
+        }
+
+        //Set the switch
+        collectDataSwitch = (Switch) view.findViewById(R.id.switch1);
+        collectDataSwitch.setChecked(isCollectingData);
+
+        collectDataSwitch.setOnCheckedChangeListener(
+                new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            isCollectingData = true;
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean(getString(R.string.data_collection_pref), true);
+                            editor.commit();
+                            boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
+                            MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
+                            Intent intent = new Intent(getContext(), DataCollectionService.class);
+                            getActivity().startService(intent);
+                            progressBarSpinner.setVisibility(View.VISIBLE);
+                            collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
+
+                            //TODO: enable pipelines
+                            //enablePipelines();
+                        } else {
+                            isCollectingData = false;
+                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                            SharedPreferences.Editor editor = prefs.edit();
+                            editor.putBoolean(getString(R.string.data_collection_pref), false);
+                            editor.commit();
+                            boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
+                            MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
+                            Intent intent = new Intent(getContext(), DataCollectionService.class);
+                            getActivity().stopService(intent);
+                            progressBarSpinner.setVisibility(View.GONE);
+                            collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
+
+                            //TODO: disable pipelines
+                            //disablePipelines();
+                        }
+                    }
+                }
+        );
+
+        return view;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);

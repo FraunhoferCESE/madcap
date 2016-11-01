@@ -65,6 +65,21 @@
             android:textSize="15sp" />
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/collectionDataStatusText"
+            android:text="@string/datacollectionstatus"
+            android:gravity="right" />
+
+        <ProgressBar
+            android:indeterminateDrawable="@drawable/madcap_progressbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:id="@+id/progressBarSpinner"
+            android:layout_margin="5dp" />
+
+        <TextView
             android:id="@+id/uploadResult"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"

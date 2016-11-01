@@ -9,7 +9,7 @@
             "maxWaitTime": 15
         }
     </string>
-    <string name="introText">The MADCAP (Mobile Application Data CAPture) app collects data for research on mobile device security. Please visit https://www.fc-md.umd.edu/madcap for more information.</string>
+    <string name="introText">You can control Madcap\'s functions from this Control App.</string>
     <string name="collectDataSwitchText">Collect Data</string>
     <string name="dataCountText">Data count: %1$s</string>
     <string name="instanceIdText">Insatnce ID: %1$s</string>
@@ -93,4 +93,8 @@
     Notice: You are free to turn off the data collection at any time you want and start it again later. Therefore it is not neccessary to quit the program.
     \n You will not receive the financial benefits anymore.</string>
     <string name="quitButtonText">Quit pocket security.</string>
+    <string name="datacollectionstatus">Data collection is at the moment</string>
+    <string name="datacollectionstatuson">Data collection is at the moment ON</string>
+    <string name="datacollectionstatusoff">Data collection is at the moment OFF</string>
+
 </resources>
