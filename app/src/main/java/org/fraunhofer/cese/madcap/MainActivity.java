@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            // Handle the camera action
+            goToStartFragment();
         } else if (id == R.id.nav_help) {
             goToHelpFragment();
         } else if (id == R.id.nav_sign_out) {
@@ -96,6 +96,21 @@ public class MainActivity extends AppCompatActivity
 
             FragmentTransaction ft = mainFragmentManager.beginTransaction();
             ft.add(R.id.fragmentHolder, helpFragment);
+            ft.commit();
+        }
+    }
+
+    /**
+     * Sets the main view to start fragment.
+     */
+    public void goToStartFragment(){
+        List<Fragment> fragmentList = getCurrentMainFragments();
+
+        if(!fragmentList.contains(startFragment)){
+            clearMainViewFromFragements();
+
+            FragmentTransaction ft = mainFragmentManager.beginTransaction();
+            ft.add(R.id.fragmentHolder, startFragment);
             ft.commit();
         }
     }
