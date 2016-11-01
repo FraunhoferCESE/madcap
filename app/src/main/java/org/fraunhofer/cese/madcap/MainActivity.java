@@ -18,16 +18,21 @@ import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
 import java.util.List;
 
+import static android.R.attr.fragment;
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         StartFragment.OnFragmentInteractionListener,
         HelpFragment.OnFragmentInteractionListener,
-        LogoutFragment.OnFragmentInteractionListener{
+        LogoutFragment.OnFragmentInteractionListener,
+        QuitFragment.OnFragmentInteractionListener{
 
     private FragmentManager mainFragmentManager = getSupportFragmentManager();
     private StartFragment startFragment;
     private HelpFragment helpFragment;
     private LogoutFragment logoutFragment;
+    private QuitFragment quitFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +56,7 @@ public class MainActivity extends AppCompatActivity
         startFragment = new StartFragment();
         helpFragment = new HelpFragment();
         logoutFragment = new LogoutFragment();
+        quitFragment = new QuitFragment();
 
         //Initial settign up of the main fragement
         FragmentTransaction ft = mainFragmentManager.beginTransaction();
@@ -76,13 +82,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            goToStartFragment();
+            goToFragment(startFragment);
         } else if (id == R.id.nav_help) {
-            goToHelpFragment();
+            goToFragment(helpFragment);
         } else if (id == R.id.nav_sign_out) {
-            goToLogoutFragment();
+            goToFragment(logoutFragment);
         } else if (id == R.id.nav_quit) {
-
+            goToFragment(quitFragment);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -91,49 +97,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Sets the main view to help fragment.
+     * Sets the main view to a specific fragment.
+     * @param fragment the fragment to switch to.
      */
-    public void goToHelpFragment(){
+    public void goToFragment(Fragment fragment){
         List<Fragment> fragmentList = getCurrentMainFragments();
 
-        if(!fragmentList.contains(helpFragment)){
+        if(!fragmentList.contains(fragment)){
             clearMainViewFromFragements();
 
             FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.add(R.id.fragmentHolder, helpFragment);
+            ft.add(R.id.fragmentHolder, fragment);
             ft.commit();
         }
     }
 
-    /**
-     * Sets the main view to start fragment.
-     */
-    public void goToStartFragment(){
-        List<Fragment> fragmentList = getCurrentMainFragments();
-
-        if(!fragmentList.contains(startFragment)){
-            clearMainViewFromFragements();
-
-            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.add(R.id.fragmentHolder, startFragment);
-            ft.commit();
-        }
-    }
-
-    /**
-     * Sets the main view to logout fragment.
-     */
-    public void goToLogoutFragment(){
-        List<Fragment> fragmentList = getCurrentMainFragments();
-
-        if(!fragmentList.contains(logoutFragment)){
-            clearMainViewFromFragements();
-
-            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.add(R.id.fragmentHolder, logoutFragment);
-            ft.commit();
-        }
-    }
 
     /**
      * Gets a list of current Fragemnts attached to the main view.

@@ -1,0 +1,31 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.fraunhofer.cese.madcap.QuitFragment">
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <TextView
+            android:text="@string/quitText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/quitTextView" />
+
+        <Button
+            android:text="@string/quitButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/quitButton"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/red" />
+    </LinearLayout>
+
+</FrameLayout>
