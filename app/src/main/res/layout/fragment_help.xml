@@ -1,0 +1,40 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.fraunhofer.cese.madcap.HelpFragment">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <TextView
+            android:text="@string/help_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/helpTextView"
+            android:layout_marginBottom="5dp" />
+
+        <Button
+            android:text="@string/contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/contactMadcapButton" />
+
+        <Button
+            android:text="@string/go_to_online_help"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/onlineHelpButton" />
+
+        <TextView
+            android:text="@string/footnoteText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/footnoteTextViewHelp"
+            android:layout_marginTop="5dp" />
+    </LinearLayout>
+</FrameLayout>

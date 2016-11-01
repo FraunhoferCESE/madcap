@@ -1,0 +1,107 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.fraunhofer.cese.madcap.StartFragment">
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:text="Hi, "
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp" />
+
+            <TextView
+                android:text="Mister User"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/usernameTextview"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoLink="all"
+            android:textIsSelectable="true"
+            android:text="@string/introText"
+            android:textColor="#000" />
+
+        <TextView
+            android:id="@+id/instanceIdText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:layout_marginTop="15dp"
+            android:text="@string/instanceIdText"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/dataCountText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:text="@string/dataCountText"
+            android:textSize="15sp" />
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/collectDataSwitchText"
+            android:layout_marginTop="15dp"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/uploadResult"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="15dp"
+            android:textIsSelectable="true"
+            android:text="@string/uploadResultText"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/SendButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:text="@string/sendButtonText"
+            android:background="@color/madcap_main_light"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/madcap_black" />
+
+        <Button
+            android:id="@+id/SignOut"
+            android:text="@string/signOutButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/madcap_main_light"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/madcap_black" />
+
+        <Button
+            android:id="@+id/QuitButton"
+            android:text="@string/quitProjectButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/red"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/common_google_signin_btn_text_dark_default" />
+
+    </LinearLayout>
+
+</FrameLayout>

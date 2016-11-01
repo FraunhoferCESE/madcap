@@ -64,7 +64,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         //Sets a flag that the main_old activity should be shown never mind if
                         //the silent login failed or succeeded.
                         intent.putExtra("ShowMainAnyway", true);
-                        MyApplication.madcapLogger.d(TAG, "Start now Login Service");
+                        MyApplication.madcapLogger.d(TAG, "StartFragment now Login Service");
                         startService(intent);
                         //WelcomeActivity.this.finish();
                         return "message";
