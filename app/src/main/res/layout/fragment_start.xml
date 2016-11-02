@@ -79,15 +79,6 @@
             android:progress="1" />
 
         <TextView
-            android:id="@+id/uploadResult"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_marginTop="15dp"
-            android:textIsSelectable="true"
-            android:text="@string/uploadResultText"
-            android:textSize="15sp" />
-
-        <TextView
             android:id="@+id/dataCountText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -114,6 +105,15 @@
             android:indeterminate="false"
             android:max="100"
             android:progress="1" />
+
+        <TextView
+            android:id="@+id/uploadResult"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginTop="15dp"
+            android:textIsSelectable="true"
+            android:text="@string/uploadResultText"
+            android:textSize="15sp" />
 
     </LinearLayout>
 

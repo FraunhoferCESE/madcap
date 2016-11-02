@@ -24,6 +24,7 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 import static com.pathsense.locationengine.lib.detectionLogic.b.u;
 import static org.fraunhofer.cese.madcap.R.id.usernameTextview;
+import static org.fraunhofer.cese.madcap.R.string.uploadResultText;
 
 
 /**
@@ -36,6 +37,9 @@ import static org.fraunhofer.cese.madcap.R.id.usernameTextview;
  */
 public class StartFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
+    private static final String STATE_UPLOAD_STATUS = "uploadStatus";
+    private static final String STATE_DATA_COUNT = "dataCount";
+    private static final String STATE_COLLECTING_DATA = "isCollectingData";
 
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
     private boolean isCollectingData;
@@ -46,6 +50,11 @@ public class StartFragment extends Fragment {
     private LinearLayout dataCollectionLayout;
     private ProgressBar collectionProgressBar;
     private Switch collectDataSwitch;
+    private TextView dataCountView;
+    private TextView uploadResultView;
+
+    private String uploadResultText;
+    private String dataCountText;
 
     public StartFragment() {
         // Required empty public constructor
@@ -70,10 +79,32 @@ public class StartFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_UPLOAD_STATUS, uploadResultText);
+        outState.putString(STATE_DATA_COUNT, dataCountText);
+        outState.putBoolean(STATE_COLLECTING_DATA, isCollectingData);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_start, container, false);
+
+        dataCountView = (TextView) view.findViewById(R.id.dataCountText);
+        uploadResultView = (TextView) view.findViewById(R.id.uploadResult);
+
+        if (savedInstanceState != null) {
+            dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
+            uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
+        } else {
+            dataCountText = "Computing...";
+            uploadResultText = "None.";
+            //isCollectingData = true;
+        }
+
 
         //Parse the greeting information
         nameTextView = (TextView) view.findViewById(R.id.usernameTextview);
@@ -172,6 +203,14 @@ public class StartFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void updateDataCount(long count) {
+        dataCountText = count < 0 ? "Computing..." : Long.toString(count);
+
+        if (dataCountView != null && dataCountView.isShown()) {
+            dataCountView.setText(getString(R.string.dataCountText, dataCountText));
+        }
     }
 
     /**
