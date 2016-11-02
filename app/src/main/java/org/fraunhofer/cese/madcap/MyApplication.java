@@ -2,33 +2,28 @@ package org.fraunhofer.cese.madcap;
 
 import android.app.Application;
 import android.content.Context;
-import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
-import org.acra.*;
-import org.acra.annotation.*;
 import org.fraunhofer.cese.madcap.util.MadcapLogger;
-
-import static android.util.Log.e;
 
 /**
  * Class used to handle lifecycle events for the entire application
  * <p>
  * Created by llayman on 9/23/2016.
  */
-@ReportsCrashes(
-        formUri = "https://madcap.cloudant.com/acra-madcap/_design/acra-storage/_update/report",
-        reportType = org.acra.sender.HttpSender.Type.JSON,
-        httpMethod = org.acra.sender.HttpSender.Method.PUT,
-        formUriBasicAuthLogin="agioneciellacenclichasem",
-        formUriBasicAuthPassword="69f1b42d55cdfb9d7e1dc3f0a9deccb0750a64fe",
-        mode = ReportingInteractionMode.TOAST,
-        resToastText = R.string.crash_toast_text
-)
+//@ReportsCrashes(
+//        formUri = "https://madcap.cloudant.com/acra-madcap/_design/acra-storage/_update/report",
+//        reportType = org.acra.sender.HttpSender.Type.JSON,
+//        httpMethod = org.acra.sender.HttpSender.Method.PUT,
+//        formUriBasicAuthLogin="agioneciellacenclichasem",
+//        formUriBasicAuthPassword="69f1b42d55cdfb9d7e1dc3f0a9deccb0750a64fe",
+//        mode = ReportingInteractionMode.TOAST,
+//        resToastText = R.string.crash_toast_text
+//)
 public class MyApplication extends Application {
     public static final String TAG = "Madcap My Application";
     private MyComponent component;
@@ -47,7 +42,7 @@ public class MyApplication extends Application {
         MyApplication.madcapLogger.e(TAG, "on create of My application has been called");
 
         //Initialize Acra
-        ACRA.init(this);
+//        ACRA.init(this);
 
         //Initializations for the Google Authentification
         context = getApplicationContext();
