@@ -11,7 +11,7 @@
     </string>
     <string name="introText">You can control Madcap\'s functions from this Control App.</string>
     <string name="collectDataSwitchText">Collect Data</string>
-    <string name="dataCountText">Data count: %1$s</string>
+    <string name="dataCountText">Collected data since the last upload: </string>
     <string name="instanceIdText">Insatnce ID: %1$s</string>
     <string name="uploadResultText">Last upload result: %1$s</string>
     <string name="sendButtonText">Upload data now</string>

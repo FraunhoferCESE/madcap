@@ -3,14 +3,17 @@ package org.fraunhofer.cese.madcap;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -18,6 +21,8 @@ import android.widget.TextView;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
+import static com.pathsense.locationengine.lib.detectionLogic.b.u;
 import static org.fraunhofer.cese.madcap.R.id.usernameTextview;
 
 
@@ -38,6 +43,8 @@ public class StartFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private TextView nameTextView;
     private TextView collectionDataStatusText;
+    private LinearLayout dataCollectionLayout;
+    private ProgressBar collectionProgressBar;
     private Switch collectDataSwitch;
 
     public StartFragment() {
@@ -80,11 +87,20 @@ public class StartFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
 
+        //Set up collection progress bar
+        collectionProgressBar = (ProgressBar) view.findViewById(R.id.collectionProgressBar);
+
+        //Set up the colorable data collection background
+        dataCollectionLayout = (LinearLayout) view.findViewById(R.id.dataCollectionLayout);
 
         if(isCollectingData){
             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
+            collectionProgressBar.setVisibility(View.VISIBLE);
+            dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
         }else{
             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
+            collectionProgressBar.setVisibility(View.INVISIBLE);
+            dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
         }
 
         //Set the switch
@@ -106,6 +122,8 @@ public class StartFragment extends Fragment {
                             Intent intent = new Intent(getContext(), DataCollectionService.class);
                             getActivity().startService(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
+                            collectionProgressBar.setVisibility(View.VISIBLE);
+                            dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
 
                             //TODO: enable pipelines
                             //enablePipelines();
@@ -120,6 +138,8 @@ public class StartFragment extends Fragment {
                             Intent intent = new Intent(getContext(), DataCollectionService.class);
                             getActivity().stopService(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
+                            collectionProgressBar.setVisibility(View.INVISIBLE);
+                            dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
 
                             //TODO: disable pipelines
                             //disablePipelines();

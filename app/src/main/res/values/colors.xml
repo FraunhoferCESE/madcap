@@ -14,4 +14,6 @@
     <color name="madcap_main_light">#0087f3</color>
     <color name="madcap_secondary_light">#efc697</color>
     <color name="madcap_decent">#6fb5eb</color>
+    <color name="madcap_true_color">#3704ff00</color>
+    <color name="madcap_false_color">#37ff000d</color>
 </resources>

@@ -39,28 +39,15 @@
             android:text="@string/introText"
             android:textColor="#000" />
 
-        <TextView
-            android:id="@+id/instanceIdText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textIsSelectable="true"
-            android:layout_marginTop="15dp"
-            android:text="@string/instanceIdText"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/dataCountText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textIsSelectable="true"
-            android:text="@string/dataCountText"
-            android:textSize="15sp" />
-
         <LinearLayout
+            android:id="@+id/dataCollectionLayout"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:padding="7dp">
 
             <Switch
                 android:id="@+id/switch1"
@@ -74,9 +61,22 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/collectionDataStatusText"
                 android:text="@string/datacollectionstatus"
-                android:gravity="center_vertical" />
+                android:gravity="center_vertical"
+                android:layout_marginLeft="5dp" />
 
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/collectionProgressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:indeterminate="true"
+            android:visibility="visible"
+            android:max="100"
+            android:progress="1" />
 
         <TextView
             android:id="@+id/uploadResult"
@@ -86,6 +86,34 @@
             android:textIsSelectable="true"
             android:text="@string/uploadResultText"
             android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/dataCountText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textIsSelectable="true"
+            android:text="@string/dataCountText"
+            android:textSize="15sp" />
+
+        <Button
+            android:text="@string/sendButtonText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/uploadButton"
+            android:background="@color/madcap_secondary_color"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp" />
+
+        <ProgressBar
+            android:id="@+id/uploadProgresBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:indeterminate="false"
+            android:max="100"
+            android:progress="1" />
 
     </LinearLayout>
 
