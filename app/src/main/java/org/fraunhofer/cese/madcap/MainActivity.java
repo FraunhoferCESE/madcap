@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentManager;
 import android.view.MenuItem;
 
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import java.util.List;
 

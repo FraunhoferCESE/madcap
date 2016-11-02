@@ -6,11 +6,11 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.OptionalPendingResult;
@@ -26,22 +26,24 @@ import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.AccelerometerListener;
 import edu.umd.fcmd.sensorlisteners.listener.SensorListener;
 
-import static android.R.attr.enabled;
-
 /**
  * Created by MMueller on 10/7/2016.
  */
 
+@Singleton
 public class DataCollectionService extends Service implements MadcapAuthEventHandler {
     private static final String TAG = "Madcap DataColl Service";
     private final int RUN_CODE = 1;
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
     private NotificationManager mNotificationManager;
+
+    private final IBinder mBinder = new DataCollectionServiceBinder();
 
     @Inject
     Cache cache;
@@ -69,7 +71,14 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return mBinder;
+    }
+
+    public class DataCollectionServiceBinder extends Binder {
+        public DataCollectionService getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return DataCollectionService.this;
+        }
     }
 
     @Override

@@ -1,11 +1,15 @@
 package org.fraunhofer.cese.madcap;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.res.ResourcesCompat;
@@ -14,18 +18,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
-import static com.pathsense.locationengine.lib.detectionLogic.b.u;
-import static org.fraunhofer.cese.madcap.R.id.usernameTextview;
-import static org.fraunhofer.cese.madcap.R.string.uploadResultText;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -41,6 +39,16 @@ public class StartFragment extends Fragment {
     private static final String STATE_DATA_COUNT = "dataCount";
     private static final String STATE_COLLECTING_DATA = "isCollectingData";
 
+    private static final long CACHE_UPDATE_UI_DELAY = 5000;
+    private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
+
+    private UploadStatusListener uploadStatusListener;
+    private AsyncTask<Void, Long, Void> cacheCountUpdater;
+
+    //This is the data collection service we bind to.
+    private DataCollectionService mDataCollectionService;
+    boolean mBound;
+
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
     private boolean isCollectingData;
 
@@ -54,6 +62,24 @@ public class StartFragment extends Fragment {
 
     private String uploadResultText;
     private String dataCountText;
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
+            DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
+            mDataCollectionService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+        }
+    };
 
     public StartFragment() {
         // Required empty public constructor
@@ -89,6 +115,10 @@ public class StartFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Intent intent = new Intent(getContext(), DataCollectionService.class);
+        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_start, container, false);
 
@@ -146,6 +176,7 @@ public class StartFragment extends Fragment {
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
                             Intent intent = new Intent(getContext(), DataCollectionService.class);
                             getActivity().startService(intent);
+                            getActivity().bindService(intent, StartFragment.this.getmConnection(), Context.BIND_AUTO_CREATE);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
 
@@ -160,6 +191,8 @@ public class StartFragment extends Fragment {
                             boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
                             Intent intent = new Intent(getContext(), DataCollectionService.class);
+                            getActivity().unbindService(mConnection);
+                            mBound = false;
                             getActivity().stopService(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
@@ -171,7 +204,36 @@ public class StartFragment extends Fragment {
                 }
         );
 
+        getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
         return view;
+    }
+
+    private AsyncTask<Void, Long, Void> getCacheCountUpdater() {
+        if (cacheCountUpdater == null) {
+            cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
+                @Override
+                protected Void doInBackground(Void... params) {
+                    while (!isCancelled()) {
+                        if(mBound){
+                            publishProgress(mDataCollectionService.getCacheSize());
+                        }
+                        try {
+                            Thread.sleep(CACHE_UPDATE_UI_DELAY);
+                        } catch (InterruptedException e) {
+                            MyApplication.madcapLogger.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
+                        }
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void onProgressUpdate(Long... values) {
+                    updateDataCount(values[0]);
+                }
+            };
+        }
+        return cacheCountUpdater;
     }
 
     public void onButtonPressed(Uri uri) {
@@ -194,7 +256,29 @@ public class StartFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+
+        AsyncTask.Status status = getCacheCountUpdater().getStatus();
+        if (!getCacheCountUpdater().isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
+            getCacheCountUpdater().cancel(true);
+        }
+
+        if (mBound) {
+            getActivity().unbindService(mConnection);
+            mBound = false;
+        }
         mListener = null;
+    }
+
+    protected ServiceConnection getmConnection() {
+        return mConnection;
+    }
+
+    private void updateDataCount(long count) {
+        dataCountText = count < 0 ? "Computing..." : Long.toString(count);
+
+        if (dataCountView != null && dataCountView.isShown()) {
+            dataCountView.setText(getString(R.string.dataCountText)+" "+dataCountText);
+        }
     }
 
     /**
