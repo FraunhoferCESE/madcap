@@ -1,6 +1,7 @@
 package org.fraunhofer.cese.madcap.appengine;
 
 import android.content.Context;
+
 import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.android.gms.iid.InstanceID;
@@ -40,13 +41,18 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     public GoogleAppEnginePipeline(Cache cache, Context context) {
         this.cache = cache;
         googleUserId = madcapAuthManager.getUserId();
-        MyApplication.madcapLogger.d(TAG, "Google User Id is "+googleUserId);
+        MyApplication.madcapLogger.d(TAG, "Google User Id is " + googleUserId);
     }
 
     /**
      * Called when the probe emits data. Data emitted from probes that
      * extend the Probe class are guaranteed to have the PROBE and TIMESTAMP
      * parameters.
+     * <p>
+     * From LL: This was previously the central point where ALL the probes would send their data, and that data would be logged to the Cache.
+     * I think that the structure is now different in Anumeet's library, so this function may need to be distributed among the listeners.
+     * However, you can probably save a lot of code replication if you had a method like this in the DataCollectionService where all the
+     * Probes send their data.
      */
     @Override
     public void onDataReceived(IJsonObject probeConfig, IJsonObject data) {
@@ -88,6 +94,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      * stream the probe ran. Continuable probes can use this checkpoint to
      * start the data stream where it previously left off.
      *
+     * From LL: I do not think that this method will be needed with Anumeet's library.
+     *
      * @param completeProbeUri the probe which has finished sending data
      * @param checkpoint       a checkpoint indicating the leave off point for probes that support it
      */
@@ -101,6 +109,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
      * Called once when the pipeline is created.  This method can be used
      * to register any scheduled operations.
      *
+     * From LL: Nothing special here. This was a method required by Funf.
+     *
      * @param manager the FunfManager the pipeline is attached to
      */
     @Override
@@ -111,6 +121,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
     /**
      * Instructs pipeline to perform an operation. This is a requirement of the Pipeline interface, but we don't use it.
+     *
+     * From LL: Nothing special here. This was a method required by Funf.
      *
      * @param action The action to perform.
      * @param config The object to perform the action on.
@@ -124,9 +136,11 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     /**
      * Requests an on-demand upload of cached data.
      *
-     * @return a status code reflecting whether or not the upload request could be completed. {@link Cache#INTERNAL_ERROR} {@link Cache#UPLOAD_READY} {@link Cache#DATABASE_LIMIT_NOT_MET} {@link Cache#NO_INTERNET_CONNECTION} {@link Cache#UPLOAD_ALREADY_IN_PROGRESS} {@link Cache#UPLOAD_INTERVAL_NOT_MET}
-     */
-    public int requestUpload() {
+     * From LL: This responds to a command from the MainActivity.
+     * You can move this to the DataCollectionService and have the
+     * MainActivity call this when the "Upload Now" button is pressed.
+    */
+     public int requestUpload() {
         int status = cache.checkUploadConditions(Cache.UploadStrategy.IMMEDIATE);
         if (status == Cache.UPLOAD_READY)
             cache.flush(Cache.UploadStrategy.IMMEDIATE);
@@ -135,6 +149,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
     /**
      * Sets flag indicating if the pipeline is enabled or not.
+     *
+     * From LL: This method is called from the MainActivity, but I do not think we actually need the functionality.
      *
      * @param isEnabled the boolean value to set
      */
@@ -156,6 +172,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     /**
      * Returns true if this pipeline is enabled, meaning onCreate has been called
      * and onDestroy has not yet been called.
+     *
+     * From LL: This method is called from the MainActivity, but I do not think we actually need the functionality.
      */
     @Override
     public boolean isEnabled() {
@@ -165,6 +183,9 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
 
     /**
      * Attempts to add an upload status listener to the cache.
+     *
+     * From LL: This method is called from MainActivity to get upload status information. It
+     * should be moved to the DataCollectionService and the reference updated in the MainActivity.
      *
      * @param listener the listener to add
      * @see Cache#addUploadListener(UploadStatusListener)
@@ -176,6 +197,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     /**
      * Attempts to remove an upload status listener from the cache.
      *
+     * From LL: same as addUploadListener()...
+     *
      * @param listener the listener to remove
      * @return {@code true} if the listener was removed, {@code false} otherwise.
      */
@@ -186,6 +209,9 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     /**
      * Returns the number of entities currently held in the cache.
      *
+     * From LL: Used by the MainActivity to get a count of entries to display.
+     * Move to DataCollectionService and update the references in the MainActivity.
+     *
      * @return the number of entities in the cache.
      * @see Cache#getSize()
      */
@@ -194,6 +220,8 @@ public class GoogleAppEnginePipeline implements Pipeline, Probe.DataListener {
     }
 
     /**
+     * From LL: Called by the MainActivity. Move to DataCollectionService and update reference in MainActivity.
+     *
      * Should be called when the OS triggers onTrimMemory in the app
      */
     public void onTrimMemory() {
