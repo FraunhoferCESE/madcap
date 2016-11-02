@@ -22,6 +22,7 @@ import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
 
 import javax.inject.Inject;
@@ -29,6 +30,8 @@ import javax.inject.Inject;
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.AccelerometerListener;
 import edu.umd.fcmd.sensorlisteners.listener.SensorListener;
+
+import static android.R.attr.enabled;
 
 /**
  * Created by MMueller on 10/7/2016.
@@ -79,6 +82,10 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public void onDestroy() {
+        // Any closeout or disconnect operations
+        MyApplication.madcapLogger.d(TAG, "onDestroy");
+        cache.close();
+
         hideRunNotification();
     }
 
@@ -89,10 +96,72 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         try{
             accelerometerService.startListening();
         } catch (NoSensorFoundException nsf) {
-            Log.e(TAG, "onStartCommand: ", nsf);
+            MyApplication.madcapLogger.e(TAG, "onStartCommand: ", nsf);
         }
         return super.onStartCommand(intent, flags, startId);
     }
+
+    /**
+     * Requests an on-demand upload of cached data.
+     *
+     * From LL: This responds to a command from the MainActivity.
+     * You can move this to the DataCollectionService and have the
+     * MainActivity call this when the "Upload Now" button is pressed.
+     */
+    public int requestUpload() {
+        int status = cache.checkUploadConditions(Cache.UploadStrategy.IMMEDIATE);
+        if (status == Cache.UPLOAD_READY)
+            cache.flush(Cache.UploadStrategy.IMMEDIATE);
+        return status;
+    }
+
+    /**
+     * Attempts to add an upload status listener to the cache.
+     *
+     * From LL: This method is called from MainActivity to get upload status information. It
+     * should be moved to the DataCollectionService and the reference updated in the MainActivity.
+     *
+     * @param listener the listener to add
+     * @see Cache#addUploadListener(UploadStatusListener)
+     */
+    public void addUploadListener(UploadStatusListener listener) {
+        cache.addUploadListener(listener);
+    }
+
+    /**
+     * Attempts to remove an upload status listener from the cache.
+     *
+     * From LL: same as addUploadListener()...
+     *
+     * @param listener the listener to remove
+     * @return {@code true} if the listener was removed, {@code false} otherwise.
+     */
+    public boolean removeUploadListener(UploadStatusListener listener) {
+        return cache.removeUploadListener(listener);
+    }
+
+    /**
+     * Returns the number of entities currently held in the cache.
+     *
+     * From LL: Used by the MainActivity to get a count of entries to display.
+     * Move to DataCollectionService and update the references in the MainActivity.
+     *
+     * @return the number of entities in the cache.
+     * @see Cache#getSize()
+     */
+    public long getCacheSize() {
+        return cache.getSize();
+    }
+
+    /**
+     * From LL: Called by the MainActivity. Move to DataCollectionService and update reference in MainActivity.
+     *
+     * Should be called when the OS triggers onTrimMemory in the app
+     */
+    public void onTrimMemory() {
+        cache.flush(Cache.UploadStrategy.NORMAL);
+    }
+
 
     /**
      * Shows the madcap logo in the notification bar,
@@ -134,6 +203,9 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         mNotificationManager.notify(RUN_CODE, note);
     }
 
+    /**
+     * Hides the madcap logo in the notification bar.
+     */
     private void hideRunNotification(){
         mNotificationManager.cancel(RUN_CODE);
     }
