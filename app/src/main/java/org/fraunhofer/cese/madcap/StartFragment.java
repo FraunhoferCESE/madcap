@@ -48,7 +48,6 @@ public class StartFragment extends Fragment {
     private TextView nameTextView;
     private TextView collectionDataStatusText;
     private LinearLayout dataCollectionLayout;
-    private ProgressBar collectionProgressBar;
     private Switch collectDataSwitch;
     private TextView dataCountView;
     private TextView uploadResultView;
@@ -118,19 +117,14 @@ public class StartFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
 
-        //Set up collection progress bar
-        collectionProgressBar = (ProgressBar) view.findViewById(R.id.collectionProgressBar);
-
         //Set up the colorable data collection background
         dataCollectionLayout = (LinearLayout) view.findViewById(R.id.dataCollectionLayout);
 
         if(isCollectingData){
             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
-            collectionProgressBar.setVisibility(View.VISIBLE);
             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
         }else{
             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
-            collectionProgressBar.setVisibility(View.INVISIBLE);
             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
         }
 
@@ -153,7 +147,6 @@ public class StartFragment extends Fragment {
                             Intent intent = new Intent(getContext(), DataCollectionService.class);
                             getActivity().startService(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
-                            collectionProgressBar.setVisibility(View.VISIBLE);
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
 
                             //TODO: enable pipelines
@@ -169,7 +162,6 @@ public class StartFragment extends Fragment {
                             Intent intent = new Intent(getContext(), DataCollectionService.class);
                             getActivity().stopService(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
-                            collectionProgressBar.setVisibility(View.INVISIBLE);
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
 
                             //TODO: disable pipelines
@@ -203,14 +195,6 @@ public class StartFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    private void updateDataCount(long count) {
-        dataCountText = count < 0 ? "Computing..." : Long.toString(count);
-
-        if (dataCountView != null && dataCountView.isShown()) {
-            dataCountView.setText(getString(R.string.dataCountText, dataCountText));
-        }
     }
 
     /**
