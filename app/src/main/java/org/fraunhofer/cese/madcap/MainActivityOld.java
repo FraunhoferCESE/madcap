@@ -201,7 +201,7 @@ public class MainActivityOld extends Activity implements MadcapAuthEventHandler{
         super.onCreate(savedInstanceState);
 
         //Performs dependency injection
-        ((MyApplication) getApplication()).getComponent().inject(this);
+        //((MyApplication) getApplication()).getComponent().inject(this);
 
         //Manage the MadcapAuthManager
         madcapAuthManager = MadcapAuthManager.getInstance();

@@ -5,6 +5,7 @@ import android.util.Log;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheEntry;
 
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -20,6 +21,16 @@ public class CacheFactory implements StateManager {
     private static final String TAG = CacheFactory.class.getSimpleName();
 
     private final Cache cache;
+
+    @Override
+    public void save(State state) {
+
+    }
+
+    @Override
+    public List getAll() {
+        return null;
+    }
 
     enum DataType {
         ACCELEROMETER
