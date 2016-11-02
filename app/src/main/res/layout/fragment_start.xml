@@ -56,28 +56,27 @@
             android:text="@string/dataCountText"
             android:textSize="15sp" />
 
-        <Switch
-            android:id="@+id/switch1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/collectDataSwitchText"
-            android:layout_marginTop="15dp"
-            android:textSize="15sp" />
-
-        <TextView
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/collectionDataStatusText"
-            android:text="@string/datacollectionstatus"
-            android:gravity="right" />
+            android:gravity="center_vertical">
 
-        <ProgressBar
-            android:indeterminateDrawable="@drawable/madcap_progressbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone"
-            android:id="@+id/progressBarSpinner"
-            android:layout_margin="5dp" />
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/collectDataSwitchText"
+                android:textSize="15sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/collectionDataStatusText"
+                android:text="@string/datacollectionstatus"
+                android:gravity="center_vertical" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/uploadResult"

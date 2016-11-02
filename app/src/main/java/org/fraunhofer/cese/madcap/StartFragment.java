@@ -39,7 +39,6 @@ public class StartFragment extends Fragment {
     private TextView nameTextView;
     private TextView collectionDataStatusText;
     private Switch collectDataSwitch;
-    private ProgressBar progressBarSpinner;
 
     public StartFragment() {
         // Required empty public constructor
@@ -81,10 +80,8 @@ public class StartFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
 
-        //Set the spinner
-        progressBarSpinner = (ProgressBar) view.findViewById(R.id.progressBarSpinner);
+
         if(isCollectingData){
-            progressBarSpinner.setVisibility(View.VISIBLE);
             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
         }else{
             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
@@ -108,7 +105,6 @@ public class StartFragment extends Fragment {
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
                             Intent intent = new Intent(getContext(), DataCollectionService.class);
                             getActivity().startService(intent);
-                            progressBarSpinner.setVisibility(View.VISIBLE);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
 
                             //TODO: enable pipelines
@@ -123,7 +119,6 @@ public class StartFragment extends Fragment {
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
                             Intent intent = new Intent(getContext(), DataCollectionService.class);
                             getActivity().stopService(intent);
-                            progressBarSpinner.setVisibility(View.GONE);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
 
                             //TODO: disable pipelines
