@@ -54,6 +54,7 @@ configurations {
 }
 
 dependencies {
+    compile project(':sensorlisteners')
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile files('libs/gson-2.1.funf.jar')
     compile files('libs/funf-0.4.2.jar')

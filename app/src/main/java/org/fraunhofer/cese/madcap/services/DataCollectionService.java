@@ -10,12 +10,12 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.Status;
 
+import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
@@ -67,6 +67,16 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     @Override
     public void onDestroy() {
         hideRunNotification();
+    }
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+//        SensorManager sensorManager = (SensorManager)this.getSystemService(Context.SENSOR_SERVICE);
+//        Sensor a = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+//        SensorListener accelerometerService = new SensorListener(a, this);
+//        accelerometerService.startListening();
+        return super.onStartCommand(intent, flags, startId);
     }
 
     /**
