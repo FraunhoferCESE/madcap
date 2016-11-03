@@ -104,6 +104,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         SensorListener accelerometerService = new AccelerometerListener(this, new CacheFactory(cache));
         try{
             accelerometerService.startListening();
+            MyApplication.madcapLogger.d(TAG, "Accelerometer started listening");
         } catch (NoSensorFoundException nsf) {
             MyApplication.madcapLogger.e(TAG, "onStartCommand: ", nsf);
         }
