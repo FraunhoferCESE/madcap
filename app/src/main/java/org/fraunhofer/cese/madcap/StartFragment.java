@@ -202,36 +202,36 @@ public class StartFragment extends Fragment {
                 }
         );
 
+
         getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         return view;
     }
 
     private AsyncTask<Void, Long, Void> getCacheCountUpdater() {
-        if (cacheCountUpdater == null) {
-            cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
-                @Override
-                protected Void doInBackground(Void... params) {
-                    while (!isCancelled()) {
-                        if(mBound){
-                            //MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
-                            publishProgress(mDataCollectionService.getCacheSize());
-                        }
-                        try {
-                            Thread.sleep(CACHE_UPDATE_UI_DELAY);
-                        } catch (InterruptedException e) {
-                            MyApplication.madcapLogger.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
-                        }
+        cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                while (!isCancelled()) {
+                    if(mBound){
+                        //MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
+                        publishProgress(mDataCollectionService.getCacheSize());
                     }
-                    return null;
+                    try {
+                        Thread.sleep(CACHE_UPDATE_UI_DELAY);
+                    } catch (InterruptedException e) {
+                        MyApplication.madcapLogger.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
+                    }
                 }
+                return null;
+            }
 
-                @Override
-                protected void onProgressUpdate(Long... values) {
-                    updateDataCount(values[0]);
-                }
-            };
-        }
+            @Override
+            protected void onProgressUpdate(Long... values) {
+                updateDataCount(values[0]);
+            }
+        };
+
         return cacheCountUpdater;
     }
 
