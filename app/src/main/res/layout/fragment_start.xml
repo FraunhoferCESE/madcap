@@ -83,7 +83,7 @@
             android:layout_marginTop="10dp" />
 
         <ProgressBar
-            android:id="@+id/uploadProgresBar"
+            android:id="@+id/uploadProgressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
