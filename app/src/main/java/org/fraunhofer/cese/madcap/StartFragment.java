@@ -5,14 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.res.ResourcesCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -216,6 +214,7 @@ public class StartFragment extends Fragment {
                 protected Void doInBackground(Void... params) {
                     while (!isCancelled()) {
                         if(mBound){
+                            //MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
                             publishProgress(mDataCollectionService.getCacheSize());
                         }
                         try {

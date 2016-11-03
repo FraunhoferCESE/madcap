@@ -10,6 +10,8 @@ import java.util.Date;
 import edu.umd.fcmd.sensorlisteners.model.AccelerometerState;
 import edu.umd.fcmd.sensorlisteners.service.StateManager;
 
+import static android.os.Build.VERSION_CODES.M;
+
 /**
  * Created by ANepaul on 10/28/2016.
  */

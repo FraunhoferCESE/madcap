@@ -2,6 +2,7 @@ package org.fraunhofer.cese.madcap.factories;
 
 import android.util.Log;
 
+import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheEntry;
 
@@ -19,12 +20,13 @@ import edu.umd.fcmd.sensorlisteners.service.StateManager;
 
 public class CacheFactory implements StateManager {
     private static final String TAG = CacheFactory.class.getSimpleName();
+    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
 
     private final Cache cache;
 
     @Override
     public void save(State state) {
-
+        saveToCache(state);
     }
 
     @Override
@@ -42,13 +44,15 @@ public class CacheFactory implements StateManager {
     }
 
     public void saveToCache(State state) {
-        Log.i(TAG, "saveToCache: Sensor Added to Cache");
+        //Log.i(TAG, "UID "+madcapAuthManager.getUserId());
         CacheEntry probeEntry = new CacheEntry();
         probeEntry.setId(UUID.randomUUID().toString());
         probeEntry.setTimestamp(state.getDate().getTime());
-        probeEntry.setProbeType(DataType.ACCELEROMETER.name());
+        probeEntry.setUserID(madcapAuthManager.getUserId());
+        probeEntry.setProbeType(state.getType());
         probeEntry.setSensorData(state.toString());
 
+        Log.i(TAG, "CACHED "+probeEntry.toString());
         cache.add(probeEntry);
     }
 }
