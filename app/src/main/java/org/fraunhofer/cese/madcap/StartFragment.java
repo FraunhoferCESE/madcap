@@ -59,6 +59,7 @@ public class StartFragment extends Fragment {
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
     private boolean isCollectingData;
 
+    //Ui elements
     private OnFragmentInteractionListener mListener;
     private TextView nameTextView;
     private TextView collectionDataStatusText;
@@ -69,6 +70,7 @@ public class StartFragment extends Fragment {
     private TextView uploadResultView;
     private Button uploadButton;
 
+    //Models for Ui elements
     private String uploadResultText;
     private String dataCountText;
 

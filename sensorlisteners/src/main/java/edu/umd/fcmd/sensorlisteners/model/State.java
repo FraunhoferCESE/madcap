@@ -7,13 +7,13 @@ import java.util.Date;
  */
 
 public abstract class State {
-    private Date date;
+    private long date;
 
-    public Date getDate() {
+    public long getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(long date) {
         this.date = date;
     }
 

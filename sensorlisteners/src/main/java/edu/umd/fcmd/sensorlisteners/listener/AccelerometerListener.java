@@ -67,7 +67,7 @@ public class AccelerometerListener extends SensorListener<AccelerometerState> {
     @Override
     AccelerometerState parseEvent(SensorEvent event) {
         AccelerometerState state = new AccelerometerState();
-        state.setDate(new Date(event.timestamp));
+        state.setDate(System.currentTimeMillis());
         state.setxAxis(event.values[0]);
         state.setyAxis(event.values[1]);
         state.setzAxis(event.values[2]);

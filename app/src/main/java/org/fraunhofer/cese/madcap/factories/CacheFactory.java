@@ -47,7 +47,7 @@ public class CacheFactory implements StateManager {
         //Log.i(TAG, "UID "+madcapAuthManager.getUserId());
         CacheEntry probeEntry = new CacheEntry();
         probeEntry.setId(UUID.randomUUID().toString());
-        probeEntry.setTimestamp(state.getDate().getTime());
+        probeEntry.setTimestamp(state.getDate());
         probeEntry.setUserID(madcapAuthManager.getUserId());
         probeEntry.setProbeType(state.getType());
         probeEntry.setSensorData(state.toString());
