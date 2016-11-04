@@ -25,6 +25,10 @@ import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -44,6 +48,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     private NotificationManager mNotificationManager;
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
+    private List<SensorListener> sensorListeners = new ArrayList<>();
 
     @Inject
     Cache cache;
@@ -101,14 +106,34 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        SensorListener accelerometerService = new AccelerometerListener(this, new CacheFactory(cache));
-        try{
-            accelerometerService.startListening();
-            MyApplication.madcapLogger.d(TAG, "Accelerometer started listening");
-        } catch (NoSensorFoundException nsf) {
-            MyApplication.madcapLogger.e(TAG, "onStartCommand: ", nsf);
-        }
+        sensorListeners.add(new AccelerometerListener(this, new CacheFactory(cache)));
+
+        enableAllListeners();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    /**
+     * Starts all listeners.
+     */
+    public void enableAllListeners(){
+        for(SensorListener l : sensorListeners){
+            try{
+                l.startListening();
+                MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName()+"started listening");
+            } catch (NoSensorFoundException nsf) {
+                MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
+            }
+        }
+    }
+
+    /**
+     * Stops all listeners.
+     */
+    public void disableAllListeners(){
+        for(SensorListener l : sensorListeners) {
+            l.stopListening();
+            MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + "started listening");
+        }
     }
 
     /**
@@ -124,6 +149,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             cache.flush(Cache.UploadStrategy.IMMEDIATE);
         return status;
     }
+
+
 
     /**
      * Attempts to add an upload status listener to the cache.

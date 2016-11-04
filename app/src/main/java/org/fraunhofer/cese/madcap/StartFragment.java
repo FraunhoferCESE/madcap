@@ -206,9 +206,7 @@ public class StartFragment extends Fragment {
                             getActivity().bindService(intent, StartFragment.this.getmConnection(), Context.BIND_AUTO_CREATE);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
-
-                            //TODO: enable pipelines
-                            //enablePipelines();
+                            mDataCollectionService.enableAllListeners();
                         } else {
                             isCollectingData = false;
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -223,9 +221,7 @@ public class StartFragment extends Fragment {
                             getActivity().stopService(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
-
-                            //TODO: disable pipelines
-                            //disablePipelines();
+                            mDataCollectionService.disableAllListeners();
                         }
                     }
                 }
