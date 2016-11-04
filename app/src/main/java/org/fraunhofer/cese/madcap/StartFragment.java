@@ -111,6 +111,14 @@ public class StartFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
+            uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
+        } else {
+            dataCountText = "Computing...";
+            uploadResultText = "None.";
+            //isCollectingData = true;
+        }
     }
 
     @Override
@@ -120,6 +128,11 @@ public class StartFragment extends Fragment {
         outState.putBoolean(STATE_COLLECTING_DATA, isCollectingData);
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
     }
 
     @Override
