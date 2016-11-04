@@ -157,6 +157,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         if(showMainAnyway){
             MyApplication.madcapLogger.d(TAG, "Show now main_old Activity");
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
+            mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(mainActivityIntent);
         }
     }
@@ -296,7 +297,9 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
     @Override
     public int hashCode() {
         int result = madcapAuthManager != null ? madcapAuthManager.hashCode() : 0;
-        result = 31 * result + stackBuilder.hashCode();
+        if(stackBuilder!= null){
+            result = 31 * result + stackBuilder.hashCode();
+        }
         return result;
     }
 
