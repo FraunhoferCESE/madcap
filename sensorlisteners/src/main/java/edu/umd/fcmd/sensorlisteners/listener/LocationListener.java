@@ -39,15 +39,17 @@ public class LocationListener implements Listener, GoogleApiClient.ConnectionCal
     private final StateManager<LocationState> mStateManager;
 
     private TimedLocationTask timedLocationTask;
-    private GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(context)
-            .addApi(Awareness.API)
-            .addConnectionCallbacks(this)
-            .addOnConnectionFailedListener(this)
-            .build();
+    private GoogleApiClient mGoogleApiClient;
 
     public LocationListener(Context context, StateManager<LocationState> mStateManager){
         this.context = context;
         this.mStateManager = mStateManager;
+
+        mGoogleApiClient = new GoogleApiClient.Builder(context)
+                .addApi(Awareness.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
     }
 
     @Override
@@ -84,18 +86,22 @@ public class LocationListener implements Listener, GoogleApiClient.ConnectionCal
          */
         @Override
         protected Void doInBackground(Void... params) {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
                 while(true){
+                    Log.d(TAG, "Retrieving play location");
                     Awareness.SnapshotApi.getLocation(mGoogleApiClient)
                             .setResultCallback(new ResultCallback<LocationResult>() {
                                 @Override
                                 public void onResult(@NonNull LocationResult locationResult) {
-                                    publishProgress(locationResult);
+                                    if (!locationResult.getStatus().isSuccess()) {
+                                        Log.e(TAG, "Could not detect user location");
+                                    }
+                                    Log.d(TAG, "Received update from Google");
+                                    //publishProgress(locationResult);
                                 }
                             });
                     try {
-                        Thread.sleep(15000);
+                        Thread.sleep(1500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

@@ -34,6 +34,7 @@ import javax.inject.Singleton;
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.AccelerometerListener;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
+import edu.umd.fcmd.sensorlisteners.listener.LocationListener;
 
 import static com.pathsense.locationengine.lib.detectionLogic.b.o;
 
@@ -111,7 +112,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         listeners.add(new AccelerometerListener(this, new CacheFactory(cache)));
-        //listeners.add(new LocationListener(this, new CacheFactory(cache)));
+        listeners.add(new LocationListener(this, new CacheFactory(cache)));
 
         enableAllListeners();
         return super.onStartCommand(intent, flags, startId);
