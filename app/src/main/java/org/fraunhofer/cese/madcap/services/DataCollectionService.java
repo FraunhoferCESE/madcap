@@ -34,10 +34,8 @@ import javax.inject.Singleton;
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.AccelerometerListener;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.listener.LocationListener;
-import edu.umd.fcmd.sensorlisteners.listener.SensorListener;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import static com.pathsense.locationengine.lib.detectionLogic.b.o;
 
 /**
  * Created by MMueller on 10/7/2016.
@@ -99,6 +97,9 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public void onDestroy() {
+        super.onDestroy();
+        disableAllListeners();
+
         // Any closeout or disconnect operations
         MyApplication.madcapLogger.d(TAG, "onDestroy");
         cache.close();
@@ -119,11 +120,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     /**
      * Starts all listeners.
      */
-    public void enableAllListeners(){
+    private void enableAllListeners(){
         for(Listener l : listeners){
             try{
+                MyApplication.madcapLogger.d(TAG,"numListeners: "+listeners.size());
                 l.startListening();
-                MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName()+"started listening");
+                MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName()+" started listening");
             } catch (NoSensorFoundException nsf) {
                 MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
             }
@@ -133,10 +135,10 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     /**
      * Stops all listeners.
      */
-    public void disableAllListeners(){
+    private void disableAllListeners(){
         for(Listener l : listeners) {
             l.stopListening();
-            MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + "stopped listening");
+            MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " stopped listening");
         }
     }
 

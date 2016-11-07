@@ -155,7 +155,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         }
 
         if(showMainAnyway){
-            MyApplication.madcapLogger.d(TAG, "Show now main_old Activity");
+            MyApplication.madcapLogger.d(TAG, "Show now main Activity");
             Intent mainActivityIntent = new Intent(this, MainActivity.class);
             mainActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(mainActivityIntent);
@@ -216,6 +216,8 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
      */
     @Override
     public void onSignInSucessfull() {
+
+        //Not reached
         Intent intent = new Intent(LoginService.this, DataCollectionService.class);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);

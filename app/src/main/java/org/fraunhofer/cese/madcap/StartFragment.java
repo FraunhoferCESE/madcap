@@ -201,12 +201,11 @@ public class StartFragment extends Fragment {
                             editor.commit();
                             boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
-                            Intent intent = new Intent(getContext(), DataCollectionService.class);
+                            Intent intent = new Intent(getActivity(), DataCollectionService.class);
                             getActivity().startService(intent);
-                            getActivity().bindService(intent, StartFragment.this.getmConnection(), Context.BIND_AUTO_CREATE);
+                            getActivity().bindService(intent , StartFragment.this.getmConnection(), Context.BIND_AUTO_CREATE);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
-                            mDataCollectionService.enableAllListeners();
                         } else {
                             isCollectingData = false;
                             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -215,13 +214,12 @@ public class StartFragment extends Fragment {
                             editor.commit();
                             boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
-                            Intent intent = new Intent(getContext(), DataCollectionService.class);
+                            Intent intent = new Intent(getActivity(), DataCollectionService.class);
                             getActivity().unbindService(mConnection);
                             mBound = false;
                             getActivity().stopService(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
-                            mDataCollectionService.disableAllListeners();
                         }
                     }
                 }
