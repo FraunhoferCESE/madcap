@@ -92,7 +92,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
 
         // We want this service to continue running until it is explicitly
         // stopped, so return sticky.
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     /**

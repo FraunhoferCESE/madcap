@@ -141,9 +141,6 @@ public class StartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Intent intent = new Intent(getContext(), DataCollectionService.class);
-        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_start, container, false);
 
@@ -215,7 +212,7 @@ public class StartFragment extends Fragment {
                             boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
                             Intent intent = new Intent(getActivity(), DataCollectionService.class);
-                            getActivity().unbindService(mConnection);
+                            if(mBound) getActivity().unbindService(mConnection);
                             mBound = false;
                             getActivity().stopService(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
@@ -266,15 +263,14 @@ public class StartFragment extends Fragment {
     @Override
     public void onDestroyView(){
         super.onDestroyView();
+        MyApplication.madcapLogger.d(TAG, "onDestroy Fragment");
+
         AsyncTask.Status status = getCacheCountUpdater().getStatus();
         if (!getCacheCountUpdater().isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
             getCacheCountUpdater().cancel(true);
         }
 
-        if (mBound) {
-            getActivity().unbindService(mConnection);
-            mBound = false;
-        }
+        mBound = false;
         mListener = null;
     }
 
