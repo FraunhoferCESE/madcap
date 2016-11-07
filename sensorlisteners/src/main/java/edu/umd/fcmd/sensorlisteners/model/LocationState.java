@@ -8,7 +8,8 @@ import android.os.Bundle;
 
 public class LocationState extends State {
     private float accuracy;
-    private double altitude;private float bearing;
+    private double altitude;
+    private float bearing;
     private Bundle extras;
     private double latitude;
     private double longitude;
@@ -136,7 +137,7 @@ public class LocationState extends State {
      */
     @Override
     public String toString() {
-        return "{\"latitude\": "+latitude+"\"longitude\": "+longitude+"\"altitude\": "+altitude+"\"accuracy\": "+accuracy+"\"bearing\": "+bearing+
-                "\"extras\": "+extras.toString()+"}";
+        return "{\"latitude\": "+latitude+", \"longitude\": "+longitude+", \"altitude\": "+altitude+", \"accuracy\": "+accuracy+", \"bearing\": "+bearing+
+                ", \"extras\": "+extras+"}";
     }
 }

@@ -50,6 +50,8 @@ public class LocationListener implements Listener, GoogleApiClient.ConnectionCal
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+
+        mGoogleApiClient.connect();
     }
 
     @Override
@@ -68,7 +70,7 @@ public class LocationListener implements Listener, GoogleApiClient.ConnectionCal
         timedLocationTask.cancel(true);
     }
 
-    public class TimedLocationTask extends AsyncTask<Void, LocationResult, Void>{
+    public class TimedLocationTask extends AsyncTask<Void, Location, Void>{
 
         /**
          * Override this method to perform a computation on a background thread. The
@@ -96,8 +98,8 @@ public class LocationListener implements Listener, GoogleApiClient.ConnectionCal
                                     if (!locationResult.getStatus().isSuccess()) {
                                         Log.e(TAG, "Could not detect user location");
                                     }
-                                    Log.d(TAG, "Received update from Google");
-                                    //publishProgress(locationResult);
+                                    Log.d(TAG, "Received update from Google "+locationResult.getLocation().toString());
+                                    publishProgress(locationResult.getLocation());
                                 }
                             });
                     try {
@@ -112,8 +114,8 @@ public class LocationListener implements Listener, GoogleApiClient.ConnectionCal
             }
         }
 
-        protected void onProgressUpdate(LocationResult... progress) {
-            Location location = progress[0].getLocation();
+        protected void onProgressUpdate(Location... progress) {
+            Location location = progress[0];
             LocationState state = new LocationState();
             state.setDate(System.currentTimeMillis());
             state.setAccuracy(location.getAccuracy());

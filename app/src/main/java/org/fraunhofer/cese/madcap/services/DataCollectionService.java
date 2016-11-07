@@ -111,7 +111,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        listeners.add(new AccelerometerListener(this, new CacheFactory(cache)));
+        //listeners.add(new AccelerometerListener(this, new CacheFactory(cache)));
         listeners.add(new LocationListener(this, new CacheFactory(cache)));
 
         enableAllListeners();

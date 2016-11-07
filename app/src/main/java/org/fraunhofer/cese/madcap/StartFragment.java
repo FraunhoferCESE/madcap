@@ -144,6 +144,9 @@ public class StartFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_start, container, false);
 
+        Intent intent = new Intent(getContext(), DataCollectionService.class);
+        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
         uploadResultView = (TextView) view.findViewById(R.id.uploadResult);
 
