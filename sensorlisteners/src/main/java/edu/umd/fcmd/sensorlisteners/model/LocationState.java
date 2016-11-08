@@ -7,6 +7,7 @@ import android.os.Bundle;
  */
 
 public class LocationState extends State {
+    private static final String LOCATION_TYPE = "Location";
     private double accuracy;
     private double altitude;
     private double bearing;
@@ -18,14 +19,14 @@ public class LocationState extends State {
      * Gets the Accuracy.
      * @return Accuracy.
      */
-    public double getAccuracy() {
+    public final double getAccuracy() {
         return accuracy;
     }
 
     /**
      * Sets the Accuracy.
      */
-    public void setAccuracy(double accuracy) {
+    public final void setAccuracy(double accuracy) {
         this.accuracy = accuracy;
     }
 
@@ -33,14 +34,14 @@ public class LocationState extends State {
      * Gets the Altitude.
      * @return Altitude.
      */
-    public double getAltitude() {
+    public final double getAltitude() {
         return altitude;
     }
 
     /**
      * Sets the Altitude.
      */
-    public void setAltitude(double altitude) {
+    public final void setAltitude(double altitude) {
         this.altitude = altitude;
     }
 
@@ -48,14 +49,14 @@ public class LocationState extends State {
      * Gets the Bearing.
      * @return bearing.
      */
-    public double getBearing() {
+    public final double getBearing() {
         return bearing;
     }
 
     /**
      * Sets the Bearing.
      */
-    public void setBearing(double bearing) {
+    public final void setBearing(double bearing) {
         this.bearing = bearing;
     }
 
@@ -63,14 +64,14 @@ public class LocationState extends State {
      * Gets the Extras.
      * @return extras as a bundle.
      */
-    public Bundle getExtras() {
+    public final Bundle getExtras() {
         return extras;
     }
 
     /**
      * Sets the Extras.
      */
-    public void setExtras(Bundle extras) {
+    public final void setExtras(Bundle extras) {
         this.extras = extras;
     }
 
@@ -78,14 +79,14 @@ public class LocationState extends State {
      * Gets the Latitude.
      * @return Latitude.
      */
-    public double getLatitude() {
+    public final double getLatitude() {
         return latitude;
     }
 
     /**
      * Gets the latitude
      */
-    public void setLatitude(double latitude) {
+    public final void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
@@ -93,14 +94,14 @@ public class LocationState extends State {
      * Gets the Longitude.
      * @return Longitude.
      */
-    public double getLongitude() {
+    public final double getLongitude() {
         return longitude;
     }
 
     /**
      * Sets the Longitude.
      */
-    public void setLongitude(double longitude) {
+    public final void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
@@ -110,8 +111,8 @@ public class LocationState extends State {
      * @return the type of state.
      */
     @Override
-    public String getType() {
-        return "Location";
+    public final String getType() {
+        return LOCATION_TYPE;
     }
 
     /**
@@ -136,7 +137,7 @@ public class LocationState extends State {
      * @return a string representation of the object.
      */
     @Override
-    public String toString() {
+    public final String toString() {
         return "{\"latitude\": "+latitude+
                 ", \"longitude\": "+longitude+
                 ", \"altitude\": "+altitude+
