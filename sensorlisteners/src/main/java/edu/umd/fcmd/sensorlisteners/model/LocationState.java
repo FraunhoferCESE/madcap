@@ -137,11 +137,12 @@ public class LocationState extends State {
      */
     @Override
     public String toString() {
-        String extraString = "eee";
-//        if(extras != null){
-//            extraString = extras.toString();
-//        }
-        return "{\"latitude\": "+latitude+", \"longitude\": "+longitude+", \"altitude\": "+altitude+", \"accuracy\": "+accuracy+", \"bearing\": "+bearing+
-                ", \"extras\": "+extraString+"}";
+        return "{\"latitude\": "+latitude+
+                ", \"longitude\": "+longitude+
+                ", \"altitude\": "+altitude+
+                ", \"accuracy\": "+accuracy+
+                ", \"bearing\": "+bearing+
+                ", \"extras\": "+(extras != null ? extras.toString() : "-")+
+                "}";
     }
 }

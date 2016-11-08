@@ -288,7 +288,7 @@ public class LocationEntry implements Comparable<LocationEntry>, DatastoreEntry 
                 ", longitude='" + longitude + '\'' +
                 ", altitude='" + altitude + '\'' +
                 ", accuracy='" + accuracy + '\'' +
-                ", extras='" + extras + '\'' +
+                ", extras='" + extras.toString() + '\'' +
                 '}';
     }
 

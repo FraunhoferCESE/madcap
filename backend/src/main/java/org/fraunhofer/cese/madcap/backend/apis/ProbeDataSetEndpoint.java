@@ -7,6 +7,7 @@ import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.appengine.api.oauth.OAuthRequestException;
 import com.google.appengine.repackaged.com.google.protobuf.MapEntry;
+import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.cmd.LoadType;
 
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
@@ -127,7 +128,8 @@ public class ProbeDataSetEndpoint {
             for (DatastoreEntry entry : currentEntrySet) {
                 uploadedIds.add(entry.getId());
             }
-            LoadType loadType = ofy().load().type(type);
+            Objectify of = ofy();
+            LoadType loadType = of.load().type(type);
 
             Map alreadyUploadedIds = loadType.ids(uploadedIds);
 

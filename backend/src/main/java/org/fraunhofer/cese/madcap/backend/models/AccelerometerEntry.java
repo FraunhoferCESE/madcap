@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.backend.models;
 
+import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
@@ -8,7 +9,7 @@ import org.json.JSONObject;
 /**
  * Created by MMueller on 11/8/2016.
  */
-
+@Entity
 public class AccelerometerEntry implements Comparable<LocationEntry>, DatastoreEntry {
 
     @Id
