@@ -47,5 +47,5 @@ debug.keystore
 backend/src/main/java/org/fraunhofer/cese/madcap/backend/Constants.java
 
 
-/app/src/main/res/values/privatevalues.xml
-/sensorlisteners/src/main/res/values/privatesensorvalues.xml
+app/src/main/res/values/privatevalues.xml
+sensorlisteners/src/main/res/values/privatesensorvalues.xml
