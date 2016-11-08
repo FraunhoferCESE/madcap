@@ -4,6 +4,8 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 
+import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
+import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 
@@ -16,6 +18,8 @@ public class OfyService {
     static {
         ObjectifyService.register(ProbeDataSet.class);
         ObjectifyService.register(ProbeEntry.class);
+        ObjectifyService.register(LocationEntry.class);
+        ObjectifyService.register(AccelerometerEntry.class);
     }
 
     /**

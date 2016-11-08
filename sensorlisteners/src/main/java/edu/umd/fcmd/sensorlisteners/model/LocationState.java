@@ -9,7 +9,7 @@ import android.os.Bundle;
 public class LocationState extends State {
     private float accuracy;
     private double altitude;
-    private float bearing;
+    private double bearing;
     private Bundle extras;
     private double latitude;
     private double longitude;
@@ -48,14 +48,14 @@ public class LocationState extends State {
      * Gets the Bearing.
      * @return bearing.
      */
-    public float getBearing() {
+    public double getBearing() {
         return bearing;
     }
 
     /**
      * Sets the Bearing.
      */
-    public void setBearing(float bearing) {
+    public void setBearing(double bearing) {
         this.bearing = bearing;
     }
 
@@ -137,7 +137,11 @@ public class LocationState extends State {
      */
     @Override
     public String toString() {
+        String extraString = "eee";
+//        if(extras != null){
+//            extraString = extras.toString();
+//        }
         return "{\"latitude\": "+latitude+", \"longitude\": "+longitude+", \"altitude\": "+altitude+", \"accuracy\": "+accuracy+", \"bearing\": "+bearing+
-                ", \"extras\": "+extras+"}";
+                ", \"extras\": "+extraString+"}";
     }
 }

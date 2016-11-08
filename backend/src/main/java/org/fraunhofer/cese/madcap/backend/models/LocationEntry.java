@@ -6,29 +6,124 @@ import com.googlecode.objectify.annotation.Index;
 
 import java.util.HashMap;
 
+import org.json.*;
+
+
 /**
  * Created by MMueller on 11/7/2016.
  */
 
 @Entity
-public class LocationEntry implements Comparable<LocationEntry> {
+public class LocationEntry implements Comparable<LocationEntry>, DatastoreEntry {
 
     @Id
     private String id;
     @Index
     private Long timestamp;
     @Index
-    private String probeType;
+    private Double latitude;
     @Index
-    private String latitude;
-    @Index
-    private String longitude;
-    private String altitude;
-    private String accuracy;
-    private String extra;
+    private Double longitude;
+    private Double altitude;
+    private Double accuracy;
+    private String extras;
+    private Double bearing;
     @Index
     private String userID;
 
+    public LocationEntry(ProbeEntry probeEntry){
+        id = probeEntry.getId();
+        timestamp = probeEntry.getTimestamp();
+        userID = probeEntry.getUserID();
+
+        // parsing the data
+        JSONObject dataJsonObject = new JSONObject(probeEntry.getSensorData());
+        latitude = dataJsonObject.getDouble("latitude");
+        longitude = dataJsonObject.getDouble("longitude");
+        altitude = dataJsonObject.getDouble("altitude");
+        accuracy = dataJsonObject.getDouble("accuracy");
+        extras =  dataJsonObject.getString("extras");
+        bearing = dataJsonObject.getDouble("bearing");
+
+//        try{
+//            extras =  dataJsonObject.getString("extras");
+//        }catch (JSONException j){
+//            j.printStackTrace();
+//            System.out.println(dataJsonObject.toString());
+//        }
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public Double getBearing() {
+        return bearing;
+    }
+
+    public void setBearing(Double bearing) {
+        this.bearing = bearing;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public Double getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(Double altitude) {
+        this.altitude = altitude;
+    }
+
+    public Double getAccuracy() {
+        return accuracy;
+    }
+
+    public void setAccuracy(Double accuracy) {
+        this.accuracy = accuracy;
+    }
+
+    public String getExtras() {
+        return extras;
+    }
+
+    public void setExtras(String extras) {
+        this.extras = extras;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
 
     /**
      * Compares this object with the specified object for order.  Returns a
@@ -154,7 +249,7 @@ public class LocationEntry implements Comparable<LocationEntry> {
      * general contract for the {@code hashCode} method, which states
      * that equal objects must have equal hash codes.
      *
-     * @param obj the reference object with which to compare.
+     * @param o the reference object with which to compare.
      * @return {@code true} if this object is the same as the obj
      * argument; {@code false} otherwise.
      * @see #hashCode()
@@ -170,8 +265,6 @@ public class LocationEntry implements Comparable<LocationEntry> {
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (timestamp != null ? !timestamp.equals(that.timestamp) : that.timestamp != null)
             return false;
-        if (probeType != null ? !probeType.equals(that.probeType) : that.probeType != null)
-            return false;
         if (latitude != null ? !latitude.equals(that.latitude) : that.latitude !=null)
             return false;
         if (longitude != null ? !longitude.equals(that.longitude) : that.longitude !=null)
@@ -180,7 +273,7 @@ public class LocationEntry implements Comparable<LocationEntry> {
             return false;
         if (accuracy != null ? !accuracy.equals(that.accuracy) : that.accuracy !=null)
             return false;
-        if (extra != null ? !extra.equals(that.longitude) : that.extra !=null)
+        if (extras != null ? !extras.equals(that.extras) : that.extras !=null)
             return false;
         return (userID != null ? !userID.equals(that.userID) : that.userID !=null);
 
@@ -191,12 +284,11 @@ public class LocationEntry implements Comparable<LocationEntry> {
         return "ProbeEntry{" +
                 "id=" + id +
                 ", timestamp=" + timestamp +
-                ", probeType='" + probeType + '\'' +
                 ", latitude='" + latitude + '\'' +
                 ", longitude='" + longitude + '\'' +
                 ", altitude='" + altitude + '\'' +
                 ", accuracy='" + accuracy + '\'' +
-                ", extra='" + extra + '\'' +
+                ", extras='" + extras + '\'' +
                 '}';
     }
 

@@ -6,15 +6,25 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.appengine.api.oauth.OAuthRequestException;
+import com.google.appengine.repackaged.com.google.protobuf.MapEntry;
+import com.googlecode.objectify.cmd.LoadType;
 
+import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
+import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
+import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +41,7 @@ import static org.fraunhofer.cese.madcap.backend.OfyService.ofy;
         namespace = @ApiNamespace(
                 ownerDomain = "madcap.cese.fraunhofer.org",
                 ownerName = "madcap.cese.fraunhofer.org",
-                packagePath="backend"
+                packagePath = "backend"
         )
 )
 public class ProbeDataSetEndpoint {
@@ -51,11 +61,15 @@ public class ProbeDataSetEndpoint {
 
         long startTime = System.currentTimeMillis();
         logger.info("Upload request received from " + req.getRemoteAddr());
+
+        // Check if data gets passed at all
         if (probeDataSet == null) {
             throw new BadRequestException("sensorDataSet cannot be null");
         }
 
         Collection<ProbeEntry> entryList = probeDataSet.getEntryList();
+
+        // Check if passed list has no entries
         if (entryList == null || entryList.isEmpty()) {
             throw new BadRequestException("entryList is null or empty");
         }
@@ -63,27 +77,119 @@ public class ProbeDataSetEndpoint {
         logger.fine("Logging request received. Data: " + entryList);
         logger.info("Number of entries received: " + entryList.size() + ", Request size: " + humanReadableByteCount(Long.parseLong(req.getHeader("Content-Length")), false));
 
+        //TODO parse probe entries
+
         Collection<String> saved = new ArrayList<>();
         Collection<String> alreadyExists = new ArrayList<>();
 
         Collection<ProbeEntry> toSave = new ArrayList<>();
 
         Collection<String> uploadedIds = new ArrayList<>();
-        for (ProbeEntry entry : entryList) {
-            uploadedIds.add(entry.getId());
-        }
+//        for (ProbeEntry entry : entryList) {
+//            uploadedIds.add(entry.getId());
+//        }
 
-        Map<String, ProbeEntry> ids = ofy().load().type(ProbeEntry.class).ids(uploadedIds);
+        //==============
+
+        //A map from the probe type to all entries from that type in the current set
+        Map<String, Collection> entryMap = new HashMap<>();
+
         for (ProbeEntry entry : entryList) {
-            if (ids.get(entry.getId()) == null) {
-                saved.add(entry.getId());
-                toSave.add(entry);
-            } else {
-                alreadyExists.add(entry.getId());
+            switch (entry.getProbeType()) {
+                case "Location":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<LocationEntry>());
+                    }
+                    Collection<LocationEntry> llist = entryMap.get(entry.getProbeType());
+                    LocationEntry locationEntry = new LocationEntry(entry);
+                    llist.add(locationEntry);
+                    break;
+                case "Accelerometer":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<AccelerometerEntry>());
+                    }
+                    Collection<AccelerometerEntry> alist = entryMap.get(entry.getProbeType());
+                    AccelerometerEntry accelerometerEntry = new AccelerometerEntry(entry);
+                    alist.add(accelerometerEntry);
+                    break;
+                default:
+                    throw new IllegalArgumentException();
             }
         }
-        ofy().save().entities(toSave).now();
-        ofy().clear();
+
+        Set<String> keySet = entryMap.keySet();
+
+        for (String key : keySet) {
+            Collection<DatastoreEntry> currentEntrySet = entryMap.get(key);
+            Collection<DatastoreEntry> currentToSave = new ArrayList<>();
+
+            Class type = (currentEntrySet.toArray())[0].getClass();
+            for (DatastoreEntry entry : currentEntrySet) {
+                uploadedIds.add(entry.getId());
+            }
+            LoadType loadType = ofy().load().type(type);
+
+            Map alreadyUploadedIds = loadType.ids(uploadedIds);
+
+            for (DatastoreEntry entry : currentEntrySet) {
+                if (alreadyUploadedIds.get(entry.getId()) == null) {
+                    saved.add(entry.getId());
+                    currentToSave.add(entry);
+                } else {
+                    alreadyExists.add(entry.getId());
+                }
+            }
+
+            ofy().save().entities(currentToSave).now();
+            ofy().clear();
+        }
+
+
+//        Map<String, LocationEntry> locationIds = ofy().load().type(LocationEntry.class).ids(uploadedIds);
+//        ids.add(locationIds);
+//        Map<String, AccelerometerEntry> accelerometerIds = ofy().load().type(AccelerometerEntry.class).ids(uploadedIds);
+//        ids.add(accelerometerIds);
+//
+//        Collection<LocationEntry> toSaveLocation = new ArrayList<>();
+//        Collection<AccelerometerEntry> toSaveAccelerometer = new ArrayList<>();
+//
+//        for (ProbeEntry entry : entryList) {
+//            String type = entry.getProbeType();
+//            if (ids.get(entry.getId()) == null) {
+//                saved.add(entry.getId());
+//                switch (type) {
+//                    case "Location":
+//                        toSaveLocation.add(new LocationEntry(entry));
+//                        break;
+//                    case "Accelerometer":
+//                        toSaveAccelerometer.add(new);
+//                }
+//
+//            } else {
+//                alreadyExists.add(entry.getId());
+//            }
+//
+//        }
+
+//        ofy().save().entities(toSaveLocation).now();
+//        ofy().clear();
+//        ofy().save().entities(toSaveAccelerometer).now();
+//        ofy().clear();
+
+        // ===============
+
+
+//        Map<String, ProbeEntry> ids = ofy().load().type(ProbeEntry.class).ids(uploadedIds);
+//        for (ProbeEntry entry : entryList) {
+//            if (ids.get(entry.getId()) == null) {
+//                saved.add(entry.getId());
+//                toSave.add(entry);
+//            } else {
+//                alreadyExists.add(entry.getId());
+//            }
+//        }
+//        ofy().save().entities(toSave).now();
+//        ofy().clear();
 
         logger.info("Num Saved: " + saved.size() + ", Num already existing: " + alreadyExists.size() + ", Time taken: " + ((System.currentTimeMillis() - startTime) / 1000) + "s");
         return ProbeSaveResult.create(saved, alreadyExists);
@@ -105,6 +211,6 @@ public class ProbeDataSetEndpoint {
         if (bytes < unit) return bytes + " B";
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format(Locale.ENGLISH,"%.1f %sB", bytes / Math.pow(unit, exp), pre);
+        return String.format(Locale.ENGLISH, "%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 }

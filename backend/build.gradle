@@ -28,6 +28,8 @@ dependencies {
 
     testCompile 'com.google.appengine:appengine-tools-sdk:1.9.42'
 
+    compile 'org.json:json:20160212'
+
 }
 
 
