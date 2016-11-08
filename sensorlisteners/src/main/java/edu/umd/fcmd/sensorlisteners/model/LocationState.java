@@ -7,7 +7,7 @@ import android.os.Bundle;
  */
 
 public class LocationState extends State {
-    private float accuracy;
+    private double accuracy;
     private double altitude;
     private double bearing;
     private Bundle extras;
@@ -18,14 +18,14 @@ public class LocationState extends State {
      * Gets the Accuracy.
      * @return Accuracy.
      */
-    public float getAccuracy() {
+    public double getAccuracy() {
         return accuracy;
     }
 
     /**
      * Sets the Accuracy.
      */
-    public void setAccuracy(float accuracy) {
+    public void setAccuracy(double accuracy) {
         this.accuracy = accuracy;
     }
 
