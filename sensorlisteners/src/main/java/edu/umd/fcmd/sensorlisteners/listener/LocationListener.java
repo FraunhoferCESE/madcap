@@ -3,45 +3,46 @@ package edu.umd.fcmd.sensorlisteners.listener;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.awareness.snapshot.LocationResult;
+import com.google.android.gms.awareness.snapshot.internal.Snapshot;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.model.AccelerometerState;
 import edu.umd.fcmd.sensorlisteners.model.LocationState;
-import edu.umd.fcmd.sensorlisteners.model.State;
 import edu.umd.fcmd.sensorlisteners.service.StateManager;
-
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * Created by MMueller on 11/4/2016.
  */
 
-public class LocationListener implements Listener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LocationListener implements Listener<LocationState>, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = LocationListener.class.getSimpleName();
 
     private Context context;
     private final StateManager<LocationState> mStateManager;
-
-    private TimedLocationTask timedLocationTask;
     private GoogleApiClient mGoogleApiClient;
+    private LocationListener.TimedLocationTask timedLocationTask;
+    private TimedLocationTaskFactory timedLocationTaskFactory = new TimedLocationTaskFactory();
 
-    public LocationListener(Context context, StateManager<LocationState> mStateManager){
+    /**
+     * Default constructor used in projcet
+     *
+     * @param context       the app context.
+     * @param mStateManager the StateManager to connect to.
+     */
+    public LocationListener(Context context, StateManager<LocationState> mStateManager) {
         this.context = context;
         this.mStateManager = mStateManager;
 
@@ -54,23 +55,72 @@ public class LocationListener implements Listener, GoogleApiClient.ConnectionCal
         mGoogleApiClient.connect();
     }
 
-    @Override
-    public void onUpdate(State state) {
-        mStateManager.save((LocationState)state);
+    /**
+     * Custom constructor for testing purposes only.
+     *
+     * @param context          the app context.
+     * @param mStateManager    the StateManager to connect to.
+     * @param mGoogleApiClient a googleApi client from API Awareness.API.
+     * @deprecated
+     */
+    public LocationListener(Context context,
+                            StateManager<LocationState> mStateManager,
+                            GoogleApiClient mGoogleApiClient,
+                            TimedLocationTaskFactory timedLocationTaskFactory) {
+        this.context = context;
+        this.mStateManager = mStateManager;
+        this.mGoogleApiClient = mGoogleApiClient;
+        this.mGoogleApiClient.connect();
+        this.timedLocationTaskFactory = timedLocationTaskFactory;
     }
 
+    /**
+     * Being called when a new update is available.
+     * @param state location update state.
+     */
+    @Override
+    public void onUpdate(LocationState state) {
+        mStateManager.save(state);
+    }
+
+    /**
+     * Starts listening to frquent location updates.
+     * @throws NoSensorFoundException when the connection to the GoogleApi client fails.
+     */
     @Override
     public void startListening() throws NoSensorFoundException {
-        timedLocationTask = new TimedLocationTask();
+        timedLocationTask = timedLocationTaskFactory.getNew();
         timedLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
     public void stopListening() {
-        timedLocationTask.cancel(true);
+        if(timedLocationTask != null){
+            timedLocationTask.cancel(true);
+        }
     }
 
-    public class TimedLocationTask extends AsyncTask<Void, Location, Void>{
+    /**
+     * Factory class for timed location tasks.
+     */
+    public class TimedLocationTaskFactory {
+
+        /**
+         * Creation method according to factory pattern.
+         * @return a new TimedLocationTask.
+         */
+        public TimedLocationTask getNew() {
+            return new LocationListener.TimedLocationTask();
+        }
+    }
+
+    /**
+     * A asynchronous timed location task being started to retrieve
+     * a location update every 15 seconds.
+     */
+    public class TimedLocationTask extends AsyncTask<Void, Location, Void> {
+        private SnapshotApi snapshotApi = Awareness.SnapshotApi;
+        private boolean runUntilCancelled = true;
 
         /**
          * Override this method to perform a computation on a background thread. The
@@ -88,27 +138,28 @@ public class LocationListener implements Listener, GoogleApiClient.ConnectionCal
          */
         @Override
         protected Void doInBackground(Void... params) {
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                while(true){
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                do {
                     Log.d(TAG, "Retrieving play location");
-                    Awareness.SnapshotApi.getLocation(mGoogleApiClient)
+                    snapshotApi.getLocation(mGoogleApiClient)
                             .setResultCallback(new ResultCallback<LocationResult>() {
                                 @Override
                                 public void onResult(@NonNull LocationResult locationResult) {
                                     if (!locationResult.getStatus().isSuccess()) {
                                         Log.e(TAG, "Could not detect user location");
                                     }
-                                    Log.d(TAG, "Received update from Google "+locationResult.getLocation().toString());
+                                    //Log.d(TAG, "Received update from Google "+locationResult.getLocation().toString());
                                     publishProgress(locationResult.getLocation());
                                 }
                             });
                     try {
-                        Thread.sleep(1500);
+                        Thread.sleep(15000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                }
-            }else{
+                }while (runUntilCancelled);
+                return null;
+            } else {
                 Log.e(TAG, "NO PERMISSION");
                 return null;
             }
@@ -126,6 +177,24 @@ public class LocationListener implements Listener, GoogleApiClient.ConnectionCal
             state.setLongitude(location.getLongitude());
             onUpdate(state);
         }
+
+        /**
+         * Setter for the Google Snapshot API.
+         * @deprecated for testing purposes only.
+         * @param snapshotApi
+         */
+        public void setSnapshotApi(SnapshotApi snapshotApi) {
+            this.snapshotApi = snapshotApi;
+        }
+
+        /**
+         * Setter for stopping the task after the first loop iteration.
+         * @deprecated for testing purposes only.
+         * @param runUntilCancelled if false, it will stop after first iteration.
+         */
+        public void setRunUntilCancelled(boolean runUntilCancelled) {
+            this.runUntilCancelled = runUntilCancelled;
+        }
     }
 
     @Override
@@ -141,5 +210,17 @@ public class LocationListener implements Listener, GoogleApiClient.ConnectionCal
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e(TAG, "Conntection failed");
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public StateManager<LocationState> getmStateManager() {
+        return mStateManager;
+    }
+
+    public GoogleApiClient getmGoogleApiClient() {
+        return mGoogleApiClient;
     }
 }
