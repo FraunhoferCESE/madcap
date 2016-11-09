@@ -997,4 +997,3 @@
   </inspection_tool>
   <inspection_tool class="ZeroLengthArrayInitialization" enabled="true" level="WARNING" enabled_by_default="true" />
 </inspections>
-

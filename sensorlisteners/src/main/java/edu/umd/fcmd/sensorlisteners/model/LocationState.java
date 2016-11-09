@@ -4,6 +4,11 @@ import android.os.Bundle;
 
 /**
  * Created by MMueller on 11/4/2016.
+ * <p>
+ * Model class for a Location state.
+ * Has acurracy, altitiude, bearing, longitue and latitude as double.
+ * Extras is a bundle and differs from manufacturer to manufacturer.
+ * Most of the time it is null.
  */
 
 public class LocationState extends State {
@@ -17,6 +22,7 @@ public class LocationState extends State {
 
     /**
      * Gets the Accuracy.
+     *
      * @return Accuracy.
      */
     public final double getAccuracy() {
@@ -32,6 +38,7 @@ public class LocationState extends State {
 
     /**
      * Gets the Altitude.
+     *
      * @return Altitude.
      */
     public final double getAltitude() {
@@ -47,6 +54,7 @@ public class LocationState extends State {
 
     /**
      * Gets the Bearing.
+     *
      * @return bearing.
      */
     public final double getBearing() {
@@ -62,6 +70,7 @@ public class LocationState extends State {
 
     /**
      * Gets the Extras.
+     *
      * @return extras as a bundle.
      */
     public final Bundle getExtras() {
@@ -77,6 +86,7 @@ public class LocationState extends State {
 
     /**
      * Gets the Latitude.
+     *
      * @return Latitude.
      */
     public final double getLatitude() {
@@ -92,6 +102,7 @@ public class LocationState extends State {
 
     /**
      * Gets the Longitude.
+     *
      * @return Longitude.
      */
     public final double getLongitude() {
@@ -138,12 +149,12 @@ public class LocationState extends State {
      */
     @Override
     public final String toString() {
-        return "{\"latitude\": "+latitude+
-                ", \"longitude\": "+longitude+
-                ", \"altitude\": "+altitude+
-                ", \"accuracy\": "+accuracy+
-                ", \"bearing\": "+bearing+
-                ", \"extras\": "+(extras != null ? extras.toString() : "-")+
-                "}";
+        return "{\"latitude\": " + latitude +
+                ", \"longitude\": " + longitude +
+                ", \"altitude\": " + altitude +
+                ", \"accuracy\": " + accuracy +
+                ", \"bearing\": " + bearing +
+                ", \"extras\": " + (extras != null ? extras.toString() : "-") +
+                '}';
     }
 }
