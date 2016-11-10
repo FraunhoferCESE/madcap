@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
+import edu.umd.fcmd.sensorlisteners.listener.AccelerometerListener;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 
@@ -139,12 +140,15 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         }
     }
 
+
+
     /**
      * Stops all listeners.
      */
     private void disableAllListeners(){
         for(Listener l : listeners) {
             l.stopListening();
+            listeners.remove(l);
             MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " stopped listening");
         }
     }

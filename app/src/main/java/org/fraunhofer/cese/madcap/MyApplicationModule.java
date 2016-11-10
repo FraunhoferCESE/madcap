@@ -17,6 +17,7 @@ import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
 import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -56,6 +57,8 @@ class MyApplicationModule {
     GoogleApiClient.Builder provideBuilder(){
         return new GoogleApiClient.Builder(application);
     }
+
+
 
     @Provides
     SnapshotApi provideSnapshotApi(){

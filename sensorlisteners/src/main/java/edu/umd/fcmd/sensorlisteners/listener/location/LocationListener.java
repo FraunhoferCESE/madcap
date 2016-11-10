@@ -58,7 +58,6 @@ public class LocationListener implements Listener<LocationState>, GoogleApiClien
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
-        mGoogleApiClient.connect();
         this.snapshotApi = snapshotApi;
     }
 
@@ -77,14 +76,18 @@ public class LocationListener implements Listener<LocationState>, GoogleApiClien
      */
     @Override
     public void startListening() throws NoSensorFoundException {
+        mGoogleApiClient.connect();
         timedLocationTask = TimedLocationTask.create(this, snapshotApi);
         timedLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
     public void stopListening() {
-        if(timedLocationTask != null){
+
+        if (timedLocationTask != null) {
+            Log.d(TAG, "Timed location task is not null");
             timedLocationTask.cancel(true);
+            mGoogleApiClient.disconnect();
         }
     }
 

@@ -66,6 +66,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         if (ContextCompat.checkSelfPermission(locationListener.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Permission granted");
             do {
                 snapshotApi.getLocation(locationListener.getmGoogleApiClient())
                         .setResultCallback(new ResultCallback<LocationResult>() {
@@ -73,21 +74,24 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                             public void onResult(@NonNull LocationResult locationResult) {
                                 if (!locationResult.getStatus().isSuccess()) {
                                     Log.e(TAG, "could not retrieve result");
+                                }else{
+                                    publishProgress(locationResult.getLocation());
+                                    //Log.d(TAG, "new results available");
                                 }
-
-                                publishProgress(locationResult.getLocation());
-                                Log.d(TAG, "here");
+                                //Log.d(TAG, "OnResult called");
                             }
                         });
+                //Log.d(TAG, "Attempt to get location");
                 try {
+                    //Log.d(TAG, "Sleep now");
                     Thread.sleep(LOCATION_SLEEP_TIME);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-            } while (runUntilCancelled);
+            } while (runUntilCancelled && !isCancelled());
             return null;
         } else {
-            Log.d(TAG, "No permission");
+            Log.d(TAG, "Permission denied");
             return null;
         }
     }
