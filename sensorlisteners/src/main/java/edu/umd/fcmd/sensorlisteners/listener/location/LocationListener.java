@@ -60,8 +60,6 @@ public class LocationListener implements Listener<LocationState>, GoogleApiClien
                 .build();
         mGoogleApiClient.connect();
         this.snapshotApi = snapshotApi;
-
-        Log.d(TAG, "aaaa");
     }
 
     /**

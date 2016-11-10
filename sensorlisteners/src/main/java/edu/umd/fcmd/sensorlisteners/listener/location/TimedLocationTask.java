@@ -28,7 +28,8 @@ import java.util.logging.Logger;
  * a location update every 15 seconds.
  */
 class TimedLocationTask extends AsyncTask<Void, Location, Void> {
-    public static final int LOCATION_SLEEP_TIME = 15000;
+    private final String TAG = this.getClass().getSimpleName();
+    public static final int LOCATION_SLEEP_TIME = 1500;
     private SnapshotApi snapshotApi;
     private boolean runUntilCancelled = true;
     private LocationListener locationListener;
@@ -72,6 +73,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                             public void onResult(@NonNull LocationResult locationResult) {
                                 if (!locationResult.getStatus().isSuccess()) {
                                     publishProgress(locationResult.getLocation());
+                                    Log.d(TAG, "here");
                                 }
                             }
                         });
@@ -83,6 +85,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
             } while (runUntilCancelled);
             return null;
         } else {
+            Log.d(TAG, "No permission");
             return null;
         }
     }
