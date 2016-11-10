@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 
+import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.awareness.SnapshotApi;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
@@ -47,6 +50,16 @@ class MyApplicationModule {
     @Provides
     Context provideContext() {
         return application;
+    }
+
+    @Provides
+    GoogleApiClient.Builder provideBuilder(){
+        return new GoogleApiClient.Builder(application);
+    }
+
+    @Provides
+    SnapshotApi provideSnapshotApi(){
+        return Awareness.SnapshotApi;
     }
 
     /**

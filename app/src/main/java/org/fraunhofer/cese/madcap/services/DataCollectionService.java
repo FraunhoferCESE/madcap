@@ -13,6 +13,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.awareness.SnapshotApi;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.Status;
 
@@ -32,11 +34,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.listener.AccelerometerListener;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.listener.LocationListener;
-
-import static com.pathsense.locationengine.lib.detectionLogic.b.o;
+import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 
 /**
  * Created by MMueller on 10/7/2016.
@@ -54,6 +53,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Inject
     Cache cache;
+
+    @Inject
+    GoogleApiClient.Builder builder;
+
+    @Inject
+    SnapshotApi snapshotApi;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -112,7 +117,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         //listeners.add(new AccelerometerListener(this, new CacheFactory(cache)));
-        listeners.add(new LocationListener(this, new CacheFactory(cache)));
+
+        listeners.add(new LocationListener(this, new CacheFactory(cache), builder, snapshotApi));
 
         enableAllListeners();
         return super.onStartCommand(intent, flags, startId);
