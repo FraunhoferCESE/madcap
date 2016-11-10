@@ -72,9 +72,11 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                             @Override
                             public void onResult(@NonNull LocationResult locationResult) {
                                 if (!locationResult.getStatus().isSuccess()) {
-                                    publishProgress(locationResult.getLocation());
-                                    Log.d(TAG, "here");
+                                    Log.e(TAG, "could not retrieve result");
                                 }
+
+                                publishProgress(locationResult.getLocation());
+                                Log.d(TAG, "here");
                             }
                         });
                 try {
