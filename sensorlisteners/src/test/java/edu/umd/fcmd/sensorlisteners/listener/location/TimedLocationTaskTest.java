@@ -62,25 +62,19 @@ public class TimedLocationTaskTest{
     }
 
     @Test
-    public void create() throws Exception {
-        TimedLocationTask cut = TimedLocationTask.create(mockLocationListener, mockSnapshotApi);
-
-    }
-
-    @Test
     public void constructor() throws Exception {
         try{
-            TimedLocationTask.create(null, null);
+            TimedLocationTask cut = new TimedLocationTask(null, null);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask.create(null, mockSnapshotApi);
+            TimedLocationTask cut = new TimedLocationTask(null, mockSnapshotApi);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask.create(mockLocationListener, null);
+            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, null);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
     }
@@ -130,7 +124,7 @@ public class TimedLocationTaskTest{
 
     @Test
     public void onProgressUpdate() throws Exception {
-        TimedLocationTask cut = TimedLocationTask.create(mockLocationListener, mockSnapshotApi);
+        TimedLocationTask cut = new TimedLocationTask(mockLocationListener, mockSnapshotApi);
 
         Location mockLocation = mock(Location.class);
         cut.onProgressUpdate(mockLocation);

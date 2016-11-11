@@ -26,11 +26,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
     private boolean runUntilCancelled = true;
     private final LocationListener locationListener;
 
-    static TimedLocationTask create(LocationListener locationListener, SnapshotApi snapshotApi) {
-        return new TimedLocationTask(locationListener, snapshotApi);
-    }
-
-    private TimedLocationTask(LocationListener locationListener, SnapshotApi snapshotApi) {
+    protected TimedLocationTask(LocationListener locationListener, SnapshotApi snapshotApi) {
         if ((locationListener != null) && (snapshotApi != null)) {
             this.locationListener = locationListener;
             this.snapshotApi = snapshotApi;
@@ -102,6 +98,4 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
         state.setLongitude(location.getLongitude());
         locationListener.onUpdate(state);
     }
-
-
 }

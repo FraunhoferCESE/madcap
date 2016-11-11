@@ -22,6 +22,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 
 /**
  * This class defines the providers to use for dependency injection
@@ -53,9 +54,21 @@ class MyApplicationModule {
         return application;
     }
 
-    @Provides
-    GoogleApiClient.Builder provideBuilder(){
-        return new GoogleApiClient.Builder(application);
+//    @Provides
+//    GoogleApiClient.Builder provideBuilder(){
+//        return new GoogleApiClient.Builder(application);
+//    }
+//
+//    @Provides
+//    GoogleApiClientBuilderFactory provideGoogleApiClientBuilderFactory(){
+//        return new GoogleApiClientBuilderFactory();
+//    }
+
+    @Provides @Named("AwarenessApi")
+    GoogleApiClient provideGoogleApiClient(){
+        return new GoogleApiClient.Builder(application)
+                .addApi(Awareness.API)
+                .build();
     }
 
 
@@ -64,6 +77,9 @@ class MyApplicationModule {
     SnapshotApi provideSnapshotApi(){
         return Awareness.SnapshotApi;
     }
+
+    @Provides
+    TimedLocationTaskFactory provideTimedLocationTaskFactory(){ return new TimedLocationTaskFactory();}
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}

@@ -31,12 +31,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.listener.AccelerometerListener;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
+import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 
 /**
  * Created by MMueller on 10/7/2016.
@@ -55,11 +56,14 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     @Inject
     Cache cache;
 
-    @Inject
-    GoogleApiClient.Builder builder;
+    @Inject @Named("AwarenessApi")
+    GoogleApiClient locationClient;
 
     @Inject
     SnapshotApi snapshotApi;
+
+    @Inject
+    TimedLocationTaskFactory timedLocationTaskFactory;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -119,7 +123,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     public int onStartCommand(Intent intent, int flags, int startId) {
         //listeners.add(new AccelerometerListener(this, new CacheFactory(cache)));
 
-        listeners.add(new LocationListener(this, new CacheFactory(cache), builder, snapshotApi));
+        listeners.add(new LocationListener(this, new CacheFactory(cache), locationClient, snapshotApi, timedLocationTaskFactory));
 
         enableAllListeners();
         return super.onStartCommand(intent, flags, startId);
