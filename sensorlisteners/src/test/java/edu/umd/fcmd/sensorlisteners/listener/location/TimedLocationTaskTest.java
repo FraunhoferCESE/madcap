@@ -29,7 +29,13 @@ import edu.umd.fcmd.sensorlisteners.model.LocationState;
 import edu.umd.fcmd.sensorlisteners.model.State;
 
 import static junit.framework.TestCase.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 /**

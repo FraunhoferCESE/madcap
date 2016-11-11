@@ -90,8 +90,8 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
 
     @SuppressWarnings("OverloadedVarargsMethod")
     @Override
-    protected void onProgressUpdate(Location... progress) {
-        Location location = progress[0];
+    protected void onProgressUpdate(Location... values) {
+        Location location = values[0];
         LocationState state = new LocationState();
         state.setDate(System.currentTimeMillis());
         state.setAccuracy((double) location.getAccuracy());
