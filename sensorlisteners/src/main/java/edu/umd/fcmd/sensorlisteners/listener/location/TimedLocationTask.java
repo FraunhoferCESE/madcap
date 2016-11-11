@@ -103,15 +103,5 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
         locationListener.onUpdate(state);
     }
 
-    /**
-     * Setter for stopping the task after the first loop iteration.
-     *
-     * @param runUntilCancelled if false, it will stop after first iteration.
-     * @deprecated for testing purposes only.
-     */
-    @Deprecated
-    protected void setRunUntilCancelled(boolean runUntilCancelled) {
-        this.runUntilCancelled = runUntilCancelled;
-    }
 
 }

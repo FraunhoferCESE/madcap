@@ -20,6 +20,7 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.AdditionalAnswers;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockitoAnnotations;
 
@@ -44,7 +45,7 @@ public class LocationListenerTest {
     public void setUp() throws Exception {
         mockContext = mock(Context.class);
         mockStateManager = (StateManager<LocationState>) mock(StateManager.class);
-        mockBuilder = mock(GoogleApiClient.Builder.class);
+        //mockBuilder = mock(GoogleApiClient.class, AdditionalAnswers.delegatesTo(GoogleApiClient.Builder.class));
 //        mockSnapshotApi = mock(Awareness.SnapshotApi.getClass());
 
         //MockitoAnnotations.initMocks(this);
