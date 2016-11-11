@@ -29,13 +29,8 @@ import edu.umd.fcmd.sensorlisteners.model.LocationState;
 import edu.umd.fcmd.sensorlisteners.model.State;
 
 import static junit.framework.TestCase.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
 
 /**
  * Created by MMueller on 11/10/2016.
@@ -115,6 +110,11 @@ public class TimedLocationTaskTest{
 
         Status status = new Status(CommonStatusCodes.CANCELED);
         when(mockLocationResult.getStatus()).thenReturn(status);
+        when(mockLocationResult.getLocation()).thenReturn(mockLocation);
+        resultCallbackLocationResultCaptor.getValue().onResult(mockLocationResult);
+
+        Status status2 = new Status(CommonStatusCodes.SUCCESS);
+        when(mockLocationResult.getStatus()).thenReturn(status2);
         when(mockLocationResult.getLocation()).thenReturn(mockLocation);
         resultCallbackLocationResultCaptor.getValue().onResult(mockLocationResult);
 

@@ -21,22 +21,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
-import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
+
 import edu.umd.fcmd.sensorlisteners.model.LocationState;
 import edu.umd.fcmd.sensorlisteners.service.StateManager;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
 
 /**
  * Created by MMueller on 11/9/2016.
@@ -47,13 +39,10 @@ public class LocationListenerTest {
     GoogleApiClient.Builder mockBuilder;
     SnapshotApi mockSnapshotApi;
 
-    @Captor
-    private ArgumentCaptor<ResultCallback<LocationResult>> resultCallbackLocationResultCaptor;
-
     @Before
     public void setUp() throws Exception {
-        mockContext = spy(Context.class);
-        mockStateManager = (StateManager<LocationState>) spy(StateManager.class);
+        mockContext = mock(Context.class);
+        mockStateManager = (StateManager<LocationState>) mock(StateManager.class);
         mockBuilder = mock(GoogleApiClient.Builder.class);
         mockSnapshotApi = mock(Awareness.SnapshotApi.getClass());
 

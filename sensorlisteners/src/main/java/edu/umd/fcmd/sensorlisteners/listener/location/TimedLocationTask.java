@@ -1,16 +1,12 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
-/**
- * Created by MMueller on 11/10/2016.
- */
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.util.Pools;
 import android.util.Log;
 
 import com.google.android.gms.awareness.SnapshotApi;
@@ -19,33 +15,27 @@ import com.google.android.gms.common.api.ResultCallback;
 
 import edu.umd.fcmd.sensorlisteners.model.LocationState;
 
-import static com.google.android.gms.internal.zzs.TAG;
-
-import java.util.logging.Logger;
-
 /**
  * A asynchronous timed location task being started to retrieve
  * a location update every 15 seconds.
  */
 class TimedLocationTask extends AsyncTask<Void, Location, Void> {
-    private final String TAG = this.getClass().getSimpleName();
-    public static final int LOCATION_SLEEP_TIME = 1500;
-    private SnapshotApi snapshotApi;
+    private final String TAG = getClass().getSimpleName();
+    private static final int LOCATION_SLEEP_TIME = 1500;
+    private final SnapshotApi snapshotApi;
     private boolean runUntilCancelled = true;
-    private LocationListener locationListener;
-
-    private Logger logger = Logger.getLogger(this.getClass().getSimpleName());
+    private final LocationListener locationListener;
 
     static TimedLocationTask create(LocationListener locationListener, SnapshotApi snapshotApi) {
         return new TimedLocationTask(locationListener, snapshotApi);
     }
 
     private TimedLocationTask(LocationListener locationListener, SnapshotApi snapshotApi) {
-        if (locationListener != null && snapshotApi != null) {
+        if ((locationListener != null) && (snapshotApi != null)) {
             this.locationListener = locationListener;
             this.snapshotApi = snapshotApi;
         } else {
-            throw new NullPointerException();
+            throw new NullPointerException("Cannot create a new TimedLocationTask for null parametes.");
         }
     }
 
@@ -63,6 +53,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
      * @see #onPostExecute
      * @see #publishProgress
      */
+    @Nullable
     @Override
     protected Void doInBackground(Void... params) {
         if (ContextCompat.checkSelfPermission(locationListener.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -71,12 +62,12 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                 snapshotApi.getLocation(locationListener.getmGoogleApiClient())
                         .setResultCallback(new ResultCallback<LocationResult>() {
                             @Override
-                            public void onResult(@NonNull LocationResult locationResult) {
-                                if (!locationResult.getStatus().isSuccess()) {
+                            public void onResult(@NonNull LocationResult r) {
+                                if (r.getStatus().isSuccess()) {
+                                    publishProgress(r.getLocation());
+                                    Log.d(TAG, "New Location results available");
+                                } else {
                                     Log.e(TAG, "could not retrieve result");
-                                }else{
-                                    publishProgress(locationResult.getLocation());
-                                    //Log.d(TAG, "new results available");
                                 }
                                 //Log.d(TAG, "OnResult called");
                             }
@@ -84,25 +75,26 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                 //Log.d(TAG, "Attempt to get location");
                 try {
                     //Log.d(TAG, "Sleep now");
-                    Thread.sleep(LOCATION_SLEEP_TIME);
-                } catch (InterruptedException e) {
+                    Thread.sleep((long) LOCATION_SLEEP_TIME);
+                } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
+                    Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
                 }
             } while (runUntilCancelled && !isCancelled());
-            return null;
         } else {
             Log.d(TAG, "Permission denied");
-            return null;
         }
+        return null;
     }
 
+    @Override
     protected void onProgressUpdate(Location... progress) {
         Location location = progress[0];
         LocationState state = new LocationState();
         state.setDate(System.currentTimeMillis());
-        state.setAccuracy(location.getAccuracy());
+        state.setAccuracy((double) location.getAccuracy());
         state.setAltitude(location.getAltitude());
-        state.setBearing(location.getBearing());
+        state.setBearing((double) location.getBearing());
         state.setExtras(location.getExtras());
         state.setLatitude(location.getLatitude());
         state.setLongitude(location.getLongitude());
@@ -115,6 +107,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
      * @param runUntilCancelled if false, it will stop after first iteration.
      * @deprecated for testing purposes only.
      */
+    @Deprecated
     protected void setRunUntilCancelled(boolean runUntilCancelled) {
         this.runUntilCancelled = runUntilCancelled;
     }
