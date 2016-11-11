@@ -18,16 +18,19 @@ import edu.umd.fcmd.sensorlisteners.service.StateManager;
 
 /**
  * Created by MMueller on 11/4/2016.
+ *
+ * A listener for Locations. Retrieving updates in a certain defined period.
  */
 
+@SuppressWarnings("ClassNamePrefixedWithPackageName")
 public class LocationListener implements Listener<LocationState>, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = LocationListener.class.getSimpleName();
 
     private final Context context;
     private final StateManager<LocationState> mStateManager;
-    private SnapshotApi snapshotApi;
+    private final SnapshotApi snapshotApi;
 
-    private TimedLocationTaskFactory timedLocationTaskFactory;
+    private final TimedLocationTaskFactory timedLocationTaskFactory;
     private TimedLocationTask timedLocationTask;
     private final GoogleApiClient mGoogleApiClient;
 
@@ -43,14 +46,17 @@ public class LocationListener implements Listener<LocationState>, GoogleApiClien
                             StateManager<LocationState> mStateManager,
                             GoogleApiClient mGoogleApiClient,
                             SnapshotApi snapshotApi,
-                            TimedLocationTaskFactory timedLocationTaskFactory) {
+                            TimedLocationTaskFactory timedTaskFactory) {
         this.context = context;
         this.mStateManager = mStateManager;
         this.mGoogleApiClient = mGoogleApiClient;
-        mGoogleApiClient.registerConnectionCallbacks(this);
-        mGoogleApiClient.registerConnectionFailedListener(this);
         this.snapshotApi = snapshotApi;
-        this.timedLocationTaskFactory = timedLocationTaskFactory;
+        timedLocationTaskFactory = timedTaskFactory;
+        //noinspection ThisEscapedInObjectConstruction
+        mGoogleApiClient.registerConnectionCallbacks(this);
+        //noinspection ThisEscapedInObjectConstruction
+        mGoogleApiClient.registerConnectionFailedListener(this);
+
     }
 
     /**
@@ -99,10 +105,6 @@ public class LocationListener implements Listener<LocationState>, GoogleApiClien
 
     protected Context getContext() {
         return context;
-    }
-
-    protected StateManager<LocationState> getmStateManager() {
-        return mStateManager;
     }
 
     protected GoogleApiClient getmGoogleApiClient() {

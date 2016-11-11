@@ -5,9 +5,11 @@ import android.os.AsyncTask;
 
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.SnapshotApi;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
@@ -63,14 +65,18 @@ public class LocationListenerTest {
     public void startListening() throws Exception {
         LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockSnapshotApi, mockTimedLocationTaskFactory);
         TimedLocationTask mockTimedLocationTask = mock(TimedLocationTask.class);
+        when(mockTimedLocationTaskFactory.create(cut, mockSnapshotApi)).thenReturn(mockTimedLocationTask);
 
         cut.startListening();
+
+        verify(mockTimedLocationTask).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Test
     public void stopListening() throws Exception {
         LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockSnapshotApi, mockTimedLocationTaskFactory);
         TimedLocationTask mockTimedLocationTask = mock(TimedLocationTask.class);
+        when(mockTimedLocationTaskFactory.create(cut, mockSnapshotApi)).thenReturn(mockTimedLocationTask);
 
         // Make sure nothing happens when the task has not been instanciated before
         cut.stopListening();
@@ -78,67 +84,46 @@ public class LocationListenerTest {
 
         // Make sure the task gets cancelled when the task has been instanciated.
         when(mockTimedLocationTask.cancel(true)).thenReturn(true);
-        //when(mockTimedLocationTaskFactory.create()).thenReturn(mockTimedLocationTask);
         cut.startListening();
+        cut.stopListening();
+        verify(mockGoogleApiClient).disconnect();
+        verify(mockTimedLocationTask).cancel(true);
     }
-//
-//
-//    @Test
-//    public void TimedLocationTaskTest() throws Exception {
-//        LocationListener outerClass = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockTimedLocationTaskFactory);
-//        LocationListener.TimedLocationTask cut = outerClass.new TimedLocationTask();
-//        SnapshotApi mockSnapshotApi = mock(SnapshotApi.class);
-//        cut.setSnapshotApi(mockSnapshotApi);
-//
-//
-//
-//        // === Test onProgressUpdate ===
-//
-//        Location mockLocation2 = mock(Location.class);
-//        cut.onProgressUpdate(mockLocation2);
-//    }
-//
-//    @Test
-//    public void onConnected() throws Exception {
-//        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockTimedLocationTaskFactory);
-//
-//        cut.onConnected(null);
-//    }
-//
-//    @Test
-//    public void onConnectionSuspended() throws Exception {
-//        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockTimedLocationTaskFactory);
-//
-//        cut.onConnectionSuspended(0);
-//    }
-//
-//    @Test
-//    public void onConnectionFailed() throws Exception {
-//        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockTimedLocationTaskFactory);
-//        ConnectionResult mockConnectionResult = new ConnectionResult(1);
-//
-//        cut.onConnectionFailed(mockConnectionResult);
-//    }
-//
-//    @Test
-//    public void getContext() {
-//        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockTimedLocationTaskFactory);
-//
-//        Assert.assertSame(mockContext, cut.getContext());
-//    }
-//
-//    @Test
-//    public void getmStateManager(){
-//        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockTimedLocationTaskFactory);
-//
-//        Assert.assertSame(mockStateManager, cut.getmStateManager());
-//    }
-//
-//    @Test
-//    public void getmGoogleApiClient(){
-//        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockTimedLocationTaskFactory);
-//
-//        Assert.assertSame(mockGoogleApiClient, cut.getmGoogleApiClient());
-//    }
+
+    @Test
+    public void onConnected() throws Exception {
+        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockSnapshotApi, mockTimedLocationTaskFactory);
+
+        cut.onConnected(null);
+    }
+
+    @Test
+    public void onConnectionSuspended() throws Exception {
+        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockSnapshotApi, mockTimedLocationTaskFactory);
+
+        cut.onConnectionSuspended(0);
+    }
+
+    @Test
+    public void onConnectionFailed() throws Exception {
+        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockSnapshotApi, mockTimedLocationTaskFactory);
+        ConnectionResult mockConnectionResult = new ConnectionResult(1);
+
+        cut.onConnectionFailed(mockConnectionResult);
+    }
+
+    @Test
+    public void getContext() {
+        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockSnapshotApi, mockTimedLocationTaskFactory);
+
+        Assert.assertSame(mockContext, cut.getContext());
+    }
+
+    @Test
+    public void getmGoogleApiClient(){
+        LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockSnapshotApi, mockTimedLocationTaskFactory);
+
+        Assert.assertSame(mockGoogleApiClient, cut.getmGoogleApiClient());
+    }
 
 }
