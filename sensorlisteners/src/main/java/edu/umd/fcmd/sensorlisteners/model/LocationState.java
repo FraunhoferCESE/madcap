@@ -25,7 +25,7 @@ public class LocationState extends State {
      *
      * @return Accuracy.
      */
-    public final double getAccuracy() {
+    final double getAccuracy() {
         return accuracy;
     }
 
@@ -41,7 +41,7 @@ public class LocationState extends State {
      *
      * @return Altitude.
      */
-    public final double getAltitude() {
+    final double getAltitude() {
         return altitude;
     }
 
@@ -57,7 +57,7 @@ public class LocationState extends State {
      *
      * @return bearing.
      */
-    public final double getBearing() {
+    final double getBearing() {
         return bearing;
     }
 
@@ -73,7 +73,7 @@ public class LocationState extends State {
      *
      * @return extras as a bundle.
      */
-    public final Bundle getExtras() {
+    final Bundle getExtras() {
         return extras;
     }
 
@@ -89,7 +89,7 @@ public class LocationState extends State {
      *
      * @return Latitude.
      */
-    public final double getLatitude() {
+    final double getLatitude() {
         return latitude;
     }
 
@@ -105,7 +105,7 @@ public class LocationState extends State {
      *
      * @return Longitude.
      */
-    public final double getLongitude() {
+    final double getLongitude() {
         return longitude;
     }
 

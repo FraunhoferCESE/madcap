@@ -23,10 +23,14 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
     private final String TAG = getClass().getSimpleName();
     private static final int LOCATION_SLEEP_TIME = 1500;
     private final SnapshotApi snapshotApi;
-    private boolean runUntilCancelled = true;
     private final LocationListener locationListener;
 
-    protected TimedLocationTask(LocationListener locationListener, SnapshotApi snapshotApi) {
+    /**
+     * Constructor called by a factory.
+     * @param locationListener the listener to connect to.
+     * @param snapshotApi the snapshot api from google.
+     */
+    TimedLocationTask(LocationListener locationListener, SnapshotApi snapshotApi) {
         if ((locationListener != null) && (snapshotApi != null)) {
             this.locationListener = locationListener;
             this.snapshotApi = snapshotApi;
@@ -55,7 +59,8 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
     protected Void doInBackground(Void... params) {
         if (ContextCompat.checkSelfPermission(locationListener.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Permission granted");
-            do {
+            while (!isCancelled()) {
+                //noinspection ObjectAllocationInLoop
                 snapshotApi.getLocation(locationListener.getmGoogleApiClient())
                         .setResultCallback(new ResultCallback<LocationResult>() {
                             @Override
@@ -72,12 +77,13 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                 //Log.d(TAG, "Attempt to get location");
                 try {
                     //Log.d(TAG, "Sleep now");
+                    //noinspection BusyWait
                     Thread.sleep((long) LOCATION_SLEEP_TIME);
                 } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
                     Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
                 }
-            } while (runUntilCancelled && !isCancelled());
+            }
         } else {
             Log.d(TAG, "Permission denied");
         }
