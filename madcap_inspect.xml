@@ -79,7 +79,14 @@
   <inspection_tool class="BadExceptionDeclared" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="exceptionsString" value="" />
     <option name="exceptions">
-      <value />
+      <value>
+        <item value="java.lang.Throwable" />
+        <item value="java.lang.Exception" />
+        <item value="java.lang.Error" />
+        <item value="java.lang.RuntimeException" />
+        <item value="java.lang.ClassCastException" />
+        <item value="java.lang.ArrayIndexOutOfBoundsException" />
+      </value>
     </option>
     <option name="ignoreTestCases" value="false" />
     <option name="ignoreLibraryOverrides" value="false" />
@@ -87,7 +94,14 @@
   <inspection_tool class="BadExceptionThrown" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="exceptionsString" value="" />
     <option name="exceptions">
-      <value />
+      <value>
+        <item value="java.lang.Throwable" />
+        <item value="java.lang.Exception" />
+        <item value="java.lang.Error" />
+        <item value="java.lang.RuntimeException" />
+        <item value="java.lang.ClassCastException" />
+        <item value="java.lang.ArrayIndexOutOfBoundsException" />
+      </value>
     </option>
   </inspection_tool>
   <inspection_tool class="BadOddness" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -370,11 +384,10 @@
     <option name="m_maxLength" value="32" />
   </inspection_tool>
   <inspection_tool class="InstanceVariableNamingConvention" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="m_regex" value="[a-z][A-Za-z\d]*" />
-    <option name="m_minLength" value="5" />
+    <option name="m_regex" value="[A-Za-z\d]*" />
+    <option name="m_minLength" value="3" />
     <option name="m_maxLength" value="32" />
   </inspection_tool>
-  <inspection_tool class="InstanceVariableOfConcreteClass" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="InstanceVariableUninitializedUse" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="m_ignorePrimitives" value="false" />
     <option name="annotationNamesString" value="" />
@@ -957,7 +970,6 @@
   </inspection_tool>
   <inspection_tool class="UnusedImport" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UnusedLibrary" enabled="true" level="WARNING" enabled_by_default="true" />
-  <inspection_tool class="UpperCaseFieldNameNotConstant" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UseOfAWTPeerClass" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UseOfAnotherObjectsPrivateField" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="ignoreSameClass" value="false" />
@@ -997,3 +1009,4 @@
   </inspection_tool>
   <inspection_tool class="ZeroLengthArrayInitialization" enabled="true" level="WARNING" enabled_by_default="true" />
 </inspections>
+

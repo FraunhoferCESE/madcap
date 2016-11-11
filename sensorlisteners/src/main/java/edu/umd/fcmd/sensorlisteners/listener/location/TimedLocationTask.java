@@ -53,6 +53,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
      * @see #onPostExecute
      * @see #publishProgress
      */
+    @SuppressWarnings("OverloadedVarargsMethod")
     @Nullable
     @Override
     protected Void doInBackground(Void... params) {
@@ -87,6 +88,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
         return null;
     }
 
+    @SuppressWarnings("OverloadedVarargsMethod")
     @Override
     protected void onProgressUpdate(Location... progress) {
         Location location = progress[0];
