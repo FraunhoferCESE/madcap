@@ -100,7 +100,7 @@ public class BluetoothProbeTest{
         BluetoothProbe spyCut = spy(cut);
         verify(mockIntentFactory, atLeastOnce()).getNew();
         verify(mockIntent, atLeastOnce()).putExtra(BluetoothProbe.getTAG(), "Initial Probe!");
-        verify(mockIntent, atLeastOnce()).putExtra("State: ", BluetoothProbe.OFF);
+        verify(mockIntent, atLeastOnce()).putExtra("Probe: ", BluetoothProbe.OFF);
         assertEquals("Unmatched", mockIntent, cut.getLastSentIntent());
     }
 
@@ -238,11 +238,11 @@ public class BluetoothProbeTest{
         JsonObjectFactory jsonObjectFactory = mock(JsonObjectFactory.class);
         when(jsonObjectFactory.createJsonObject(any(Intent.class))).thenReturn(new JsonObject());
 
-        when(intent.putExtra("new State: ", BluetoothProbe.OFF)).thenReturn(intent);
-        when(intent.putExtra("new State: ", BluetoothProbe.ON)).thenReturn(intent);
-        when(intent.putExtra("new State: ", BluetoothProbe.TURNING_ON)).thenReturn(intent);
-        when(intent.putExtra("new State: ", BluetoothProbe.TURNING_OFF)).thenReturn(intent);
-        when(intent.putExtra("new State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0))).thenReturn(intent);
+        when(intent.putExtra("new Probe: ", BluetoothProbe.OFF)).thenReturn(intent);
+        when(intent.putExtra("new Probe: ", BluetoothProbe.ON)).thenReturn(intent);
+        when(intent.putExtra("new Probe: ", BluetoothProbe.TURNING_ON)).thenReturn(intent);
+        when(intent.putExtra("new Probe: ", BluetoothProbe.TURNING_OFF)).thenReturn(intent);
+        when(intent.putExtra("new Probe: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0))).thenReturn(intent);
 
 
         BluetoothProbe bluetoothProbe = new BluetoothProbe(mockBluetoothAdapter, context, jsonObjectFactory, null);
@@ -251,43 +251,43 @@ public class BluetoothProbeTest{
 
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)).thenReturn(BluetoothAdapter.STATE_OFF);
         bluetoothProbe.getStateChangeInformation(intent);
-        verify(intent, atLeastOnce()).putExtra("new State: ", BluetoothProbe.OFF);
+        verify(intent, atLeastOnce()).putExtra("new Probe: ", BluetoothProbe.OFF);
 
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)).thenReturn(BluetoothAdapter.STATE_ON);
         bluetoothProbe.getStateChangeInformation(intent);
-        verify(intent, atLeastOnce()).putExtra("new State: ", BluetoothProbe.ON);
+        verify(intent, atLeastOnce()).putExtra("new Probe: ", BluetoothProbe.ON);
 
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)).thenReturn(BluetoothAdapter.STATE_TURNING_ON);
         bluetoothProbe.getStateChangeInformation(intent);
-        verify(intent, atLeastOnce()).putExtra("new State: ", BluetoothProbe.TURNING_ON);
+        verify(intent, atLeastOnce()).putExtra("new Probe: ", BluetoothProbe.TURNING_ON);
 
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)).thenReturn(BluetoothAdapter.STATE_TURNING_OFF);
         bluetoothProbe.getStateChangeInformation(intent);
-        verify(intent, atLeastOnce()).putExtra("new State: ", BluetoothProbe.TURNING_OFF);
+        verify(intent, atLeastOnce()).putExtra("new Probe: ", BluetoothProbe.TURNING_OFF);
 
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)).thenReturn(BluetoothAdapter.ERROR);
         bluetoothProbe.getStateChangeInformation(intent);
-        verify(intent, atLeastOnce()).putExtra("new State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0));
+        verify(intent, atLeastOnce()).putExtra("new Probe: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0));
 
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0)).thenReturn(BluetoothAdapter.STATE_OFF);
         bluetoothProbe.getStateChangeInformation(intent);
-        verify(intent, atLeastOnce()).putExtra("previous State: ", BluetoothProbe.OFF);
+        verify(intent, atLeastOnce()).putExtra("previous Probe: ", BluetoothProbe.OFF);
 
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0)).thenReturn(BluetoothAdapter.STATE_ON);
         bluetoothProbe.getStateChangeInformation(intent);
-        verify(intent, atLeastOnce()).putExtra("previous State: ", BluetoothProbe.ON);
+        verify(intent, atLeastOnce()).putExtra("previous Probe: ", BluetoothProbe.ON);
 
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0)).thenReturn(BluetoothAdapter.STATE_TURNING_OFF);
         bluetoothProbe.getStateChangeInformation(intent);
-        verify(intent, atLeastOnce()).putExtra("previous State: ", BluetoothProbe.TURNING_OFF);
+        verify(intent, atLeastOnce()).putExtra("previous Probe: ", BluetoothProbe.TURNING_OFF);
 
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0)).thenReturn(BluetoothAdapter.STATE_TURNING_ON);
         bluetoothProbe.getStateChangeInformation(intent);
-        verify(intent, atLeastOnce()).putExtra("previous State: ", BluetoothProbe.TURNING_ON);
+        verify(intent, atLeastOnce()).putExtra("previous Probe: ", BluetoothProbe.TURNING_ON);
 
         when(intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0)).thenReturn(BluetoothAdapter.ERROR);
         bluetoothProbe.getStateChangeInformation(intent);
-        verify(intent, atLeastOnce()).putExtra("previous State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0));
+        verify(intent, atLeastOnce()).putExtra("previous Probe: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0));
     }
 
     @Test
@@ -359,7 +359,7 @@ public class BluetoothProbeTest{
         ArgumentCaptor<Intent> argument = ArgumentCaptor.forClass(Intent.class);
         verify(mockJsonObjectFactory).createJsonObject(argument.capture());
         assertEquals("Initial Probe!", argument.getValue().getStringExtra("BluetoothProbe: "));
-        assertEquals("OFF", argument.getValue().getStringExtra("State: "));
+        assertEquals("OFF", argument.getValue().getStringExtra("Probe: "));
         assertEquals("127.0.0.1", argument.getValue().getStringExtra("Address: "));
         assertEquals("this is my mock adapter!", argument.getValue().getStringExtra("Name: "));
         assertEquals("[]", argument.getValue().getStringExtra("Bonded devices: ")); // this is what an empty list.toString looks like
@@ -400,7 +400,7 @@ public class BluetoothProbeTest{
         ArgumentCaptor<Intent> argument = ArgumentCaptor.forClass(Intent.class);
         verify(mockJsonObjectFactory).createJsonObject(argument.capture());
         assertEquals("Initial Probe!", argument.getValue().getStringExtra("BluetoothProbe: "));
-        assertEquals("OFF", argument.getValue().getStringExtra("State: "));
+        assertEquals("OFF", argument.getValue().getStringExtra("Probe: "));
         assertEquals("127.0.0.1", argument.getValue().getStringExtra("Address: "));
         assertEquals("this is my mock adapter!", argument.getValue().getStringExtra("Name: "));
         assertEquals("[speaker, Ear piece]", argument.getValue().getStringExtra("Bonded devices: ")); // this is what an empty list.toString looks like

@@ -14,7 +14,7 @@ import com.google.android.gms.awareness.snapshot.LocationResult;
 import com.google.android.gms.common.api.ResultCallback;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
-import edu.umd.fcmd.sensorlisteners.model.LocationState;
+import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
 
 /**
  * A asynchronous timed location task being started to retrieve
@@ -97,7 +97,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
     @Override
     protected void onProgressUpdate(Location... values) {
         Location location = values[0];
-        LocationState state = new LocationState();
+        LocationProbe state = new LocationProbe();
         state.setDate(System.currentTimeMillis());
         state.setAccuracy((double) location.getAccuracy());
         state.setAltitude(location.getAltitude());

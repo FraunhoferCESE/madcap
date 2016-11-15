@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
 
-import edu.umd.fcmd.sensorlisteners.model.LocationState;
+import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
 import edu.umd.fcmd.sensorlisteners.service.StateManager;
 
 import static org.mockito.Mockito.*;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  */
 public class LocationListenerTest {
     Context mockContext;
-    StateManager<LocationState> mockStateManager;
+    StateManager<LocationProbe> mockStateManager;
     GoogleApiClient mockGoogleApiClient;
     SnapshotApi mockSnapshotApi;
     TimedLocationTaskFactory mockTimedLocationTaskFactory;
@@ -34,7 +34,7 @@ public class LocationListenerTest {
     @Before
     public void setUp() throws Exception {
         mockContext = mock(Context.class);
-        mockStateManager = (StateManager<LocationState>) mock(StateManager.class);
+        mockStateManager = (StateManager<LocationProbe>) mock(StateManager.class);
         mockGoogleApiClient = mock(GoogleApiClient.class);
         mockSnapshotApi = mock(Awareness.SnapshotApi.getClass());
         mockTimedLocationTaskFactory = mock(TimedLocationTaskFactory.class);
@@ -55,7 +55,7 @@ public class LocationListenerTest {
     @Test
     public void onUpdate() throws Exception {
         LocationListener cut = new LocationListener(mockContext, mockStateManager, mockGoogleApiClient, mockSnapshotApi, mockTimedLocationTaskFactory);
-        LocationState mockState = mock(LocationState.class);
+        LocationProbe mockState = mock(LocationProbe.class);
 
         cut.onUpdate(mockState);
         verify(mockStateManager).save(mockState);

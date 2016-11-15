@@ -9,10 +9,10 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.model.State;
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.StateManager;
 
-public abstract class SensorListener<T extends State> implements SensorEventListener, Listener<T> {
+public abstract class SensorListener<T extends Probe> implements SensorEventListener, Listener<T> {
     private static final String TAG = SensorListener.class.getSimpleName();
     private final Sensor mSensor;
     private final Context mContext;

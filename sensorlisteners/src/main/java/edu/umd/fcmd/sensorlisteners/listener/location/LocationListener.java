@@ -1,44 +1,19 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.SnapshotApi;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-import com.google.android.gms.location.LocationSettingsStates;
-import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.R;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusState;
-import edu.umd.fcmd.sensorlisteners.model.LocationState;
+import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
+import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
 import edu.umd.fcmd.sensorlisteners.service.StateManager;
-
-import static android.location.GpsStatus.GPS_EVENT_STARTED;
-import static android.location.GpsStatus.GPS_EVENT_STOPPED;
 
 /**
  * Created by MMueller on 11/4/2016.
@@ -47,7 +22,7 @@ import static android.location.GpsStatus.GPS_EVENT_STOPPED;
  */
 
 @SuppressWarnings("ClassNamePrefixedWithPackageName")
-public class LocationListener implements Listener<LocationState> {
+public class LocationListener implements Listener<LocationProbe> {
     private static final String TAG = LocationListener.class.getSimpleName();
 
     private final Context context;
@@ -100,7 +75,7 @@ public class LocationListener implements Listener<LocationState> {
      * @param state location update state.
      */
     @Override
-    public void onUpdate(LocationState state) {
+    public void onUpdate(LocationProbe state) {
         mStateManager.save(state);
     }
 
@@ -108,7 +83,7 @@ public class LocationListener implements Listener<LocationState> {
      * Being called when a new location service status is available.
      * @param state location service update state.
      */
-    public void onUpdate(LocationServiceStatusState state) {
+    public void onUpdate(LocationServiceStatusProbe state) {
         mStateManager.save(state);
     }
 

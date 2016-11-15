@@ -127,8 +127,8 @@ public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveP
                     callback.sendData(intent);
                     break;
                 case WifiManager.WIFI_STATE_CHANGED_ACTION:
-                    intent.putExtra("New Wifi State: ", getWifiState(intent));
-                    intent.putExtra("Previous Wifi State: ", getPreviousWifiState(intent));
+                    intent.putExtra("New Wifi Probe: ", getWifiState(intent));
+                    intent.putExtra("Previous Wifi Probe: ", getPreviousWifiState(intent));
                     intent.putExtra("cellular data network state: ", getCellDataState());
                     callback.sendData(intent);
                     break;

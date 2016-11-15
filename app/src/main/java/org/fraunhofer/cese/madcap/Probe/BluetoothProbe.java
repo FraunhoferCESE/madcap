@@ -146,7 +146,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
      * ACTION_STATE_CHANGED) as an intent filter.
      * Puts extra information (
      * TAG, "Initial Probe!",
-     * "State: ",
+     * "Probe: ",
      * "Address: ",
      * "Name: ",
      * "Bonded devices: ")
@@ -175,7 +175,7 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
 
             Intent intent = intentFactory.getNew();
             intent.putExtra(TAG, "Initial Probe!");
-            intent.putExtra("State: ", getBluetoothState());
+            intent.putExtra("Probe: ", getBluetoothState());
             intent.putExtra("Address: ", bluetoothAdapter.getAddress());
             intent.putExtra("Name: ", bluetoothAdapter.getName());
             Set<BluetoothDevice> bondedDevices = bluetoothAdapter.getBondedDevices();
@@ -333,41 +333,41 @@ public class BluetoothProbe extends Probe.Base implements Probe.PassiveProbe {
      * changed information.
      */
     static Intent getStateChangeInformation(Intent intent) {
-        intent.putExtra(TAG, "State changed.");
+        intent.putExtra(TAG, "Probe changed.");
 
         switch (intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0)) {
             case BluetoothAdapter.STATE_OFF:
-                intent.putExtra("new State: ", OFF);
+                intent.putExtra("new Probe: ", OFF);
                 break;
             case BluetoothAdapter.STATE_ON:
-                intent.putExtra("new State: ", ON);
+                intent.putExtra("new Probe: ", ON);
                 break;
             case BluetoothAdapter.STATE_TURNING_OFF:
-                intent.putExtra("new State: ", TURNING_OFF);
+                intent.putExtra("new Probe: ", TURNING_OFF);
                 break;
             case BluetoothAdapter.STATE_TURNING_ON:
-                intent.putExtra("new State: ", TURNING_ON);
+                intent.putExtra("new Probe: ", TURNING_ON);
                 break;
             default:
-                intent.putExtra("new State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0));
+                intent.putExtra("new Probe: ", intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, 0));
                 break;
         }
 
         switch (intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0)) {
             case BluetoothAdapter.STATE_OFF:
-                intent.putExtra("previous State: ", OFF);
+                intent.putExtra("previous Probe: ", OFF);
                 break;
             case BluetoothAdapter.STATE_ON:
-                intent.putExtra("previous State: ", ON);
+                intent.putExtra("previous Probe: ", ON);
                 break;
             case BluetoothAdapter.STATE_TURNING_OFF:
-                intent.putExtra("previous State: ", TURNING_OFF);
+                intent.putExtra("previous Probe: ", TURNING_OFF);
                 break;
             case BluetoothAdapter.STATE_TURNING_ON:
-                intent.putExtra("previous State: ", TURNING_ON);
+                intent.putExtra("previous Probe: ", TURNING_ON);
                 break;
             default:
-                intent.putExtra("previous State: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0));
+                intent.putExtra("previous Probe: ", intent.getIntExtra(BluetoothAdapter.EXTRA_PREVIOUS_STATE, 0));
                 break;
         }
 

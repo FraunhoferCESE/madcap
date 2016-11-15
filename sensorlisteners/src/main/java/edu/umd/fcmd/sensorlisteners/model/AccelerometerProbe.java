@@ -1,31 +1,37 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
 /**
- * Created by MMueller on 11/14/2016.
+ * Created by ANepaul on 10/28/2016.
  */
 
-public class LocationServiceStatusState extends State {
-    public static final String ON = "ON";
-    public static final String OFF = "OFF";
-    private static final String LOCATION_SERVICE_TYPE = "LocationService";
-    private String locationServiceStatus;
+public class AccelerometerProbe extends Probe {
+    private float xAxis;
+    private float yAxis;
+    private float zAxis;
 
-    /**
-     * Gets the LocationServiceStatus.
-     *
-     * @return ON or OFF.
-     */
-    public String getLocationServiceStatus() {
-        return locationServiceStatus;
+    public float getxAxis() {
+        return xAxis;
     }
 
-    /**
-     * Sets the LocationServiceStatus.
-     */
-    public void setLocationServiceStatus(String locationServiceStatus) {
-        this.locationServiceStatus = locationServiceStatus;
+    public void setxAxis(float xAxis) {
+        this.xAxis = xAxis;
     }
 
+    public float getyAxis() {
+        return yAxis;
+    }
+
+    public void setyAxis(float yAxis) {
+        this.yAxis = yAxis;
+    }
+
+    public float getzAxis() {
+        return zAxis;
+    }
+
+    public void setzAxis(float zAxis) {
+        this.zAxis = zAxis;
+    }
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -34,7 +40,7 @@ public class LocationServiceStatusState extends State {
      */
     @Override
     public String getType() {
-        return LOCATION_SERVICE_TYPE;
+        return "Accelerometer";
     }
 
     /**
@@ -60,7 +66,6 @@ public class LocationServiceStatusState extends State {
      */
     @Override
     public String toString() {
-        return "{\"LocationServiceStatus\": " + locationServiceStatus +
-                '}';
+        return "{\"x\": "+xAxis+", \"y\": "+yAxis+", \"z\": "+zAxis+"}" ;
     }
 }

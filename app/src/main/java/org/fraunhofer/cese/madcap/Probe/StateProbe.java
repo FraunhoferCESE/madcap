@@ -108,7 +108,7 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
 
 
     /**
-     * Sends the initial State when a StateProbe object is set up.
+     * Sends the initial Probe when a StateProbe object is set up.
      * Should only be called from within the onEnable().
      */
 

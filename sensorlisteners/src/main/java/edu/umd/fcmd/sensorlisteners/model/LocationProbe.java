@@ -11,7 +11,7 @@ import android.os.Bundle;
  * Most of the time it is null.
  */
 
-public class LocationState extends State {
+public class LocationProbe extends Probe {
     private static final String LOCATION_TYPE = "Location";
     private double accuracy;
     private double altitude;

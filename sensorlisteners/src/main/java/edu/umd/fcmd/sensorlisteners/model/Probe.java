@@ -6,7 +6,7 @@ import java.util.Date;
  * Created by ANepaul on 10/28/2016.
  */
 
-public abstract class State {
+public abstract class Probe {
     private long date;
 
     public long getDate() {

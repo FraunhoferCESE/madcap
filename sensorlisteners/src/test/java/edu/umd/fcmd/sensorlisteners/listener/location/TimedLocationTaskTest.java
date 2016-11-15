@@ -1,20 +1,11 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.location.Location;
-import android.test.AndroidTestCase;
 
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.awareness.snapshot.LocationResult;
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.common.api.Status;
-
-import junit.framework.Assert;
 
 import org.junit.After;
 import org.junit.Before;
@@ -23,19 +14,13 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
-import javax.xml.datatype.Duration;
-
-import edu.umd.fcmd.sensorlisteners.model.LocationState;
-import edu.umd.fcmd.sensorlisteners.model.State;
+import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
 
 import static junit.framework.TestCase.fail;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 
 /**
@@ -128,7 +113,7 @@ public class TimedLocationTaskTest{
 
         Location mockLocation = mock(Location.class);
         cut.onProgressUpdate(mockLocation);
-        verify(mockLocationListener).onUpdate(any(LocationState.class));
+        verify(mockLocationListener).onUpdate(any(LocationProbe.class));
     }
 
 }

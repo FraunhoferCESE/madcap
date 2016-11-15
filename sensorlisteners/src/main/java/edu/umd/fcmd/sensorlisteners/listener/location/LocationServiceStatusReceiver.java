@@ -6,9 +6,7 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.util.Log;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusState;
+import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
 
 /**
  * Created by MMueller on 11/14/2016.
@@ -81,15 +79,15 @@ public class LocationServiceStatusReceiver extends BroadcastReceiver {
 
         if (!gpsEnabled) {
             Log.d(TAG, "Location is disabled, please enable");
-            parseEvent(LocationServiceStatusState.OFF);
+            parseEvent(LocationServiceStatusProbe.OFF);
         } else {
             Log.d(TAG, "Location is enabled, everything is fine");
-            parseEvent(LocationServiceStatusState.ON);
+            parseEvent(LocationServiceStatusProbe.ON);
         }
     }
 
     private void parseEvent(String status) {
-        LocationServiceStatusState state = new LocationServiceStatusState();
+        LocationServiceStatusProbe state = new LocationServiceStatusProbe();
         state.setLocationServiceStatus(status);
         locationListener.onUpdate(state);
     }

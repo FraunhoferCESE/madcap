@@ -5,21 +5,17 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
-import java.util.Date;
-
-import edu.umd.fcmd.sensorlisteners.model.AccelerometerState;
+import edu.umd.fcmd.sensorlisteners.model.AccelerometerProbe;
 import edu.umd.fcmd.sensorlisteners.service.StateManager;
-
-import static android.os.Build.VERSION_CODES.M;
 
 /**
  * Created by ANepaul on 10/28/2016.
  */
 
-public class AccelerometerListener extends SensorListener<AccelerometerState> {
+public class AccelerometerListener extends SensorListener<AccelerometerProbe> {
     private static final int ACCELEROMETER_THRESHOLD_PERCENT = 5;
 
-    public AccelerometerListener(Context context, StateManager<AccelerometerState> stateManager) {
+    public AccelerometerListener(Context context, StateManager<AccelerometerProbe> stateManager) {
         super(((SensorManager) context.getSystemService(Context.SENSOR_SERVICE))
                 .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), context, stateManager);
     }
@@ -33,7 +29,7 @@ public class AccelerometerListener extends SensorListener<AccelerometerState> {
      * @return boolean value if the new state is considered significant
      */
     @Override
-    public boolean isSignificant(AccelerometerState newState, AccelerometerState oldState) {
+    public boolean isSignificant(AccelerometerProbe newState, AccelerometerProbe oldState) {
         // Null Check
         if (oldState == null) {
             return true;
@@ -65,8 +61,8 @@ public class AccelerometerListener extends SensorListener<AccelerometerState> {
     }
 
     @Override
-    AccelerometerState parseEvent(SensorEvent event) {
-        AccelerometerState state = new AccelerometerState();
+    AccelerometerProbe parseEvent(SensorEvent event) {
+        AccelerometerProbe state = new AccelerometerProbe();
         state.setDate(System.currentTimeMillis());
         state.setxAxis(event.values[0]);
         state.setyAxis(event.values[1]);

@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import javax.inject.Inject;
 
-import edu.umd.fcmd.sensorlisteners.model.State;
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.StateManager;
 
 /**
@@ -25,8 +25,8 @@ public class CacheFactory implements StateManager {
     private final Cache cache;
 
     @Override
-    public void save(State state) {
-        saveToCache(state);
+    public void save(Probe probe) {
+        saveToCache(probe);
     }
 
     @Override
@@ -43,14 +43,14 @@ public class CacheFactory implements StateManager {
         this.cache = cache;
     }
 
-    public void saveToCache(State state) {
+    public void saveToCache(Probe probe) {
         //Log.i(TAG, "UID "+madcapAuthManager.getUserId());
         CacheEntry probeEntry = new CacheEntry();
         probeEntry.setId(UUID.randomUUID().toString());
-        probeEntry.setTimestamp(state.getDate());
+        probeEntry.setTimestamp(probe.getDate());
         probeEntry.setUserID(madcapAuthManager.getUserId());
-        probeEntry.setProbeType(state.getType());
-        probeEntry.setSensorData(state.toString());
+        probeEntry.setProbeType(probe.getType());
+        probeEntry.setSensorData(probe.toString());
 
         Log.i(TAG, "CACHED "+probeEntry.toString());
         cache.add(probeEntry);

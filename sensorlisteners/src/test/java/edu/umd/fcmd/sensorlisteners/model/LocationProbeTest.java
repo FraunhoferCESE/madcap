@@ -1,7 +1,6 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 
 import junit.framework.Assert;
 
@@ -9,7 +8,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -18,7 +16,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by MMueller on 11/8/2016.
  */
-public class LocationStateTest {
+public class LocationProbeTest {
     @Before
     public void setUp() throws Exception {
 
@@ -31,7 +29,7 @@ public class LocationStateTest {
 
     @Test
     public void getAccuracy() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setAccuracy(d);
@@ -41,7 +39,7 @@ public class LocationStateTest {
 
     @Test
     public void setAccuracy() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setAccuracy(d);
@@ -51,7 +49,7 @@ public class LocationStateTest {
 
     @Test
     public void getAltitude() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setAltitude(d);
@@ -61,7 +59,7 @@ public class LocationStateTest {
 
     @Test
     public void setAltitude() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setAltitude(d);
@@ -71,7 +69,7 @@ public class LocationStateTest {
 
     @Test
     public void getBearing() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setBearing(d);
@@ -81,7 +79,7 @@ public class LocationStateTest {
 
     @Test
     public void setBearing() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setBearing(d);
@@ -91,7 +89,7 @@ public class LocationStateTest {
 
     @Test
     public void getExtras() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Bundle mockExtras = spy(Bundle.class);
         cut.setExtras(mockExtras);
@@ -101,7 +99,7 @@ public class LocationStateTest {
 
     @Test
     public void setExtras() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Bundle mockExtras = spy(Bundle.class);
         cut.setExtras(mockExtras);
@@ -111,7 +109,7 @@ public class LocationStateTest {
 
     @Test
     public void getLatitude() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setLatitude(d);
@@ -121,7 +119,7 @@ public class LocationStateTest {
 
     @Test
     public void setLatitude() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setLatitude(d);
@@ -131,7 +129,7 @@ public class LocationStateTest {
 
     @Test
     public void getLongitude() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setLongitude(d);
@@ -141,7 +139,7 @@ public class LocationStateTest {
 
     @Test
     public void setLongitude() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setLongitude(d);
@@ -151,14 +149,14 @@ public class LocationStateTest {
 
     @Test
     public void getType() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Assert.assertEquals("Location", cut.getType());
     }
 
     @Test
     public void testToString() throws Exception {
-        LocationState cut = new LocationState();
+        LocationProbe cut = new LocationProbe();
 
         Double d = 21d;
         cut.setLatitude(d);

@@ -110,9 +110,9 @@ public class CallStateProbe extends Probe.Base implements Probe.PassiveProbe {
 
         TelephonyManager telephonyManager = (TelephonyManager)getContext().getSystemService(Context.TELEPHONY_SERVICE);
 
-        intent.putExtra(TAG, "Initial Call State!");
-        intent.putExtra("Call State: ", getCallState(telephonyManager));
-        intent.putExtra("Data State: ", getDataState(telephonyManager));
+        intent.putExtra(TAG, "Initial Call Probe!");
+        intent.putExtra("Call Probe: ", getCallState(telephonyManager));
+        intent.putExtra("Data Probe: ", getDataState(telephonyManager));
 
         sendData(intent);
 
