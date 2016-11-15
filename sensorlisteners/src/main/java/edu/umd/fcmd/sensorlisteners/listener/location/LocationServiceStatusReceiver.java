@@ -14,10 +14,11 @@ import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
  * A location Staus receiver listening to a special intent which is
  * indicating if the user turned the location services on or off.
  */
+@SuppressWarnings({"ALL", "NonBooleanMethodNameMayNotStartWithQuestion"})
 public class LocationServiceStatusReceiver extends BroadcastReceiver {
     private final String TAG = getClass().getSimpleName();
-    private LocationListener locationListener;
-    private boolean gpsEnabled;
+    private final LocationListener locationListener;
+    private boolean gpsDisabled = true;
 
     LocationServiceStatusReceiver(LocationListener locationListener) {
         this.locationListener = locationListener;
@@ -50,7 +51,7 @@ public class LocationServiceStatusReceiver extends BroadcastReceiver {
      * and in application manifests are <em>not</em> guaranteed to be exclusive. They
      * are hints to the operating system about how to find suitable recipients. It is
      * possible for senders to force delivery to specific recipients, bypassing filter
-     * resolution.  For this reason, {@link #onReceive(Context, Intent) onReceive()}
+     * resolution.  For this reason,
      * implementations should respond only to known actions, ignoring any unexpected
      * Intents that they may receive.
      *
@@ -74,10 +75,12 @@ public class LocationServiceStatusReceiver extends BroadcastReceiver {
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         try {
-            gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception e) { }
+            gpsDisabled = !lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (RuntimeException ignored) {
+            Log.e(TAG, "Could not access provider");
+        }
 
-        if (!gpsEnabled) {
+        if (gpsDisabled) {
             Log.d(TAG, "Location is disabled, please enable");
             parseEvent(LocationServiceStatusProbe.OFF);
         } else {
