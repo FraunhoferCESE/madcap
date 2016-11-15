@@ -2,6 +2,9 @@ package edu.umd.fcmd.sensorlisteners.model;
 
 /**
  * Created by MMueller on 11/14/2016.
+ *
+ * Is indicating if the user turned location status on
+ * or off.
  */
 
 public class LocationServiceStatusProbe extends Probe {
@@ -22,8 +25,8 @@ public class LocationServiceStatusProbe extends Probe {
     /**
      * Sets the LocationServiceStatus.
      */
-    public void setLocationServiceStatus(String locationServiceStatus) {
-        this.locationServiceStatus = locationServiceStatus;
+    public void setLocationServiceStatus(String locationSerStatus) {
+        locationServiceStatus = locationSerStatus;
     }
 
 

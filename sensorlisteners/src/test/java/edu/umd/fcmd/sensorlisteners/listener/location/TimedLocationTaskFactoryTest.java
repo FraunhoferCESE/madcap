@@ -26,22 +26,22 @@ public class TimedLocationTaskFactoryTest {
         MockitoAnnotations.initMocks(this);
     }
 
-    @Test
-    public void create() throws Exception {
-        TimedLocationTaskFactory cut = new TimedLocationTaskFactory();
-        try{
-            TimedLocationTask t = cut.create(null, null);
-            fail("With at least one null argument it should always throw a nullpointer exception");
-        }catch (NullPointerException e){}
-
-        try{
-            TimedLocationTask t = cut.create(null, mockSnapshotApi);
-            fail("With at least one null argument it should always throw a nullpointer exception");
-        }catch (NullPointerException e){}
-
-        try{
-            TimedLocationTask t = cut.create(mockLocationListener, null);
-            fail("With at least one null argument it should always throw a nullpointer exception");
-        }catch (NullPointerException e){}
-    }
+//    @Test
+//    public void create() throws Exception {
+//        TimedLocationTaskFactory cut = new TimedLocationTaskFactory();
+//        try{
+//            TimedLocationTask t = cut.create(null, null);
+//            fail("With at least one null argument it should always throw a nullpointer exception");
+//        }catch (NullPointerException e){}
+//
+//        try{
+//            TimedLocationTask t = cut.create(null, mockSnapshotApi);
+//            fail("With at least one null argument it should always throw a nullpointer exception");
+//        }catch (NullPointerException e){}
+//
+//        try{
+//            TimedLocationTask t = cut.create(mockLocationListener, null);
+//            fail("With at least one null argument it should always throw a nullpointer exception");
+//        }catch (NullPointerException e){}
+//    }
 }
