@@ -1,5 +1,7 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
+import android.location.Location;
+
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.awareness.snapshot.LocationResult;
@@ -12,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
 
 import static junit.framework.TestCase.fail;
@@ -27,6 +30,7 @@ import static org.mockito.Mockito.verify;
 public class TimedLocationTaskTest{
     LocationListener mockLocationListener;
     SnapshotApi mockSnapshotApi;
+    PermissionDeniedHandler mockPermissionDeniedHandler;
 
     @Captor
     private ArgumentCaptor<ResultCallback<LocationResult>> resultCallbackLocationResultCaptor;
@@ -35,6 +39,7 @@ public class TimedLocationTaskTest{
     public void setUp() throws Exception {
         mockLocationListener = mock(LocationListener.class);
         mockSnapshotApi = mock(Awareness.SnapshotApi.getClass());
+        mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
 
         MockitoAnnotations.initMocks(this);
     }
@@ -44,23 +49,39 @@ public class TimedLocationTaskTest{
 
     }
 
-//    @Test
-//    public void constructor() throws Exception {
-//        try{
-//            TimedLocationTask cut = new TimedLocationTask(null, null);
-//            fail("With at least one null argument it should always throw a nullpointer exception");
-//        }catch (NullPointerException e){}
-//
-//        try{
-//            TimedLocationTask cut = new TimedLocationTask(null, mockSnapshotApi);
-//            fail("With at least one null argument it should always throw a nullpointer exception");
-//        }catch (NullPointerException e){}
-//
-//        try{
-//            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, null);
-//            fail("With at least one null argument it should always throw a nullpointer exception");
-//        }catch (NullPointerException e){}
-//    }
+    @Test
+    public void constructor() throws Exception {
+        try{
+            TimedLocationTask cut = new TimedLocationTask(null, null, null);
+            fail("With at least one null argument it should always throw a nullpointer exception");
+        }catch (NullPointerException e){}
+
+        try{
+            TimedLocationTask cut = new TimedLocationTask(null, mockSnapshotApi, mockPermissionDeniedHandler);
+            fail("With at least one null argument it should always throw a nullpointer exception");
+        }catch (NullPointerException e){}
+
+        try{
+            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, null, mockPermissionDeniedHandler);
+            fail("With at least one null argument it should always throw a nullpointer exception");
+        }catch (NullPointerException e){}
+
+        try{
+            TimedLocationTask cut = new TimedLocationTask(null, mockSnapshotApi, null);
+            fail("With at least one null argument it should always throw a nullpointer exception");
+        }catch (NullPointerException e){}
+
+        try{
+            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, null, null);
+            fail("With at least one null argument it should always throw a nullpointer exception");
+        }catch (NullPointerException e){}
+
+        try{
+            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, mockSnapshotApi, mockPermissionDeniedHandler);
+        }catch (NullPointerException e){
+            fail("Should not cause an exception.");
+        }
+    }
 
     @Test
     public void doInBackground() throws Exception {
@@ -105,13 +126,13 @@ public class TimedLocationTaskTest{
 
     }
 
-//    @Test
-//    public void onProgressUpdate() throws Exception {
-//        TimedLocationTask cut = new TimedLocationTask(mockLocationListener, mockSnapshotApi);
-//
-//        Location mockLocation = mock(Location.class);
-//        cut.onProgressUpdate(mockLocation);
-//        verify(mockLocationListener).onUpdate(any(LocationProbe.class));
-//    }
+    @Test
+    public void onProgressUpdate() throws Exception {
+        TimedLocationTask cut = new TimedLocationTask(mockLocationListener, mockSnapshotApi, mockPermissionDeniedHandler);
+
+        Location mockLocation = mock(Location.class);
+        cut.onProgressUpdate(mockLocation);
+        verify(mockLocationListener).onUpdate(any(LocationProbe.class));
+    }
 
 }
