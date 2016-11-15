@@ -13,6 +13,7 @@ import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.awareness.snapshot.LocationResult;
 import com.google.android.gms.common.api.ResultCallback;
 
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.model.LocationState;
 
 /**
@@ -21,19 +22,21 @@ import edu.umd.fcmd.sensorlisteners.model.LocationState;
  */
 class TimedLocationTask extends AsyncTask<Void, Location, Void> {
     private final String TAG = getClass().getSimpleName();
-    private static final int LOCATION_SLEEP_TIME = 1500;
+    private static final int LOCATION_SLEEP_TIME = 15000;
     private final SnapshotApi snapshotApi;
     private final LocationListener locationListener;
+    private final PermissionDeniedHandler permissionDeniedHandler;
 
     /**
      * Constructor called by a factory.
      * @param locationListener the listener to connect to.
      * @param snapshotApi the snapshot api from google.
      */
-    TimedLocationTask(LocationListener locationListener, SnapshotApi snapshotApi) {
+    TimedLocationTask(LocationListener locationListener, SnapshotApi snapshotApi, PermissionDeniedHandler permissionDeniedHandler) {
         if ((locationListener != null) && (snapshotApi != null)) {
             this.locationListener = locationListener;
             this.snapshotApi = snapshotApi;
+            this.permissionDeniedHandler = permissionDeniedHandler;
         } else {
             throw new NullPointerException("Cannot create a new TimedLocationTask for null parametes.");
         }
@@ -85,7 +88,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                 }
             }
         } else {
-            Log.d(TAG, "Permission denied");
+            permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
         }
         return null;
     }

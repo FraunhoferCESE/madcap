@@ -4,32 +4,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.location.LocationManager;
-import android.os.Handler;
 import android.util.Log;
 
-import com.google.android.gms.awareness.Awareness;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusState;
 
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.L;
-
 /**
  * Created by MMueller on 11/14/2016.
+ *
+ * A location Staus receiver listening to a special intent which is
+ * indicating if the user turned the location services on or off.
  */
-
 public class LocationServiceStatusReceiver extends BroadcastReceiver {
     private final String TAG = getClass().getSimpleName();
     private LocationListener locationListener;
-    private GoogleApiClient mGoogleApiClient;
     private boolean gpsEnabled;
 
-    LocationServiceStatusReceiver(LocationListener locationListener, GoogleApiClient mGoogleApiClient){
+    LocationServiceStatusReceiver(LocationListener locationListener) {
         this.locationListener = locationListener;
-        this.mGoogleApiClient = mGoogleApiClient;
     }
-
 
     /**
      * This method is called when the BroadcastReceiver is receiving an Intent
@@ -69,31 +63,34 @@ public class LocationServiceStatusReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().matches("android.location.PROVIDERS_CHANGED")) {
             Log.d(TAG, "GPS Status changed");
-            LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-
-            ConnectionResult connectionResult = mGoogleApiClient.getConnectionResult(Awareness.API);
-
-            try {
-                gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-            } catch (Exception ex) {}
-
-            if (!gpsEnabled) {
-                Log.d(TAG, "Location is disabled, please enable");
-                parseEvent("OFF", connectionResult);
-            } else {
-                Log.d(TAG, "Location is enabled, everything is fine");
-                parseEvent("ON", connectionResult);
-            }
-
+            checkForStatus(context);
         }
     }
 
-    private void parseEvent(String status, ConnectionResult connectionResult){
+    void sendInitialProbe(Context context) {
+        checkForStatus(context);
+    }
+
+    private void checkForStatus(Context context) {
+        Log.d(TAG, "Check for Location preference status");
+        LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        try {
+            gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        } catch (Exception e) { }
+
+        if (!gpsEnabled) {
+            Log.d(TAG, "Location is disabled, please enable");
+            parseEvent(LocationServiceStatusState.OFF);
+        } else {
+            Log.d(TAG, "Location is enabled, everything is fine");
+            parseEvent(LocationServiceStatusState.ON);
+        }
+    }
+
+    private void parseEvent(String status) {
         LocationServiceStatusState state = new LocationServiceStatusState();
-        state.setGoogleConnectionResult(connectionResult);
         state.setLocationServiceStatus(status);
         locationListener.onUpdate(state);
     }
-
-
 }

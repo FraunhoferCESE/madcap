@@ -26,6 +26,8 @@ import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
+import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,6 +70,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Inject
     LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory;
+
+    @Inject
+    GoogleApiClientConnectionIssueManager googleApiClientConnectionIssueManager;
+
+    @Inject
+    MadcapPermissionDeniedHandler madcapPermissionDeniedHandler;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -127,7 +135,14 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     public int onStartCommand(Intent intent, int flags, int startId) {
         //listeners.add(new AccelerometerListener(this, new CacheFactory(cache)));
 
-        listeners.add(new LocationListener(this, new CacheFactory(cache), locationClient, snapshotApi, timedLocationTaskFactory, locationServiceStatusReceiverFactory));
+        listeners.add(new LocationListener(this, new CacheFactory(cache),
+                locationClient,
+                snapshotApi,
+                timedLocationTaskFactory,
+                locationServiceStatusReceiverFactory,
+                googleApiClientConnectionIssueManager,
+                googleApiClientConnectionIssueManager,
+                madcapPermissionDeniedHandler));
 
         enableAllListeners();
         return super.onStartCommand(intent, flags, startId);

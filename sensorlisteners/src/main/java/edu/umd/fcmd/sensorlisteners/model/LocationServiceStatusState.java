@@ -1,33 +1,14 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
-import com.google.android.gms.common.ConnectionResult;
-
 /**
  * Created by MMueller on 11/14/2016.
  */
 
 public class LocationServiceStatusState extends State {
-    private static final String ON = "ON";
-    private static final String OFF = "OFF";
+    public static final String ON = "ON";
+    public static final String OFF = "OFF";
     private static final String LOCATION_SERVICE_TYPE = "LocationService";
-    private ConnectionResult googleConnectionResult;
     private String locationServiceStatus;
-
-    /**
-     * Gets the connectionResult.
-     *
-     * @return connectionResult.
-     */
-    public ConnectionResult getGoogleConnectionResult() {
-        return googleConnectionResult;
-    }
-
-    /**
-     * Sets the connectionResult.
-     */
-    public void setGoogleConnectionResult(ConnectionResult googleConnectionResult) {
-        this.googleConnectionResult = googleConnectionResult;
-    }
 
     /**
      * Gets the LocationServiceStatus.
@@ -80,7 +61,6 @@ public class LocationServiceStatusState extends State {
     @Override
     public String toString() {
         return "{\"LocationServiceStatus\": " + locationServiceStatus +
-                ", \"GoogleApiClientConnectionResult\": " + googleConnectionResult.getErrorCode() +
                 '}';
     }
 }

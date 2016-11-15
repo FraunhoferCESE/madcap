@@ -16,13 +16,14 @@ import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
 import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
+import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiver;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 
@@ -74,17 +75,47 @@ class MyApplicationModule {
     }
 
 
-
+    /**
+     * Needed by the DataCollectionService.
+     *
+     * @return a statuc SnapshotApi
+     */
     @Provides
     SnapshotApi provideSnapshotApi(){
         return Awareness.SnapshotApi;
     }
 
+    /**
+     * Needed by the DataCollectionService.
+     *
+     * @return a factory.
+     */
     @Provides
     TimedLocationTaskFactory provideTimedLocationTaskFactory(){ return new TimedLocationTaskFactory();}
 
+    /**
+     * Needed by the DataCollectionService.
+     *
+     * @return a factory.
+     */
     @Provides
     LocationServiceStatusReceiverFactory provideLocationServiceStatusReceiverFactory(){ return new LocationServiceStatusReceiverFactory(); }
+
+    /**
+     * Needed by the DataCollectionService.
+     *
+     * @return an issuemanager.
+     */
+    @Provides
+    GoogleApiClientConnectionIssueManager provideGoogleConnectionIssueManager(){return new GoogleApiClientConnectionIssueManager();}
+
+    /**
+     * Needed by the DataCollectionService.
+     *
+     * @return an MadcapPermissionDeniedHandler.
+     */
+    @Provides
+    MadcapPermissionDeniedHandler provideMadcapPermissionDeniedHandler(){ return new MadcapPermissionDeniedHandler();}
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}

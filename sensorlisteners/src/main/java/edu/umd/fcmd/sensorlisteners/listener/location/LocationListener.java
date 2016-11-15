@@ -31,6 +31,7 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.R;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusState;
 import edu.umd.fcmd.sensorlisteners.model.LocationState;
@@ -46,7 +47,7 @@ import static android.location.GpsStatus.GPS_EVENT_STOPPED;
  */
 
 @SuppressWarnings("ClassNamePrefixedWithPackageName")
-public class LocationListener implements Listener<LocationState>, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LocationListener implements Listener<LocationState> {
     private static final String TAG = LocationListener.class.getSimpleName();
 
     private final Context context;
@@ -58,6 +59,7 @@ public class LocationListener implements Listener<LocationState>, GoogleApiClien
     private final GoogleApiClient mGoogleApiClient;
     private LocationServiceStatusReceiver locationServiceStatusReceiver;
     private IntentFilter intentFilter;
+    private PermissionDeniedHandler permissionDeniedHandler;
 
     /**
      * Default constructor which should be used.
@@ -72,17 +74,22 @@ public class LocationListener implements Listener<LocationState>, GoogleApiClien
                             GoogleApiClient mGoogleApiClient,
                             SnapshotApi snapshotApi,
                             TimedLocationTaskFactory timedTaskFactory,
-                            LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory) {
+                            LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory,
+                            GoogleApiClient.ConnectionCallbacks connectionCallbackClass,
+                            GoogleApiClient.OnConnectionFailedListener connectionFailedCallbackClass,
+                            PermissionDeniedHandler permissionDeniedHandler) {
         this.context = context;
         this.mStateManager = mStateManager;
         this.mGoogleApiClient = mGoogleApiClient;
         this.snapshotApi = snapshotApi;
-        locationServiceStatusReceiver =  locationServiceStatusReceiverFactory.create(this, mGoogleApiClient);
+        this.permissionDeniedHandler = permissionDeniedHandler;
+        locationServiceStatusReceiver =  locationServiceStatusReceiverFactory.create(this);
+        locationServiceStatusReceiver.sendInitialProbe(context);
         timedLocationTaskFactory = timedTaskFactory;
         //noinspection ThisEscapedInObjectConstruction
-        mGoogleApiClient.registerConnectionCallbacks(this);
+        mGoogleApiClient.registerConnectionCallbacks(connectionCallbackClass);
         //noinspection ThisEscapedInObjectConstruction
-        mGoogleApiClient.registerConnectionFailedListener(this);
+        mGoogleApiClient.registerConnectionFailedListener(connectionFailedCallbackClass);
         intentFilter = new IntentFilter();
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
         context.registerReceiver(locationServiceStatusReceiver, intentFilter);
@@ -112,7 +119,7 @@ public class LocationListener implements Listener<LocationState>, GoogleApiClien
     @Override
     public void startListening() throws NoSensorFoundException {
         mGoogleApiClient.connect();
-        timedLocationTask = timedLocationTaskFactory.create(this, snapshotApi);
+        timedLocationTask = timedLocationTaskFactory.create(this, snapshotApi, permissionDeniedHandler);
         timedLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -124,22 +131,6 @@ public class LocationListener implements Listener<LocationState>, GoogleApiClien
             mGoogleApiClient.disconnect();
             context.unregisterReceiver(locationServiceStatusReceiver);
         }
-    }
-
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.e(TAG, "Conntected");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.e(TAG, "Conntection suspended");
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e(TAG, "Conntection failed");
     }
 
     protected Context getContext() {
