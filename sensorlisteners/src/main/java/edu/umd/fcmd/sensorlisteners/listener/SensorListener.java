@@ -10,21 +10,21 @@ import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
-import edu.umd.fcmd.sensorlisteners.service.StateManager;
+import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 public abstract class SensorListener<T extends Probe> implements SensorEventListener, Listener<T> {
     private static final String TAG = SensorListener.class.getSimpleName();
     private final Sensor mSensor;
     private final Context mContext;
     private final SensorManager mSensorManager;
-    private final StateManager<T> mStateManager;
+    private final ProbeManager<T> mProbeManager;
 
     private T mLastState;
 
-    public SensorListener(@Nullable Sensor sensor, Context context, StateManager stateManager) {
+    public SensorListener(@Nullable Sensor sensor, Context context, ProbeManager probeManager) {
         this.mSensor = sensor;
         this.mContext = context;
-        this.mStateManager = stateManager;
+        this.mProbeManager = probeManager;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
 
@@ -44,7 +44,7 @@ public abstract class SensorListener<T extends Probe> implements SensorEventList
 
     @Override
     public void onUpdate(T state) {
-        mStateManager.save(state);
+        mProbeManager.save(state);
     }
 
     abstract boolean isSignificant(T newState, T lastState);

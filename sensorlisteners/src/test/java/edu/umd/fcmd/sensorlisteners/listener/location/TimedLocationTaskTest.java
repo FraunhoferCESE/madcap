@@ -1,7 +1,5 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
-import android.location.Location;
-
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.awareness.snapshot.LocationResult;

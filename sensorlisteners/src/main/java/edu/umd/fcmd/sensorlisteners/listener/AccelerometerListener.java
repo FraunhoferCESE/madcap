@@ -6,7 +6,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 
 import edu.umd.fcmd.sensorlisteners.model.AccelerometerProbe;
-import edu.umd.fcmd.sensorlisteners.service.StateManager;
+import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
  * Created by ANepaul on 10/28/2016.
@@ -15,9 +15,9 @@ import edu.umd.fcmd.sensorlisteners.service.StateManager;
 public class AccelerometerListener extends SensorListener<AccelerometerProbe> {
     private static final int ACCELEROMETER_THRESHOLD_PERCENT = 5;
 
-    public AccelerometerListener(Context context, StateManager<AccelerometerProbe> stateManager) {
+    public AccelerometerListener(Context context, ProbeManager<AccelerometerProbe> probeManager) {
         super(((SensorManager) context.getSystemService(Context.SENSOR_SERVICE))
-                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), context, stateManager);
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER), context, probeManager);
     }
 
     /**

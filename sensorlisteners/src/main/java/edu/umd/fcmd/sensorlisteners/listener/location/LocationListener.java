@@ -13,7 +13,8 @@ import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
 import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
-import edu.umd.fcmd.sensorlisteners.service.StateManager;
+import edu.umd.fcmd.sensorlisteners.model.Probe;
+import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
  * Created by MMueller on 11/4/2016.
@@ -21,31 +22,30 @@ import edu.umd.fcmd.sensorlisteners.service.StateManager;
  * A listener for Locations. Retrieving updates in a certain defined period.
  */
 
-@SuppressWarnings("ClassNamePrefixedWithPackageName")
+@SuppressWarnings({"ClassNamePrefixedWithPackageName", "rawtypes", "ThisEscapedInObjectConstruction"})
 public class LocationListener implements Listener<LocationProbe> {
     private static final String TAG = LocationListener.class.getSimpleName();
 
     private final Context context;
-    private final StateManager mStateManager;
+    private final ProbeManager<Probe> mProbeManager;
     private final SnapshotApi snapshotApi;
 
     private final TimedLocationTaskFactory timedLocationTaskFactory;
     private TimedLocationTask timedLocationTask;
     private final GoogleApiClient mGoogleApiClient;
-    private LocationServiceStatusReceiver locationServiceStatusReceiver;
-    private IntentFilter intentFilter;
-    private PermissionDeniedHandler permissionDeniedHandler;
+    private final LocationServiceStatusReceiver locationServiceStatusReceiver;
+    private final PermissionDeniedHandler permissionDeniedHandler;
 
     /**
      * Default constructor which should be used.
      *
      * @param context          the app context.
-     * @param mStateManager    the StateManager to connect to.
+     * @param mProbeManager    the ProbeManager to connect to.
      * @param mGoogleApiClient  a GoogleApi client.
      * @param snapshotApi      usally the Awarness.SnapshotsApi
      */
     public LocationListener(Context context,
-                            StateManager mStateManager,
+                            ProbeManager<Probe> mProbeManager,
                             GoogleApiClient mGoogleApiClient,
                             SnapshotApi snapshotApi,
                             TimedLocationTaskFactory timedTaskFactory,
@@ -54,18 +54,16 @@ public class LocationListener implements Listener<LocationProbe> {
                             GoogleApiClient.OnConnectionFailedListener connectionFailedCallbackClass,
                             PermissionDeniedHandler permissionDeniedHandler) {
         this.context = context;
-        this.mStateManager = mStateManager;
+        this.mProbeManager = mProbeManager;
         this.mGoogleApiClient = mGoogleApiClient;
         this.snapshotApi = snapshotApi;
         this.permissionDeniedHandler = permissionDeniedHandler;
         locationServiceStatusReceiver =  locationServiceStatusReceiverFactory.create(this);
         locationServiceStatusReceiver.sendInitialProbe(context);
         timedLocationTaskFactory = timedTaskFactory;
-        //noinspection ThisEscapedInObjectConstruction
         mGoogleApiClient.registerConnectionCallbacks(connectionCallbackClass);
-        //noinspection ThisEscapedInObjectConstruction
         mGoogleApiClient.registerConnectionFailedListener(connectionFailedCallbackClass);
-        intentFilter = new IntentFilter();
+        IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
         context.registerReceiver(locationServiceStatusReceiver, intentFilter);
     }
@@ -76,7 +74,7 @@ public class LocationListener implements Listener<LocationProbe> {
      */
     @Override
     public void onUpdate(LocationProbe state) {
-        mStateManager.save(state);
+        mProbeManager.save(state);
     }
 
     /**
@@ -84,7 +82,7 @@ public class LocationListener implements Listener<LocationProbe> {
      * @param state location service update state.
      */
     public void onUpdate(LocationServiceStatusProbe state) {
-        mStateManager.save(state);
+        mProbeManager.save(state);
     }
 
     /**
@@ -112,7 +110,7 @@ public class LocationListener implements Listener<LocationProbe> {
         return context;
     }
 
-    protected GoogleApiClient getmGoogleApiClient() {
+    GoogleApiClient getmGoogleApiClient() {
         return mGoogleApiClient;
     }
 }

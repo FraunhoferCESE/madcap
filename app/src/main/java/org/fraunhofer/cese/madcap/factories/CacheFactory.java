@@ -12,13 +12,13 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
-import edu.umd.fcmd.sensorlisteners.service.StateManager;
+import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
  * Created by ANepaul on 10/28/2016.
  */
 
-public class CacheFactory implements StateManager {
+public class CacheFactory implements ProbeManager {
     private static final String TAG = CacheFactory.class.getSimpleName();
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
 
