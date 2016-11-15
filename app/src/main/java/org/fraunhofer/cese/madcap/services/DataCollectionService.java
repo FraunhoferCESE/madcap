@@ -37,6 +37,7 @@ import javax.inject.Singleton;
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
+import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 
 /**
@@ -64,6 +65,9 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Inject
     TimedLocationTaskFactory timedLocationTaskFactory;
+
+    @Inject
+    LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -123,7 +127,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     public int onStartCommand(Intent intent, int flags, int startId) {
         //listeners.add(new AccelerometerListener(this, new CacheFactory(cache)));
 
-        listeners.add(new LocationListener(this, new CacheFactory(cache), locationClient, snapshotApi, timedLocationTaskFactory));
+        listeners.add(new LocationListener(this, new CacheFactory(cache), locationClient, snapshotApi, timedLocationTaskFactory, locationServiceStatusReceiverFactory));
 
         enableAllListeners();
         return super.onStartCommand(intent, flags, startId);

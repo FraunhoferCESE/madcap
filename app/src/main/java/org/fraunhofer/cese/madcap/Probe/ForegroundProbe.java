@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.Probe;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import org.fraunhofer.cese.madcap.MyApplication;
@@ -9,6 +10,8 @@ import com.google.gson.Gson;
 import org.fraunhofer.cese.madcap.MyApplication;
 
 import edu.mit.media.funf.probe.Probe;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 
 public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe {
@@ -38,7 +41,7 @@ public class ForegroundProbe extends Probe.Base implements Probe.ContinuousProbe
 
         onStart();
         Gson gson = getGson();
-        ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager am = (ActivityManager) getContext().getApplicationContext().getSystemService(ACTIVITY_SERVICE);
 
         foregroundProbeDeliverer = createForegroundProbeDeliverer(gson, am);
         foregroundProbeDeliverer.start();

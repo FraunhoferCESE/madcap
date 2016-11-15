@@ -22,6 +22,8 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiver;
+import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 
 /**
@@ -80,6 +82,9 @@ class MyApplicationModule {
 
     @Provides
     TimedLocationTaskFactory provideTimedLocationTaskFactory(){ return new TimedLocationTaskFactory();}
+
+    @Provides
+    LocationServiceStatusReceiverFactory provideLocationServiceStatusReceiverFactory(){ return new LocationServiceStatusReceiverFactory(); }
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
