@@ -21,6 +21,7 @@ import com.google.android.gms.common.api.Status;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
+import org.fraunhofer.cese.madcap.WelcomeActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
@@ -252,7 +253,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         mBuilder.setPriority(Notification.PRIORITY_LOW);
 
         // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, SignInActivity.class);
+        Intent resultIntent = new Intent(this, WelcomeActivity.class);
 
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
@@ -261,7 +262,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 
         // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(SignInActivity.class);
+        stackBuilder.addParentStack(WelcomeActivity.class);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
         PendingIntent resultPendingIntent =
