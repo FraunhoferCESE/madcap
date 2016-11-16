@@ -13,6 +13,7 @@ import com.googlecode.objectify.cmd.LoadType;
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
+import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
@@ -112,6 +113,14 @@ public class ProbeDataSetEndpoint {
                     Collection<AccelerometerEntry> alist = entryMap.get(entry.getProbeType());
                     AccelerometerEntry accelerometerEntry = new AccelerometerEntry(entry);
                     alist.add(accelerometerEntry);
+                    break;
+                case "LocationService":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<LocationServiceEntry>());
+                    }
+                    Collection<LocationServiceEntry> blist = entryMap.get(entry.getProbeType());
+                    LocationServiceEntry locationServiceEntry = new LocationServiceEntry(entry);
+                    blist.add(locationServiceEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();

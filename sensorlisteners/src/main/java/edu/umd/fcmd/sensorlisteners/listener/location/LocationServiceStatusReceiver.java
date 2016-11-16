@@ -91,6 +91,7 @@ public class LocationServiceStatusReceiver extends BroadcastReceiver {
 
     private void parseEvent(String status) {
         LocationServiceStatusProbe state = new LocationServiceStatusProbe();
+        state.setDate(System.currentTimeMillis());
         state.setLocationServiceStatus(status);
         locationListener.onUpdate(state);
     }
