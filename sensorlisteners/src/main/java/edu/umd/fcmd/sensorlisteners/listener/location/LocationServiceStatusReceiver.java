@@ -62,32 +62,34 @@ public class LocationServiceStatusReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().matches("android.location.PROVIDERS_CHANGED")) {
             Log.d(TAG, "GPS Status changed");
-            updateStatus(context);
+            this.oldStatus = updateStatus(context, this.oldStatus);
         }
     }
 
     void sendInitialProbe(Context context) {
-        updateStatus(context);
+        this.oldStatus = updateStatus(context, null);
     }
 
-    private synchronized void updateStatus(Context context) {
+    private synchronized String updateStatus(Context context, String oldStatus) {
         Log.d(TAG, "Check for Location preference status");
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
+        String newStatus;
         try {
-            String status = lm.isProviderEnabled(LocationManager.GPS_PROVIDER) == true ? LocationServiceStatusProbe.ON : LocationServiceStatusProbe.OFF;
-
-            if (oldStatus == null || !oldStatus.equals(status)) {
-                Log.d(TAG, "Location status updated:" + status);
-
-                LocationServiceStatusProbe probe = new LocationServiceStatusProbe();
-                probe.setDate(System.currentTimeMillis());
-                probe.setLocationServiceStatus(status);
-                locationListener.onUpdate(probe);
-                oldStatus = status;
-            }
+            newStatus = lm.isProviderEnabled(LocationManager.GPS_PROVIDER) == true ? LocationServiceStatusProbe.ON : LocationServiceStatusProbe.OFF;
         } catch (RuntimeException ignored) {
-            Log.e(TAG, "Could not access provider");
+            newStatus = LocationServiceStatusProbe.NO_PROVIDER;
         }
+
+        if (oldStatus == null || !oldStatus.equals(newStatus)) {
+            Log.d(TAG, "Location status updated:" + newStatus);
+
+            LocationServiceStatusProbe probe = new LocationServiceStatusProbe();
+            probe.setDate(System.currentTimeMillis());
+            probe.setLocationServiceStatus(newStatus);
+            locationListener.onUpdate(probe);
+        }
+
+        return newStatus;
     }
 }

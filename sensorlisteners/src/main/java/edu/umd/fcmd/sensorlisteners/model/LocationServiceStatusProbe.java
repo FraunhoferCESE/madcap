@@ -10,6 +10,7 @@ package edu.umd.fcmd.sensorlisteners.model;
 public class LocationServiceStatusProbe extends Probe {
     public static final String ON = "ON";
     public static final String OFF = "OFF";
+    public static final String NO_PROVIDER = "NO PROVIDER";
     private static final String LOCATION_SERVICE_TYPE = "LocationService";
     private String locationServiceStatus;
 
