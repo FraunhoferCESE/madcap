@@ -70,7 +70,7 @@ public class LocationServiceStatusReceiver extends BroadcastReceiver {
         updateStatus(context);
     }
 
-    private void updateStatus(Context context) {
+    private synchronized void updateStatus(Context context) {
         Log.d(TAG, "Check for Location preference status");
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
