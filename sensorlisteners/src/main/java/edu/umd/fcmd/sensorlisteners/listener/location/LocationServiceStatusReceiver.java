@@ -10,7 +10,7 @@ import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
 
 /**
  * Created by MMueller on 11/14/2016.
- *
+ * <p>
  * A location Staus receiver listening to a special intent which is
  * indicating if the user turned the location services on or off.
  */
@@ -18,7 +18,7 @@ import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
 public class LocationServiceStatusReceiver extends BroadcastReceiver {
     private final String TAG = getClass().getSimpleName();
     private final LocationListener locationListener;
-    private boolean gpsDisabled = true;
+    private String oldStatus = null;
 
     LocationServiceStatusReceiver(LocationListener locationListener) {
         this.locationListener = locationListener;
@@ -62,37 +62,32 @@ public class LocationServiceStatusReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent.getAction().matches("android.location.PROVIDERS_CHANGED")) {
             Log.d(TAG, "GPS Status changed");
-            checkForStatus(context);
+            updateStatus(context);
         }
     }
 
     void sendInitialProbe(Context context) {
-        checkForStatus(context);
+        updateStatus(context);
     }
 
-    private void checkForStatus(Context context) {
+    private void updateStatus(Context context) {
         Log.d(TAG, "Check for Location preference status");
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         try {
-            gpsDisabled = !lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            String status = lm.isProviderEnabled(LocationManager.GPS_PROVIDER) == true ? LocationServiceStatusProbe.ON : LocationServiceStatusProbe.OFF;
+
+            if (oldStatus == null || !oldStatus.equals(status)) {
+                Log.d(TAG, "Location status updated:" + status);
+
+                LocationServiceStatusProbe probe = new LocationServiceStatusProbe();
+                probe.setDate(System.currentTimeMillis());
+                probe.setLocationServiceStatus(status);
+                locationListener.onUpdate(probe);
+                oldStatus = status;
+            }
         } catch (RuntimeException ignored) {
             Log.e(TAG, "Could not access provider");
         }
-
-        if (gpsDisabled) {
-            Log.d(TAG, "Location is disabled, please enable");
-            parseEvent(LocationServiceStatusProbe.OFF);
-        } else {
-            Log.d(TAG, "Location is enabled, everything is fine");
-            parseEvent(LocationServiceStatusProbe.ON);
-        }
-    }
-
-    private void parseEvent(String status) {
-        LocationServiceStatusProbe state = new LocationServiceStatusProbe();
-        state.setDate(System.currentTimeMillis());
-        state.setLocationServiceStatus(status);
-        locationListener.onUpdate(state);
     }
 }
