@@ -56,7 +56,7 @@ public class LocationServiceStatusReceiverTest {
 
         cut.onReceive(mockContext, mockIntentProvidersFalse);
 
-        //Testing inside of checkForStatus
+        //Testing inside of updateStatus
         LocationManager mockLocationManager = mock(LocationManager.class);
 
         when((LocationManager) mockContext.getSystemService(Context.LOCATION_SERVICE)).thenReturn(mockLocationManager);
