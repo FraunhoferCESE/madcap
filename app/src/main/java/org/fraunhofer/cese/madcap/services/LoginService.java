@@ -149,8 +149,10 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         MyApplication.madcapLogger.d(TAG, "Silent login was successfull. Logged in as " + madcapAuthManager.getUserId());
 
         Intent intent = new Intent(LoginService.this, DataCollectionService.class);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
         if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
+            MyApplication.madcapLogger.e(TAG, "HERE");
             startService(intent);
         }
 

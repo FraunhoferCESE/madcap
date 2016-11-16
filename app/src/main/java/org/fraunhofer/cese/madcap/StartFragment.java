@@ -145,7 +145,12 @@ public class StartFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_start, container, false);
 
         Intent intent = new Intent(getContext(), DataCollectionService.class);
-        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
+        if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
+            getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        }
+
 
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
         uploadResultView = (TextView) view.findViewById(R.id.uploadResult);
@@ -168,8 +173,7 @@ public class StartFragment extends Fragment {
         collectionDataStatusText = (TextView) view.findViewById(R.id.collectionDataStatusText);
 
         //Set the toggle button on the last set preference configuration
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
+
 
         //Set up upload progress bar
         uploadProgressBar = (ProgressBar) view.findViewById(R.id.uploadProgressBar);
@@ -272,6 +276,8 @@ public class StartFragment extends Fragment {
         if (!getCacheCountUpdater().isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
             getCacheCountUpdater().cancel(true);
         }
+
+        if(mBound) getActivity().unbindService(mConnection);
 
         mBound = false;
         mListener = null;

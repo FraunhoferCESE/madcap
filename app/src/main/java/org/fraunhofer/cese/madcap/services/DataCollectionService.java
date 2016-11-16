@@ -116,6 +116,17 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service");
         madcapAuthManager.setCallbackClass(this);
         showRunNotification();
+
+        listeners.add(new LocationListener(this, new CacheFactory(cache),
+                locationClient,
+                snapshotApi,
+                timedLocationTaskFactory,
+                locationServiceStatusReceiverFactory,
+                googleApiClientConnectionIssueManager,
+                googleApiClientConnectionIssueManager,
+                madcapPermissionDeniedHandler));
+
+        enableAllListeners();
     }
 
     @Override
@@ -133,18 +144,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //listeners.add(new AccelerometerListener(this, new CacheFactory(cache)));
-
-        listeners.add(new LocationListener(this, new CacheFactory(cache),
-                locationClient,
-                snapshotApi,
-                timedLocationTaskFactory,
-                locationServiceStatusReceiverFactory,
-                googleApiClientConnectionIssueManager,
-                googleApiClientConnectionIssueManager,
-                madcapPermissionDeniedHandler));
-
-        enableAllListeners();
+        MyApplication.madcapLogger.d(TAG, "OnStartcommand code: "+super.onStartCommand(intent, flags, startId));
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -168,7 +168,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     /**
      * Stops all listeners.
      */
-    private void disableAllListeners(){
+    private synchronized void disableAllListeners(){
         for(Listener l : listeners) {
             l.stopListening();
             listeners.remove(l);
@@ -322,7 +322,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      */
     @Override
     public void onSignOutResults(Status status) {
-
+            MyApplication.madcapLogger.d(TAG, "Sign out callback");
+            stopSelf();
     }
 
     /**

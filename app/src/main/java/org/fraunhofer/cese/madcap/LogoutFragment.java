@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +13,6 @@ import android.widget.Button;
 
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
-
-import static android.os.Build.VERSION_CODES.M;
-import static org.fraunhofer.cese.madcap.R.id.logoutButton;
 
 
 /**
@@ -74,7 +70,7 @@ public class LogoutFragment extends Fragment {
                 MyApplication.madcapLogger.d(TAG, "Logout clicked");
                 madcapAuthManager.signOut();
 
-                getActivity().startService(new Intent(getActivity(),DataCollectionService.class));
+                //getContext().stopService(new Intent(getActivity(),DataCollectionService.class));
 
                 goBackToSignIn();
             }

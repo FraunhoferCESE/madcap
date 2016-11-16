@@ -341,7 +341,7 @@ public class MainActivityOld extends Activity implements MadcapAuthEventHandler{
 
         // Bind to the service, to create the connection with FunfManager+
         MyApplication.madcapLogger.d(TAG, "Starting FunfManager");
-        startService(new Intent(this, FunfManager.class));
+        //startService(new Intent(this, FunfManager.class));
         MyApplication.madcapLogger.d(TAG, "Binding Funf ServiceConnection to activity");
         getApplicationContext().bindService(new Intent(this, FunfManager.class), funfManagerConn, BIND_AUTO_CREATE);
         pipeline.addUploadListener(getUploadStatusListener());

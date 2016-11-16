@@ -107,7 +107,11 @@ public class SignInActivity extends AppCompatActivity implements
         if (result.isSuccess()) {
             // Signed in successfully, show authenticated UI.
             GoogleSignInAccount acct = result.getSignInAccount();
-            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            if (acct != null) {
+                mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            }else{
+                MyApplication.madcapLogger.e(TAG, "Could not get SignIn Result for some reason");
+            }
             madcapAuthManager.handleSignInResult(result);
             updateUI(true);
 
