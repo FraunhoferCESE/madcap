@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.location.LocationManager;
 import android.util.Log;
 
+import java.util.Objects;
+import java.util.regex.Pattern;
+
 import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
 
 /**
@@ -14,11 +17,11 @@ import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
  * A location Staus receiver listening to a special intent which is
  * indicating if the user turned the location services on or off.
  */
-@SuppressWarnings({"ALL", "NonBooleanMethodNameMayNotStartWithQuestion"})
 public class LocationServiceStatusReceiver extends BroadcastReceiver {
     private final String TAG = getClass().getSimpleName();
     private final LocationListener locationListener;
-    private String oldStatus = null;
+    private String oldStatus;
+    private static final Pattern PROVIDER_CHANGED_PATTERN = Pattern.compile("android.location.PROVIDERS_CHANGED");
 
     LocationServiceStatusReceiver(LocationListener locationListener) {
         this.locationListener = locationListener;
@@ -58,34 +61,41 @@ public class LocationServiceStatusReceiver extends BroadcastReceiver {
      * @param context The Context in which the receiver is running.
      * @param intent  The Intent being received.
      */
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().matches("android.location.PROVIDERS_CHANGED")) {
+        if (PROVIDER_CHANGED_PATTERN.matcher(intent.getAction()).matches()) {
             Log.d(TAG, "GPS Status changed");
-            this.oldStatus = updateStatus(context, this.oldStatus);
+            long currentTime = System.currentTimeMillis();
+            synchronized (new Object()) {
+                oldStatus = updateStatus(context, oldStatus, currentTime);
+            }
         }
     }
 
     void sendInitialProbe(Context context) {
-        this.oldStatus = updateStatus(context, null);
+        long currentTime = System.currentTimeMillis();
+        synchronized (new Object()) {
+            oldStatus = updateStatus(context, null, currentTime);
+        }
     }
 
-    private synchronized String updateStatus(Context context, String oldStatus) {
+    private String updateStatus(Context context, String previousStatus, long currentTime) {
         Log.d(TAG, "Check for Location preference status");
         LocationManager lm = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         String newStatus;
         try {
-            newStatus = lm.isProviderEnabled(LocationManager.GPS_PROVIDER) == true ? LocationServiceStatusProbe.ON : LocationServiceStatusProbe.OFF;
+            newStatus = (lm.isProviderEnabled(LocationManager.GPS_PROVIDER)) ? LocationServiceStatusProbe.ON : LocationServiceStatusProbe.OFF;
         } catch (RuntimeException ignored) {
             newStatus = LocationServiceStatusProbe.NO_PROVIDER;
         }
 
-        if (oldStatus == null || !oldStatus.equals(newStatus)) {
+        if (!Objects.equals(previousStatus, newStatus)) {
             Log.d(TAG, "Location status updated:" + newStatus);
 
             LocationServiceStatusProbe probe = new LocationServiceStatusProbe();
-            probe.setDate(System.currentTimeMillis());
+            probe.setDate(currentTime);
             probe.setLocationServiceStatus(newStatus);
             locationListener.onUpdate(probe);
         }

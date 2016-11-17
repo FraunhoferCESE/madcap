@@ -1,8 +1,5 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
-import android.content.Context;
-import android.text.Editable;
-
 import com.google.android.gms.awareness.SnapshotApi;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
@@ -12,7 +9,7 @@ import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
  *
  * A TimedLocationTask Factory following the factory pattern.
  */
-public class TimedLocationTaskFactory {
+class TimedLocationTaskFactory {
 
     /**
      * Create method following the factory pattern.
@@ -20,7 +17,8 @@ public class TimedLocationTaskFactory {
      * @param snapshotApi the SnapshotAPI.
      * @return a new TimedLocationTask
      */
-    public TimedLocationTask create(LocationListener locationListener, SnapshotApi snapshotApi, PermissionDeniedHandler permissionDeniedHandler){
+    @SuppressWarnings("MethodMayBeStatic")
+    TimedLocationTask create(LocationListener locationListener, SnapshotApi snapshotApi, PermissionDeniedHandler permissionDeniedHandler){
         return new TimedLocationTask(locationListener, snapshotApi, permissionDeniedHandler);
     }
 }

@@ -81,7 +81,7 @@ public class LocationListener implements Listener<LocationProbe> {
      * Being called when a new location service status is available.
      * @param state location service update state.
      */
-    public void onUpdate(LocationServiceStatusProbe state) {
+    void onUpdate(LocationServiceStatusProbe state) {
         mProbeManager.save(state);
     }
 

@@ -11,7 +11,9 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
         LocationListenerTest.class,
         TimedLocationTaskTest.class,
-        TimedLocationTaskFactoryTest.class
+        TimedLocationTaskFactoryTest.class,
+        LocationServiceStatusReceiverFactoryTest.class,
+        LocationServiceStatusReceiverTest.class
 })
 
 public class LocationListenerTestSuite {
