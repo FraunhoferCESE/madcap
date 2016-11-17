@@ -78,7 +78,8 @@
             android:enabled="true" />
         <service
             android:name=".services.DataCollectionService"
-            android:enabled="true" />
+            android:enabled="true"
+            />
         <service android:name="edu.mit.media.funf.FunfManager" />
 
         <receiver

@@ -73,6 +73,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
     @Override
     public void onCreate() {
         MyApplication.madcapLogger.d(TAG, "onCreate Login Service");
+        stopService(new Intent(this,DataCollectionService.class));
         madcapAuthManager.setCallbackClass(this);
         madcapAuthManager.connect();
     }
@@ -152,7 +153,6 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
-            MyApplication.madcapLogger.e(TAG, "HERE");
             startService(intent);
         }
 

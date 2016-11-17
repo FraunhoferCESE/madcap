@@ -116,18 +116,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         ((MyApplication) getApplication()).getComponent().inject(this);
         MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service");
         madcapAuthManager.setCallbackClass(this);
-        showRunNotification();
 
-        listeners.add(new LocationListener(this, new CacheFactory(cache),
-                locationClient,
-                snapshotApi,
-                timedLocationTaskFactory,
-                locationServiceStatusReceiverFactory,
-                googleApiClientConnectionIssueManager,
-                googleApiClientConnectionIssueManager,
-                madcapPermissionDeniedHandler));
-
-        enableAllListeners();
     }
 
     @Override
@@ -142,11 +131,30 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         hideRunNotification();
     }
 
+    @Override
+    public boolean onUnbind(Intent intent){
+        return false;
+    }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        MyApplication.madcapLogger.d(TAG, "OnStartcommand code: "+super.onStartCommand(intent, flags, startId));
-        return super.onStartCommand(intent, flags, startId);
+        MyApplication.madcapLogger.d(TAG, "OnStartCommand");
+        showRunNotification();
+
+        listeners.add(new LocationListener(this, new CacheFactory(cache, this),
+                locationClient,
+                snapshotApi,
+                timedLocationTaskFactory,
+                locationServiceStatusReceiverFactory,
+                googleApiClientConnectionIssueManager,
+                googleApiClientConnectionIssueManager,
+                madcapPermissionDeniedHandler));
+
+        enableAllListeners();
+
+        return START_STICKY;
+        //return super.onStartCommand(intent, flags, startId);
     }
 
     /**

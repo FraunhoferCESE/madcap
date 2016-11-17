@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -81,6 +82,7 @@ public class StartFragment extends Fragment {
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
+            Log.e(TAG, service.toString());
             DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
             mDataCollectionService = binder.getService();
             mDataCollectionService.addUploadListener(getUploadStatusListener());
@@ -268,6 +270,13 @@ public class StartFragment extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if(mBound) getActivity().unbindService(mConnection);
+        mBound = false;
+    }
+
+    @Override
     public void onDestroyView(){
         super.onDestroyView();
         MyApplication.madcapLogger.d(TAG, "onDestroy Fragment");
@@ -277,9 +286,7 @@ public class StartFragment extends Fragment {
             getCacheCountUpdater().cancel(true);
         }
 
-        if(mBound) getActivity().unbindService(mConnection);
 
-        mBound = false;
         mListener = null;
     }
 

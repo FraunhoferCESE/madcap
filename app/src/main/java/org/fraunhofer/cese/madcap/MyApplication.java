@@ -3,6 +3,7 @@ package org.fraunhofer.cese.madcap;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -78,5 +79,11 @@ public class MyApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    @Override
+    public void onTerminate(){
+        super.onTerminate();
+        Log.e(TAG, "Application terminated");
     }
 }
