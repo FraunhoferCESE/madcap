@@ -36,11 +36,6 @@ public class CacheFactory implements ProbeManager {
         saveToCache(probe);
     }
 
-    @Override
-    public List getAll() {
-        return null;
-    }
-
     enum DataType {
         ACCELEROMETER
     }

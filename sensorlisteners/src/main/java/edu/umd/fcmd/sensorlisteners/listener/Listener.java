@@ -4,6 +4,8 @@ import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
+ * Interface for listeners that listen for events or periodically capture state
+ *
  * Created by ANepaul on 10/28/2016.
  */
 

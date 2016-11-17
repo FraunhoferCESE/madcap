@@ -9,6 +9,8 @@ import edu.umd.fcmd.sensorlisteners.model.AccelerometerProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
+ * A listener to capture Accelerometer data on sensor changed events.
+ *
  * Created by ANepaul on 10/28/2016.
  */
 
@@ -24,8 +26,8 @@ public class AccelerometerListener extends SensorListener<AccelerometerProbe> {
      * Checks if the new state is significantly different than the old state depending on the
      * {@value ACCELEROMETER_THRESHOLD_PERCENT}. If old state is null, then the new state is
      * considered significant.
-     * @param newState
-     * @param oldState
+     * @param newState new data from the accelerometer
+     * @param oldState last seen data from the accelerometer
      * @return boolean value if the new state is considered significant
      */
     @Override

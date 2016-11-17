@@ -9,7 +9,7 @@ import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
  *
  * A TimedLocationTask Factory following the factory pattern.
  */
-class TimedLocationTaskFactory {
+public class TimedLocationTaskFactory {
 
     /**
      * Create method following the factory pattern.

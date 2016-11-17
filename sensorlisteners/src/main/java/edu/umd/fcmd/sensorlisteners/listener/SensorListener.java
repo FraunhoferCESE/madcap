@@ -12,19 +12,17 @@ import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
-public abstract class SensorListener<T extends Probe> implements SensorEventListener, Listener<T> {
+abstract class SensorListener<T extends Probe> implements SensorEventListener, Listener<T> {
     private static final String TAG = SensorListener.class.getSimpleName();
     private final Sensor mSensor;
-    private final Context mContext;
     private final SensorManager mSensorManager;
     private final ProbeManager<T> mProbeManager;
 
     private T mLastState;
 
-    public SensorListener(@Nullable Sensor sensor, Context context, ProbeManager probeManager) {
-        this.mSensor = sensor;
-        this.mContext = context;
-        this.mProbeManager = probeManager;
+    SensorListener(@Nullable Sensor sensor, Context context, ProbeManager<T> probeManager) {
+        mSensor = sensor;
+        mProbeManager = probeManager;
         mSensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
 
@@ -47,7 +45,7 @@ public abstract class SensorListener<T extends Probe> implements SensorEventList
         mProbeManager.save(state);
     }
 
-    abstract boolean isSignificant(T newState, T lastState);
+    abstract boolean isSignificant(T newState, T oldState);
 
     abstract T parseEvent(SensorEvent event);
 
@@ -62,10 +60,11 @@ public abstract class SensorListener<T extends Probe> implements SensorEventList
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        Log.i(TAG, "onAccuracyChanged: " + sensor + accuracy);
+        Log.i(TAG, "onAccuracyChanged: " + sensor + ", accuracy: " + accuracy);
     }
 
-    public int percentDiff(float newValue, float oldValue) {
+    @SuppressWarnings("NumericCastThatLosesPrecision")
+    static int percentDiff(float newValue, float oldValue) {
         return Math.abs(((int)((newValue - oldValue)/oldValue)) * 100);
     }
 }
