@@ -1,12 +1,13 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
-import java.util.Date;
-
 /**
+ * Base class for all probe types that record sensor or state data.
+ *
  * Created by ANepaul on 10/28/2016.
  */
 
 public abstract class Probe {
+    @SuppressWarnings("FieldNotUsedInToString")
     private long date;
 
     public long getDate() {

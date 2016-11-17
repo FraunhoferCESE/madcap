@@ -1,6 +1,8 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
 /**
+ * Captures accelerometer sensor data.
+ * <p>
  * Created by ANepaul on 10/28/2016.
  */
 
@@ -66,6 +68,6 @@ public class AccelerometerProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"x\": "+xAxis+", \"y\": "+yAxis+", \"z\": "+zAxis+"}" ;
+        return "{\"x\": " + xAxis + ", \"y\": " + yAxis + ", \"z\": " + zAxis + '}';
     }
 }

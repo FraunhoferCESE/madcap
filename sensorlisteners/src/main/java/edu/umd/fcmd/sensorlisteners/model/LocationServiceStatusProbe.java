@@ -2,7 +2,7 @@ package edu.umd.fcmd.sensorlisteners.model;
 
 /**
  * Created by MMueller on 11/14/2016.
- *
+ * <p>
  * Is indicating if the user turned location status on
  * or off.
  */
@@ -19,7 +19,7 @@ public class LocationServiceStatusProbe extends Probe {
      *
      * @return ON or OFF.
      */
-    public String getLocationServiceStatus() {
+    String getLocationServiceStatus() {
         return locationServiceStatus;
     }
 
