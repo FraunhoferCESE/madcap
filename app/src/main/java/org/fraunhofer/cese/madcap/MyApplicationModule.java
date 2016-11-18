@@ -19,11 +19,15 @@ import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 
+import java.util.Calendar;
+
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTask;
+import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 
@@ -74,6 +78,11 @@ class MyApplicationModule {
                 .build();
     }
 
+    @Provides
+    Calendar provideCalendar(){
+        return Calendar.getInstance();
+    }
+
 
     /**
      * Needed by the DataCollectionService.
@@ -92,6 +101,14 @@ class MyApplicationModule {
      */
     @Provides
     TimedLocationTaskFactory provideTimedLocationTaskFactory(){ return new TimedLocationTaskFactory();}
+
+    /**
+     * Needed by the DataCollectionService.
+     *
+     * @return a factory.
+     */
+    @Provides
+    TimedApplicationTaskFactory provideTimedApplicationTask(){ return new TimedApplicationTaskFactory();}
 
     /**
      * Needed by the DataCollectionService.

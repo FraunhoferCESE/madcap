@@ -31,6 +31,7 @@ import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueMa
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -39,6 +40,8 @@ import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
+import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
+import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
@@ -77,6 +80,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Inject
     MadcapPermissionDeniedHandler madcapPermissionDeniedHandler;
+
+    @Inject
+    TimedApplicationTaskFactory timedApplicationTaskFactory;
+
+    @Inject
+    Calendar calendar;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -151,6 +160,9 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
                 googleApiClientConnectionIssueManager,
                 madcapPermissionDeniedHandler));
 
+        listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this),
+                timedApplicationTaskFactory, calendar));
+
         enableAllListeners();
 
         return START_STICKY;
@@ -177,7 +189,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     /**
      * Stops all listeners.
      */
-    private synchronized void disableAllListeners(){
+    private void disableAllListeners(){
         for(Listener l : listeners) {
             l.stopListening();
             listeners.remove(l);

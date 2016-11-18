@@ -13,7 +13,7 @@
     <string name="collectDataSwitchText">Collect Data</string>
     <string name="dataCountText">Collected data since the last upload: </string>
     <string name="instanceIdText">Insatnce ID: %1$s</string>
-    <string name="uploadResultText">Last upload result: %1$s</string>
+    <string name="uploadResultText">Last upload result:</string>
     <string name="sendButtonText">Upload data now</string>
     <string name="signOutButtonText">Log out</string>
     <string name="quitProjectButtonText">Quit pocket security</string>
