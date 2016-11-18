@@ -211,8 +211,6 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         return status;
     }
 
-
-
     /**
      * Attempts to add an upload status listener to the cache.
      *
