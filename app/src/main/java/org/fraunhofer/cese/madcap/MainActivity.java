@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,9 +14,6 @@ import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.FragmentManager;
 import android.view.MenuItem;
-
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
-import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import java.util.List;
 
@@ -28,6 +26,7 @@ public class MainActivity extends AppCompatActivity
         HelpFragment.OnFragmentInteractionListener,
         LogoutFragment.OnFragmentInteractionListener,
         QuitFragment.OnFragmentInteractionListener{
+    private final String TAG = getClass().getSimpleName();
 
     private FragmentManager mainFragmentManager = getSupportFragmentManager();
     private StartFragment startFragment;
@@ -35,9 +34,19 @@ public class MainActivity extends AppCompatActivity
     private LogoutFragment logoutFragment;
     private QuitFragment quitFragment;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            //Restore the fragment's instance
+            MyApplication.madcapLogger.d(TAG, "SavedInstanceState not null");
+            startFragment = (StartFragment) mainFragmentManager.getFragment(savedInstanceState, "startfragment");
+        }else{
+            startFragment = new StartFragment();
+        }
+
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -54,7 +63,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         // Section for all fragments being shown in the main activity
-        startFragment = new StartFragment();
+        //startFragment = new StartFragment(); // see save instance
         helpFragment = new HelpFragment();
         logoutFragment = new LogoutFragment();
         quitFragment = new QuitFragment();
@@ -128,5 +137,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //Save the fragment's instance
+        getSupportFragmentManager().putFragment(outState, "startfragment", startFragment);
+        super.onSaveInstanceState(outState);
     }
 }

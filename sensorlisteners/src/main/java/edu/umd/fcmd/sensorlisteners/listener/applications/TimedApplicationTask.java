@@ -118,8 +118,6 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
                 //Retrieve form last time to current time
                 UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
                 UsageEvents usageEvents = usageStatsManager.queryEvents(lastTime, currentTime);
-                Log.d(TAG, "Last time "+lastTime+" Current time "+currentTime);
-                Log.d(TAG, usageEvents.hasNextEvent()+"");
 
                 while(usageEvents.hasNextEvent()){
                     UsageEvents.Event event = new UsageEvents.Event();

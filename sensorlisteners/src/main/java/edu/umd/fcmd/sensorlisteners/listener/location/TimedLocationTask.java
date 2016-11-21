@@ -70,7 +70,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                             public void onResult(@NonNull LocationResult r) {
                                 if (r.getStatus().isSuccess()) {
                                     publishProgress(r.getLocation());
-                                    Log.d(TAG, "New Location results available");
+                                    //Log.d(TAG, "New Location results available");
                                 } else {
                                     Log.e(TAG, "could not retrieve result");
                                 }

@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -115,16 +116,19 @@ public class StartFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
-            uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
-        } else {
-            dataCountText = "Computing...";
-            uploadResultText = "None.";
-            //isCollectingData = true;
-        }
 
         mConnection = new ServiceConnection() {
             @Override
@@ -152,20 +156,6 @@ public class StartFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(STATE_UPLOAD_STATUS, uploadResultText);
-        outState.putString(STATE_DATA_COUNT, dataCountText);
-        outState.putBoolean(STATE_COLLECTING_DATA, isCollectingData);
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -184,6 +174,7 @@ public class StartFragment extends Fragment {
         }
 
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
+        dataCountView.setText(dataCountText);
         uploadResultView = (TextView) view.findViewById(R.id.uploadResult);
 
         if (savedInstanceState != null) {
@@ -298,11 +289,33 @@ public class StartFragment extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if(mBound){
-            unbindConnection();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            MyApplication.madcapLogger.d(TAG, "NOT NULL");
+            dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
+            dataCountView.setText(dataCountText);
+            uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
+        } else {
+            dataCountText = "Computing...";
+            uploadResultText = "None.";
+            //isCollectingData = true;
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_UPLOAD_STATUS, uploadResultText);
+        outState.putString(STATE_DATA_COUNT, dataCountText);
+        outState.putBoolean(STATE_COLLECTING_DATA, isCollectingData);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
     }
 
     @Override
@@ -312,6 +325,14 @@ public class StartFragment extends Fragment {
         Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
         bindConnection(intent);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(mBound){
+            unbindConnection();
+        }
     }
 
     @Override
@@ -327,13 +348,18 @@ public class StartFragment extends Fragment {
         mListener = null;
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
     private AsyncTask<Void, Long, Void> getCacheCountUpdater() {
         cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 while (!isCancelled()) {
                     if(mBound){
-                        MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
+                       // MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
                         publishProgress(mDataCollectionService.getCacheSize());
                     }
                     try {
@@ -430,22 +456,6 @@ public class StartFragment extends Fragment {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
     }
 
     protected ServiceConnection getmConnection() {
