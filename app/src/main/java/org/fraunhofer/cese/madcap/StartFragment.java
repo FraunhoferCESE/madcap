@@ -173,6 +173,14 @@ public class StartFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
 
+        Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
+        if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
+            Log.d(TAG, "now binding connection");
+            bindConnection(intent);
+        }else {
+            mBound =false;
+        }
+
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
         uploadResultView = (TextView) view.findViewById(R.id.uploadResult);
 
@@ -279,7 +287,7 @@ public class StartFragment extends Fragment {
                             text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
                         }
                         uploadResultText = text;
-                        uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
+                        uploadResultView.setText(uploadResultText);
                     }
                 }
         );
@@ -300,13 +308,6 @@ public class StartFragment extends Fragment {
         super.onResume();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-        Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
-        if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
-            Log.d(TAG, "now binding connection");
-            bindConnection(intent);
-        }else {
-            mBound =false;
-        }
     }
 
     @Override
@@ -389,7 +390,7 @@ public class StartFragment extends Fragment {
 
                     uploadResultText = text;
                     if (uploadResultView.isShown())
-                        uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
+                        uploadResultView.setText(getString(R.string.uploadResultText)+uploadResultText);
                     if (mDataCollectionService != null)
                         updateDataCount(-1);
                     MyApplication.madcapLogger.d(TAG, "Upload result received");
