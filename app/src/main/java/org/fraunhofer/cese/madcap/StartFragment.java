@@ -83,7 +83,9 @@ public class StartFragment extends Fragment {
 
     private void bindConnection(Intent intent){
         MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is "+mBound);
-        getActivity().getApplicationContext().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
+        if(!mBound){
+            getActivity().getApplicationContext().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
+        }
         mBound = true;
     }
 
@@ -331,7 +333,7 @@ public class StartFragment extends Fragment {
             protected Void doInBackground(Void... params) {
                 while (!isCancelled()) {
                     if(mBound){
-                        //MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
+                        MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
                         publishProgress(mDataCollectionService.getCacheSize());
                     }
                     try {
