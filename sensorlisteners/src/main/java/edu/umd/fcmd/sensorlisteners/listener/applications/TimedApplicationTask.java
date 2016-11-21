@@ -102,7 +102,6 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
     public void checkForNewEvents(Context context, ComponentName lastComponent, long lastTime) {
         if (apiLevel >= Build.VERSION_CODES.LOLLIPOP) {
             this.lastTime = getUsageEventsStatsManager(context, lastTime);
-            Log.d(TAG, "Here");
             //getUsageEvents();
         } else {
             this.lastComponent = getUsageEventsRunningTasks(context, lastComponent);
@@ -119,6 +118,7 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
                 //Retrieve form last time to current time
                 UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
                 UsageEvents usageEvents = usageStatsManager.queryEvents(lastTime, currentTime);
+                Log.d(TAG, usageEvents.toString());
 
                 while(usageEvents.hasNextEvent()){
                     UsageEvents.Event event = new UsageEvents.Event();

@@ -91,6 +91,7 @@ public class StartFragment extends Fragment {
             MyApplication.madcapLogger.d(TAG, "mDataCollectionService is "+mDataCollectionService.toString());
             mBound = true;
             Log.d(TAG, "added UploadListener");
+            getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         @Override
@@ -106,7 +107,6 @@ public class StartFragment extends Fragment {
         MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is "+mBound);
         getActivity().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
         mBound = true;
-        MyApplication.madcapLogger.d(TAG, "boundConnection "+mDataCollectionService);
     }
 
     private void unbindConnection(){
@@ -287,8 +287,6 @@ public class StartFragment extends Fragment {
                     }
                 }
         );
-
-        getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         return view;
     }
