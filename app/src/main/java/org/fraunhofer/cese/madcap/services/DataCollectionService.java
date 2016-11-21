@@ -32,7 +32,9 @@ import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -58,7 +60,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     private NotificationManager mNotificationManager;
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
-    private List<Listener> listeners = new ArrayList<>();
+    private List<Listener> listeners = new CopyOnWriteArrayList<>();
 
     @Inject
     Cache cache;
@@ -151,17 +153,19 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         MyApplication.madcapLogger.d(TAG, "OnStartCommand");
         showRunNotification();
 
-        listeners.add(new LocationListener(this, new CacheFactory(cache, this),
-                locationClient,
-                snapshotApi,
-                timedLocationTaskFactory,
-                locationServiceStatusReceiverFactory,
-                googleApiClientConnectionIssueManager,
-                googleApiClientConnectionIssueManager,
-                madcapPermissionDeniedHandler));
+        synchronized(listeners){
+            listeners.add(new LocationListener(this, new CacheFactory(cache, this),
+                    locationClient,
+                    snapshotApi,
+                    timedLocationTaskFactory,
+                    locationServiceStatusReceiverFactory,
+                    googleApiClientConnectionIssueManager,
+                    googleApiClientConnectionIssueManager,
+                    madcapPermissionDeniedHandler));
 
-        listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this),
-                timedApplicationTaskFactory, calendar));
+            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this),
+                    timedApplicationTaskFactory, calendar));
+        }
 
         enableAllListeners();
 
@@ -173,15 +177,18 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      * Starts all listeners.
      */
     private void enableAllListeners(){
-        for(Listener l : listeners){
-            try{
-                MyApplication.madcapLogger.d(TAG,"numListeners: "+listeners.size());
-                l.startListening();
-                MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName()+" started listening");
-            } catch (NoSensorFoundException nsf) {
-                MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
+        synchronized(listeners){
+            for(Listener l : listeners){
+                try{
+                    MyApplication.madcapLogger.d(TAG,"numListeners: "+listeners.size());
+                    l.startListening();
+                    MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName()+" started listening");
+                } catch (NoSensorFoundException nsf) {
+                    MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
+                }
             }
         }
+
     }
 
 
@@ -190,10 +197,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      * Stops all listeners.
      */
     private void disableAllListeners(){
-        for(Listener l : listeners) {
-            l.stopListening();
-            listeners.remove(l);
-            MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " stopped listening");
+        synchronized(listeners){
+            for(Listener l : listeners) {
+                l.stopListening();
+                listeners.remove(l);
+                MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " stopped listening");
+            }
         }
     }
 

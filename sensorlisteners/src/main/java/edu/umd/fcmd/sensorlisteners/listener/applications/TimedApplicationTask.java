@@ -2,24 +2,20 @@ package edu.umd.fcmd.sensorlisteners.listener.applications;
 
 import android.app.ActivityManager;
 import android.app.usage.UsageEvents;
-import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.Calendar;
-import java.util.Map;
+
 
 import edu.umd.fcmd.sensorlisteners.model.ForegroundBackgroundEventsProbe;
 
 import static android.content.Context.ACTIVITY_SERVICE;
-import static android.content.Context.SYSTEM_HEALTH_SERVICE;
-import static java.security.AccessController.getContext;
 
 /**
  * Created by MMueller on 11/17/2016.
@@ -205,11 +201,14 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
      * @return accuracy [0,1]
      */
     private double computeAccuracy(int apilevel, long intervallStart, long intervallStop) {
-        if (apilevel >= Build.VERSION_CODES.LOLLIPOP) {
-            return 1.0;
-        } else {
-            long periode = intervallStop - intervallStart;
-            return Math.exp(-(periode / normalizationFactor));
-        }
+        return intervallStop - intervallStart;
+
+        //TODO find a good function to represent this.
+//        if (apilevel >= Build.VERSION_CODES.LOLLIPOP) {
+//            return 1.0;
+//        } else {
+//            long periode = intervallStop - intervallStart;
+//            return Math.exp(-(periode / normalizationFactor));
+//        }
     }
 }

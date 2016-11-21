@@ -91,6 +91,7 @@ public class StartFragment extends Fragment {
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
+            mDataCollectionService.removeUploadListener(getUploadStatusListener());
             mBound = false;
         }
     };
@@ -285,7 +286,6 @@ public class StartFragment extends Fragment {
         if (!getCacheCountUpdater().isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
             getCacheCountUpdater().cancel(true);
         }
-
 
         mListener = null;
     }
