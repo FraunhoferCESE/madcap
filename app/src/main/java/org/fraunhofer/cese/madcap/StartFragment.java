@@ -1,6 +1,7 @@
 package org.fraunhofer.cese.madcap;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -77,31 +78,8 @@ public class StartFragment extends Fragment {
     private String dataCountText;
 
     /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
-        private final String TAG = getClass().getSimpleName();
+    private ServiceConnection mConnection;
 
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
-            Log.e(TAG, "New service connection service "+service.toString());
-            DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
-            mDataCollectionService = binder.getService();
-            mDataCollectionService.addUploadListener(getUploadStatusListener());
-            MyApplication.madcapLogger.d(TAG, "mDataCollectionService is "+mDataCollectionService.toString());
-            mBound = true;
-            Log.d(TAG, "added UploadListener");
-            getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            // Only invoked when hosting service crashed or is killed.
-            mDataCollectionService.removeUploadListener(getUploadStatusListener());
-            mBound = false;
-            Log.d(TAG, "removed UploadListener");
-        }
-    };
 
     private void bindConnection(Intent intent){
         MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is "+mBound);
@@ -145,6 +123,30 @@ public class StartFragment extends Fragment {
             uploadResultText = "None.";
             //isCollectingData = true;
         }
+
+        mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                Log.d(TAG, "onServiceConnected");
+                // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
+                Log.e(TAG, "New service connection service "+service.toString());
+                DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
+                mDataCollectionService = binder.getService();
+                mDataCollectionService.addUploadListener(getUploadStatusListener());
+                mBound = true;
+                Log.d(TAG, "added UploadListener");
+                getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                // Only invoked when hosting service crashed or is killed.
+                mDataCollectionService.removeUploadListener(getUploadStatusListener());
+                mBound = false;
+                Log.d(TAG, "removed UploadListener");
+            }
+        };
     }
 
     @Override
@@ -168,15 +170,8 @@ public class StartFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_start, container, false);
 
-        Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
-        if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
-            Log.d(TAG, "now binding connection");
-            bindConnection(intent);
-        }else {
-            mBound =false;
-        }
 
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
         uploadResultView = (TextView) view.findViewById(R.id.uploadResult);
@@ -303,6 +298,15 @@ public class StartFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
+        if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
+            Log.d(TAG, "now binding connection");
+            bindConnection(intent);
+        }else {
+            mBound =false;
+        }
     }
 
     @Override
