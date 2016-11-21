@@ -307,6 +307,8 @@ public class StartFragment extends Fragment {
     public void onResume(){
         super.onResume();
 
+        Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
+        bindConnection(intent);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
