@@ -84,7 +84,7 @@ public class StartFragment extends Fragment {
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
-            Log.e(TAG, service.toString());
+            Log.e(TAG, "New service connection service "+service.toString());
             DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
             mDataCollectionService = binder.getService();
             mDataCollectionService.addUploadListener(getUploadStatusListener());
@@ -105,14 +105,14 @@ public class StartFragment extends Fragment {
 
     private void bindConnection(Intent intent){
         MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is "+mBound);
-        getActivity().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
+        getActivity().getApplicationContext().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
         mBound = true;
     }
 
     private void unbindConnection(){
         MyApplication.madcapLogger.d(TAG, "Attempt to unbind self. Current bound status is "+mBound);
-        getActivity().unbindService(mConnection);
         mDataCollectionService.removeUploadListener(uploadStatusListener);
+        getActivity().getApplicationContext().unbindService(mConnection);
         Log.d(TAG, "removed UploadListener");
         mBound = false;
     }
@@ -172,6 +172,7 @@ public class StartFragment extends Fragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
         if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
+            Log.d(TAG, "now binding connection");
             bindConnection(intent);
         }else {
             mBound =false;
@@ -231,7 +232,7 @@ public class StartFragment extends Fragment {
                             boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
                             Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
-                            getActivity().startService(intent);
+                            getActivity().getApplicationContext().startService(intent);
                             bindConnection(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
@@ -297,6 +298,11 @@ public class StartFragment extends Fragment {
         if(mBound){
             unbindConnection();
         }
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
     }
 
     @Override
