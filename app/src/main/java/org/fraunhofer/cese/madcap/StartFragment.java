@@ -1,6 +1,7 @@
 package org.fraunhofer.cese.madcap;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -164,36 +165,8 @@ public class StartFragment extends Fragment {
     /**
      * Defines callbacks for service binding, passed to bindService()
      */
-    private final ServiceConnection mConnection = new ServiceConnection() {
-        private final String TAG = getClass().getSimpleName();
+    private ServiceConnection mConnection;
 
-        @Override
-        public void onServiceConnected(ComponentName className,
-                                       IBinder service) {
-            // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
-
-            Log.d(TAG, "onServiceConnected: " + service.toString());
-
-            mDataCollectionService = ((DataCollectionService.DataCollectionServiceBinder) service).getService();
-            mDataCollectionService.addUploadListener(uploadStatusListener);
-            MyApplication.madcapLogger.d(TAG, "mDataCollectionService is " + mDataCollectionService.toString());
-            mBound = true;
-            cacheCountUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            // Only invoked when hosting service crashed or is killed.
-            MyApplication.madcapLogger.d(TAG, "onServiceDisconected");
-            mDataCollectionService.removeUploadListener(uploadStatusListener);
-            mBound = false;
-
-            AsyncTask.Status status = cacheCountUpdater.getStatus();
-            if (cacheCountUpdater.isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
-                cacheCountUpdater.cancel(true);
-            }
-        }
-    };
 
     private void bindConnection(Intent intent) {
         MyApplication.madcapLogger.d(TAG, "bindConnection called. Current bound status: " + mBound);
@@ -227,6 +200,37 @@ public class StartFragment extends Fragment {
             dataCountText = "Computing...";
             uploadResultText = "None.";
         }
+
+        mConnection = new ServiceConnection() {
+            private final String TAG = getClass().getSimpleName();
+
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
+
+                Log.d(TAG, "onServiceConnected: " + service.toString());
+
+                mDataCollectionService = ((DataCollectionService.DataCollectionServiceBinder) service).getService();
+                mDataCollectionService.addUploadListener(uploadStatusListener);
+                MyApplication.madcapLogger.d(TAG, "mDataCollectionService is " + mDataCollectionService.toString());
+                mBound = true;
+                cacheCountUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                // Only invoked when hosting service crashed or is killed.
+                MyApplication.madcapLogger.d(TAG, "onServiceDisconected");
+                mDataCollectionService.removeUploadListener(uploadStatusListener);
+                mBound = false;
+
+                AsyncTask.Status status = cacheCountUpdater.getStatus();
+                if (cacheCountUpdater.isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
+                    cacheCountUpdater.cancel(true);
+                }
+            }
+        };
     }
 
     @Override
@@ -250,11 +254,12 @@ public class StartFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_start, container, false);
 
-        Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
 
         if (isCollectingData && !mBound) {
+            Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
+
             bindConnection(intent);
         }
 
@@ -361,7 +366,7 @@ public class StartFragment extends Fragment {
                             text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
                         }
                         uploadResultText = text;
-                        uploadResultView.setText(R.string.uploadResultText);
+                        uploadResultView.setText(uploadResultText);
                     }
                 }
         );
@@ -380,6 +385,10 @@ public class StartFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
+        bindConnection(intent);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
     @Override
@@ -387,11 +396,13 @@ public class StartFragment extends Fragment {
         super.onDestroyView();
         MyApplication.madcapLogger.d(TAG, "onDestroy Fragment");
 
-        if(mBound)
+        if (mBound)
             unbindConnection();
 
         mListener = null;
     }
+
+
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

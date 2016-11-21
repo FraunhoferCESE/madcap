@@ -29,7 +29,8 @@ import org.fraunhofer.cese.madcap.util.MadcapLogger;
 public class MyApplication extends Application {
     public static final String TAG = "MADCAP.MyApplication";
     private MyComponent component;
-    public static MadcapLogger madcapLogger = new MadcapLogger();
+    @SuppressWarnings("StaticVariableOfConcreteClass")
+    public static final MadcapLogger madcapLogger = new MadcapLogger();
 
 
     @Override
