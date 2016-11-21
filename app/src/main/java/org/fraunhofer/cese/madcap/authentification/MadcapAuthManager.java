@@ -21,12 +21,15 @@ import com.google.android.gms.common.api.Status;
 
 import java.io.Serializable;
 
+import javax.inject.Singleton;
+
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 /**
  * Created by MMueller on 9/29/2016.
  */
-public class MadcapAuthManager implements OnConnectionFailedListener, Serializable{
+@Singleton
+public class MadcapAuthManager implements OnConnectionFailedListener, Serializable {
     private static MadcapAuthManager instance = null;
 
     private static final String TAG = "MADCAP Auth Manager";

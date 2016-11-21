@@ -39,8 +39,6 @@ import java.util.regex.Pattern;
  * Activities that contain this fragment must implement the
  * {@link StartFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link StartFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class StartFragment extends Fragment {
     private final String TAG = getClass().getSimpleName();
@@ -117,7 +115,29 @@ public class StartFragment extends Fragment {
         }
     };
 
-    private AsyncTask<Void, Long, Void> cacheCountUpdater;
+    private final AsyncTask<Void, Long, Void> cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
+        @Override
+        protected Void doInBackground(Void... params) {
+            while (!isCancelled()) {
+                if (mBound) {
+                    //MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
+                    publishProgress(mDataCollectionService.getCacheSize());
+                }
+                try {
+                    Thread.sleep(CACHE_UPDATE_UI_DELAY);
+                } catch (InterruptedException e) {
+                    MyApplication.madcapLogger.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Long... values) {
+            updateDataCount(values[0]);
+        }
+    };
+    ;
 
     //This is the data collection service we bind to.
     private DataCollectionService mDataCollectionService;
@@ -141,7 +161,9 @@ public class StartFragment extends Fragment {
     private String uploadResultText;
     private String dataCountText;
 
-    /** Defines callbacks for service binding, passed to bindService() */
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
     private final ServiceConnection mConnection = new ServiceConnection() {
         private final String TAG = getClass().getSimpleName();
 
@@ -149,12 +171,14 @@ public class StartFragment extends Fragment {
         public void onServiceConnected(ComponentName className,
                                        IBinder service) {
             // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
+
             Log.d(TAG, "onServiceConnected: " + service.toString());
 
-            mDataCollectionService = (DataCollectionService) service;
+            mDataCollectionService = ((DataCollectionService.DataCollectionServiceBinder) service).getService();
             mDataCollectionService.addUploadListener(uploadStatusListener);
-            MyApplication.madcapLogger.d(TAG, "mDataCollectionService is "+mDataCollectionService.toString());
+            MyApplication.madcapLogger.d(TAG, "mDataCollectionService is " + mDataCollectionService.toString());
             mBound = true;
+            cacheCountUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         @Override
@@ -163,22 +187,27 @@ public class StartFragment extends Fragment {
             MyApplication.madcapLogger.d(TAG, "onServiceDisconected");
             mDataCollectionService.removeUploadListener(uploadStatusListener);
             mBound = false;
+
+            AsyncTask.Status status = cacheCountUpdater.getStatus();
+            if (cacheCountUpdater.isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
+                cacheCountUpdater.cancel(true);
+            }
         }
     };
 
-    private void bindConnection(Intent intent){
-        MyApplication.madcapLogger.d(TAG, "bindConnection called. Current bound status: "+mBound);
-        if(!mBound) {
-            getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+    private void bindConnection(Intent intent) {
+        MyApplication.madcapLogger.d(TAG, "bindConnection called. Current bound status: " + mBound);
+        if (!mBound) {
+            getActivity().getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             mBound = true;
             MyApplication.madcapLogger.d(TAG, "bindConnection -- bound to " + mDataCollectionService);
         }
     }
 
-    private void unbindConnection(){
-        MyApplication.madcapLogger.d(TAG, "unbindConnection called. Current bound status is "+mBound);
-        if(mBound) {
-            getActivity().unbindService(mConnection);
+    private void unbindConnection() {
+        MyApplication.madcapLogger.d(TAG, "unbindConnection called. Current bound status is " + mBound);
+        if (mBound) {
+            getActivity().getApplicationContext().unbindService(mConnection);
             mBound = false;
             MyApplication.madcapLogger.d(TAG, "unbindConnection -- connection unbound.");
         }
@@ -210,7 +239,7 @@ public class StartFragment extends Fragment {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
     }
 
@@ -224,7 +253,8 @@ public class StartFragment extends Fragment {
         Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
-        if(isCollectingData && !mBound) {
+
+        if (isCollectingData && !mBound) {
             bindConnection(intent);
         }
 
@@ -241,7 +271,7 @@ public class StartFragment extends Fragment {
 
         //Parse the greeting information
         nameTextView = (TextView) view.findViewById(R.id.usernameTextview);
-        if(madcapAuthManager.getLastSignedInUsersName() != null){
+        if (madcapAuthManager.getLastSignedInUsersName() != null) {
             nameTextView.setText(madcapAuthManager.getLastSignedInUsersName());
         }
 
@@ -256,10 +286,10 @@ public class StartFragment extends Fragment {
         //Set up the colorable data collection background
         dataCollectionLayout = (LinearLayout) view.findViewById(R.id.dataCollectionLayout);
 
-        if(isCollectingData){
+        if (isCollectingData) {
             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
-        }else{
+        } else {
             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
         }
@@ -274,28 +304,27 @@ public class StartFragment extends Fragment {
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                         if (isChecked) {
                             isCollectingData = true;
-                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-                            SharedPreferences.Editor editor = prefs.edit();
+                            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
                             editor.putBoolean(getString(R.string.data_collection_pref), true);
                             editor.commit();
 
-                            MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+isCollectingData);
+                            MyApplication.madcapLogger.d(TAG, "Current data collection preference is now " + isCollectingData);
                             Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
-                            getActivity().startService(intent);
+                            getActivity().getApplicationContext().startService(intent);
                             bindConnection(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
                         } else {
                             isCollectingData = false;
-                            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-                            SharedPreferences.Editor editor = prefs.edit();
+                            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getContext()).edit();
                             editor.putBoolean(getString(R.string.data_collection_pref), false);
                             editor.commit();
-                            MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+isCollectingData);
+
+                            MyApplication.madcapLogger.d(TAG, "Current data collection preference is now " + isCollectingData);
+
+                            unbindConnection();
+
                             Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
-                            if(mBound){
-                                unbindConnection();
-                            }
                             getActivity().getApplicationContext().stopService(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
@@ -332,12 +361,10 @@ public class StartFragment extends Fragment {
                             text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
                         }
                         uploadResultText = text;
-                        uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
+                        uploadResultView.setText(R.string.uploadResultText);
                     }
                 }
         );
-
-        getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         return view;
     }
@@ -345,49 +372,25 @@ public class StartFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if(mBound){
+        if (mBound) {
             unbindConnection();
         }
     }
 
     @Override
-    public void onDestroyView(){
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onDestroyView() {
         super.onDestroyView();
         MyApplication.madcapLogger.d(TAG, "onDestroy Fragment");
 
-        AsyncTask.Status status = getCacheCountUpdater().getStatus();
-        if (!getCacheCountUpdater().isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
-            getCacheCountUpdater().cancel(true);
-        }
+        if(mBound)
+            unbindConnection();
 
         mListener = null;
-    }
-
-    private AsyncTask<Void, Long, Void> getCacheCountUpdater() {
-        cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
-            @Override
-            protected Void doInBackground(Void... params) {
-                while (!isCancelled()) {
-                    if(mBound){
-                        //MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
-                        publishProgress(mDataCollectionService.getCacheSize());
-                    }
-                    try {
-                        Thread.sleep(CACHE_UPDATE_UI_DELAY);
-                    } catch (InterruptedException e) {
-                        MyApplication.madcapLogger.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
-                    }
-                }
-                return null;
-            }
-
-            @Override
-            protected void onProgressUpdate(Long... values) {
-                updateDataCount(values[0]);
-            }
-        };
-
-        return cacheCountUpdater;
     }
 
     public void onButtonPressed(Uri uri) {
@@ -412,15 +415,11 @@ public class StartFragment extends Fragment {
         super.onDetach();
     }
 
-    protected ServiceConnection getmConnection() {
-        return mConnection;
-    }
-
     private void updateDataCount(long count) {
-        dataCountText = count < 0 ? "Computing..." : Long.toString(count);
 
         if (dataCountView != null && dataCountView.isShown()) {
-            dataCountView.setText(getString(R.string.dataCountText)+" "+dataCountText);
+            dataCountText = count < 0 ? "Computing..." : Long.toString(count);
+            dataCountView.setText(getString(R.string.dataCountText) + " " + dataCountText);
         }
     }
 

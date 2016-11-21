@@ -27,39 +27,32 @@ import org.fraunhofer.cese.madcap.util.MadcapLogger;
 //        resToastText = R.string.crash_toast_text
 //)
 public class MyApplication extends Application {
-    public static final String TAG = "Madcap My Application";
+    public static final String TAG = "MADCAP.MyApplication";
     private MyComponent component;
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
     public static MadcapLogger madcapLogger = new MadcapLogger();
 
-    private static GoogleApiClient mGoogleApiClient;
-    private static GoogleSignInOptions gso;
-
-    private static Context context;
 
     @Override
     public final void onCreate() {
         super.onCreate();
 
-        MyApplication.madcapLogger.e(TAG, "on create of My application has been called");
+        madcapLogger.e(TAG, "on create of My application has been called");
 
         //Initialize Acra
 //        ACRA.init(this);
 
         //Initializations for the Google Authentification
-        context = getApplicationContext();
-
-        gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestProfile()
                 .build();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
+        GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
                 //.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
 
-        madcapAuthManager.setUp(gso, mGoogleApiClient);
+        MadcapAuthManager.getInstance().setUp(gso, mGoogleApiClient);
 
         // Initialize the Component used to inject dependencies.
         component = DaggerMyComponent.builder()

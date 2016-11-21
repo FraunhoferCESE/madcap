@@ -42,7 +42,7 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                APPLICATION_SLEEP_TIME = 15000;
+                APPLICATION_SLEEP_TIME = 5000;
 
             } else {
                 APPLICATION_SLEEP_TIME = 1000;
@@ -102,7 +102,6 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
     public void checkForNewEvents(Context context, ComponentName lastComponent, long lastTime) {
         if (apiLevel >= Build.VERSION_CODES.LOLLIPOP) {
             this.lastTime = getUsageEventsStatsManager(context, lastTime);
-            Log.d(TAG, "Here");
             //getUsageEvents();
         } else {
             this.lastComponent = getUsageEventsRunningTasks(context, lastComponent);
@@ -119,6 +118,8 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
                 //Retrieve form last time to current time
                 UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
                 UsageEvents usageEvents = usageStatsManager.queryEvents(lastTime, currentTime);
+                Log.d(TAG, "Last time "+lastTime+" Current time "+currentTime);
+                Log.d(TAG, usageEvents.hasNextEvent()+"");
 
                 while(usageEvents.hasNextEvent()){
                     UsageEvents.Event event = new UsageEvents.Event();
@@ -130,7 +131,6 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
                     probe.setPackageName(event.getPackageName());
                     probe.setDate(event.getTimeStamp());
                     publishProgress(probe);
-
                 }
 
 //                Map<String, UsageStats> stats = usageStatsManager.queryAndAggregateUsageStats(lastTime, currentTime);

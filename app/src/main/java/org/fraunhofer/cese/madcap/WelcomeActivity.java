@@ -16,8 +16,12 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.services.LoginService;
 
+import javax.inject.Inject;
+
 public class WelcomeActivity extends AppCompatActivity {
     private final String TAG = "Welcome Activity";
+
+    @Inject
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
     private TextView errorTextView;
     private Button helpButton;
