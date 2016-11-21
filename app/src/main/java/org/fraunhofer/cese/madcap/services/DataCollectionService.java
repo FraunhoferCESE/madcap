@@ -200,7 +200,6 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         synchronized(listeners){
             for(Listener l : listeners) {
                 l.stopListening();
-                listeners.remove(l);
                 MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " stopped listening");
             }
         }

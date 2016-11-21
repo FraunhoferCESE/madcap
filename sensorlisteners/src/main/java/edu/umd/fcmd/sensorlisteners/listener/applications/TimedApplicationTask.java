@@ -102,6 +102,7 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
     public void checkForNewEvents(Context context, ComponentName lastComponent, long lastTime) {
         if (apiLevel >= Build.VERSION_CODES.LOLLIPOP) {
             this.lastTime = getUsageEventsStatsManager(context, lastTime);
+            Log.d(TAG, "Here");
             //getUsageEvents();
         } else {
             this.lastComponent = getUsageEventsRunningTasks(context, lastComponent);

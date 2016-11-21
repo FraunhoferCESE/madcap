@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -42,7 +43,7 @@ import java.util.regex.Pattern;
  * create an instance of this fragment.
  */
 public class StartFragment extends Fragment {
-    private final String TAG = this.getClass().getSimpleName();
+    private final String TAG = getClass().getSimpleName();
     private static final String STATE_UPLOAD_STATUS = "uploadStatus";
     private static final String STATE_DATA_COUNT = "dataCount";
     private static final String STATE_COLLECTING_DATA = "isCollectingData";
@@ -77,6 +78,7 @@ public class StartFragment extends Fragment {
 
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection = new ServiceConnection() {
+        private final String TAG = getClass().getSimpleName();
 
         @Override
         public void onServiceConnected(ComponentName className,
@@ -86,15 +88,34 @@ public class StartFragment extends Fragment {
             DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
             mDataCollectionService = binder.getService();
             mDataCollectionService.addUploadListener(getUploadStatusListener());
+            MyApplication.madcapLogger.d(TAG, "mDataCollectionService is "+mDataCollectionService.toString());
             mBound = true;
+            Log.d(TAG, "added UploadListener");
         }
 
         @Override
         public void onServiceDisconnected(ComponentName arg0) {
+            // Only invoked when hosting service crashed or is killed.
             mDataCollectionService.removeUploadListener(getUploadStatusListener());
             mBound = false;
+            Log.d(TAG, "removed UploadListener");
         }
     };
+
+    private void bindConnection(Intent intent){
+        MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is "+mBound);
+        getActivity().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
+        mBound = true;
+        MyApplication.madcapLogger.d(TAG, "boundConnection "+mDataCollectionService);
+    }
+
+    private void unbindConnection(){
+        MyApplication.madcapLogger.d(TAG, "Attempt to unbind self. Current bound status is "+mBound);
+        getActivity().unbindService(mConnection);
+        mDataCollectionService.removeUploadListener(uploadStatusListener);
+        Log.d(TAG, "removed UploadListener");
+        mBound = false;
+    }
 
     public StartFragment() {
         // Required empty public constructor
@@ -147,13 +168,14 @@ public class StartFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_start, container, false);
 
-        Intent intent = new Intent(getContext(), DataCollectionService.class);
+        Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         isCollectingData = prefs.getBoolean(getString(R.string.data_collection_pref), true);
         if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
-            getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+            bindConnection(intent);
+        }else {
+            mBound =false;
         }
-
 
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
         uploadResultView = (TextView) view.findViewById(R.id.uploadResult);
@@ -208,9 +230,9 @@ public class StartFragment extends Fragment {
                             editor.commit();
                             boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
-                            Intent intent = new Intent(getActivity(), DataCollectionService.class);
+                            Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
                             getActivity().startService(intent);
-                            getActivity().bindService(intent , StartFragment.this.getmConnection(), Context.BIND_AUTO_CREATE);
+                            bindConnection(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_true_color));
                         } else {
@@ -221,10 +243,11 @@ public class StartFragment extends Fragment {
                             editor.commit();
                             boolean currentCollectionState = prefs.getBoolean(getString(R.string.data_collection_pref), true);
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now "+currentCollectionState);
-                            Intent intent = new Intent(getActivity(), DataCollectionService.class);
-                            if(mBound) getActivity().unbindService(mConnection);
-                            mBound = false;
-                            getActivity().stopService(intent);
+                            Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
+                            if(mBound){
+                                unbindConnection();
+                            }
+                            getActivity().getApplicationContext().stopService(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
                             dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
                         }
@@ -273,8 +296,9 @@ public class StartFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        if(mBound) getActivity().unbindService(mConnection);
-        mBound = false;
+        if(mBound){
+            unbindConnection();
+        }
     }
 
     @Override
@@ -363,16 +387,17 @@ public class StartFragment extends Fragment {
                     MyApplication.madcapLogger.d(TAG, "Upload result received");
                 }
 
-                private final Pattern pattern = Pattern.compile("[0-9]+% completed.");
+                private final Pattern pattern = Pattern.compile("[0-9]+%% completed.");
 
+                @SuppressLint("StringFormatInvalid")
                 @Override
                 public void progressUpdate(int value) {
                     uploadProgressBar.setProgress(value);
                     Matcher matcher = pattern.matcher(uploadResultText);
                     if (matcher.find()) {
-                        uploadResultText = matcher.replaceFirst(value + "% completed.");
+                        uploadResultText = matcher.replaceFirst(value + "%% completed.");
                     } else {
-                        uploadResultText += " " + value + "% completed.";
+                        uploadResultText += " " + value + "%% completed.";
                     }
 
                     if (uploadResultView.isShown())

@@ -44,9 +44,9 @@ public class ApplicationsListener implements Listener {
     @Override
     public void startListening() throws NoSensorFoundException {
         //This only works on api level 21+
-        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
+//        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        context.startActivity(intent);
 
         timedApplicationTask = timedApplicationTaskFactory.create(this, context, calendar);
         timedApplicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
