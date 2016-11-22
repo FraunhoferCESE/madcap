@@ -213,6 +213,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      * MainActivity call this when the "Upload Now" button is pressed.
      */
     public int requestUpload() {
+        MyApplication.madcapLogger.d(TAG, "Upload requested");
         int status = cache.checkUploadConditions(Cache.UploadStrategy.IMMEDIATE);
         if (status == Cache.UPLOAD_READY)
             cache.flush(Cache.UploadStrategy.IMMEDIATE);

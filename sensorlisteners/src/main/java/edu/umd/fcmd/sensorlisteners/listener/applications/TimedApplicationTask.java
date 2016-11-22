@@ -1,10 +1,13 @@
 package edu.umd.fcmd.sensorlisteners.listener.applications;
 
 import android.app.ActivityManager;
+import android.app.AppOpsManager;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
@@ -72,7 +75,7 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
     protected Void doInBackground(Void... params) {
         Log.d(TAG, "started doInBackground");
 
-        while (!isCancelled()) {
+        while (!isCancelled() && checkPermissions()) {
             checkForNewEvents(context, lastComponent, lastTime);
 
             try {
@@ -91,6 +94,24 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
     protected void onProgressUpdate(ForegroundBackgroundEventsProbe... values) {
         ForegroundBackgroundEventsProbe eventsProbe = values[0];
         applicationsListener.onUpdate(eventsProbe);
+    }
+
+    /**
+     * Checks if the permission for accessing the events is being gratnted
+     * or denied.
+     * @return true if granted, else false.
+     */
+    protected boolean checkPermissions(){
+        try {
+            PackageManager packageManager = context.getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+            int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+            return (mode == AppOpsManager.MODE_ALLOWED);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
     }
 
     /**
