@@ -86,7 +86,6 @@ public class StartFragment extends Fragment {
         if(!mBound){
             getActivity().getApplicationContext().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
         }
-        mBound = true;
     }
 
     private void unbindConnection(){

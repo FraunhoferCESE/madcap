@@ -10,12 +10,15 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.Calendar;
+import java.util.Date;
 
 
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.model.ForegroundBackgroundEventsProbe;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -32,15 +35,15 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
     private ComponentName lastComponent = null;
 
     private final ApplicationsListener applicationsListener;
+    private final PermissionDeniedHandler permissionDeniedHandler;
     private final ActivityManager activityManager;
     private final Context context;
-    private final Calendar calendar;
     private int apiLevel;
 
-    TimedApplicationTask(ApplicationsListener applicationsListener, Context context, Calendar calendar) {
+    TimedApplicationTask(ApplicationsListener applicationsListener, Context context, PermissionDeniedHandler permissionDeniedHandler) {
         this.applicationsListener = applicationsListener;
+        this.permissionDeniedHandler = permissionDeniedHandler;
         this.context = context;
-        this.calendar = calendar;
         activityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
 
         try {
@@ -86,6 +89,9 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
                 Thread.currentThread().interrupt();
                 Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
             }
+        }
+        if(!checkPermissions()){
+            permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         }
         return null;
     }
@@ -182,7 +188,7 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
             //Check if something new happened
             if (lastComponent != null) {
                 if (!componentName.getClassName().equals(lastComponent.getClassName())) {
-                    long currentTime = calendar.getTimeInMillis();
+                    long currentTime = System.currentTimeMillis();
                     double acc = computeAccuracy(Build.VERSION.SDK_INT, lastTime, currentTime);
 
                     //The last known applications got in background

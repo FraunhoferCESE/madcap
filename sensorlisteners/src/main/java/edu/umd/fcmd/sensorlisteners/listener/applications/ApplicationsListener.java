@@ -9,6 +9,7 @@ import android.util.Log;
 import java.util.Calendar;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
@@ -21,19 +22,19 @@ public class ApplicationsListener implements Listener {
     private final String TAG = getClass().getSimpleName();
 
     private final Context context;
-    private final Calendar calendar;
     private final ProbeManager<Probe> probeProbeManager;
     private final TimedApplicationTaskFactory timedApplicationTaskFactory;
     private TimedApplicationTask timedApplicationTask;
+    private final PermissionDeniedHandler permissionDeniedHandler;
 
     public ApplicationsListener(Context context,
                                 ProbeManager<Probe> probeProbeManager,
                                 TimedApplicationTaskFactory timedApplicationTaskFactory,
-                                Calendar calendar){
+                                PermissionDeniedHandler permissionDeniedHandler){
         this.context = context;
         this.probeProbeManager = probeProbeManager;
         this.timedApplicationTaskFactory = timedApplicationTaskFactory;
-        this.calendar = calendar;
+        this.permissionDeniedHandler = permissionDeniedHandler;
     }
 
     @Override
@@ -43,12 +44,7 @@ public class ApplicationsListener implements Listener {
 
     @Override
     public void startListening() throws NoSensorFoundException {
-        //This only works on api level 21+
-        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(intent);
-
-        timedApplicationTask = timedApplicationTaskFactory.create(this, context, calendar);
+        timedApplicationTask = timedApplicationTaskFactory.create(this, context, permissionDeniedHandler);
         timedApplicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 

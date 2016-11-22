@@ -132,7 +132,7 @@ class MyApplicationModule {
      * @return an MadcapPermissionDeniedHandler.
      */
     @Provides
-    MadcapPermissionDeniedHandler provideMadcapPermissionDeniedHandler(){ return new MadcapPermissionDeniedHandler();}
+    MadcapPermissionDeniedHandler provideMadcapPermissionDeniedHandler(){ return new MadcapPermissionDeniedHandler(application);}
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}

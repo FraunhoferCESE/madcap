@@ -164,7 +164,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
                     madcapPermissionDeniedHandler));
 
             listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this),
-                    timedApplicationTaskFactory, calendar));
+                    timedApplicationTaskFactory, madcapPermissionDeniedHandler));
         }
 
         enableAllListeners();
