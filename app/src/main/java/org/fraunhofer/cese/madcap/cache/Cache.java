@@ -161,8 +161,10 @@ public class Cache {
         last_db_write_attempt = System.currentTimeMillis();
 
         MyApplication.madcapLogger.d(TAG, "Upload strategy"+ uploadStrategy.toString());
+        MyApplication.madcapLogger.d(TAG, "Context is "+ context);
         AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> task = dbTaskFactory.createWriteTask(context, this, uploadStrategy);
         MyApplication.madcapLogger.d(TAG, "Task "+task);
+        MyApplication.madcapLogger.d(TAG, "Memcache" + memcache.toString());
         task.execute(ImmutableMap.copyOf(memcache));
     }
 
