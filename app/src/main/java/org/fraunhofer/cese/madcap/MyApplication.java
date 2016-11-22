@@ -22,7 +22,7 @@ import org.fraunhofer.cese.madcap.util.MadcapLogger;
 //        resToastText = R.string.crash_toast_text
 //)
 public class MyApplication extends Application {
-    public static final String TAG = "MADCAP.MyApplication";
+    private static final String TAG = "MADCAP.MyApplication";
     private MyComponent component;
     @SuppressWarnings("StaticVariableOfConcreteClass")
     public static final MadcapLogger madcapLogger = new MadcapLogger();
@@ -53,6 +53,7 @@ public class MyApplication extends Application {
         return component;
     }
 
+    @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);

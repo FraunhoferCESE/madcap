@@ -1,13 +1,11 @@
 package org.fraunhofer.cese.madcap.factories;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheEntry;
-import org.fraunhofer.cese.madcap.services.LoginService;
 
 import java.util.List;
 import java.util.UUID;
@@ -61,9 +59,10 @@ public class CacheFactory implements ProbeManager {
 
             Log.i(TAG, "CACHED "+probeEntry.toString());
             cache.add(probeEntry);
-        }else{
-            //start login service again
-            context.startService(new Intent(context, LoginService.class));
         }
+            // TODO: Figure out what to do when getUserId() == null.
+            //start login service again
+//            context.startService(new Intent(context, LoginService.class));
+
     }
 }

@@ -1,12 +1,12 @@
 package org.fraunhofer.cese.madcap;
 
-import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -16,13 +16,14 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
@@ -32,9 +33,7 @@ import javax.inject.Inject;
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
  * profile.
  */
-public class SignInActivity extends AppCompatActivity implements
-        GoogleApiClient.OnConnectionFailedListener,
-        View.OnClickListener, MadcapAuthEventHandler {
+public class SignInActivity extends AppCompatActivity {
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
@@ -42,56 +41,166 @@ public class SignInActivity extends AppCompatActivity implements
     @Inject
     private MadcapAuthManager madcapAuthManager;
 
+    @Inject
+    private GoogleApiClient mGoogleApiClient;
 
-    //private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
-    private ProgressDialog mProgressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
 
-        setContentView(R.layout.signinactivity);
-
         //Debug
-        MyApplication.madcapLogger.d(TAG, "Firebase token "+ FirebaseInstanceId.getInstance().getToken());
-
-        madcapAuthManager.setCallbackClass(this);
-
-        MyApplication.madcapLogger.d(TAG, "CREATED");
-        //MyApplication.madcapLogger.d(TAG, "Context of Auth Manager is "+MadcapAuthManager.getContext());
+        MyApplication.madcapLogger.d(TAG, "Firebase token " + FirebaseInstanceId.getInstance().getToken());
+        MyApplication.madcapLogger.d(TAG, "onCreate");
 
         // Views
+        setContentView(R.layout.signinactivity);
         mStatusTextView = (TextView) findViewById(R.id.status);
 
         // Button listeners
-        findViewById(R.id.sign_in_button).setOnClickListener(this);
-        findViewById(R.id.sign_out_button).setOnClickListener(this);
-        findViewById(R.id.to_control_button).setOnClickListener(this);
+        findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyApplication.madcapLogger.d(TAG, "pressed sign in");
+                mStatusTextView.setText("Attempting to sign in...");
+                signin();
+            }
+        });
 
+        findViewById(R.id.sign_out_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyApplication.madcapLogger.d(TAG, "pressed sign out");
+                mStatusTextView.setText("Signing out...");
+                signout();
+            }
+        });
 
-        // [END build_client]
+        final Context context = this;
+        findViewById(R.id.to_control_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MyApplication.madcapLogger.d(TAG, "pressed to proceed to Control App");
+                startActivity(new Intent(context, MainActivity.class));
+            }
+        });
 
-        // [START customize_button]
-        // Customize sign-in button. The sign-in button can be displayed in
-        // multiple sizes and color schemes. It can also be contextually
-        // rendered based on the requested scopes. For example. a red button may
-        // be displayed when Google+ scopes are requested, but a white button
-        // may be displayed when only basic profile is requested. Try adding the
-        // Scopes.PLUS_LOGIN scope to the GoogleSignInOptions to see the
-        // difference.
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
-        signInButton.setScopes(madcapAuthManager.getGsoScopeArray());
-        // [END customize_button]
     }
+
+    private boolean checkApiAvailability() {
+        int connectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
+        boolean isAvailable = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS;
+
+        String text;
+
+        if (isAvailable) {
+            text = "Google Play Services are online.";
+        } else {
+            switch (connectionResult) {
+                case ConnectionResult.SERVICE_MISSING:
+                    text = "Play services not available, please install them and retry.";
+                    break;
+                case ConnectionResult.SERVICE_UPDATING:
+                    text = "Play services are currently updating, please wait and try again.";
+                    break;
+                case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+                    text = "Play services not up to date. Please update your system and try again.";
+                    break;
+                case ConnectionResult.SERVICE_DISABLED:
+                    text = "Play services are disabled. Please enable and try again.";
+                    break;
+                case ConnectionResult.SERVICE_INVALID:
+                    text = "Play services are invalid. Please reinstall them and try again.";
+                    break;
+                default:
+                    text = "Play services connection failed. Error code: " + connectionResult;
+            }
+
+            MyApplication.madcapLogger.e(TAG, text);
+        }
+
+        mStatusTextView.setText(text);
+        return isAvailable;
+    }
+
+
+    private void signin() {
+        if (checkApiAvailability()) {
+            if (mGoogleApiClient.isConnected()) {
+                startActivityForResult(Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient), RC_SIGN_IN);
+            } else {
+                mGoogleApiClient.registerConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                        mGoogleApiClient.unregisterConnectionFailedListener(this);
+                        MyApplication.madcapLogger.w(TAG, "Could not connect to GoogleSignInApi.");
+                        mStatusTextView.setText("Could not connect to Google SignIn service. Please try again.");
+                    }
+                });
+                mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(@Nullable Bundle bundle) {
+                        mGoogleApiClient.unregisterConnectionCallbacks(this);
+                        MyApplication.madcapLogger.d(TAG, "Connected to Google SignIn services...");
+                        mStatusTextView.setText("Connected to Google SignIn services...");
+                        startActivityForResult(Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient), RC_SIGN_IN);
+                    }
+
+                    @Override
+                    public void onConnectionSuspended(int i) {
+                        MyApplication.madcapLogger.w(TAG, "onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
+                        mStatusTextView.setText("Connection to Google SignIn services interrupted. Please try again.");
+                    }
+                });
+                mGoogleApiClient.connect();
+            }
+        }
+    }
+
+    private void signout() {
+        if (checkApiAvailability()) {
+            final Context context = this;
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(@NonNull Status r) {
+                            if (r.getStatusCode() == CommonStatusCodes.SUCCESS) {
+                                MyApplication.madcapLogger.d(TAG, "Logout succeeded. Status code: " + r.getStatusCode() + ", Message: " + r.getStatusMessage());
+                                findViewById(R.id.sign_in_button).setEnabled(false);
+                                findViewById(R.id.sign_out_button).setEnabled(true);
+                                findViewById(R.id.to_control_button).setEnabled(true);
+                                mStatusTextView.setText("You are now signed out of MADCAP.");
+                                Toast.makeText(context, "You are now signed out of MADCAP.", Toast.LENGTH_SHORT).show();
+
+                                // TODO: What to do with the user's data?
+                                stopService(new Intent(context, DataCollectionService.class));
+                                madcapAuthManager.setUser(null);
+                            } else {
+                                MyApplication.madcapLogger.e(TAG, "Logout failed. Status code: " + r.getStatusCode() + ", Message: " + r.getStatusMessage());
+                                mStatusTextView.setText("Logout from MADCAP failed. Error code: " + r.getStatusCode() + ". Please try again.");
+                                Toast.makeText(context, "Logout from MADCAP failed. Error code: " + r.getStatusCode() + ". Please try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+            Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(@NonNull Status r) {
+                            MyApplication.madcapLogger.d(TAG, "Revoke access finished. Status code: " + r.getStatusCode() + ", Message: " + r.getStatusMessage());
+                        }
+                    });
+        }
+    }
+
 
     @Override
     public void onStart() {
         super.onStart();
-
-        MyApplication.madcapLogger.d(TAG, "On start being called.");
     }
 
     // [START onActivityResult]
@@ -102,179 +211,49 @@ public class SignInActivity extends AppCompatActivity implements
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
-            handleSignInResult(result);
-        }
-    }
+            if (result.isSuccess()) {
+                // Signed in successfully, show authenticated UI.
+                GoogleSignInAccount acct = result.getSignInAccount();
+                if (acct == null) {
+                    MyApplication.madcapLogger.e(TAG, "Could not get SignIn Result for some reason");
+                    throw new RuntimeException("SignIn successful, but account is null. Result: " + result);
+                } else {
+                    madcapAuthManager.setUser(acct);
+                    findViewById(R.id.sign_in_button).setEnabled(false);
+                    findViewById(R.id.sign_out_button).setEnabled(true);
+                    findViewById(R.id.to_control_button).setEnabled(true);
+                    mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 
-    public void handleSignInResult(GoogleSignInResult result) {
-        //From the result we can retrieve some credentials
+                    if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.data_collection_pref), true)) {
+                        startService(new Intent(this, DataCollectionService.class));
+                    }
 
-        MyApplication.madcapLogger.d(TAG, "handleSignInResult:" + result.isSuccess());
-        if (result.isSuccess()) {
-            // Signed in successfully, show authenticated UI.
-            GoogleSignInAccount acct = result.getSignInAccount();
-            if (acct != null) {
-                mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-            }else{
-                MyApplication.madcapLogger.e(TAG, "Could not get SignIn Result for some reason");
+                    startActivity(new Intent(this, MainActivity.class));
+                }
+            } else {
+                MyApplication.madcapLogger.w(TAG, "SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
+                findViewById(R.id.sign_in_button).setEnabled(true);
+                findViewById(R.id.sign_out_button).setEnabled(false);
+                findViewById(R.id.to_control_button).setEnabled(false);
+                mStatusTextView.setText("Login failed. Error code: " + result.getStatus().getStatusCode() + ". Please try again.");
+                Toast.makeText(this, "Login failed, pleas try again", Toast.LENGTH_SHORT).show();
             }
-            madcapAuthManager.handleSignInResult(result);
-            updateUI(true);
-
-            Intent intent = new Intent(this, DataCollectionService.class);
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
-                startService(intent);
-            }
-
-            proceedToMainActivity();
-        } else {
-            // Signed out, show unauthenticated UI.
-            updateUI(false);
         }
     }
+
 
     @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        // An unresolvable error has occurred and Google APIs (including Sign-In) will not
-        // be available.
-        MyApplication.madcapLogger.d(TAG, "onConnectionFailed:" + connectionResult);
-        mStatusTextView.setText("Login failed, please try again");
-        Toast.makeText(this, "Login failed, pleas try again", Toast.LENGTH_SHORT);
-    }
+    protected void onDestroy() {
 
-    private void showProgressDialog() {
-        if (mProgressDialog == null) {
-            mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.setMessage(getString(R.string.loading));
-            mProgressDialog.setIndeterminate(true);
-        }
-
-        mProgressDialog.show();
-    }
-
-    private void hideProgressDialog() {
-        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-            mProgressDialog.hide();
-        }
-    }
-
-    private void updateUI(boolean signedIn) {
-        if (signedIn) {
-            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.VISIBLE);
-        } else {
-            mStatusTextView.setText(R.string.signed_out);
-            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
-            findViewById(R.id.sign_out_and_disconnect).setVisibility(View.GONE);
-        }
-    }
-
-    /**
-     * Starts the transition to the main_old activity
-     */
-    public void proceedToMainActivity(){
-        MyApplication.madcapLogger.d(TAG, "Now going to the MainActivity");
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.sign_in_button:
-                MyApplication.madcapLogger.d(TAG, "pressed sign in");
-                mStatusTextView.setText("Attempting now to Sign in");
-                madcapAuthManager.signIn();
-                break;
-            case R.id.sign_out_button:
-                MyApplication.madcapLogger.d(TAG, "pressed sign ou");
-                madcapAuthManager.signOut();
-                break;
-            case R.id.to_control_button:
-                MyApplication.madcapLogger.d(TAG, "pressed to proceed to Control App");
-                proceedToMainActivity();
-                break;
-        }
-    }
-
-    @Override
-    protected void onDestroy(){
         super.onDestroy();
-    }
-
-    /**
-     * Specifies what the class is expected to do, when the silent login was sucessfull.
-     */
-    @Override
-    public void onSilentLoginSuccessfull(GoogleSignInResult result) {
-        // If the user's cached credentials are valid, the OptionalPendingResult will be "done"
-        // and the GoogleSignInResult will be available instantly.
-        MyApplication.madcapLogger.d(TAG, "Got cached sign-in");
-        handleSignInResult(result);
-    }
-
-    /**
-     * Specifies what the clas is expected to do, when the silent login was not successfull.
-     */
-    @Override
-    public void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr) {
-        // If the user has not previously signed in on this device or the sign-in has expired,
-        // this asynchronous branch will attempt to sign in the user silently.  Cross-device
-        // single sign-on will occur in this branch.
-//        showProgressDialog();
-//        opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-//            @Override
-//            public void onResult(GoogleSignInResult googleSignInResult) {
-//                hideProgressDialog();
-//                handleSignInResult((GoogleSignInResult)googleSignInResult);
-//            }
-//        });
-    }
-
-    /**
-     * Specifies what the class is expected to do, when the regular sign in was successful.
-     */
-    @Override
-    public void onSignInSucessfull() {
-        MyApplication.madcapLogger.d(TAG, "onSignIn successfull");
-
-        Intent intent = new Intent(this, DataCollectionService.class);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if(prefs.getBoolean(getString(R.string.data_collection_pref), true)){
-            startService(intent);
+        if (mGoogleApiClient != null) {
+            mGoogleApiClient.disconnect();
         }
-
-        proceedToMainActivity();
     }
 
     @Override
-    public void onSignInIntent(Intent intent, int requestCode) {
-        MyApplication.madcapLogger.d(TAG,"Now starting the signing procedure with intnet");
-        startActivityForResult(intent, requestCode);
-    }
-
-    /**
-     * Specifies what the app is expected to do when the Signout was sucessfull.
-     */
-    @Override
-    public void onSignOutResults(Status status) {
-        updateUI(false);
-    }
-
-    /**
-     * Specifies what the class is expected to do, when disconnected.
-     * @param status
-     */
-    @Override
-    public void onRevokeAccess(Status status) {
-        updateUI(false);
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (keyCode == KeyEvent.KEYCODE_BACK ) {
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             finish();
             return true;
         }

@@ -216,19 +216,16 @@ class MyApplicationModule {
         return null;
     }
 
-    @Provides
-    GoogleSignInOptions providesGoogleSignInOptions() {
-        return new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+    @Provides @Named("SigninApi")
+    GoogleApiClient providesGoogleSigninApiClient() {
+        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .requestProfile()
                 .build();
-    }
 
-    @Provides @Named("SigninApi")
-    GoogleApiClient providesGoogleSigninApiClient() {
         return new GoogleApiClient.Builder(application)
                 //.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, providesGoogleSignInOptions())
+                .addApi(Auth.GOOGLE_SIGN_IN_API, options)
                 .build();
     }
 }

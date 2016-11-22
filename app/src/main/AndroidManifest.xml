@@ -67,28 +67,20 @@
 
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityChangeBroadcastReceiver" />
         <receiver android:name=".Probe.ActivityProbe.PathsenseActivityUpdateBroadcastReceiver" />
-        <receiver android:name=".broadcastreceivers.OnBootCompleteBoardcastReceiver">
+        <receiver android:name=".boot.OnBootCompleteBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
         <service
-            android:name=".services.OnBootService"
+            android:name=".boot.OnBootService"
             android:enabled="true" />
-        <service
-            android:name=".services.LoginService"
-            android:enabled="true" />
+
         <service
             android:name=".services.DataCollectionService"
             android:enabled="true"
             />
-
-        <activity
-            android:name=".MainActivityOld"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme" />
 
         <meta-data
             android:name="com.google.android.gms.version"
