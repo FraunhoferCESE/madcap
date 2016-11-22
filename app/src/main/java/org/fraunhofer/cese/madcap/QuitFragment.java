@@ -10,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+
+import javax.inject.Inject;
 
 
 /**
@@ -22,7 +24,8 @@ import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
  * create an instance of this fragment.
  */
 public class QuitFragment extends Fragment {
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+    @Inject
+    private MadcapAuthManager madcapAuthManager;
     private Button quitButton;
 
     private final String TAG = this.getClass().getSimpleName();
@@ -33,21 +36,11 @@ public class QuitFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     * @return A new instance of fragment QuitFragment.
-     */
-
-    public static QuitFragment newInstance() {
-        QuitFragment fragment = new QuitFragment();
-        Bundle args = new Bundle();
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MyApplication) getActivity().getApplication()).getComponent().inject(this);
     }
 
     @Override

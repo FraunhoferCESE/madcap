@@ -9,10 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
-import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+
+import javax.inject.Inject;
 
 
 /**
@@ -25,7 +25,9 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
  */
 public class HelpFragment extends Fragment {
     private final String TAG = "HelpFragment";
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+
+    @Inject
+    private MadcapAuthManager madcapAuthManager;
 
     private OnFragmentInteractionListener mListener;
     private Button contactMadcapButton;
@@ -52,6 +54,7 @@ public class HelpFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MyApplication) getActivity().getApplication()).getComponent().inject(this);
     }
 
     @Override

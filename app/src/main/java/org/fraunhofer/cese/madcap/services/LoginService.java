@@ -15,7 +15,6 @@ import android.support.v4.app.TaskStackBuilder;
 import android.widget.Toast;
 
 import org.fraunhofer.cese.madcap.MainActivity;
-import org.fraunhofer.cese.madcap.MainActivityOld;
 import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -26,8 +25,10 @@ import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthEventHandler;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+
+import javax.inject.Inject;
 
 /**
  * Created by MMueller on 10/7/2016.
@@ -35,9 +36,12 @@ import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 
 public class LoginService extends Service implements Cloneable, MadcapAuthEventHandler {
     private static final String TAG = "Madcap Login Service";
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+
+    @Inject
+    private MadcapAuthManager madcapAuthManager;
     private TaskStackBuilder stackBuilder;
     private boolean showMainAnyway = false;
+
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -72,6 +76,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
 
     @Override
     public void onCreate() {
+        ((MyApplication) getApplication()).getComponent().inject(this);
         MyApplication.madcapLogger.d(TAG, "onCreate Login Service");
         stopService(new Intent(this,DataCollectionService.class));
         madcapAuthManager.setCallbackClass(this);
@@ -81,28 +86,7 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         madcapAuthManager.setCallbackClass(this);
-        if(checkGooglePlayServices()){
-            MyApplication.madcapLogger.d(TAG, "onStartCommand Login Service");
-            if(intent.hasExtra("ShowMainAnyway")){
-                showMainAnyway = true;
-            }
 
-            MyApplication.madcapLogger.d(TAG, "Trying to log in silently");
-            madcapAuthManager.silentLogin();
-        }
-
-        // We want this service to continue running until it is explicitly
-        // stopped, so return sticky.
-        return START_NOT_STICKY;
-    }
-
-    /**
-     * Verifies that Google Play services is installed and enabled on this device,
-     * and that the version installed on this device is no older than the one
-     * required by this client.
-     * @return
-     */
-    private boolean checkGooglePlayServices(){
         boolean checkSucceeded = false;
 
         int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
@@ -137,8 +121,21 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
                 break;
         }
 
-        return checkSucceeded;
+        if(checkSucceeded){
+            MyApplication.madcapLogger.d(TAG, "onStartCommand Login Service");
+            if(intent.hasExtra("ShowMainAnyway")){
+                showMainAnyway = true;
+            }
+
+            MyApplication.madcapLogger.d(TAG, "Trying to log in silently");
+            madcapAuthManager.silentLogin();
+        }
+
+        // We want this service to continue running until it is explicitly
+        // stopped, so return sticky.
+        return START_NOT_STICKY;
     }
+
 
     /**
      * Specifies what the class is expected to do, when the silent login was sucessfull.
@@ -265,46 +262,6 @@ public class LoginService extends Service implements Cloneable, MadcapAuthEventH
      */
     protected void setMadcapAuthManager(MadcapAuthManager madcapAuthManager){
         this.madcapAuthManager = madcapAuthManager;
-    }
-
-    /**
-     * Clone Method used by testing classes.
-     * @return The cloned object.
-     */
-    @Override
-    public LoginService clone() throws CloneNotSupportedException {
-        final LoginService result = (LoginService) super.clone();
-        // copy fields that need to be copied here!
-        return result;
-
-    }
-
-    /**
-     * For testing purposes
-     * @param o Object to be checked if equals.
-     * @return True, if objects are same reference or from same Type.
-     */
-    @Override
-    public boolean equals(Object o){
-        if(o.getClass() == LoginService.class){
-            //Return true, due to no real mutable class variables.
-            return true;
-        }else{
-            return super.equals(o);
-        }
-    }
-
-    /**
-     * Hash code method.
-     * @return the hash code.
-     */
-    @Override
-    public int hashCode() {
-        int result = madcapAuthManager != null ? madcapAuthManager.hashCode() : 0;
-        if(stackBuilder!= null){
-            result = 31 * result + stackBuilder.hashCode();
-        }
-        return result;
     }
 
     /**

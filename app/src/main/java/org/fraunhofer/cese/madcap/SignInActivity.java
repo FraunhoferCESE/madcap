@@ -22,9 +22,11 @@ import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.Status;
 import com.google.firebase.iid.FirebaseInstanceId;
 
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthEventHandler;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
+
+import javax.inject.Inject;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -36,7 +38,9 @@ public class SignInActivity extends AppCompatActivity implements
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+
+    @Inject
+    private MadcapAuthManager madcapAuthManager;
 
 
     //private GoogleApiClient mGoogleApiClient;
@@ -46,6 +50,8 @@ public class SignInActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MyApplication) getApplication()).getComponent().inject(this);
+
         setContentView(R.layout.signinactivity);
 
         //Debug

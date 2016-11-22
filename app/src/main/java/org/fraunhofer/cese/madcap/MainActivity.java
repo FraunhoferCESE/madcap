@@ -14,13 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.support.v4.app.FragmentManager;
 import android.view.MenuItem;
 
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
-import org.fraunhofer.cese.madcap.services.DataCollectionService;
-
 import java.util.List;
-
-import static android.R.attr.fragment;
-import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,

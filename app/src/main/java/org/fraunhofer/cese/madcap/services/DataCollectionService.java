@@ -20,19 +20,16 @@ import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
-import org.fraunhofer.cese.madcap.SignInActivity;
 import org.fraunhofer.cese.madcap.WelcomeActivity;
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthEventHandler;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -56,7 +53,9 @@ import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 public class DataCollectionService extends Service implements MadcapAuthEventHandler {
     private static final String TAG = "Madcap DataColl Service";
     private final int RUN_CODE = 1;
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+
+    @Inject
+    private MadcapAuthManager madcapAuthManager;
     private NotificationManager mNotificationManager;
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
@@ -154,7 +153,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         showRunNotification();
 
         synchronized(listeners){
-            listeners.add(new LocationListener(this, new CacheFactory(cache, this),
+            listeners.add(new LocationListener(this, new CacheFactory(cache, this, madcapAuthManager),
                     locationClient,
                     snapshotApi,
                     timedLocationTaskFactory,
@@ -163,7 +162,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
                     googleApiClientConnectionIssueManager,
                     madcapPermissionDeniedHandler));
 
-            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this),
+            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this, madcapAuthManager),
                     timedApplicationTaskFactory, calendar));
         }
 

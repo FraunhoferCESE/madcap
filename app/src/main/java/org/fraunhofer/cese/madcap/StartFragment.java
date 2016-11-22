@@ -1,7 +1,6 @@
 package org.fraunhofer.cese.madcap;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -24,7 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
@@ -401,8 +400,6 @@ public class StartFragment extends Fragment {
 
         mListener = null;
     }
-
-
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

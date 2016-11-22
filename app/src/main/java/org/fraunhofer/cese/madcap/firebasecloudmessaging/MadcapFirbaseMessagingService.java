@@ -16,9 +16,11 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import static android.graphics.Color.RED;
 
@@ -28,7 +30,13 @@ import static android.graphics.Color.RED;
 public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MFirebaseMsgService";
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+
+    @Inject
+    private MadcapAuthManager madcapAuthManager;
+
+    MadcapFirbaseMessagingService() {
+        ((MyApplication) getApplication()).getComponent().inject(this);
+    }
 
     /**
      * Called when message is received.

@@ -5,11 +5,6 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 /**
@@ -43,18 +38,6 @@ public class MyApplication extends Application {
 //        ACRA.init(this);
 
         //Initializations for the Google Authentification
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .requestProfile()
-                .build();
-
-        GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
-                //.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-
-        MadcapAuthManager.getInstance().setUp(gso, mGoogleApiClient);
-
         // Initialize the Component used to inject dependencies.
         component = DaggerMyComponent.builder()
                 .myApplicationModule(new MyApplicationModule(this))

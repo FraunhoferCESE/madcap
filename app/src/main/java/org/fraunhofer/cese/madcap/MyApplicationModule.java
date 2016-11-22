@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -26,7 +28,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTask;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
@@ -215,5 +216,19 @@ class MyApplicationModule {
         return null;
     }
 
+    @Provides
+    GoogleSignInOptions providesGoogleSignInOptions() {
+        return new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestProfile()
+                .build();
+    }
 
+    @Provides @Named("SigninApi")
+    GoogleApiClient providesGoogleSigninApiClient() {
+        return new GoogleApiClient.Builder(application)
+                //.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, providesGoogleSignInOptions())
+                .build();
+    }
 }

@@ -2,7 +2,9 @@ package org.fraunhofer.cese.madcap;
 
 import org.fraunhofer.cese.madcap.Probe.ActivityProbe.ActivityProbe;
 import org.fraunhofer.cese.madcap.Probe.BluetoothProbe;
+import org.fraunhofer.cese.madcap.firebasecloudmessaging.MadcapFirbaseMessagingService;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.services.LoginService;
 
 import javax.inject.Singleton;
 
@@ -21,4 +23,11 @@ public interface MyComponent {
     void inject(BluetoothProbe bluetoothProbe);
     void inject(ActivityProbe activityProbe);
     void inject(DataCollectionService dataCollectionService);
+    void inject(HelpFragment helpFragment);
+    void inject(LogoutFragment logoutFragment);
+    void inject(QuitFragment quitFragment);
+    void inject(SignInActivity signInActivity);
+    void inject(MadcapFirbaseMessagingService madcapFirbaseMessagingService);
+    void inject(WelcomeActivity welcomeActivity);
+    void inject(LoginService loginService);
 }

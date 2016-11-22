@@ -11,8 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
-import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+
+import javax.inject.Inject;
 
 
 /**
@@ -20,14 +21,14 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
  * Activities that contain this fragment must implement the
  * {@link LogoutFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link LogoutFragment#newInstance} factory method to
- * create an instance of this fragment.
  */
 public class LogoutFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
 
     private OnFragmentInteractionListener mListener;
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+
+    @Inject
+    private MadcapAuthManager madcapAuthManager;
     private Activity parentActivity = getActivity();
     private Button logoutButton;
 
@@ -35,21 +36,11 @@ public class LogoutFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment LogoutFragment.
-     */
-    public static LogoutFragment newInstance() {
-        LogoutFragment fragment = new LogoutFragment();
-        Bundle args = new Bundle();
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MyApplication) getActivity().getApplication()).getComponent().inject(this);
     }
 
     @Override

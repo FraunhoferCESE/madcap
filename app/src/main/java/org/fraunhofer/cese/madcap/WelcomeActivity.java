@@ -1,41 +1,46 @@
 package org.fraunhofer.cese.madcap;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
-import org.fraunhofer.cese.madcap.services.LoginService;
+import org.fraunhofer.cese.madcap.authentication.ApiUtils;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 
 import javax.inject.Inject;
 
 public class WelcomeActivity extends AppCompatActivity {
-    private final String TAG = "Welcome Activity";
+    private static final String TAG = "WelcomeActivity";
 
     @Inject
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+    private MadcapAuthManager madcapAuthManager;
     private TextView errorTextView;
-    private Button helpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        MyApplication.madcapLogger.d(TAG, "Welcome created");
         super.onCreate(savedInstanceState);
+
+        //noinspection CastToConcreteClass
+        ((MyApplication) getApplication()).getComponent().inject(this);
+        MyApplication.madcapLogger.d(TAG, "Welcome created");
+
         setContentView(R.layout.activity_welcome);
         errorTextView = (TextView) findViewById(R.id.welcomeErrorTextView);
         errorTextView.setMovementMethod(LinkMovementMethod.getInstance());
 
         Button helpButton = (Button) findViewById(R.id.helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener(){
+        helpButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Called when a view has been clicked.
              *
@@ -45,89 +50,59 @@ public class WelcomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 MyApplication.madcapLogger.d(TAG, "Help toggled");
 
-                String url = "https://www.pocket-security.org/app-help/";
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse("https://www.pocket-security.org/app-help/"));
+                startActivity(intent);
             }
         });
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
-        MyApplication.madcapLogger.d(TAG, "onStart Welcome");
+        MyApplication.madcapLogger.d(TAG, "onStart");
 
-        if(checkGooglePlayServices()){
-            if(madcapAuthManager.getLastSignedInUsersName() == null){
-                new AsyncTask<Void, Void, String>() {
-                    protected String doInBackground(Void... params) {
-                        // Background Code
-                        Intent intent = new Intent(WelcomeActivity.this, LoginService.class);
+        if (madcapAuthManager.getUser() != null) {
+            startActivity(new Intent(this, MainActivity.class));
+        } else {
+            final Context context = this;
+            madcapAuthManager.silentLogin(this, new MadcapAuthManager.LoginResultCallback() {
+                @Override
+                public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                    errorTextView.setText("Unable to connect to Google Signin services. Error code: " + connectionResult);
+                    MyApplication.madcapLogger.e(TAG, "onStart.onConnectionFailed: Unable to connect to Google Play services. Error code: " + connectionResult);
+                    // TODO: Unregister this listener from mGoogleClientApi in MadcapAuthManager?
+                }
 
-                        //Sets a flag that the main_old activity should be shown never mind if
-                        //the silent login failed or succeeded.
-                        intent.putExtra("ShowMainAnyway", true);
-                        MyApplication.madcapLogger.d(TAG, "StartFragment now Login Service");
-                        startService(intent);
-                        //WelcomeActivity.this.finish();
-                        return "message";
+                @Override
+                public void onConnected(@Nullable Bundle bundle) {
+                    MyApplication.madcapLogger.d(TAG, "onStart.onConnected: successfully connected to Google Play Services.");
+                    errorTextView.setText("Connected to Google Signin services...");
+                }
+
+                @Override
+                public void onConnectionSuspended(int i) {
+                    MyApplication.madcapLogger.w(TAG, "onStart.onConnectionSuspended: Connection suspended. Error code: " + i);
+                    errorTextView.setText("Lost connection to Google Signin services. Please try again.");
+                }
+
+                @Override
+                public void onServicesUnavailable(int connectionResult) {
+                    String text = ApiUtils.getTextFromConnectionResult(connectionResult);
+                    MyApplication.madcapLogger.e(TAG, text);
+                    errorTextView.setText(text);
+                }
+
+                @Override
+                public void onLoginResult(GoogleSignInResult signInResult) {
+                    if (signInResult.isSuccess()) {
+                        startActivity(new Intent(context, MainActivity.class));
+                        finish();
                     }
-                    protected void onPostExecute(String msg) {
-                        // Post Code
-                        // Use `msg` in code
-                    }
-                }.execute();
-            }else{
-                Intent mainActivityIntent = new Intent(this, MainActivity.class);
-                startActivity(mainActivityIntent);
-                finish();
-            }
+                }
+            });
+
         }
-    }
-
-    /**
-     * Verifies that Google Play services is installed and enabled on this device,
-     * and that the version installed on this device is no older than the one
-     * required by this client.
-     * @return
-     */
-    private boolean checkGooglePlayServices(){
-        boolean checkSucceeded = false;
-
-        int resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this);
-
-        switch(resultCode) {
-            case ConnectionResult.SUCCESS:
-                MyApplication.madcapLogger.d(TAG, "Google Play services checked and o.k.");
-                checkSucceeded = true;
-                break;
-            case ConnectionResult.SERVICE_MISSING:
-                MyApplication.madcapLogger.d(TAG, "Play services not available, please install them.");
-                errorTextView.setText("Play services not available, please install them.");
-                break;
-            case ConnectionResult.SERVICE_UPDATING:
-                MyApplication.madcapLogger.d(TAG, "Play services are currently updating, please wait.");
-                errorTextView.setText("Play services are currently updating, please wait.");
-                break;
-            case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-                MyApplication.madcapLogger.d(TAG, "Play services not up to date. Please update.");
-                errorTextView.setText("Play services not up to date. Please update.");
-                break;
-            case ConnectionResult.SERVICE_DISABLED:
-                MyApplication.madcapLogger.d(TAG, "Play services are disabled. Please enable.");
-                errorTextView.setText("Play services are disabled. Please enable them.");
-                break;
-            case ConnectionResult.SERVICE_INVALID:
-                MyApplication.madcapLogger.d(TAG, "Play services are invalid");
-                errorTextView.setText("Play services are invalid. Please reinstall them.");
-                break;
-            default:
-                MyApplication.madcapLogger.d(TAG, "Other error");
-                break;
-        }
-
-        return checkSucceeded;
     }
 
 }

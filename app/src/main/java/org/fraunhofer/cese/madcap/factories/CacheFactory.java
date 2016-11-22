@@ -4,12 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import org.fraunhofer.cese.madcap.MyApplication;
-import org.fraunhofer.cese.madcap.SignInActivity;
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheEntry;
-import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.fraunhofer.cese.madcap.services.LoginService;
 
 import java.util.List;
@@ -26,8 +23,8 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 public class CacheFactory implements ProbeManager {
     private static final String TAG = CacheFactory.class.getSimpleName();
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
 
+    private final MadcapAuthManager madcapAuthManager;
     private final Cache cache;
     private final Context context;
 
@@ -46,9 +43,10 @@ public class CacheFactory implements ProbeManager {
     }
 
     @Inject
-    public CacheFactory(Cache cache, Context context) {
+    public CacheFactory(Cache cache, Context context, MadcapAuthManager madcapAuthManager) {
         this.cache = cache;
         this.context = context;
+        this.madcapAuthManager = madcapAuthManager;
     }
 
     public void saveToCache(Probe probe) {
