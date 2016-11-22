@@ -81,7 +81,6 @@ public class StartFragment extends Fragment {
     /** Defines callbacks for service binding, passed to bindService() */
     private ServiceConnection mConnection;
 
-
     private void bindConnection(Intent intent){
         MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is "+mBound);
         if(!mBound){
@@ -196,7 +195,6 @@ public class StartFragment extends Fragment {
 
         //Set the toggle button on the last set preference configuration
 
-
         //Set up upload progress bar
         uploadProgressBar = (ProgressBar) view.findViewById(R.id.uploadProgressBar);
 
@@ -260,6 +258,7 @@ public class StartFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         String text = "\nUpload requested on " + df.format(new Date()) + "\n";
+                        MyApplication.madcapLogger.d(TAG, "Upload data clicked");
 
                         int status = mDataCollectionService.requestUpload();
                         if (status == Cache.UPLOAD_READY)
@@ -295,13 +294,14 @@ public class StartFragment extends Fragment {
         if (savedInstanceState != null) {
             MyApplication.madcapLogger.d(TAG, "NOT NULL");
             dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
-            dataCountView.setText(dataCountText);
             uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
         } else {
             dataCountText = "Computing...";
             uploadResultText = "None.";
             //isCollectingData = true;
         }
+        dataCountView.setText(dataCountText);
+        uploadResultView.setText(uploadResultText);
     }
 
     @Override

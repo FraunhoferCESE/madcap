@@ -254,6 +254,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      * @see Cache#getSize()
      */
     public long getCacheSize() {
+        MyApplication.madcapLogger.d(TAG, "Cache size "+cache.getSize());
         return cache.getSize();
     }
 
