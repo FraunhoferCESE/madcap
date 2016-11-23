@@ -6,8 +6,10 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -25,6 +27,8 @@ import org.fraunhofer.cese.madcap.WelcomeActivity;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthEventHandler;
 import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
+import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
@@ -33,6 +37,7 @@ import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -48,19 +53,26 @@ import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 
+import static android.R.attr.value;
+import static org.fraunhofer.cese.madcap.R.string.uploadResultText;
+import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
+import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.INCOMPLETE;
+
 /**
  * Created by MMueller on 10/7/2016.
  */
 
 @Singleton
-public class DataCollectionService extends Service implements MadcapAuthEventHandler {
+public class DataCollectionService extends Service implements MadcapAuthEventHandler, UploadStatusListener {
     private static final String TAG = "Madcap DataColl Service";
+    private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
     private final int RUN_CODE = 1;
     private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
     private NotificationManager mNotificationManager;
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
     private List<Listener> listeners = new CopyOnWriteArrayList<>();
+    private UploadStatusGuiListener uploadStatusGuiListener;
 
     @Inject
     Cache cache;
@@ -135,6 +147,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         super.onDestroy();
         disableAllListeners();
 
+        removeUploadListener(this);
+
         // Any closeout or disconnect operations
         MyApplication.madcapLogger.d(TAG, "onDestroy");
         cache.close();
@@ -168,6 +182,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         }
 
         enableAllListeners();
+        addUploadListener(this);
 
         return START_STICKY;
         //return super.onStartCommand(intent, flags, startId);
@@ -188,7 +203,6 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
                 }
             }
         }
-
     }
 
 
@@ -215,8 +229,43 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     public int requestUpload() {
         MyApplication.madcapLogger.d(TAG, "Upload requested");
         int status = cache.checkUploadConditions(Cache.UploadStrategy.IMMEDIATE);
-        if (status == Cache.UPLOAD_READY)
+
+        String text = "Result: ";
+        MyApplication.madcapLogger.d(TAG, "Upload data clicked");
+
+        if (status == Cache.UPLOAD_READY){
             cache.flush(Cache.UploadStrategy.IMMEDIATE);
+            text += "Upload started...";
+        } else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS){
+            text += "Upload in progress...";
+        } else {
+            String errorText = "";
+            if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
+                errorText += "\n- An internal error occurred and data could not be uploaded.";
+            if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET)
+                errorText += "\n- An upload was just requested; please wait a few seconds.";
+            if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION)
+                errorText += "\n- No WiFi connection detected.";
+            if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
+                errorText += "\n- No entries to upload";
+
+            text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
+        }
+
+        String date = new Date()+"";
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(getString(R.string.last_upload_date), date);
+        editor.commit();
+        uploadStatusGuiListener.onUploadStatusDateUpdate(date);
+
+        editor.putString(getString(R.string.last_upload_result), text);
+        editor.commit();
+        uploadStatusGuiListener.onUploadStatusResultUpdate(text);
+
+        uploadStatusGuiListener.onUploadStatusProgressUpdate(0);
+        uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
+
         return status;
     }
 
@@ -268,6 +317,96 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         cache.flush(Cache.UploadStrategy.NORMAL);
     }
 
+    /**
+     * Called when a remote upload attempt has finished.
+     *
+     * @param result the remote upload result, which can be {@code null} in certain rare cases of an internal error.
+     */
+    @Override
+    public void uploadFinished(RemoteUploadResult result) {
+
+        String text = "";
+        if (result == null) {
+            text += "Result: No upload due to an internal error.";
+        } else if (!result.isUploadAttempted()) {
+            text += "Result: No entries to upload.";
+        } else if (result.getException() != null) {
+            String exceptionMessage;
+            if (result.getException().getMessage() != null)
+                exceptionMessage = result.getException().getMessage();
+            else if (result.getException().toString() != null)
+                exceptionMessage = result.getException().toString();
+            else
+                exceptionMessage = "Unspecified error";
+
+            text += "Result: Upload failed due to " + (exceptionMessage.length() > MAX_EXCEPTION_MESSAGE_LENGTH ? exceptionMessage.substring(0, MAX_EXCEPTION_MESSAGE_LENGTH - 1) : exceptionMessage);
+        } else if (result.getSaveResult() == null) {
+            text += "Result: An error occurred on the remote server.";
+        } else {
+            text += "Result:\n";
+            text += "\t" + (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
+            if (result.getSaveResult().getAlreadyExists() != null)
+                text += "\n\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
+        }
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(getString(R.string.last_upload_completeness), getString(R.string.status_complete));
+        editor.commit();
+        editor.putString(getString(R.string.last_upload_result), text);
+        editor.commit();
+        editor.putInt(getString(R.string.last_upload_progress), 100);
+        editor.commit();
+
+        if(uploadStatusGuiListener  != null){
+            uploadStatusGuiListener.onUploadStatusCompletenessUpdate(COMPLETE);
+            uploadStatusGuiListener.onUploadStatusResultUpdate(text);
+            uploadStatusGuiListener.onUploadStatusProgressUpdate(100);
+        }else{
+            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+        }
+        MyApplication.madcapLogger.d(TAG, "Upload result received");
+
+    }
+
+    /**
+     * Called when the the cache is being closed. The listener is automatically unregistered from the cache immediately after this call.
+     */
+    @Override
+    public void cacheClosing() {
+        MyApplication.madcapLogger.d(TAG, "Cache is closing");
+    }
+
+    /**
+     * Provides the percentage of upload that is completed thus far.
+     *
+     * @param value The percentage of the uploaded completed thus far
+     */
+    @Override
+    public void progressUpdate(int value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(getString(R.string.last_upload_progress), value);
+        editor.commit();
+
+        if(uploadStatusGuiListener  != null){
+            uploadStatusGuiListener.onUploadStatusProgressUpdate(value);
+            if(value < 100){
+                uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
+            }
+        }else{
+            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+        }
+
+    }
+
+    public UploadStatusGuiListener getUploadStatusGuiListener() {
+        return uploadStatusGuiListener;
+    }
+
+    public void setUploadStatusGuiListener(UploadStatusGuiListener uploadStatusGuiListener) {
+        this.uploadStatusGuiListener = uploadStatusGuiListener;
+    }
 
     /**
      * Shows the madcap logo in the notification bar,
