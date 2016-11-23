@@ -147,7 +147,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
                 //mDataCollectionService.addUploadListener(getUploadStatusListener());
                 mDataCollectionService.setUploadStatusGuiListener(getStatusGuiListener());
                 mBound = true;
-                Log.d(TAG, "added UploadListener");
+                Log.d(TAG, "added GUI UploadListener");
                 getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
 
@@ -157,7 +157,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
                 //mDataCollectionService.removeUploadListener(getUploadStatusListener());
                 mDataCollectionService.setUploadStatusGuiListener(null);
                 mBound = false;
-                Log.d(TAG, "removed UploadListener");
+                Log.d(TAG, "removed GUI UploadListener");
             }
         };
     }

@@ -14,6 +14,7 @@ import com.google.android.gms.awareness.snapshot.LocationResult;
 import com.google.android.gms.common.api.ResultCallback;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
 
 /**
@@ -26,17 +27,23 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
     private final SnapshotApi snapshotApi;
     private final LocationListener locationListener;
     private final PermissionDeniedHandler permissionDeniedHandler;
+    private final SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler;
+    private int attempts;
 
     /**
      * Constructor called by a factory.
      * @param locationListener the listener to connect to.
      * @param snapshotApi the snapshot api from google.
      */
-    TimedLocationTask(LocationListener locationListener, SnapshotApi snapshotApi, PermissionDeniedHandler permissionDeniedHandler) {
+    TimedLocationTask(LocationListener locationListener,
+                      SnapshotApi snapshotApi,
+                      PermissionDeniedHandler permissionDeniedHandler,
+                      SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler) {
         if ((locationListener != null) && (snapshotApi != null)) {
             this.locationListener = locationListener;
             this.snapshotApi = snapshotApi;
             this.permissionDeniedHandler = permissionDeniedHandler;
+            this.sensorNoAnswerReceivedHandler = sensorNoAnswerReceivedHandler;
         } else {
             throw new NullPointerException("Cannot create a new TimedLocationTask for null parametes.");
         }
@@ -77,7 +84,11 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                                 //Log.d(TAG, "OnResult called");
                             }
                         });
-                //Log.d(TAG, "Attempt to get location");
+                Log.d(TAG, "Attempt to get location");
+                attempts++;
+                if(attempts > 10){
+                    sensorNoAnswerReceivedHandler.onNoAnswerReceivedForLongTime("Location");
+                }
                 try {
                     //Log.d(TAG, "Sleep now");
                     //noinspection BusyWait
@@ -96,6 +107,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
     @SuppressWarnings("OverloadedVarargsMethod")
     @Override
     protected void onProgressUpdate(Location... values) {
+        attempts = 0;
         Location location = values[0];
         LocationProbe state = new LocationProbe();
         state.setDate(System.currentTimeMillis());

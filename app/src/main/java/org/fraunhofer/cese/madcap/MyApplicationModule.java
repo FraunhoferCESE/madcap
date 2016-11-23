@@ -18,6 +18,7 @@ import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
 import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 
 import java.util.Calendar;
 
@@ -26,6 +27,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTask;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
@@ -133,6 +135,9 @@ class MyApplicationModule {
      */
     @Provides
     MadcapPermissionDeniedHandler provideMadcapPermissionDeniedHandler(){ return new MadcapPermissionDeniedHandler(application);}
+
+    @Provides
+    MadcapSensorNoAnswerReceivedHandler provideSensorNoAnswerReceivedHandler(){ return  new MadcapSensorNoAnswerReceivedHandler();}
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}

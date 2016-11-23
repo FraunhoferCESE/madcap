@@ -33,6 +33,7 @@ import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -94,6 +95,9 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Inject
     MadcapPermissionDeniedHandler madcapPermissionDeniedHandler;
+
+    @Inject
+    MadcapSensorNoAnswerReceivedHandler madcapSensorNoAnswerReceivedHandler;
 
     @Inject
     TimedApplicationTaskFactory timedApplicationTaskFactory;
@@ -175,7 +179,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
                     locationServiceStatusReceiverFactory,
                     googleApiClientConnectionIssueManager,
                     googleApiClientConnectionIssueManager,
-                    madcapPermissionDeniedHandler));
+                    madcapPermissionDeniedHandler,
+                    madcapSensorNoAnswerReceivedHandler));
 
             listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this),
                     timedApplicationTaskFactory, madcapPermissionDeniedHandler));
