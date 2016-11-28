@@ -91,16 +91,42 @@
             android:layout_alignParentTop="true"
             android:indeterminate="false"
             android:max="100"
-            android:progress="1" />
+            android:progress="0" />
+
+        <TextView
+            android:id="@+id/lastUpload"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textIsSelectable="true"
+            android:text="@string/last_upload_text"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/uploadDate"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textIsSelectable="true"
+            android:text=""
+            android:textSize="15sp"
+            android:textColor="#000"/>
+
+        <TextView
+            android:id="@+id/uploadCompleteness"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:textIsSelectable="true"
+            android:text=""
+            android:textSize="15sp"
+            android:textColor="#000"/>
 
         <TextView
             android:id="@+id/uploadResult"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginTop="15dp"
             android:textIsSelectable="true"
             android:text="@string/uploadResultText"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            android:textColor="#000"/>
 
     </LinearLayout>
 

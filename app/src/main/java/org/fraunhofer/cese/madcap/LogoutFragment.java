@@ -1,19 +1,31 @@
 package org.fraunhofer.cese.madcap;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
+
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 
 /**
@@ -25,17 +37,16 @@ import javax.inject.Inject;
 public class LogoutFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
 
-    private OnFragmentInteractionListener mListener;
+    @Inject
+    MadcapAuthManager madcapAuthManager;
 
     @Inject
-    private MadcapAuthManager madcapAuthManager;
-    private Activity parentActivity = getActivity();
+    @Named("SigninApi")
+    GoogleApiClient mGoogleApiClient;
+
+    private OnFragmentInteractionListener mListener;
+
     private Button logoutButton;
-
-    public LogoutFragment() {
-        // Required empty public constructor
-    }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +61,7 @@ public class LogoutFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_logout, container, false);
 
         logoutButton = (Button) view.findViewById(R.id.logoutButton);
-        logoutButton.setOnClickListener(new View.OnClickListener(){
+        logoutButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Called when a view has been clicked.
              *
@@ -59,21 +70,107 @@ public class LogoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MyApplication.madcapLogger.d(TAG, "Logout clicked");
-                madcapAuthManager.signOut();
+                if (checkApiAvailability()) {
+                    if(mGoogleApiClient.isConnected()) {
+                        signout();
+                    }
+                    else {
+                        mGoogleApiClient.registerConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                            @Override
+                            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                                mGoogleApiClient.unregisterConnectionFailedListener(this);
+                                MyApplication.madcapLogger.w(TAG, "Could not connect to GoogleSignInApi.");
+                                Toast.makeText(getContext(), "Logout from MADCAP failed. Could not access Google Services. Please try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                            @Override
+                            public void onConnected(@Nullable Bundle bundle) {
+                                mGoogleApiClient.unregisterConnectionCallbacks(this);
+                                MyApplication.madcapLogger.d(TAG, "Connected to Google SignIn services...");
+                                signout();
+                            }
 
-                //getContext().stopService(new Intent(getActivity(),DataCollectionService.class));
-
-                goBackToSignIn();
+                            @Override
+                            public void onConnectionSuspended(int i) {
+                                MyApplication.madcapLogger.w(TAG, "onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
+                                Toast.makeText(getContext(), "Logout from MADCAP failed. Connection lost to Google Services. Please try again.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        mGoogleApiClient.connect();
+                    }
+                }
             }
         });
 
         return view;
     }
 
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+    private void signout() {
+        final Context context = getContext();
+        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status r) {
+                        if (r.getStatusCode() == CommonStatusCodes.SUCCESS) {
+                            MyApplication.madcapLogger.d(TAG, "Logout succeeded. Status code: " + r.getStatusCode() + ", Message: " + r.getStatusMessage());
+                            Toast.makeText(context, "You are now signed out of MADCAP.", Toast.LENGTH_SHORT).show();
+
+                            // TODO: What to do with the user's data?
+                            getActivity().stopService(new Intent(context, DataCollectionService.class));
+                            madcapAuthManager.setUser(null);
+                        } else {
+                            MyApplication.madcapLogger.e(TAG, "Logout failed. Status code: " + r.getStatusCode() + ", Message: " + r.getStatusMessage());
+                            Toast.makeText(context, "Logout from MADCAP failed. Error code: " + r.getStatusCode() + ". Please try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+        Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(
+                new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(@NonNull Status r) {
+                        MyApplication.madcapLogger.d(TAG, "Revoke access finished. Status code: " + r.getStatusCode() + ", Message: " + r.getStatusMessage());
+                    }
+                });
+        MyApplication.madcapLogger.d(TAG, "Now going back to SignInActivity");
+        Intent intent = new Intent(getActivity(), SignInActivity.class);
+        intent.putExtra("distractfromsilentlogin", true);
+        startActivity(intent);
+    }
+
+
+    private boolean checkApiAvailability() {
+        int connectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext());
+        boolean isAvailable = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(getContext()) == ConnectionResult.SUCCESS;
+
+        String text;
+
+        if (!isAvailable) {
+
+            switch (connectionResult) {
+                case ConnectionResult.SERVICE_MISSING:
+                    text = "Play services not available, please install them and retry.";
+                    break;
+                case ConnectionResult.SERVICE_UPDATING:
+                    text = "Play services are currently updating, please wait and try again.";
+                    break;
+                case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+                    text = "Play services not up to date. Please update your system and try again.";
+                    break;
+                case ConnectionResult.SERVICE_DISABLED:
+                    text = "Play services are disabled. Please enable and try again.";
+                    break;
+                case ConnectionResult.SERVICE_INVALID:
+                    text = "Play services are invalid. Please reinstall them and try again.";
+                    break;
+                default:
+                    text = "Play services connection failed. Error code: " + connectionResult;
+            }
+
+            MyApplication.madcapLogger.d(TAG, text);
         }
+
+        return isAvailable;
     }
 
     @Override
@@ -106,12 +203,5 @@ public class LogoutFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    private void goBackToSignIn(){
-        MyApplication.madcapLogger.d(TAG, "Now going back to SignInActivity");
-        Intent intent = new Intent(getActivity(), SignInActivity.class);
-        intent.putExtra("distractfromsilentlogin", true);
-        startActivity(intent);
     }
 }

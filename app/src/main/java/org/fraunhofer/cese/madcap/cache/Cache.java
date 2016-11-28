@@ -157,9 +157,15 @@ public class Cache {
      * @param uploadStrategy The upload strategy to use
      */
     public void flush(Cache.UploadStrategy uploadStrategy) {
+        MyApplication.madcapLogger.d(TAG, "Cache now flushing.");
         last_db_write_attempt = System.currentTimeMillis();
-        //noinspection unchecked
-        dbTaskFactory.createWriteTask(context, this, uploadStrategy).execute(ImmutableMap.copyOf(memcache));
+
+        MyApplication.madcapLogger.d(TAG, "Upload strategy"+ uploadStrategy.toString());
+        MyApplication.madcapLogger.d(TAG, "Context is "+ context);
+        AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> task = dbTaskFactory.createWriteTask(context, this, uploadStrategy);
+        MyApplication.madcapLogger.d(TAG, "Task "+task);
+        MyApplication.madcapLogger.d(TAG, "Memcache" + memcache.toString());
+        task.execute(ImmutableMap.copyOf(memcache));
     }
 
     /**

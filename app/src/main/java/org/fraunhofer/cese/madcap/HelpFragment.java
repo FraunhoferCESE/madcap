@@ -26,12 +26,12 @@ import javax.inject.Inject;
 public class HelpFragment extends Fragment {
     private final String TAG = "HelpFragment";
 
-    @Inject
-    private MadcapAuthManager madcapAuthManager;
-
     private OnFragmentInteractionListener mListener;
     private Button contactMadcapButton;
     private Button onlineHelpButton;
+
+    @Inject
+    MadcapAuthManager madcapAuthManager;
 
     public HelpFragment() {
         // Required empty public constructor
@@ -63,6 +63,7 @@ public class HelpFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_help, container, false);
+
 
         contactMadcapButton = (Button) view.findViewById(R.id.contactMadcapButton);
         contactMadcapButton.setOnClickListener(new View.OnClickListener(){

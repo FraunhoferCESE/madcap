@@ -1,18 +1,24 @@
 package edu.umd.fcmd.sensorlisteners.listener.applications;
 
 import android.app.ActivityManager;
+import android.app.AppOpsManager;
 import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.Calendar;
+import java.util.Date;
 
 
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.model.ForegroundBackgroundEventsProbe;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -29,15 +35,15 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
     private ComponentName lastComponent = null;
 
     private final ApplicationsListener applicationsListener;
+    private final PermissionDeniedHandler permissionDeniedHandler;
     private final ActivityManager activityManager;
     private final Context context;
-    private final Calendar calendar;
     private int apiLevel;
 
-    TimedApplicationTask(ApplicationsListener applicationsListener, Context context, Calendar calendar) {
+    TimedApplicationTask(ApplicationsListener applicationsListener, Context context, PermissionDeniedHandler permissionDeniedHandler) {
         this.applicationsListener = applicationsListener;
+        this.permissionDeniedHandler = permissionDeniedHandler;
         this.context = context;
-        this.calendar = calendar;
         activityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
 
         try {
@@ -72,7 +78,7 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
     protected Void doInBackground(Void... params) {
         Log.d(TAG, "started doInBackground");
 
-        while (!isCancelled()) {
+        while (!isCancelled() && checkPermissions()) {
             checkForNewEvents(context, lastComponent, lastTime);
 
             try {
@@ -84,6 +90,9 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
                 Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
             }
         }
+        if(!checkPermissions()){
+            permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        }
         return null;
     }
 
@@ -91,6 +100,28 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
     protected void onProgressUpdate(ForegroundBackgroundEventsProbe... values) {
         ForegroundBackgroundEventsProbe eventsProbe = values[0];
         applicationsListener.onUpdate(eventsProbe);
+    }
+
+    /**
+     * Checks if the permission for accessing the events is being gratnted
+     * or denied.
+     * @return true if granted, else false.
+     */
+    protected boolean checkPermissions(){
+        if(apiLevel >=21){
+            try {
+                PackageManager packageManager = context.getPackageManager();
+                ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), 0);
+                AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+                int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+                return (mode == AppOpsManager.MODE_ALLOWED);
+
+            } catch (PackageManager.NameNotFoundException e) {
+                return false;
+            }
+        }else{
+            return true;
+        }
     }
 
     /**
@@ -118,8 +149,6 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
                 //Retrieve form last time to current time
                 UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
                 UsageEvents usageEvents = usageStatsManager.queryEvents(lastTime, currentTime);
-                Log.d(TAG, "Last time "+lastTime+" Current time "+currentTime);
-                Log.d(TAG, usageEvents.hasNextEvent()+"");
 
                 while(usageEvents.hasNextEvent()){
                     UsageEvents.Event event = new UsageEvents.Event();
@@ -163,7 +192,7 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
             //Check if something new happened
             if (lastComponent != null) {
                 if (!componentName.getClassName().equals(lastComponent.getClassName())) {
-                    long currentTime = calendar.getTimeInMillis();
+                    long currentTime = System.currentTimeMillis();
                     double acc = computeAccuracy(Build.VERSION.SDK_INT, lastTime, currentTime);
 
                     //The last known applications got in background

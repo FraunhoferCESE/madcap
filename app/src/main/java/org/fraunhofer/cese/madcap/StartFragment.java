@@ -1,6 +1,5 @@
 package org.fraunhofer.cese.madcap;
 
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,15 +24,13 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
-import org.fraunhofer.cese.madcap.cache.Cache;
-import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
-import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
+import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import javax.inject.Inject;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,7 +38,7 @@ import java.util.regex.Pattern;
  * {@link StartFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class StartFragment extends Fragment {
+public class StartFragment extends Fragment implements UploadStatusGuiListener {
     private final String TAG = getClass().getSimpleName();
     private static final String STATE_UPLOAD_STATUS = "uploadStatus";
     private static final String STATE_DATA_COUNT = "dataCount";
@@ -49,101 +47,16 @@ public class StartFragment extends Fragment {
     private static final long CACHE_UPDATE_UI_DELAY = 5000;
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
 
-    private final UploadStatusListener uploadStatusListener = new UploadStatusListener() {
-        private static final String TAG = "UploadStatusListener";
-        private static final String pre = "\nLast upload attempt: ";
-        private final DateFormat df = DateFormat.getDateTimeInstance();
 
-        @Override
-        public void uploadFinished(RemoteUploadResult result) {
-            // handle the various options
-            if (uploadResultView == null)
-                return;
-
-            String text = pre + df.format(new Date()) + "\n";
-            if (result == null) {
-                text += "Result: No upload due to an internal error.";
-            } else if (!result.isUploadAttempted()) {
-                text += "Result: No entries to upload.";
-            } else if (result.getException() != null) {
-                String exceptionMessage;
-                if (result.getException().getMessage() != null)
-                    exceptionMessage = result.getException().getMessage();
-                else if (result.getException().toString() != null)
-                    exceptionMessage = result.getException().toString();
-                else
-                    exceptionMessage = "Unspecified error";
-
-                text += "Result: Upload failed due to " + (exceptionMessage.length() > MAX_EXCEPTION_MESSAGE_LENGTH ? exceptionMessage.substring(0, MAX_EXCEPTION_MESSAGE_LENGTH - 1) : exceptionMessage);
-            } else if (result.getSaveResult() == null) {
-                text += "Result: An error occurred on the remote server.";
-            } else {
-                text += "Result:\n";
-                text += "\t" + (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
-                if (result.getSaveResult().getAlreadyExists() != null)
-                    text += "\n\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
-            }
-
-            uploadResultText = text;
-            if (uploadResultView.isShown())
-                uploadResultView.setText(R.string.uploadResultText);
-            if (mDataCollectionService != null)
-                updateDataCount(-1);
-            MyApplication.madcapLogger.d(TAG, "Upload result received");
-        }
-
-        private final Pattern pattern = Pattern.compile("[0-9]+%% completed.");
-
-        @SuppressLint("StringFormatInvalid")
-        @Override
-        public void progressUpdate(int value) {
-            uploadProgressBar.setProgress(value);
-            Matcher matcher = pattern.matcher(uploadResultText);
-            if (matcher.find()) {
-                uploadResultText = matcher.replaceFirst(value + "%% completed.");
-            } else {
-                uploadResultText += " " + value + "%% completed.";
-            }
-
-            if (uploadResultView.isShown())
-                uploadResultView.setText(getString(R.string.uploadResultText, uploadResultText));
-        }
-
-        @Override
-        public void cacheClosing() {
-            MyApplication.madcapLogger.d(TAG, "Cache is closing");
-        }
-    };
-
-    private final AsyncTask<Void, Long, Void> cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
-        @Override
-        protected Void doInBackground(Void... params) {
-            while (!isCancelled()) {
-                if (mBound) {
-                    //MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
-                    publishProgress(mDataCollectionService.getCacheSize());
-                }
-                try {
-                    Thread.sleep(CACHE_UPDATE_UI_DELAY);
-                } catch (InterruptedException e) {
-                    MyApplication.madcapLogger.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Long... values) {
-            updateDataCount(values[0]);
-        }
-    };
-    ;
+    //private UploadStatusListener uploadStatusListener;
+    private AsyncTask<Void, Long, Void> cacheCountUpdater;
 
     //This is the data collection service we bind to.
     private DataCollectionService mDataCollectionService;
     boolean mBound = false;
 
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+    @Inject
+    MadcapAuthManager madcapAuthManager;
     private boolean isCollectingData;
 
     //Ui elements
@@ -155,6 +68,8 @@ public class StartFragment extends Fragment {
     private ProgressBar uploadProgressBar;
     private TextView dataCountView;
     private TextView uploadResultView;
+    private TextView uploadDateView;
+    private TextView uploadCompletenessView;
     private Button uploadButton;
 
     //Models for Ui elements
@@ -167,22 +82,20 @@ public class StartFragment extends Fragment {
     private ServiceConnection mConnection;
 
 
-    private void bindConnection(Intent intent) {
-        MyApplication.madcapLogger.d(TAG, "bindConnection called. Current bound status: " + mBound);
-        if (!mBound) {
-            getActivity().getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-            mBound = true;
-            MyApplication.madcapLogger.d(TAG, "bindConnection -- bound to " + mDataCollectionService);
+    private void bindConnection(Intent intent){
+        MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is "+mBound);
+        if(!mBound){
+            getActivity().getApplicationContext().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
         }
     }
 
-    private void unbindConnection() {
-        MyApplication.madcapLogger.d(TAG, "unbindConnection called. Current bound status is " + mBound);
-        if (mBound) {
-            getActivity().getApplicationContext().unbindService(mConnection);
-            mBound = false;
-            MyApplication.madcapLogger.d(TAG, "unbindConnection -- connection unbound.");
-        }
+    private void unbindConnection(){
+        MyApplication.madcapLogger.d(TAG, "Attempt to unbind self. Current bound status is "+mBound);
+        //mDataCollectionService.removeUploadListener(uploadStatusListener);
+        mDataCollectionService.setUploadStatusGuiListener(null);
+        getActivity().getApplicationContext().unbindService(mConnection);
+        Log.d(TAG, "removed UploadListener");
+        mBound = false;
     }
 
     public StartFragment() {
@@ -190,15 +103,20 @@ public class StartFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState != null) {
-            dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
-            uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
-        } else {
-            dataCountText = "Computing...";
-            uploadResultText = "None.";
-        }
+        ((MyApplication) getActivity().getApplication()).getComponent().inject(this);
 
         mConnection = new ServiceConnection() {
             private final String TAG = getClass().getSimpleName();
@@ -207,43 +125,26 @@ public class StartFragment extends Fragment {
             public void onServiceConnected(ComponentName className,
                                            IBinder service) {
                 // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
-
-                Log.d(TAG, "onServiceConnected: " + service.toString());
-
-                mDataCollectionService = ((DataCollectionService.DataCollectionServiceBinder) service).getService();
-                mDataCollectionService.addUploadListener(uploadStatusListener);
-                MyApplication.madcapLogger.d(TAG, "mDataCollectionService is " + mDataCollectionService.toString());
+                Log.d(TAG, "New service connection service "+service.toString());
+                DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
+                mDataCollectionService = binder.getService();
+                //mDataCollectionService.addUploadListener(getUploadStatusListener());
+                mDataCollectionService.setUploadStatusGuiListener(getStatusGuiListener());
                 mBound = true;
-                cacheCountUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                Log.d(TAG, "added GUI UploadListener");
+                getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
 
             @Override
             public void onServiceDisconnected(ComponentName arg0) {
                 // Only invoked when hosting service crashed or is killed.
-                MyApplication.madcapLogger.d(TAG, "onServiceDisconected");
-                mDataCollectionService.removeUploadListener(uploadStatusListener);
-                mBound = false;
 
-                AsyncTask.Status status = cacheCountUpdater.getStatus();
-                if (cacheCountUpdater.isCancelled() && (status == AsyncTask.Status.PENDING || status == AsyncTask.Status.RUNNING)) {
-                    cacheCountUpdater.cancel(true);
-                }
+                //mDataCollectionService.removeUploadListener(getUploadStatusListener());
+                mDataCollectionService.setUploadStatusGuiListener(null);
+                mBound = false;
+                Log.d(TAG, "removed GUI UploadListener");
             }
         };
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString(STATE_UPLOAD_STATUS, uploadResultText);
-        outState.putString(STATE_DATA_COUNT, dataCountText);
-        outState.putBoolean(STATE_COLLECTING_DATA, isCollectingData);
-
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
     }
 
     @Override
@@ -263,14 +164,17 @@ public class StartFragment extends Fragment {
         }
 
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
+        dataCountView.setText(dataCountText);
         uploadResultView = (TextView) view.findViewById(R.id.uploadResult);
+        uploadDateView = (TextView) view.findViewById(R.id.uploadDate);
+        uploadCompletenessView = (TextView) view.findViewById(R.id.uploadCompleteness);
 
         if (savedInstanceState != null) {
             dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
             uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
         } else {
             dataCountText = "Computing...";
-            uploadResultText = "None.";
+            //isCollectingData = true;
         }
 
         //Parse the greeting information
@@ -282,7 +186,6 @@ public class StartFragment extends Fragment {
         collectionDataStatusText = (TextView) view.findViewById(R.id.collectionDataStatusText);
 
         //Set the toggle button on the last set preference configuration
-
 
         //Set up upload progress bar
         uploadProgressBar = (ProgressBar) view.findViewById(R.id.uploadProgressBar);
@@ -344,41 +247,70 @@ public class StartFragment extends Fragment {
 
                     @Override
                     public void onClick(View view) {
+                        mDataCollectionService.requestUpload();
+
                         String text = "\nUpload requested on " + df.format(new Date()) + "\n";
+                        MyApplication.madcapLogger.d(TAG, "Upload data clicked");
+                        onUploadStatusCompletenessUpdate(Completeness.INCOMPLETE);
 
-                        int status = mDataCollectionService.requestUpload();
-                        if (status == Cache.UPLOAD_READY)
-                            text += "Upload started...";
-                        else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS)
-                            text += "Upload in progress...";
-                        else {
-                            String errorText = "";
-                            if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
-                                errorText += "\n- An internal error occurred and data could not be uploaded.";
-                            if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET)
-                                errorText += "\n- An upload was just requested; please wait a few seconds.";
-                            if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION)
-                                errorText += "\n- No WiFi connection detected.";
-                            if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
-                                errorText += "\n- No entries to upload";
-
-                            text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
-                        }
-                        uploadResultText = text;
-                        uploadResultView.setText(uploadResultText);
+//                        int status = mDataCollectionService.requestUpload();
+//                        if (status == Cache.UPLOAD_READY)
+//                            text += "Upload started...";
+//                        else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS)
+//                            text += "Upload in progress...";
+//                        else {
+//                            String errorText = "";
+//                            if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
+//                                errorText += "\n- An internal error occurred and data could not be uploaded.";
+//                            if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET)
+//                                errorText += "\n- An upload was just requested; please wait a few seconds.";
+//                            if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION)
+//                                errorText += "\n- No WiFi connection detected.";
+//                            if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
+//                                errorText += "\n- No entries to upload";
+//
+//                            text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
+//                        }
+//                        uploadResultText = text;
+//                        uploadResultView.setText(uploadResultText);
                     }
                 }
         );
+
+        restoreLastUpload();
 
         return view;
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (mBound) {
-            unbindConnection();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            MyApplication.madcapLogger.d(TAG, "NOT NULL");
+            dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
+            uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
+        } else {
+            dataCountText = "Computing...";
+            uploadResultText = "None.";
+            //isCollectingData = true;
         }
+        dataCountView.setText(dataCountText);
+        //uploadResultView.setText(uploadResultText);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(STATE_UPLOAD_STATUS, uploadResultText);
+        outState.putString(STATE_DATA_COUNT, dataCountText);
+        outState.putBoolean(STATE_COLLECTING_DATA, isCollectingData);
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
     }
 
     @Override
@@ -391,7 +323,15 @@ public class StartFragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
+    public void onPause() {
+        super.onPause();
+        if(mBound){
+            unbindConnection();
+        }
+    }
+
+    @Override
+    public void onDestroyView(){
         super.onDestroyView();
         MyApplication.madcapLogger.d(TAG, "onDestroy Fragment");
 
@@ -401,26 +341,77 @@ public class StartFragment extends Fragment {
         mListener = null;
     }
 
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    private AsyncTask<Void, Long, Void> getCacheCountUpdater() {
+        cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                while (!isCancelled()) {
+                    if(mBound){
+                       // MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
+                        publishProgress(mDataCollectionService.getCacheSize());
+                    }
+                    try {
+                        Thread.sleep(CACHE_UPDATE_UI_DELAY);
+                    } catch (InterruptedException e) {
+                        MyApplication.madcapLogger.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void onProgressUpdate(Long... values) {
+                updateDataCount(values[0]);
+            }
+        };
+
+        return cacheCountUpdater;
+    }
+
+    private UploadStatusGuiListener getStatusGuiListener(){
+        return (UploadStatusGuiListener) this;
+    }
+
+    private void restoreLastUpload(){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
+
+        // Restore completeness
+        switch(prefs.getString(getString(R.string.last_upload_completeness), "")){
+            case "Status: Complete":
+                onUploadStatusCompletenessUpdate(Completeness.COMPLETE);
+                break;
+            case "Status: Inomplete":
+                onUploadStatusCompletenessUpdate(Completeness.INCOMPLETE);
+                break;
+            default:
+                MyApplication.madcapLogger.e(TAG, "Wrong completeness status saved");
+                break;
+        }
+
+        //Restore date
+        onUploadStatusDateUpdate(prefs.getString(getString(R.string.last_upload_date), "You have not uploaded any data yet."));
+
+        //Restore result
+        onUploadStatusResultUpdate(prefs.getString(getString(R.string.last_upload_result), ""));
+
+    }
+
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
+    protected ServiceConnection getmConnection() {
+        return mConnection;
     }
 
     private void updateDataCount(long count) {
@@ -429,6 +420,57 @@ public class StartFragment extends Fragment {
             dataCountText = count < 0 ? "Computing..." : Long.toString(count);
             dataCountView.setText(getString(R.string.dataCountText) + " " + dataCountText);
         }
+    }
+
+    /**
+     * Getting called when there is an update on the date of the upload status.
+     *
+     * @param date the date to update.
+     */
+    @Override
+    public void onUploadStatusDateUpdate(String date) {
+        uploadDateView.setText(date);
+    }
+
+    /**
+     * Getting called when there is an update on the completeness is available.
+     *
+     * @param completeness the new completeness status.
+     */
+    @Override
+    public void onUploadStatusCompletenessUpdate(Completeness completeness) {
+        switch (completeness){
+            case COMPLETE:
+                uploadCompletenessView.setText(getString(R.string.status_complete));
+                break;
+            case INCOMPLETE:
+                uploadCompletenessView.setText(getString(R.string.status_incomplete));
+                break;
+            default:
+                break;
+        }
+
+    }
+
+    /**
+     * Getting called when there is an update on the result available.
+     *
+     * @param result the new result.
+     */
+    @Override
+    public void onUploadStatusResultUpdate(String result) {
+        uploadResultView.setText(result);
+    }
+
+    /**
+     * Getting called when there is an update on the progress of the upload
+     * process available.
+     *
+     * @param percent the percentage of the upload.
+     */
+    @Override
+    public void onUploadStatusProgressUpdate(int percent) {
+        uploadProgressBar.setProgress(percent);
     }
 
     /**

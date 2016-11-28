@@ -2,6 +2,10 @@ package edu.umd.fcmd.sensorlisteners.model;
 
 /**
  * Created by MMueller on 11/18/2016.
+ *
+ * Model class for Events which show that a specific
+ * application has moved to the foreground or to the
+ * background.
  */
 
 public class ForegroundBackgroundEventsProbe extends Probe{
@@ -111,8 +115,15 @@ public class ForegroundBackgroundEventsProbe extends Probe{
      */
     @Override
     public String toString() {
+        String classNameString;
+        if(className == null){
+            classNameString = "-";
+        }else{
+            classNameString = className;
+        }
         return "{\"eventType\": " + eventType +
                 ", \"packageName\": " + packageName +
+                ", \"className\": " + classNameString +
                 ", \"accuracy\": " + accuracy +
                 '}';
     }

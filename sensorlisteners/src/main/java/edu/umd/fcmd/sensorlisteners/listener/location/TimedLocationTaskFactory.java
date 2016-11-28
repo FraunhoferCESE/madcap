@@ -6,6 +6,7 @@ import android.text.Editable;
 import com.google.android.gms.awareness.SnapshotApi;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 
 /**
  * Created by MMueller on 11/11/2016.
@@ -20,7 +21,7 @@ public class TimedLocationTaskFactory {
      * @param snapshotApi the SnapshotAPI.
      * @return a new TimedLocationTask
      */
-    public TimedLocationTask create(LocationListener locationListener, SnapshotApi snapshotApi, PermissionDeniedHandler permissionDeniedHandler){
-        return new TimedLocationTask(locationListener, snapshotApi, permissionDeniedHandler);
+    public TimedLocationTask create(LocationListener locationListener, SnapshotApi snapshotApi, PermissionDeniedHandler permissionDeniedHandler, SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler){
+        return new TimedLocationTask(locationListener, snapshotApi, permissionDeniedHandler, sensorNoAnswerReceivedHandler);
     }
 }

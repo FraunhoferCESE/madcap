@@ -2,6 +2,8 @@ package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+
 import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.common.base.Function;
@@ -56,6 +58,7 @@ class DatabaseAsyncTaskFactory {
             @SafeVarargs
             public final DatabaseWriteResult doInBackground(Map<String, CacheEntry>... memcaches) {
                 DatabaseWriteResult result = DatabaseWriteResult.create();
+                Log.d(TAG, "HERE");
                 // Check preconditions for full or partial write of entry objects to database
                 if (context == null) {
                     result.setError(new RuntimeException("{doInBackground} context object is null!"));

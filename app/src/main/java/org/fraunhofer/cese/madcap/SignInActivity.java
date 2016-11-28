@@ -28,6 +28,7 @@ import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
@@ -39,10 +40,11 @@ public class SignInActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 9001;
 
     @Inject
-    private MadcapAuthManager madcapAuthManager;
+    MadcapAuthManager madcapAuthManager;
 
     @Inject
-    private GoogleApiClient mGoogleApiClient;
+    @Named("SigninApi")
+    GoogleApiClient mGoogleApiClient;
 
     private TextView mStatusTextView;
 
@@ -75,7 +77,36 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 MyApplication.madcapLogger.d(TAG, "pressed sign out");
                 mStatusTextView.setText("Signing out...");
-                signout();
+                if(checkApiAvailability()) {
+                    if (mGoogleApiClient.isConnected()) {
+                        signout();
+                    } else {
+                        mGoogleApiClient.registerConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
+                            @Override
+                            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                                mGoogleApiClient.unregisterConnectionFailedListener(this);
+                                MyApplication.madcapLogger.w(TAG, "Could not connect to GoogleSignInApi.");
+                                mStatusTextView.setText("Could not connect to Google SignIn service. Please try again.");
+                            }
+                        });
+                        mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                            @Override
+                            public void onConnected(@Nullable Bundle bundle) {
+                                mGoogleApiClient.unregisterConnectionCallbacks(this);
+                                MyApplication.madcapLogger.d(TAG, "Connected to Google SignIn services...");
+                                mStatusTextView.setText("Connected to Google SignIn services...");
+                                signout();
+                            }
+
+                            @Override
+                            public void onConnectionSuspended(int i) {
+                                MyApplication.madcapLogger.w(TAG, "onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
+                                mStatusTextView.setText("Connection to Google SignIn services interrupted. Please try again.");
+                            }
+                        });
+                        mGoogleApiClient.connect();
+                    }
+                }
             }
         });
 
@@ -164,6 +195,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void signout() {
         if (checkApiAvailability()) {
+
             final Context context = this;
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                     new ResultCallback<Status>() {
@@ -194,6 +226,7 @@ public class SignInActivity extends AppCompatActivity {
                             MyApplication.madcapLogger.d(TAG, "Revoke access finished. Status code: " + r.getStatusCode() + ", Message: " + r.getStatusMessage());
                         }
                     });
+
         }
     }
 

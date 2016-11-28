@@ -5,6 +5,9 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 /**
@@ -24,6 +27,7 @@ import org.fraunhofer.cese.madcap.util.MadcapLogger;
 public class MyApplication extends Application {
     private static final String TAG = "MADCAP.MyApplication";
     private MyComponent component;
+
     @SuppressWarnings("StaticVariableOfConcreteClass")
     public static final MadcapLogger madcapLogger = new MadcapLogger();
 
@@ -32,7 +36,7 @@ public class MyApplication extends Application {
     public final void onCreate() {
         super.onCreate();
 
-        madcapLogger.e(TAG, "on create of My application has been called");
+        madcapLogger.d(TAG, "on create of My application has been called");
 
         //Initialize Acra
 //        ACRA.init(this);
@@ -42,6 +46,7 @@ public class MyApplication extends Application {
         component = DaggerMyComponent.builder()
                 .myApplicationModule(new MyApplicationModule(this))
                 .build();
+
     }
 
     /**
@@ -53,6 +58,7 @@ public class MyApplication extends Application {
         return component;
     }
 
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -62,6 +68,6 @@ public class MyApplication extends Application {
     @Override
     public void onTerminate(){
         super.onTerminate();
-        Log.e(TAG, "Application terminated");
+        Log.d(TAG, "Application terminated");
     }
 }

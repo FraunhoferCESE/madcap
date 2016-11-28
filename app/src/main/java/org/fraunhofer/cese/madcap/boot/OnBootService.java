@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -21,6 +20,7 @@ import com.google.android.gms.common.ConnectionResult;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
+import org.fraunhofer.cese.madcap.authentication.LoginResultCallback;
 import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
@@ -30,7 +30,7 @@ import static com.pathsense.locationengine.lib.detectionLogic.b.i;
 
 /**
  * Service to attempt automatic login and start of MADCAP data collection on boot.
- *
+ * <p>
  * Created by llayman on 11/22/2016.
  */
 
@@ -39,7 +39,7 @@ public class OnBootService extends IntentService {
     private static final String TAG = "OnBootService";
 
     @Inject
-    private MadcapAuthManager authManager;
+    MadcapAuthManager authManager;
 
     public OnBootService() {
         super(TAG);
@@ -53,7 +53,7 @@ public class OnBootService extends IntentService {
             startService(new Intent(this, DataCollectionService.class));
         } else {
             final Context context = this;
-            authManager.silentLogin(this, new MadcapAuthManager.LoginResultCallback() {
+            authManager.silentLogin(this, new LoginResultCallback() {
                 @Override
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                     MyApplication.madcapLogger.w(TAG, "Google Play Services connection failed. Error code: " + connectionResult);
@@ -87,14 +87,13 @@ public class OnBootService extends IntentService {
                             startService(new Intent(context, DataCollectionService.class));
                         }
                         // TODO: Create reminder notification to enable MADCAP data collection?
-                    }
-                    else {
+                    } else {
                         MyApplication.madcapLogger.w(TAG, "Google SignIn failed to authenticate user to MADCAP.");
                         loginFailed();
                     }
                 }
 
-                private void loginFailed () {
+                private void loginFailed() {
                     Toast.makeText(context, "MADCAP failed to login automatically. Please open the MADCAP application to sign in.", Toast.LENGTH_SHORT).show();
 
                     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);

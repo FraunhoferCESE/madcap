@@ -16,6 +16,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 
+import org.fraunhofer.cese.madcap.authentication.LoginResultCallback;
 import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 
 import javax.inject.Inject;
@@ -24,7 +25,7 @@ public class WelcomeActivity extends AppCompatActivity {
     private static final String TAG = "WelcomeActivity";
 
     @Inject
-    private MadcapAuthManager madcapAuthManager;
+    MadcapAuthManager madcapAuthManager;
     private TextView errorTextView;
 
     @Override
@@ -69,7 +70,7 @@ public class WelcomeActivity extends AppCompatActivity {
             startActivity(new Intent(this, MainActivity.class));
         } else {
             final Context context = this;
-            madcapAuthManager.silentLogin(this, new MadcapAuthManager.LoginResultCallback() {
+            madcapAuthManager.silentLogin(this, new LoginResultCallback() {
                 @Override
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                     errorTextView.setText("Unable to connect to Google Signin services. Error code: " + connectionResult);
@@ -96,9 +97,6 @@ public class WelcomeActivity extends AppCompatActivity {
                     String text;
 
                     switch(connectionResult) {
-                        case ConnectionResult.SUCCESS:
-                            text =  "Play Services successfully connected.";
-                            break;
                         case ConnectionResult.SERVICE_MISSING:
                             text =  "Play services not available, please install them.";
                             break;
