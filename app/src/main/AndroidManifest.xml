@@ -92,7 +92,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/MadcapTheme" />
 
-        <service android:name=".firebasecloudmessaging.MadcapFirbaseMessagingService">
+        <service android:name=".firebasecloudmessaging.MadcapFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

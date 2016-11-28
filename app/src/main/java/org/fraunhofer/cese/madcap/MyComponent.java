@@ -2,8 +2,6 @@ package org.fraunhofer.cese.madcap;
 
 import org.fraunhofer.cese.madcap.Probe.ActivityProbe.ActivityProbe;
 import org.fraunhofer.cese.madcap.Probe.BluetoothProbe;
-import org.fraunhofer.cese.madcap.boot.OnBootService;
-import org.fraunhofer.cese.madcap.firebasecloudmessaging.MadcapFirbaseMessagingService;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Singleton;

@@ -27,7 +27,7 @@ import static android.graphics.Color.RED;
 /**
  * This class does to Firebase message handling.
  */
-public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
+public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MFirebaseMsgService";
 
