@@ -25,6 +25,10 @@ public class ForegroundBackgroundEventEntry implements Comparable<ForegroundBack
     @Index
     private String userID;
 
+    public ForegroundBackgroundEventEntry(){
+
+    }
+
     public ForegroundBackgroundEventEntry(ProbeEntry probeEntry){
         id = probeEntry.getId();
         timestamp = probeEntry.getTimestamp();

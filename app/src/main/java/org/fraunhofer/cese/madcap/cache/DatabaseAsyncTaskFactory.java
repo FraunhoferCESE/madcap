@@ -58,9 +58,10 @@ class DatabaseAsyncTaskFactory {
             @SafeVarargs
             public final DatabaseWriteResult doInBackground(Map<String, CacheEntry>... memcaches) {
                 DatabaseWriteResult result = DatabaseWriteResult.create();
-                Log.d(TAG, "HERE");
+                Log.d(TAG, "Do in Background exectured");
                 // Check preconditions for full or partial write of entry objects to database
                 if (context == null) {
+                    Log.e(TAG, "Context is Null");
                     result.setError(new RuntimeException("{doInBackground} context object is null!"));
                     return result;
                 }
@@ -68,6 +69,7 @@ class DatabaseAsyncTaskFactory {
                 DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
 
                 if (databaseHelper == null) {
+                    Log.e(TAG, "DatabaseHelper is Null");
                     result.setError(new RuntimeException("{doInBackground} Attempting to write cache to database, but DatabaseOpenHelper is null. Returning empty result."));
                     return result;
                 }

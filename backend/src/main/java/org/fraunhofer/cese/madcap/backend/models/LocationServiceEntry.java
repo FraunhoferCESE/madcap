@@ -62,6 +62,9 @@ public class LocationServiceEntry implements Comparable<LocationEntry>, Datastor
         this.userID = userID;
     }
 
+    public LocationServiceEntry(){
+    }
+
     public LocationServiceEntry(ProbeEntry probeEntry){
         id = probeEntry.getId();
         timestamp = probeEntry.getTimestamp();

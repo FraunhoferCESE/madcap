@@ -31,6 +31,9 @@ public class LocationEntry implements Comparable<LocationEntry>, DatastoreEntry 
     @Index
     private String userID;
 
+    public LocationEntry(){
+    }
+
     public LocationEntry(ProbeEntry probeEntry){
         id = probeEntry.getId();
         timestamp = probeEntry.getTimestamp();
