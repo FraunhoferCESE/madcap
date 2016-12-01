@@ -15,6 +15,7 @@ import org.mockito.Captor;
 import org.mockito.MockitoAnnotations;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
 
 import static junit.framework.TestCase.fail;
@@ -31,6 +32,7 @@ public class TimedLocationTaskTest{
     LocationListener mockLocationListener;
     SnapshotApi mockSnapshotApi;
     PermissionDeniedHandler mockPermissionDeniedHandler;
+    SensorNoAnswerReceivedHandler mockSensorNoAnswerReceivedHandler;
 
     @Captor
     private ArgumentCaptor<ResultCallback<LocationResult>> resultCallbackLocationResultCaptor;
@@ -40,6 +42,8 @@ public class TimedLocationTaskTest{
         mockLocationListener = mock(LocationListener.class);
         mockSnapshotApi = mock(Awareness.SnapshotApi.getClass());
         mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
+        mockSensorNoAnswerReceivedHandler = mock(SensorNoAnswerReceivedHandler.class);
+
 
         MockitoAnnotations.initMocks(this);
     }
@@ -52,32 +56,32 @@ public class TimedLocationTaskTest{
     @Test
     public void constructor() throws Exception {
         try{
-            TimedLocationTask cut = new TimedLocationTask(null, null, null);
+            TimedLocationTask cut = new TimedLocationTask(null, null, null, mockSensorNoAnswerReceivedHandler);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask cut = new TimedLocationTask(null, mockSnapshotApi, mockPermissionDeniedHandler);
+            TimedLocationTask cut = new TimedLocationTask(null, mockSnapshotApi, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, null, mockPermissionDeniedHandler);
+            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, null, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask cut = new TimedLocationTask(null, mockSnapshotApi, null);
+            TimedLocationTask cut = new TimedLocationTask(null, mockSnapshotApi, null, mockSensorNoAnswerReceivedHandler);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, null, null);
+            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, null, null, mockSensorNoAnswerReceivedHandler);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, mockSnapshotApi, mockPermissionDeniedHandler);
+            TimedLocationTask cut = new TimedLocationTask(mockLocationListener, mockSnapshotApi, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler);
         }catch (NullPointerException e){
             fail("Should not cause an exception.");
         }
@@ -128,7 +132,7 @@ public class TimedLocationTaskTest{
 
     @Test
     public void onProgressUpdate() throws Exception {
-        TimedLocationTask cut = new TimedLocationTask(mockLocationListener, mockSnapshotApi, mockPermissionDeniedHandler);
+        TimedLocationTask cut = new TimedLocationTask(mockLocationListener, mockSnapshotApi, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler);
 
         Location mockLocation = mock(Location.class);
         cut.onProgressUpdate(mockLocation);

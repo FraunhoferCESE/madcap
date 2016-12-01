@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 
 import static junit.framework.Assert.fail;
 import static org.junit.Assert.*;
@@ -20,13 +21,15 @@ public class TimedLocationTaskFactoryTest {
     LocationListener mockLocationListener;
     SnapshotApi mockSnapshotApi;
     PermissionDeniedHandler mockPermissionDeniedHandler;
-
+    SensorNoAnswerReceivedHandler mockSensorNoAnswerReceivedHandler;
 
     @Before
     public void setUp() throws Exception {
         mockLocationListener = mock(LocationListener.class);
         mockSnapshotApi = mock(Awareness.SnapshotApi.getClass());
         mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
+        mockSensorNoAnswerReceivedHandler = mock(SensorNoAnswerReceivedHandler.class);
+
         MockitoAnnotations.initMocks(this);
     }
 
@@ -34,30 +37,30 @@ public class TimedLocationTaskFactoryTest {
     public void create() throws Exception {
         TimedLocationTaskFactory cut = new TimedLocationTaskFactory();
         try{
-            TimedLocationTask t = cut.create(null, null, null);
+            TimedLocationTask t = cut.create(null, null, null, null);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask t = cut.create(null, mockSnapshotApi, mockPermissionDeniedHandler);
+            TimedLocationTask t = cut.create(null, mockSnapshotApi, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler );
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask t = cut.create(null, mockSnapshotApi, null);
+            TimedLocationTask t = cut.create(null, mockSnapshotApi, null, mockSensorNoAnswerReceivedHandler);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask t = cut.create(mockLocationListener, null, mockPermissionDeniedHandler);
+            TimedLocationTask t = cut.create(mockLocationListener, null, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
         try{
-            TimedLocationTask t = cut.create(mockLocationListener, null, null);
+            TimedLocationTask t = cut.create(mockLocationListener, null, null, mockSensorNoAnswerReceivedHandler);
             fail("With at least one null argument it should always throw a nullpointer exception");
         }catch (NullPointerException e){}
 
-        cut.create(mockLocationListener, mockSnapshotApi, mockPermissionDeniedHandler);
+        cut.create(mockLocationListener, mockSnapshotApi, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler);
     }
 }

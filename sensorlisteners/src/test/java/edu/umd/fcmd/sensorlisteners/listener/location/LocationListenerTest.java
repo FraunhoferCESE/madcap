@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
 import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
@@ -37,6 +38,7 @@ public class LocationListenerTest {
     GoogleApiClient.OnConnectionFailedListener mockOnConnectionFailedListener;
     PermissionDeniedHandler mockPermissionDeniedHandler;
     LocationServiceStatusReceiver mockLocationServiceStatusReceiver;
+    SensorNoAnswerReceivedHandler mockSensorNoAnswerReceivedHandler;
 
     @Before
     public void setUp() throws Exception {
@@ -50,6 +52,7 @@ public class LocationListenerTest {
         mockOnConnectionFailedListener = mock(GoogleApiClient.OnConnectionFailedListener.class);
         mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
         mockLocationServiceStatusReceiver = mock(LocationServiceStatusReceiver.class);
+        mockSensorNoAnswerReceivedHandler = mock(SensorNoAnswerReceivedHandler.class);
 
         when(mockLocationServiceStatusReceiverFactory.create(any(LocationListener.class))).thenReturn(mockLocationServiceStatusReceiver);
 
@@ -71,7 +74,8 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler);
+                mockPermissionDeniedHandler,
+                mockSensorNoAnswerReceivedHandler);
     }
 
     @Test
@@ -84,7 +88,8 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler);
+                mockPermissionDeniedHandler,
+                mockSensorNoAnswerReceivedHandler);
 
         //Testing onUpdate with a Location Probe
         LocationProbe mockState = mock(LocationProbe.class);
@@ -103,7 +108,8 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler);
+                mockPermissionDeniedHandler,
+                mockSensorNoAnswerReceivedHandler);
 
         LocationServiceStatusProbe mockServiceState = mock(LocationServiceStatusProbe.class);
 
@@ -121,9 +127,10 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler);
+                mockPermissionDeniedHandler,
+                mockSensorNoAnswerReceivedHandler);
         TimedLocationTask mockTimedLocationTask = mock(TimedLocationTask.class);
-        when(mockTimedLocationTaskFactory.create(cut, mockSnapshotApi, mockPermissionDeniedHandler)).thenReturn(mockTimedLocationTask);
+        when(mockTimedLocationTaskFactory.create(cut, mockSnapshotApi, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler)).thenReturn(mockTimedLocationTask);
 
         cut.startListening();
 
@@ -140,9 +147,10 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler);
+                mockPermissionDeniedHandler,
+                mockSensorNoAnswerReceivedHandler);
         TimedLocationTask mockTimedLocationTask = mock(TimedLocationTask.class);
-        when(mockTimedLocationTaskFactory.create(cut, mockSnapshotApi, mockPermissionDeniedHandler)).thenReturn(mockTimedLocationTask);
+        when(mockTimedLocationTaskFactory.create(cut, mockSnapshotApi, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler)).thenReturn(mockTimedLocationTask);
 
         // Make sure nothing happens when the task has not been instanciated before
         cut.stopListening();
@@ -165,7 +173,8 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler);
+                mockPermissionDeniedHandler,
+                mockSensorNoAnswerReceivedHandler);
 
         Assert.assertSame(mockContext, cut.getContext());
     }
@@ -180,7 +189,8 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler);
+                mockPermissionDeniedHandler,
+                mockSensorNoAnswerReceivedHandler);
 
         Assert.assertSame(mockGoogleApiClient, cut.getmGoogleApiClient());
     }

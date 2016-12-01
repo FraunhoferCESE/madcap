@@ -1,5 +1,6 @@
 package edu.umd.fcmd.sensorlisteners.listener.applications;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.usage.UsageEvents;
@@ -12,11 +13,8 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
-
-import java.util.Calendar;
-import java.util.Date;
-
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.model.ForegroundBackgroundEventsProbe;
@@ -25,14 +23,25 @@ import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * Created by MMueller on 11/17/2016.
+ *
+ * Retrieving the last Applications and their time when they have been moving from
+ * foreground to the background or vice versa.
+ *
+ * The implementation has to be different for Androiod API level 19-21 and API level
+ * 21+ since the Android OS developersr closed the possbilities to detect the running
+ * applications via the process stack in API level 21. For API level 21+ we now use
+ * the UsageStatsManager and the events gathered from it. This method is not available
+ * for api level 20 and lower.
+ *
+ * Also for API level 21+ permission on usageStats are required. If they have not been
+ * granted the permissionDeniedHandler triggers a callback method.
  */
 
-public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsProbe, Void> {
+class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsProbe, Void> {
     private final String TAG = getClass().getSimpleName();
-    private int APPLICATION_SLEEP_TIME;
-    private final int normalizationFactor = 5000;
+    private int applicationProbeSleepTime;
     private long lastTime;
-    private ComponentName lastComponent = null;
+    private ComponentName lastComponent;
 
     private final ApplicationsListener applicationsListener;
     private final PermissionDeniedHandler permissionDeniedHandler;
@@ -48,10 +57,9 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                APPLICATION_SLEEP_TIME = 5000;
-
+                applicationProbeSleepTime = 5000;
             } else {
-                APPLICATION_SLEEP_TIME = 1000;
+                applicationProbeSleepTime = 1000;
             }
             apiLevel = Build.VERSION.SDK_INT;
             Log.d(TAG, "API level " + Build.VERSION.SDK_INT);
@@ -74,6 +82,7 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
      * @see #onPostExecute
      * @see #publishProgress
      */
+    @SuppressLint("InlinedApi")
     @Override
     protected Void doInBackground(Void... params) {
         Log.d(TAG, "started doInBackground");
@@ -85,7 +94,7 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
                 try {
                     //Log.d(TAG, "Sleep now");
                     //noinspection BusyWait
-                    Thread.sleep((long) APPLICATION_SLEEP_TIME);
+                    Thread.sleep((long) applicationProbeSleepTime);
                 } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
                     Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
@@ -109,7 +118,7 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
      * @return true if granted, else false.
      */
     protected boolean checkPermissions(){
-        if(apiLevel >=21){
+        if(apiLevel >=Build.VERSION_CODES.LOLLIPOP){
             try {
                 PackageManager packageManager = context.getPackageManager();
                 ApplicationInfo applicationInfo = packageManager.getApplicationInfo(context.getPackageName(), 0);

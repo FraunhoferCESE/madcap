@@ -1,12 +1,8 @@
 package edu.umd.fcmd.sensorlisteners.listener.applications;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
-import android.provider.Settings;
 import android.util.Log;
-
-import java.util.Calendar;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
@@ -16,6 +12,9 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
  * Created by MMueller on 11/17/2016.
+ *
+ * Application Listener class to listen to events when a certain app goes to
+ * foreground or to background.
  */
 
 public class ApplicationsListener implements Listener {
@@ -50,7 +49,6 @@ public class ApplicationsListener implements Listener {
 
     @Override
     public void stopListening() {
-
         if(timedApplicationTask != null){
             Log.d(TAG, "Timed apllication task is not null");
             timedApplicationTask.cancel(true);
