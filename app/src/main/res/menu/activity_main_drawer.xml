@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:title="Madcap">
+    <item android:title="MADCAP">
         <menu>
             <item
                 android:id="@+id/nav_home"
@@ -24,7 +24,7 @@
             <item
                 android:id="@+id/nav_quit"
                 android:icon="@drawable/ic_cancel_black_24dp"
-                android:title="Quit Madcap" />
+                android:title="Quit MADCAP" />
         </menu>
     </item>
 

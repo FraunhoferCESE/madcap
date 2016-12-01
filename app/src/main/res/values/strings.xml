@@ -9,10 +9,10 @@
             "maxWaitTime": 15
         }
     </string>
-    <string name="introText">You can control Madcap\'s functions from this Control App.</string>
+    <string name="introText">You can control MADCAP\'s functions from this Control App.</string>
     <string name="collectDataSwitchText">Collect Data</string>
     <string name="dataCountText">Collected data since the last upload: </string>
-    <string name="instanceIdText">Insatnce ID: </string>
+    <string name="instanceIdText">Instance ID: </string>
     <string name="uploadResultText">Last upload result: </string>
     <string name="sendButtonText">Upload data now</string>
     <string name="signOutButtonText">Log out</string>
@@ -20,7 +20,7 @@
     <string name="footnoteText">Developed by Fraunhofer USA, Inc.\nContact: llayman@cese.fraunhofer.org.\nFunf Open Sensing Framework licensed under the GNU Lesser GPL.</string>
     <string name="title_activity_login">Sign in</string>
 
-    <string name="crash_toast_text">MADCAP crash has been reported. No worries</string>
+    <string name="crash_toast_text">MADCAP crash has been reported.</string>
 
     <string name="title_text">MADCAP</string>
 
@@ -49,7 +49,7 @@
     <string name="refresh_token">Get Fresh Token</string>
 
     <!-- Content Description for images -->
-    <string name="desc_google_icon">Madcap Logo</string>
+    <string name="desc_google_icon">MADCAP Logo</string>
 
     <!-- Rationale for asking for Contacts -->
     <string name="contacts_permission_rationale">Contacts access is needed in order to retrieve your email address.</string>
@@ -75,7 +75,7 @@
 
     <!-- Quit dialog Fragment -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="quitProjectDialog">Are you shure you want to quiet the Pocket Security Project? You will lose your benefits from the project. This can\'t be undone.</string>
+    <string name="quitProjectDialog">Are you sure you want to quit the Pocket Security Project? You will lose your benefits from the project. This can\'t be undone.</string>
     <string name="quitProjectDialogQuitButton">Quit</string>
     <string name="quitProjectDialogCancelButton">Cancel</string>
     <string name="help">Help</string>
@@ -93,9 +93,9 @@
     <string name="contactEmail1">mmueller@fc-md.umd.edu</string>
     <string name="contactEmail2">llayman@fc-md.umd.edu</string>
 
-    <string name="logout_text">You can log out from Madcap at any time. During this time Madcap will not collect any data. You can log in again to Madcap at any other time again. If you want to leave the Pocket Security project for ever, please select the Option in the side menu.</string>
+    <string name="logout_text">You can log out from MADCAP at any time. During this time MADCAP will not collect any data. You can log in again to Madcap at any other time again. If you want to leave the Pocket Security project for ever, please select the Option in the side menu.</string>
     <string name="logoutButtonText">Log out</string>
-    <string name="quitText">If you want to leave Madcap you have to contact the organisators to get your personal data removed. \n
+    <string name="quitText">If you want to leave MADCAP you have to contact the organizers to get your personal data removed. \n
     Notice: You are free to turn off the data collection at any time you want and start it again later. Therefore it is not neccessary to quit the program.
     \n You will not receive the financial benefits anymore.</string>
     <string name="quitButtonText">Quit pocket security.</string>

@@ -419,7 +419,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     private void showRunNotification(){
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-        mBuilder.setContentTitle("Madcap Running in Background");
+        mBuilder.setContentTitle("MADCAP is running in the background.");
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setPriority(Notification.PRIORITY_LOW);
 
