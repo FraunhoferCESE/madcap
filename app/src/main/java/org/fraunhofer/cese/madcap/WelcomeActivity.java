@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +19,7 @@ import com.google.android.gms.common.ConnectionResult;
 
 import org.fraunhofer.cese.madcap.authentication.LoginResultCallback;
 import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
@@ -127,6 +129,9 @@ public class WelcomeActivity extends AppCompatActivity {
                     if (signInResult.isSuccess()) {
                         MyApplication.madcapLogger.d(TAG, "User successfully signed in and authenticated to MADCAP.");
                         errorTextView.setText("Welcome");
+                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
+                            startService(new Intent(context, DataCollectionService.class));
+                        }
                         startActivity(new Intent(context, MainActivity.class));
                     } else {
                         MyApplication.madcapLogger.d(TAG, "User could not be authenticated to MADCAP. Starting SignInActivity.");
