@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.madcap.authentification;
+package org.fraunhofer.cese.madcap.authentication;
 
 import android.content.Intent;
 

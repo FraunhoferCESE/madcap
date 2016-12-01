@@ -9,26 +9,30 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.SignInActivity;
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
 
 import java.util.Map;
+
+import javax.inject.Inject;
 
 import static android.graphics.Color.RED;
 
 /**
  * This class does to Firebase message handling.
  */
-public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
+public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "MFirebaseMsgService";
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
+
+    @Inject
+    MadcapAuthManager madcapAuthManager;
 
     /**
      * Called when message is received.
@@ -54,7 +58,7 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             MyApplication.madcapLogger.d(TAG, "Message data payload: " + remoteMessage.getData());
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if(madcapAuthManager.getUserId()!=null && prefs.getBoolean(getString(R.string.data_collection_pref), true)){
+            if (madcapAuthManager.getUserId() != null && prefs.getBoolean(getString(R.string.data_collection_pref), true)) {
                 processIncomingMessage(remoteMessage.getData());
             }
         }
@@ -71,7 +75,6 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
 
     /**
      * Create and show a simple notification containing the received FCM message.
-     *
      */
 //    private void sendNotification(String messageBody) {
 //        Intent intent = new Intent(this, MainActivityOld.class);
@@ -93,10 +96,9 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
 //
 //        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
 //    }
-
-    private void processIncomingMessage(Map<String, String> map){
+    private void processIncomingMessage(Map<String, String> map) {
         String type = map.get("type");
-        switch(type){
+        switch (type) {
             case "notification":
                 String name = map.get("name");
                 String text = map.get("text");
@@ -110,7 +112,7 @@ public class MadcapFirbaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void showUiNotification(String title, String text, String info){
+    private void showUiNotification(String title, String text, String info) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(android.R.drawable.ic_dialog_alert);
         mBuilder.setContentTitle(title);

@@ -10,6 +10,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
 import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
@@ -35,6 +36,7 @@ public class LocationListener implements Listener<LocationProbe> {
     private final GoogleApiClient mGoogleApiClient;
     private final LocationServiceStatusReceiver locationServiceStatusReceiver;
     private final PermissionDeniedHandler permissionDeniedHandler;
+    private final SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler;
 
     /**
      * Default constructor which should be used.
@@ -52,12 +54,14 @@ public class LocationListener implements Listener<LocationProbe> {
                             LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory,
                             GoogleApiClient.ConnectionCallbacks connectionCallbackClass,
                             GoogleApiClient.OnConnectionFailedListener connectionFailedCallbackClass,
-                            PermissionDeniedHandler permissionDeniedHandler) {
+                            PermissionDeniedHandler permissionDeniedHandler,
+                            SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler) {
         this.context = context;
         this.mProbeManager = mProbeManager;
         this.mGoogleApiClient = mGoogleApiClient;
         this.snapshotApi = snapshotApi;
         this.permissionDeniedHandler = permissionDeniedHandler;
+        this.sensorNoAnswerReceivedHandler = sensorNoAnswerReceivedHandler;
         locationServiceStatusReceiver =  locationServiceStatusReceiverFactory.create(this);
         locationServiceStatusReceiver.sendInitialProbe(context);
         timedLocationTaskFactory = timedTaskFactory;
@@ -92,7 +96,7 @@ public class LocationListener implements Listener<LocationProbe> {
     @Override
     public void startListening() throws NoSensorFoundException {
         mGoogleApiClient.connect();
-        timedLocationTask = timedLocationTaskFactory.create(this, snapshotApi, permissionDeniedHandler);
+        timedLocationTask = timedLocationTaskFactory.create(this, snapshotApi, permissionDeniedHandler, sensorNoAnswerReceivedHandler);
         timedLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 

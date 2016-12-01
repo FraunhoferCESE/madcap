@@ -12,8 +12,8 @@
     <string name="introText">You can control Madcap\'s functions from this Control App.</string>
     <string name="collectDataSwitchText">Collect Data</string>
     <string name="dataCountText">Collected data since the last upload: </string>
-    <string name="instanceIdText">Insatnce ID: %1$s</string>
-    <string name="uploadResultText">Last upload result: %1$s</string>
+    <string name="instanceIdText">Insatnce ID: </string>
+    <string name="uploadResultText">Last upload result: </string>
     <string name="sendButtonText">Upload data now</string>
     <string name="signOutButtonText">Log out</string>
     <string name="quitProjectButtonText">Quit pocket security</string>
@@ -66,6 +66,12 @@
     <string name="server_client_id">611425056989-bu1aq0g9l4qkblo0rpdcud8usehskrq4.apps.googleusercontent.com</string>
 
     <string name="data_collection_pref">datacollectionturnedonoff</string>
+    <string name="last_upload_status">lastUploadStatus</string>
+    <string name="last_upload_completeness">lastUploadCompleteness</string>
+    <string name="last_upload_result">lastUploadResult</string>
+    <string name="last_upload_progress">lastUploadProgress</string>
+    <string name="status_complete">Status: Complete</string>
+    <string name="status_incomplete">Status: Incomplete</string>
 
     <!-- Quit dialog Fragment -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
@@ -96,5 +102,7 @@
     <string name="datacollectionstatus">Data collection is </string>
     <string name="datacollectionstatuson">Data collection is ON</string>
     <string name="datacollectionstatusoff">Data collection is OFF</string>
+    <string name="last_upload_text">Last upload:</string>
+    <string name="last_upload_date">lastUploadDate</string>
 
 </resources>

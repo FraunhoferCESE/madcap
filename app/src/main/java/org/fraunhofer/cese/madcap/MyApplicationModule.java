@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.net.ConnectivityManager;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -18,12 +20,16 @@ import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
 import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
+
+import java.util.Calendar;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 
@@ -74,6 +80,11 @@ class MyApplicationModule {
                 .build();
     }
 
+    @Provides
+    Calendar provideCalendar(){
+        return Calendar.getInstance();
+    }
+
 
     /**
      * Needed by the DataCollectionService.
@@ -99,6 +110,14 @@ class MyApplicationModule {
      * @return a factory.
      */
     @Provides
+    TimedApplicationTaskFactory provideTimedApplicationTask(){ return new TimedApplicationTaskFactory();}
+
+    /**
+     * Needed by the DataCollectionService.
+     *
+     * @return a factory.
+     */
+    @Provides
     LocationServiceStatusReceiverFactory provideLocationServiceStatusReceiverFactory(){ return new LocationServiceStatusReceiverFactory(); }
 
     /**
@@ -115,7 +134,10 @@ class MyApplicationModule {
      * @return an MadcapPermissionDeniedHandler.
      */
     @Provides
-    MadcapPermissionDeniedHandler provideMadcapPermissionDeniedHandler(){ return new MadcapPermissionDeniedHandler();}
+    MadcapPermissionDeniedHandler provideMadcapPermissionDeniedHandler(){ return new MadcapPermissionDeniedHandler(application);}
+
+    @Provides
+    MadcapSensorNoAnswerReceivedHandler provideSensorNoAnswerReceivedHandler(){ return  new MadcapSensorNoAnswerReceivedHandler();}
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
@@ -198,5 +220,16 @@ class MyApplicationModule {
         return null;
     }
 
+    @Provides @Named("SigninApi")
+    GoogleApiClient providesGoogleSigninApiClient() {
+        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .requestProfile()
+                .build();
 
+        return new GoogleApiClient.Builder(application)
+                //.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, options)
+                .build();
+    }
 }

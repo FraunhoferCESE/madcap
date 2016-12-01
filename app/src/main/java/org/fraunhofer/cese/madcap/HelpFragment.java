@@ -9,10 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
-import org.fraunhofer.cese.madcap.authentification.MadcapAuthManager;
-import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+
+import javax.inject.Inject;
 
 
 /**
@@ -25,11 +25,13 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
  */
 public class HelpFragment extends Fragment {
     private final String TAG = "HelpFragment";
-    private MadcapAuthManager madcapAuthManager = MadcapAuthManager.getInstance();
 
     private OnFragmentInteractionListener mListener;
     private Button contactMadcapButton;
     private Button onlineHelpButton;
+
+    @Inject
+    MadcapAuthManager madcapAuthManager;
 
     public HelpFragment() {
         // Required empty public constructor
@@ -52,6 +54,7 @@ public class HelpFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((MyApplication) getActivity().getApplication()).getComponent().inject(this);
     }
 
     @Override
@@ -60,6 +63,7 @@ public class HelpFragment extends Fragment {
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_help, container, false);
+
 
         contactMadcapButton = (Button) view.findViewById(R.id.contactMadcapButton);
         contactMadcapButton.setOnClickListener(new View.OnClickListener(){

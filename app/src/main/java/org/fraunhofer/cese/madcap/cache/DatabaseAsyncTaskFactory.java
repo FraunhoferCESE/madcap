@@ -2,6 +2,8 @@ package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+
 import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.common.base.Function;
@@ -55,9 +57,12 @@ class DatabaseAsyncTaskFactory {
             @Override
             @SafeVarargs
             public final DatabaseWriteResult doInBackground(Map<String, CacheEntry>... memcaches) {
+                Thread.currentThread().setName(TAG);
+                Log.d(TAG, "Do in Background executed");
                 DatabaseWriteResult result = DatabaseWriteResult.create();
                 // Check preconditions for full or partial write of entry objects to database
                 if (context == null) {
+                    Log.e(TAG, "Context is Null");
                     result.setError(new RuntimeException("{doInBackground} context object is null!"));
                     return result;
                 }
@@ -65,6 +70,7 @@ class DatabaseAsyncTaskFactory {
                 DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
 
                 if (databaseHelper == null) {
+                    Log.e(TAG, "DatabaseHelper is Null");
                     result.setError(new RuntimeException("{doInBackground} Attempting to write cache to database, but DatabaseOpenHelper is null. Returning empty result."));
                     return result;
                 }
@@ -111,16 +117,65 @@ class DatabaseAsyncTaskFactory {
                 return result;
             }
 
+            /**
+             * Runs on the UI thread before {@link #doInBackground}.
+             *
+             * @see #onPostExecute
+             * @see #doInBackground
+             */
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                MyApplication.madcapLogger.d(TAG, "onPreEecute");
+            }
+
+
             @Override
             public void onPostExecute(DatabaseWriteResult result) {
                 OpenHelperManager.releaseHelper();
                 cache.doPostDatabaseWrite(result, uploadStrategy);
+                MyApplication.madcapLogger.d(TAG, "onPostExecute");
+            }
+
+            /**
+             * Runs on the UI thread after {@link #publishProgress} is invoked.
+             * The specified values are the values passed to {@link #publishProgress}.
+             *
+             * @param values The values indicating progress.
+             * @see #publishProgress
+             * @see #doInBackground
+             */
+            @Override
+            protected void onProgressUpdate(Void... values) {
+                super.onProgressUpdate(values);
+
+                MyApplication.madcapLogger.d(TAG, "onProgress update");
             }
 
             @Override
             protected void onCancelled(DatabaseWriteResult databaseWriteResult) {
                 super.onCancelled(databaseWriteResult);
                 OpenHelperManager.releaseHelper();
+                MyApplication.madcapLogger.d(TAG, "onCancelled dbWriteResult");
+            }
+
+            /**
+             * <p>Applications should preferably override {@link #onCancelled(Object)}.
+             * This method is invoked by the default implementation of
+             * {@link #onCancelled(Object)}.</p>
+             * <p>
+             * <p>Runs on the UI thread after {@link #cancel(boolean)} is invoked and
+             * {@link #doInBackground(Object[])} has finished.</p>
+             *
+             * @see #onCancelled(Object)
+             * @see #cancel(boolean)
+             * @see #isCancelled()
+             */
+            @Override
+            protected void onCancelled() {
+                super.onCancelled();
+
+                MyApplication.madcapLogger.d(TAG, "onCancelled no args");
             }
         };
     }
@@ -142,6 +197,7 @@ class DatabaseAsyncTaskFactory {
             @Override
             protected Void doInBackground(Void... voids) {
                 MyApplication.madcapLogger.d(TAG, "Running task to determine if database is still within size limits");
+                Thread.currentThread().setName(TAG);
 
                 if (dbEntryLimit < 0 || cache == null)
                     return null;

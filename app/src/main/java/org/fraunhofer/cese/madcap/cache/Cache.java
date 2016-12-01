@@ -157,9 +157,18 @@ public class Cache {
      * @param uploadStrategy The upload strategy to use
      */
     public void flush(Cache.UploadStrategy uploadStrategy) {
+        MyApplication.madcapLogger.d(TAG, "Cache now flushing.");
         last_db_write_attempt = System.currentTimeMillis();
-        //noinspection unchecked
-        dbTaskFactory.createWriteTask(context, this, uploadStrategy).execute(ImmutableMap.copyOf(memcache));
+
+        MyApplication.madcapLogger.d(TAG, "Upload strategy"+ uploadStrategy.toString());
+        MyApplication.madcapLogger.d(TAG, "Context is "+ context);
+        AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> task = dbTaskFactory.createWriteTask(context, this, uploadStrategy);
+        MyApplication.madcapLogger.d(TAG, "Task "+task);
+        MyApplication.madcapLogger.d(TAG, "Memcache" + memcache.toString());
+
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ImmutableMap.copyOf(memcache));
+        MyApplication.madcapLogger.d(TAG, task.getStatus()+"");
+
     }
 
     /**
@@ -348,6 +357,7 @@ public class Cache {
      * Starts an asynchronous task to perform the upload
      */
     private void upload() {
+        Log.d(TAG, "Upload now called");
         last_upload_attempt = System.currentTimeMillis();
 
         if (config.getWriteToFile()) {
@@ -357,7 +367,7 @@ public class Cache {
                 MyApplication.madcapLogger.e(TAG, "Error writing to CSV file", e);
             }
         }
-        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi, uploadStatusListeners).execute();
+        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi, uploadStatusListeners).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void writeToFile() throws IOException {
@@ -418,7 +428,7 @@ public class Cache {
 
         if (uploadResult.getException() != null) {
             MyApplication.madcapLogger.w(TAG, "{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
-            dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).execute();
+            dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 

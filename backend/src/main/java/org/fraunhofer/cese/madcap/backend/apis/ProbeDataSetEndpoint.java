@@ -12,6 +12,7 @@ import com.googlecode.objectify.cmd.LoadType;
 
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
+import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
@@ -121,6 +122,14 @@ public class ProbeDataSetEndpoint {
                     Collection<LocationServiceEntry> blist = entryMap.get(entry.getProbeType());
                     LocationServiceEntry locationServiceEntry = new LocationServiceEntry(entry);
                     blist.add(locationServiceEntry);
+                    break;
+                case "ForegroundBackgroundEvent":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<ForegroundBackgroundEventEntry>());
+                    }
+                    Collection<ForegroundBackgroundEventEntry> clist = entryMap.get(entry.getProbeType());
+                    ForegroundBackgroundEventEntry foregroundBackgroundEventEntry = new ForegroundBackgroundEventEntry(entry);
+                    clist.add(foregroundBackgroundEventEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();
