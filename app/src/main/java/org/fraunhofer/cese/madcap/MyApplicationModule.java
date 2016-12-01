@@ -158,19 +158,19 @@ class MyApplicationModule {
     @Provides
     CacheConfig provideCacheConfig() {
         CacheConfig config = new CacheConfig();
-        config.setMaxMemEntries(R.integer.MaxMemEntries);
-        config.setMaxDbEntries(R.integer.MaxDbEntries);
+        config.setMaxMemEntries(100);
+        config.setMaxDbEntries(1000);
 
-        config.setMemForcedCleanupLimit(R.integer.MemForcedCleanupLimit);
-        config.setDbForcedCleanupLimit(R.integer.DbForcedCleanupLimit); // value must ensure that we do not exceed Google API limits for a single request
+        config.setMemForcedCleanupLimit(5000);
+        config.setDbForcedCleanupLimit(30000); // value must ensure that we do not exceed Google API limits for a single request
 
-        config.setDbWriteInterval((long) R.integer.DbWriteInterval);
-        config.setUploadInterval((long) R.integer.UploadInterval);
+        config.setDbWriteInterval(2000);
+        config.setUploadInterval(900000);
 
-        Resources res = application.getResources();
+//        Resources res = application.getResources();
 
-        config.setUploadWifiOnly(res.getBoolean(R.bool.UploadWifiOnly));
-        config.setWriteToFile(res.getBoolean(R.bool.WriteToFile));
+        config.setUploadWifiOnly(true);
+        config.setWriteToFile(false);
 
         return config;
     }
