@@ -92,12 +92,12 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
 
     private void unbindConnection(){
         MyApplication.madcapLogger.d(TAG, "Attempt to unbind self. Current bound status is "+mBound);
+        cacheCountUpdater.cancel(true);
         //mDataCollectionService.removeUploadListener(uploadStatusListener);
         mDataCollectionService.setUploadStatusGuiListener(null);
         getActivity().getApplicationContext().unbindService(mConnection);
         Log.d(TAG, "removed UploadListener");
         mBound = false;
-        cacheCountUpdater.cancel(true);
     }
 
     public StartFragment() {
@@ -161,7 +161,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         if (isCollectingData && !mBound) {
             Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
 
-            bindConnection(intent);
+            //bindConnection(intent);
         }
 
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
@@ -319,7 +319,9 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         super.onResume();
 
         Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
-        bindConnection(intent);
+        if (isCollectingData && !mBound){
+            bindConnection(intent);
+        }
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
@@ -346,6 +348,10 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
     @Override
     public void onDetach() {
         super.onDetach();
+        if (mBound)
+            unbindConnection();
+
+        mListener = null;
     }
 
     private AsyncTask<Void, Long, Void> getCacheCountUpdater() {

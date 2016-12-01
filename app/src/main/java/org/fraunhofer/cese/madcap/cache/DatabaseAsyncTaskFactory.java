@@ -57,6 +57,7 @@ class DatabaseAsyncTaskFactory {
             @Override
             @SafeVarargs
             public final DatabaseWriteResult doInBackground(Map<String, CacheEntry>... memcaches) {
+                Thread.currentThread().setName(TAG);
                 Log.d(TAG, "Do in Background executed");
                 DatabaseWriteResult result = DatabaseWriteResult.create();
                 // Check preconditions for full or partial write of entry objects to database
@@ -196,6 +197,7 @@ class DatabaseAsyncTaskFactory {
             @Override
             protected Void doInBackground(Void... voids) {
                 MyApplication.madcapLogger.d(TAG, "Running task to determine if database is still within size limits");
+                Thread.currentThread().setName(TAG);
 
                 if (dbEntryLimit < 0 || cache == null)
                     return null;
