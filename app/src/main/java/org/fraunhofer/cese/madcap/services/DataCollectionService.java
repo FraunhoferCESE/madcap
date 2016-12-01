@@ -235,7 +235,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         int status = cache.checkUploadConditions(Cache.UploadStrategy.IMMEDIATE);
 
         String text = "Result: ";
-        MyApplication.madcapLogger.d(TAG, "Upload data clicked");
+        MyApplication.madcapLogger.d(TAG, "Status: "+status );
 
         if (status == Cache.UPLOAD_READY){
             cache.flush(Cache.UploadStrategy.IMMEDIATE);

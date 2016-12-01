@@ -2,6 +2,8 @@ package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
+
 import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.common.base.Function;
@@ -58,17 +60,26 @@ public class RemoteUploadAsyncTaskFactory {
 
             @Override
             protected RemoteUploadResult doInBackground(Void... params) {
-                if (context == null || cache == null)
+                Log.d(TAG, "DoInBackground started");
+                if (context == null || cache == null){
+                    Log.e(TAG, "Cache or context null");
                     return new RemoteUploadResult();
+                }
+
 
                 DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
-                if (databaseHelper == null || databaseHelper.getDao() == null)
+                if (databaseHelper == null || databaseHelper.getDao() == null){
+                    Log.e(TAG, "DatabaseHelper or Dao null");
                     return new RemoteUploadResult();
+                }
 
                 RemoteUploadResult result = new RemoteUploadResult();
                 long numCachedEntries = databaseHelper.getDao().countOf();
-                if (numCachedEntries == 0)
+                if (numCachedEntries == 0){
+                    Log.e(TAG, "numCache Entries is 0");
                     return result;
+                }
+
 
                 MyApplication.madcapLogger.i(TAG, "Attempting to upload " + numCachedEntries + " to " + appEngineApi.getRootUrl());
 

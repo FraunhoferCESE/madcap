@@ -165,7 +165,10 @@ public class Cache {
         AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> task = dbTaskFactory.createWriteTask(context, this, uploadStrategy);
         MyApplication.madcapLogger.d(TAG, "Task "+task);
         MyApplication.madcapLogger.d(TAG, "Memcache" + memcache.toString());
-        task.execute(ImmutableMap.copyOf(memcache));
+
+        task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ImmutableMap.copyOf(memcache));
+        MyApplication.madcapLogger.d(TAG, task.getStatus()+"");
+
     }
 
     /**
@@ -354,6 +357,7 @@ public class Cache {
      * Starts an asynchronous task to perform the upload
      */
     private void upload() {
+        Log.d(TAG, "Upload now called");
         last_upload_attempt = System.currentTimeMillis();
 
         if (config.getWriteToFile()) {
@@ -363,7 +367,7 @@ public class Cache {
                 MyApplication.madcapLogger.e(TAG, "Error writing to CSV file", e);
             }
         }
-        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi, uploadStatusListeners).execute();
+        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi, uploadStatusListeners).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void writeToFile() throws IOException {
@@ -424,7 +428,7 @@ public class Cache {
 
         if (uploadResult.getException() != null) {
             MyApplication.madcapLogger.w(TAG, "{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
-            dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).execute();
+            dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 

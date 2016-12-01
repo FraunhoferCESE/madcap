@@ -86,6 +86,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is "+mBound);
         if(!mBound){
             getActivity().getApplicationContext().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
+            getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -96,6 +97,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         getActivity().getApplicationContext().unbindService(mConnection);
         Log.d(TAG, "removed UploadListener");
         mBound = false;
+        cacheCountUpdater.cancel(true);
     }
 
     public StartFragment() {
@@ -132,7 +134,6 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
                 mDataCollectionService.setUploadStatusGuiListener(getStatusGuiListener());
                 mBound = true;
                 Log.d(TAG, "added GUI UploadListener");
-                getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
 
             @Override

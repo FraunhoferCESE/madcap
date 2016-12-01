@@ -57,8 +57,8 @@ class DatabaseAsyncTaskFactory {
             @Override
             @SafeVarargs
             public final DatabaseWriteResult doInBackground(Map<String, CacheEntry>... memcaches) {
+                Log.d(TAG, "Do in Background executed");
                 DatabaseWriteResult result = DatabaseWriteResult.create();
-                Log.d(TAG, "Do in Background exectured");
                 // Check preconditions for full or partial write of entry objects to database
                 if (context == null) {
                     Log.e(TAG, "Context is Null");
@@ -116,16 +116,65 @@ class DatabaseAsyncTaskFactory {
                 return result;
             }
 
+            /**
+             * Runs on the UI thread before {@link #doInBackground}.
+             *
+             * @see #onPostExecute
+             * @see #doInBackground
+             */
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                MyApplication.madcapLogger.d(TAG, "onPreEecute");
+            }
+
+
             @Override
             public void onPostExecute(DatabaseWriteResult result) {
                 OpenHelperManager.releaseHelper();
                 cache.doPostDatabaseWrite(result, uploadStrategy);
+                MyApplication.madcapLogger.d(TAG, "onPostExecute");
+            }
+
+            /**
+             * Runs on the UI thread after {@link #publishProgress} is invoked.
+             * The specified values are the values passed to {@link #publishProgress}.
+             *
+             * @param values The values indicating progress.
+             * @see #publishProgress
+             * @see #doInBackground
+             */
+            @Override
+            protected void onProgressUpdate(Void... values) {
+                super.onProgressUpdate(values);
+
+                MyApplication.madcapLogger.d(TAG, "onProgress update");
             }
 
             @Override
             protected void onCancelled(DatabaseWriteResult databaseWriteResult) {
                 super.onCancelled(databaseWriteResult);
                 OpenHelperManager.releaseHelper();
+                MyApplication.madcapLogger.d(TAG, "onCancelled dbWriteResult");
+            }
+
+            /**
+             * <p>Applications should preferably override {@link #onCancelled(Object)}.
+             * This method is invoked by the default implementation of
+             * {@link #onCancelled(Object)}.</p>
+             * <p>
+             * <p>Runs on the UI thread after {@link #cancel(boolean)} is invoked and
+             * {@link #doInBackground(Object[])} has finished.</p>
+             *
+             * @see #onCancelled(Object)
+             * @see #cancel(boolean)
+             * @see #isCancelled()
+             */
+            @Override
+            protected void onCancelled() {
+                super.onCancelled();
+
+                MyApplication.madcapLogger.d(TAG, "onCancelled no args");
             }
         };
     }
