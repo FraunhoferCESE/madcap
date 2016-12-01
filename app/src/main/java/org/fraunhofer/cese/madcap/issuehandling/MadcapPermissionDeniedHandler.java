@@ -8,6 +8,8 @@ import android.provider.Settings;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 
+import java.util.List;
+
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 
 /**
@@ -18,6 +20,8 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
     private final String TAG = getClass().getSimpleName();
 
     private Context context;
+
+    private boolean actionUsagePrompted;
 
     public MadcapPermissionDeniedHandler(Context context){
         this.context = context;
@@ -37,13 +41,15 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
                 //Do some more things like kicking off a timer.
                 break;
             case Settings.ACTION_USAGE_ACCESS_SETTINGS:
-                MyApplication.madcapLogger.e(TAG, "Action usage access denied");
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     //This only works on api level 21+
-                    Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    context.startActivity(intent);
+                    if(!actionUsagePrompted){
+                        MyApplication.madcapLogger.e(TAG, "Action usage access denied");
+                        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                        actionUsagePrompted = true;
+                    }
                 }
                 break;
             default:

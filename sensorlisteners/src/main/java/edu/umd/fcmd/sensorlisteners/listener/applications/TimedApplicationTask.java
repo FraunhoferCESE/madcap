@@ -78,20 +78,21 @@ public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEv
     protected Void doInBackground(Void... params) {
         Log.d(TAG, "started doInBackground");
 
-        while (!isCancelled() && checkPermissions()) {
-            checkForNewEvents(context, lastComponent, lastTime);
+        while (!isCancelled()) {
+            if(checkPermissions()){
+                checkForNewEvents(context, lastComponent, lastTime);
 
-            try {
-                //Log.d(TAG, "Sleep now");
-                //noinspection BusyWait
-                Thread.sleep((long) APPLICATION_SLEEP_TIME);
-            } catch (InterruptedException ignored) {
-                Thread.currentThread().interrupt();
-                Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
+                try {
+                    //Log.d(TAG, "Sleep now");
+                    //noinspection BusyWait
+                    Thread.sleep((long) APPLICATION_SLEEP_TIME);
+                } catch (InterruptedException ignored) {
+                    Thread.currentThread().interrupt();
+                    Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
+                }
+            }else{
+                permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
             }
-        }
-        if(!checkPermissions()){
-            permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         }
         return null;
     }
