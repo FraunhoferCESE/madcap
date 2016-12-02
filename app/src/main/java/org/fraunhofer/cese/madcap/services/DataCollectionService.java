@@ -165,7 +165,15 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     public void onDestroy() {
         MyApplication.madcapLogger.d(TAG, "onDestroy");
         super.onDestroy();
-        disableAllListeners();
+
+        synchronized (listeners) {
+            for (Listener l : listeners) {
+                l.stopListening();
+                MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " stopped listening");
+            }
+            listeners.clear();
+        }
+
         cache.removeUploadListener(this);
 
         // Any closeout or disconnect operations
@@ -173,9 +181,6 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         cache.close();
 
         hideRunNotification();
-        synchronized (listeners) {
-            listeners.clear();
-        }
     }
 
     @Override
@@ -205,18 +210,6 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
         return START_STICKY;
         //return super.onStartCommand(intent, flags, startId);
-    }
-
-    /**
-     * Stops all listeners.
-     */
-    private void disableAllListeners() {
-        synchronized (listeners) {
-            for (Listener l : listeners) {
-                l.stopListening();
-                MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " stopped listening");
-            }
-        }
     }
 
     /**
