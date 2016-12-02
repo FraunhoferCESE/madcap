@@ -163,12 +163,13 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public void onDestroy() {
+        MyApplication.madcapLogger.d(TAG, "onDestroy");
         super.onDestroy();
         disableAllListeners();
         removeUploadListener(this);
 
         // Any closeout or disconnect operations
-        MyApplication.madcapLogger.d(TAG, "onDestroy");
+
         cache.close();
 
         hideRunNotification();
@@ -185,25 +186,13 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        MyApplication.madcapLogger.d(TAG, "OnStartCommand");
+        MyApplication.madcapLogger.d(TAG, "OnStartCommand. Intent callee: " + (intent == null ? "null" : intent.getStringExtra("callee")));
         showRunNotification();
 
-        enableAllListeners();
-        addUploadListener(this);
-
-        return START_STICKY;
-        //return super.onStartCommand(intent, flags, startId);
-    }
-
-    /**
-     * Starts all listeners.
-     */
-    private void enableAllListeners() {
         synchronized (listeners) {
             for (Listener l : listeners) {
                 try {
                     MyApplication.madcapLogger.d(TAG, "numListeners: " + listeners.size());
-                    MyApplication.madcapLogger.d(TAG, "num");
                     l.startListening();
                     MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " started listening");
                 } catch (NoSensorFoundException nsf) {
@@ -211,8 +200,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
                 }
             }
         }
-    }
 
+        addUploadListener(this);
+
+        return START_STICKY;
+        //return super.onStartCommand(intent, flags, startId);
+    }
 
     /**
      * Stops all listeners.

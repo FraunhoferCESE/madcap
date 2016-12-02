@@ -218,6 +218,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
 
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now " + isCollectingData);
                             Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
+                            intent.putExtra("callee",TAG);
                             getActivity().getApplicationContext().startService(intent);
                             bindConnection(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));

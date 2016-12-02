@@ -131,7 +131,9 @@ public class WelcomeActivity extends AppCompatActivity {
                         errorTextView.setText("Welcome");
                         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
                             //TODO start only if not already started
-                            startService(new Intent(context, DataCollectionService.class));
+                            Intent intent = new Intent(context, DataCollectionService.class);
+                            intent.putExtra("callee",TAG);
+                            startService(intent);
                         }
                         startActivity(new Intent(context, MainActivity.class));
                     } else {

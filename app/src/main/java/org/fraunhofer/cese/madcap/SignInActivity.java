@@ -258,7 +258,9 @@ public class SignInActivity extends AppCompatActivity {
                     mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 
                     if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.data_collection_pref), true)) {
-                        startService(new Intent(this, DataCollectionService.class));
+                        Intent intent = new Intent(this, DataCollectionService.class);
+                        intent.putExtra("callee",TAG);
+                        startService(intent);
                     }
 
                     startActivity(new Intent(this, MainActivity.class));
