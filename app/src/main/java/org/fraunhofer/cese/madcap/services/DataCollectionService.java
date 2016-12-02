@@ -166,7 +166,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         MyApplication.madcapLogger.d(TAG, "onDestroy");
         super.onDestroy();
         disableAllListeners();
-        removeUploadListener(this);
+        cache.removeUploadListener(this);
 
         // Any closeout or disconnect operations
 
@@ -201,7 +201,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             }
         }
 
-        addUploadListener(this);
+        cache.addUploadListener(this);
 
         return START_STICKY;
         //return super.onStartCommand(intent, flags, startId);
@@ -267,31 +267,6 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
 
         return status;
-    }
-
-    /**
-     * Attempts to add an upload status listener to the cache.
-     * <p>
-     * From LL: This method is called from MainActivity to get upload status information. It
-     * should be moved to the DataCollectionService and the reference updated in the MainActivity.
-     *
-     * @param listener the listener to add
-     * @see Cache#addUploadListener(UploadStatusListener)
-     */
-    public void addUploadListener(UploadStatusListener listener) {
-        cache.addUploadListener(listener);
-    }
-
-    /**
-     * Attempts to remove an upload status listener from the cache.
-     * <p>
-     * From LL: same as addUploadListener()...
-     *
-     * @param listener the listener to remove
-     * @return {@code true} if the listener was removed, {@code false} otherwise.
-     */
-    public boolean removeUploadListener(UploadStatusListener listener) {
-        return cache.removeUploadListener(listener);
     }
 
     /**
@@ -398,10 +373,6 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
         }
 
-    }
-
-    public UploadStatusGuiListener getUploadStatusGuiListener() {
-        return uploadStatusGuiListener;
     }
 
     public void setUploadStatusGuiListener(UploadStatusGuiListener uploadStatusGuiListener) {
