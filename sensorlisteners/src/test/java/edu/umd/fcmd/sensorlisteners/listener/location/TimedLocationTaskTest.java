@@ -117,12 +117,12 @@ public class TimedLocationTaskTest{
 //        Location mockLocation = mock(Location.class);
 //
 //        Status status = new Status(CommonStatusCodes.CANCELED);
-//        when(mockLocationResult.getStatus()).thenReturn(status);
+//        when(mockLocationResult.getState()).thenReturn(status);
 //        when(mockLocationResult.getLocation()).thenReturn(mockLocation);
 //        resultCallbackLocationResultCaptor.getValue().onResult(mockLocationResult);
 //
 //        Status status2 = new Status(CommonStatusCodes.SUCCESS);
-//        when(mockLocationResult.getStatus()).thenReturn(status2);
+//        when(mockLocationResult.getState()).thenReturn(status2);
 //        when(mockLocationResult.getLocation()).thenReturn(mockLocation);
 //        resultCallbackLocationResultCaptor.getValue().onResult(mockLocationResult);
 //

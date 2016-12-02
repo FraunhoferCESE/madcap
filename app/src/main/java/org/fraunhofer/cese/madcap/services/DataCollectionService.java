@@ -50,6 +50,8 @@ import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFa
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.listener.network.NetworkListener;
 
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.INCOMPLETE;
@@ -104,6 +106,9 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     @Inject
     Calendar calendar;
 
+    @Inject
+    ConnectionInfoReceiverFactory connectionInfoReceiverFactory;
+
     /**
      * Return the communication channel to the service.  May return null if
      * clients can not bind to the service.  The returned
@@ -156,6 +161,10 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
             listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this, authManager),
                     timedApplicationTaskFactory, madcapPermissionDeniedHandler));
+
+            listeners.add(new NetworkListener(this, new CacheFactory(cache, this, authManager),
+                    connectionInfoReceiverFactory,
+                    madcapPermissionDeniedHandler));
         }
 //        madcapAuthManager.setCallbackClass(this);
 
@@ -203,7 +212,6 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             for (Listener l : listeners) {
                 try {
                     MyApplication.madcapLogger.d(TAG, "numListeners: " + listeners.size());
-                    MyApplication.madcapLogger.d(TAG, "num");
                     l.startListening();
                     MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " started listening");
                 } catch (NoSensorFoundException nsf) {
@@ -212,7 +220,6 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             }
         }
     }
-
 
     /**
      * Stops all listeners.

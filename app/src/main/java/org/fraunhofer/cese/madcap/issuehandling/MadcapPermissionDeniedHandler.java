@@ -52,6 +52,9 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
                     }
                 }
                 break;
+            case Manifest.permission.ACCESS_WIFI_STATE:
+                MyApplication.madcapLogger.e(TAG, "WiFi access permission denied");
+                break;
             default:
                 MyApplication.madcapLogger.e(TAG, "Unknown permission denied");
                 break;

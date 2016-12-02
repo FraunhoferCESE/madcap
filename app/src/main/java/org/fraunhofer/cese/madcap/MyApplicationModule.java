@@ -32,6 +32,7 @@ import dagger.Provides;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
 
 /**
  * This class defines the providers to use for dependency injection
@@ -138,6 +139,11 @@ class MyApplicationModule {
 
     @Provides
     MadcapSensorNoAnswerReceivedHandler provideSensorNoAnswerReceivedHandler(){ return  new MadcapSensorNoAnswerReceivedHandler();}
+
+    @Provides
+    ConnectionInfoReceiverFactory provideConnectionInfoReceiverFactory(){
+        return new ConnectionInfoReceiverFactory();
+    }
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}

@@ -27,7 +27,7 @@ import edu.mit.media.funf.probe.Probe;
 public class NetworkConnectionProbe extends Probe.Base implements Probe.PassiveProbe {
 
     private BroadcastReceiver receiver;
-    private static final String TAG = "NetworkProbe: ";
+    private static final String TAG = "WiFiProbe: ";
 
 
     @Override

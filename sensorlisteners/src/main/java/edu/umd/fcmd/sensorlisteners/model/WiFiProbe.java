@@ -2,30 +2,50 @@ package edu.umd.fcmd.sensorlisteners.model;
 
 /**
  * Created by MMueller on 12/2/2016.
+ * <p>
+ *  Model class for a Network state.
+ *  Has Status ON/OFF, SSID and Security Level.
  */
 
-public class NetworkProbe extends Probe {
-    public static final String NOT_CONNECTED = "NOT_CONNECTED";
-    public static final String CONNECTED = "CONNECTED";
-
-    private final String NETWORK_TYPE = "Network";
+public class WiFiProbe extends Probe {
+    private static final String NETWORK_TYPE = "Network";
     private String state;
+    private String ssid;
     private String info;
+    private String quality;
+    private String ip;
+    private String networkState;
 
     /**
-     * Gets the state.
-     * @return state.
+     * Gets the state (ON/OFF).
+     *
+     * @return the state.
      */
     public String getState() {
         return state;
     }
 
     /**
-     * Sets the state.
-     * @param state to be set.
+     * Sets the state (ON/OFF).
      */
-    public void setState(String state) {
+     public void setState(String state) {
         this.state = state;
+    }
+
+    /**
+     * Gets the SSID.
+     *
+     * @return the SSID.
+     */
+    public String getSsid() {
+        return ssid;
+    }
+
+    /**
+     * Sets the SSID.
+     */
+    public void setSsid(String ssid) {
+        this.ssid = ssid;
     }
 
     /**
@@ -42,6 +62,54 @@ public class NetworkProbe extends Probe {
      */
     public void setInfo(String info) {
         this.info = info;
+    }
+
+    /**
+     * Getter for the Wifi network State.
+     * @return the wifi network state.
+     */
+    public String getNetworkState() {
+        return networkState;
+    }
+
+    /**
+     * Setter for the Wifi network state.
+     * @param networkState state to be set to.
+     */
+    public void setNetworkState(String networkState) {
+        this.networkState = networkState;
+    }
+
+    /**
+     * Gets the WiFi quality.
+     * @return quality.
+     */
+    public String getQuality() {
+        return quality;
+    }
+
+    /**
+     * Sets the Quality.
+     * @param quality the Quality.
+     */
+    public void setQuality(String quality) {
+        this.quality = quality;
+    }
+
+    /**
+     * Gets the Ip address.
+     * @return Ip address.
+     */
+    public String getIp() {
+        return ip;
+    }
+
+    /**
+     * Sets the ip address.
+     * @param ip address.
+     */
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
     /**
@@ -78,7 +146,10 @@ public class NetworkProbe extends Probe {
     @Override
     public String toString() {
         return "{\"state\": " + (state != null ? state : "-") +
+                ", \"ssid\": " + (ssid != null ? ssid : "-") +
                 ", \"info\": " + (info != null ? info : "-") +
+                ", \"quality\": " + (quality != null ? quality : "-") +
+                ", \"ip\": " + (ip != null ? ip : "-") +
                 '}';
     }
 }
