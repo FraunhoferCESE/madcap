@@ -13,5 +13,6 @@ public interface Listener<T extends Probe> {
     void onUpdate(T state);
     void startListening() throws NoSensorFoundException;
     void stopListening();
+    boolean isRunning();
 }
 

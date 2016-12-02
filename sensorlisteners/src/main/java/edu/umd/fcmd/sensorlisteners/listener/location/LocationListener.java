@@ -37,6 +37,7 @@ public class LocationListener implements Listener<LocationProbe> {
     private final LocationServiceStatusReceiver locationServiceStatusReceiver;
     private final PermissionDeniedHandler permissionDeniedHandler;
     private final SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler;
+    private boolean runningStatus;
 
     /**
      * Default constructor which should be used.
@@ -95,19 +96,29 @@ public class LocationListener implements Listener<LocationProbe> {
      */
     @Override
     public void startListening() throws NoSensorFoundException {
-        mGoogleApiClient.connect();
-        timedLocationTask = timedLocationTaskFactory.create(this, snapshotApi, permissionDeniedHandler, sensorNoAnswerReceivedHandler);
-        timedLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if(!runningStatus){
+            mGoogleApiClient.connect();
+            timedLocationTask = timedLocationTaskFactory.create(this, snapshotApi, permissionDeniedHandler, sensorNoAnswerReceivedHandler);
+            timedLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+
+        runningStatus = true;
     }
 
     @Override
     public void stopListening() {
-        if (timedLocationTask != null) {
+        if (timedLocationTask != null && runningStatus) {
             Log.d(TAG, "Timed location task is not null");
             timedLocationTask.cancel(true);
             mGoogleApiClient.disconnect();
             context.unregisterReceiver(locationServiceStatusReceiver);
         }
+        runningStatus = false;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return runningStatus;
     }
 
     protected Context getContext() {

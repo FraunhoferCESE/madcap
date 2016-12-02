@@ -130,6 +130,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         MyApplication.madcapLogger.d(TAG, "User successfully signed in and authenticated to MADCAP.");
                         errorTextView.setText("Welcome");
                         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
+                            //TODO start only if not already started
                             startService(new Intent(context, DataCollectionService.class));
                         }
                         startActivity(new Intent(context, MainActivity.class));

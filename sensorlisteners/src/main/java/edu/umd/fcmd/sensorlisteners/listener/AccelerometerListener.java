@@ -71,4 +71,9 @@ public class AccelerometerListener extends SensorListener<AccelerometerProbe> {
         state.setzAxis(event.values[2]);
         return state;
     }
+
+    @Override
+    public boolean isRunning() {
+        return false;
+    }
 }

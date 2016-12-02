@@ -25,6 +25,7 @@ public class ApplicationsListener implements Listener {
     private final TimedApplicationTaskFactory timedApplicationTaskFactory;
     private TimedApplicationTask timedApplicationTask;
     private final PermissionDeniedHandler permissionDeniedHandler;
+    private boolean runningStatus;
 
     public ApplicationsListener(Context context,
                                 ProbeManager<Probe> probeProbeManager,
@@ -43,15 +44,24 @@ public class ApplicationsListener implements Listener {
 
     @Override
     public void startListening() throws NoSensorFoundException {
-        timedApplicationTask = timedApplicationTaskFactory.create(this, context, permissionDeniedHandler);
-        timedApplicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if(!runningStatus){
+            timedApplicationTask = timedApplicationTaskFactory.create(this, context, permissionDeniedHandler);
+            timedApplicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+        runningStatus = true;
     }
 
     @Override
     public void stopListening() {
-        if(timedApplicationTask != null){
+        if(timedApplicationTask != null && runningStatus){
             Log.d(TAG, "Timed apllication task is not null");
             timedApplicationTask.cancel(true);
         }
+        runningStatus = false;
+    }
+
+    @Override
+    public boolean isRunning() {
+        return runningStatus;
     }
 }
