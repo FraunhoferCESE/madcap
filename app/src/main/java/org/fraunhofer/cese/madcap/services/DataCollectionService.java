@@ -76,7 +76,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     @Inject
     MadcapAuthManager authManager;
 
-    @Inject @Named("AwarenessApi")
+    @Inject
+    @Named("AwarenessApi")
     GoogleApiClient locationClient;
 
     @Inject
@@ -137,39 +138,11 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     }
 
     @Override
-    public void onCreate(){
+    public void onCreate() {
         ((MyApplication) getApplication()).getComponent().inject(this);
         MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service");
-//        madcapAuthManager.setCallbackClass(this);
 
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        disableAllListeners();
-
-        removeUploadListener(this);
-
-        // Any closeout or disconnect operations
-        MyApplication.madcapLogger.d(TAG, "onDestroy");
-        cache.close();
-
-        hideRunNotification();
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent){
-        return false;
-    }
-
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        MyApplication.madcapLogger.d(TAG, "OnStartCommand");
-        showRunNotification();
-
-        synchronized(listeners){
+        synchronized (listeners) {
             listeners.add(new LocationListener(this, new CacheFactory(cache, this, authManager),
                     locationClient,
                     snapshotApi,
@@ -184,6 +157,36 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this, authManager),
                     timedApplicationTaskFactory, madcapPermissionDeniedHandler));
         }
+//        madcapAuthManager.setCallbackClass(this);
+
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disableAllListeners();
+        removeUploadListener(this);
+
+        // Any closeout or disconnect operations
+        MyApplication.madcapLogger.d(TAG, "onDestroy");
+        cache.close();
+
+        hideRunNotification();
+        synchronized (listeners) {
+            listeners.clear();
+        }
+    }
+
+    @Override
+    public boolean onUnbind(Intent intent) {
+        return false;
+    }
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        MyApplication.madcapLogger.d(TAG, "OnStartCommand");
+        showRunNotification();
 
         enableAllListeners();
         addUploadListener(this);
@@ -195,13 +198,13 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     /**
      * Starts all listeners.
      */
-    private void enableAllListeners(){
-        synchronized(listeners){
-            for(Listener l : listeners){
-                try{
-                    MyApplication.madcapLogger.d(TAG,"numListeners: "+listeners.size());
+    private void enableAllListeners() {
+        synchronized (listeners) {
+            for (Listener l : listeners) {
+                try {
+                    MyApplication.madcapLogger.d(TAG, "numListeners: " + listeners.size());
                     l.startListening();
-                    MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName()+" started listening");
+                    MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " started listening");
                 } catch (NoSensorFoundException nsf) {
                     MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
                 }
@@ -210,13 +213,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     }
 
 
-
     /**
      * Stops all listeners.
      */
-    private void disableAllListeners(){
-        synchronized(listeners){
-            for(Listener l : listeners) {
+    private void disableAllListeners() {
+        synchronized (listeners) {
+            for (Listener l : listeners) {
                 l.stopListening();
                 MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " stopped listening");
             }
@@ -225,7 +227,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     /**
      * Requests an on-demand upload of cached data.
-     *
+     * <p>
      * From LL: This responds to a command from the MainActivity.
      * You can move this to the DataCollectionService and have the
      * MainActivity call this when the "Upload Now" button is pressed.
@@ -235,12 +237,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         int status = cache.checkUploadConditions(Cache.UploadStrategy.IMMEDIATE);
 
         String text = "Result: ";
-        MyApplication.madcapLogger.d(TAG, "Status: "+status );
+        MyApplication.madcapLogger.d(TAG, "Status: " + status);
 
-        if (status == Cache.UPLOAD_READY){
+        if (status == Cache.UPLOAD_READY) {
             cache.flush(Cache.UploadStrategy.IMMEDIATE);
             text += "Upload started...";
-        } else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS){
+        } else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS) {
             text += "Upload in progress...";
         } else {
             String errorText = "";
@@ -256,7 +258,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
         }
 
-        String date = new Date()+"";
+        String date = new Date() + "";
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.last_upload_date), date);
@@ -275,7 +277,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     /**
      * Attempts to add an upload status listener to the cache.
-     *
+     * <p>
      * From LL: This method is called from MainActivity to get upload status information. It
      * should be moved to the DataCollectionService and the reference updated in the MainActivity.
      *
@@ -288,7 +290,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     /**
      * Attempts to remove an upload status listener from the cache.
-     *
+     * <p>
      * From LL: same as addUploadListener()...
      *
      * @param listener the listener to remove
@@ -300,7 +302,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     /**
      * Returns the number of entities currently held in the cache.
-     *
+     * <p>
      * From LL: Used by the MainActivity to get a count of entries to display.
      * Move to DataCollectionService and update the references in the MainActivity.
      *
@@ -314,7 +316,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     /**
      * From LL: Called by the MainActivity. Move to DataCollectionService and update reference in MainActivity.
-     *
+     * <p>
      * Should be called when the OS triggers onTrimMemory in the app
      */
     public void onTrimMemory() {
@@ -362,11 +364,11 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         editor.putInt(getString(R.string.last_upload_progress), 100);
         editor.commit();
 
-        if(uploadStatusGuiListener  != null){
+        if (uploadStatusGuiListener != null) {
             uploadStatusGuiListener.onUploadStatusCompletenessUpdate(COMPLETE);
             uploadStatusGuiListener.onUploadStatusResultUpdate(text);
             uploadStatusGuiListener.onUploadStatusProgressUpdate(100);
-        }else{
+        } else {
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
         }
         MyApplication.madcapLogger.d(TAG, "Upload result received");
@@ -393,12 +395,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         editor.putInt(getString(R.string.last_upload_progress), value);
         editor.commit();
 
-        if(uploadStatusGuiListener  != null){
+        if (uploadStatusGuiListener != null) {
             uploadStatusGuiListener.onUploadStatusProgressUpdate(value);
-            if(value < 100){
+            if (value < 100) {
                 uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
             }
-        }else{
+        } else {
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
         }
 
@@ -416,7 +418,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      * Shows the madcap logo in the notification bar,
      * to signal the user that madcap is collecting data.
      */
-    private void showRunNotification(){
+    private void showRunNotification() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
         mBuilder.setContentTitle("MADCAP is running in the background.");
@@ -446,7 +448,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
-        Notification note =  mBuilder.build();
+        Notification note = mBuilder.build();
         note.flags |= Notification.FLAG_NO_CLEAR;
 
         mNotificationManager.notify(RUN_CODE, note);
@@ -455,7 +457,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     /**
      * Hides the madcap logo in the notification bar.
      */
-    private void hideRunNotification(){
+    private void hideRunNotification() {
         mNotificationManager.cancel(RUN_CODE);
     }
 
@@ -494,8 +496,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      */
     @Override
     public void onSignOutResults(Status status) {
-            MyApplication.madcapLogger.d(TAG, "Sign out callback");
-            stopSelf();
+        MyApplication.madcapLogger.d(TAG, "Sign out callback");
+        stopSelf();
     }
 
     /**
