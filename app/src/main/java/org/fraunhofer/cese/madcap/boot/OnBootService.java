@@ -47,6 +47,7 @@ public class OnBootService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        ((MyApplication) getApplication()).getComponent().inject(this);
         MyApplication.madcapLogger.d(TAG, "onHandleIntent");
 
         if (authManager.getUser() != null) {
