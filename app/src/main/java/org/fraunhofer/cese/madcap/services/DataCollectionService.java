@@ -203,6 +203,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             for (Listener l : listeners) {
                 try {
                     MyApplication.madcapLogger.d(TAG, "numListeners: " + listeners.size());
+                    MyApplication.madcapLogger.d(TAG, "num");
                     l.startListening();
                     MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " started listening");
                 } catch (NoSensorFoundException nsf) {
