@@ -8,7 +8,7 @@ package org.fraunhofer.cese.madcap.cache;
  */
 public class CacheConfig {
 
-    private long maxMemEntries;
+    private int maxMemEntries;
     private long maxDbEntries;
 
     private long memForcedCleanupLimit;
@@ -61,7 +61,7 @@ public class CacheConfig {
      *
      * @return the maximum number of entries to be held in memory
      */
-    public long getMaxMemEntries() {
+    public int getMaxMemEntries() {
         return maxMemEntries;
     }
 

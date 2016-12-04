@@ -4,31 +4,23 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.os.Environment;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
-import com.opencsv.CSVWriter;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -46,6 +38,7 @@ import javax.inject.Singleton;
  *
  * @author Lucas
  */
+@SuppressWarnings("ClassNamingConvention")
 @Singleton
 public class Cache {
 
@@ -56,18 +49,18 @@ public class Cache {
     /**
      * Background task holder for the remote upload task. Stored to query for uploads in progress.
      */
-    @android.support.annotation.Nullable
+    @Nullable
     private AsyncTask<Void, Integer, RemoteUploadResult> uploadTask;
 
     /**
      * Timestamp (in millis) of the last attempted write to the database.
      */
-    private long last_db_write_attempt;
+    private long lastDbWriteAttempt;
 
     /**
      * Timestamp (in millis) of the last attempted remote upload.
      */
-    private long last_upload_attempt;
+    private long lastUploadAttempt;
 
     /**
      * In-memory representation of the cache. Entries are held here prior to being written to the persistent database.
@@ -81,7 +74,7 @@ public class Cache {
      *
      * @see OrmLiteSqliteOpenHelper
      */
-    @android.support.annotation.Nullable
+    @Nullable
     private DatabaseOpenHelper databaseHelper;
 
     /**
@@ -128,10 +121,10 @@ public class Cache {
         this.uploadTaskFactory = uploadTaskFactory;
         this.appEngineApi = appEngineApi;
 
-        last_db_write_attempt = System.currentTimeMillis();
-        last_upload_attempt = 0;
+        lastDbWriteAttempt = System.currentTimeMillis();
+        lastUploadAttempt = 0;
 
-        memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>());
+        memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>(config.getMaxMemEntries()));
 
         if (checkUploadConditions(UploadStrategy.NORMAL) == UPLOAD_READY) {
             upload();
@@ -143,13 +136,14 @@ public class Cache {
      *
      * @param entry the entry to save to the cache.
      */
+    @SuppressWarnings({"InstanceMethodNamingConvention", "NonBooleanMethodNameMayNotStartWithQuestion"})
     public void add(CacheEntry entry) {
         if (entry == null) {
             return;
         }
 
         memcache.put(entry.getId(), entry);
-        if ((memcache.size() > config.getMaxMemEntries()) && ((System.currentTimeMillis() - last_db_write_attempt) > config.getDbWriteInterval())) {
+        if ((memcache.size() > config.getMaxMemEntries()) && ((System.currentTimeMillis() - lastDbWriteAttempt) > config.getDbWriteInterval())) {
             flush(UploadStrategy.NORMAL);
         }
     }
@@ -161,17 +155,17 @@ public class Cache {
      */
     public void flush(UploadStrategy uploadStrategy) {
         MyApplication.madcapLogger.d(TAG, "Cache now flushing.");
-        last_db_write_attempt = System.currentTimeMillis();
+        lastDbWriteAttempt = System.currentTimeMillis();
 
-        MyApplication.madcapLogger.d(TAG, "Upload strategy" + uploadStrategy);
+        MyApplication.madcapLogger.d(TAG, "Upload strategy " + uploadStrategy);
         MyApplication.madcapLogger.d(TAG, "Context is " + context);
         AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> task = dbTaskFactory.createWriteTask(context, this, uploadStrategy);
         MyApplication.madcapLogger.d(TAG, "Task " + task);
-        MyApplication.madcapLogger.d(TAG, "Memcache" + memcache);
+        MyApplication.madcapLogger.d(TAG, "Memcache " + memcache);
 
         //noinspection unchecked
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ImmutableMap.copyOf(memcache));
-        MyApplication.madcapLogger.d(TAG, task.getStatus() + "");
+        MyApplication.madcapLogger.d(TAG, task.getStatus().toString());
 
     }
 
@@ -238,6 +232,7 @@ public class Cache {
      *
      * @param listener the listener to add
      */
+    @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
     public void addUploadListener(UploadStatusListener listener) {
         if (uploadStatusListeners == null) {
             uploadStatusListeners = new ArrayList<>(2);
@@ -301,7 +296,8 @@ public class Cache {
      *
      * @param strategy the upload strategy to use
      */
-    public int checkUploadConditions(UploadStrategy strategy) {
+    @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
+    public final int checkUploadConditions(UploadStrategy strategy) {
         // 1. Check preconditions
         if (appEngineApi == null) {
             MyApplication.madcapLogger.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
@@ -319,6 +315,7 @@ public class Cache {
         }
 
         // 2. Check if an upload is already in progress
+        //noinspection VariableNotUsedInsideIf
         if (uploadTask != null) {
             return UPLOAD_ALREADY_IN_PROGRESS;
         }
@@ -348,7 +345,7 @@ public class Cache {
                 status |= DATABASE_LIMIT_NOT_MET;
             }
 
-            if ((System.currentTimeMillis() - last_upload_attempt) <= uploadInterval) {
+            if ((System.currentTimeMillis() - lastUploadAttempt) <= uploadInterval) {
                 status |= UPLOAD_INTERVAL_NOT_MET;
             }
 
@@ -369,51 +366,10 @@ public class Cache {
      */
     private void upload() {
         Log.d(TAG, "Upload now called");
-        last_upload_attempt = System.currentTimeMillis();
+        lastUploadAttempt = System.currentTimeMillis();
 
-        if (config.getWriteToFile()) {
-            try {
-                writeToFile();
-            } catch (IOException e) {
-                MyApplication.madcapLogger.e(TAG, "Error writing to CSV file", e);
-            }
-        }
         uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi, uploadStatusListeners).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
-
-    private void writeToFile() throws IOException {
-        String state = Environment.getExternalStorageState();
-        if (!Environment.MEDIA_MOUNTED.equals(state)) {
-            MyApplication.madcapLogger.e(TAG, "External media not mounted for read/write");
-            return;
-        }
-
-        File dir = new File(context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS), "probeData");
-        MyApplication.madcapLogger.d(TAG, "CSV directory " + dir.getAbsolutePath() + " exists: " + dir.exists());
-        if (!dir.exists() && !dir.mkdirs()) {
-            MyApplication.madcapLogger.e(TAG, "Probe data directory not created");
-            return;
-        }
-
-        List<String[]> toWrite = Lists.transform(getHelper().getDao().queryForAll(), new Function<CacheEntry, String[]>() {
-            @Nullable
-            @Override
-            public String[] apply(CacheEntry cacheEntry) {
-                return new String[]{cacheEntry.getId(), cacheEntry.getUserID(), cacheEntry.getTimestamp().toString(), cacheEntry.getProbeType(), cacheEntry.getSensorData()};
-            }
-        });
-
-        File f = new File(dir, "probeData.csv");
-        if (!f.exists() && f.createNewFile()) {
-            CSVWriter writer = new CSVWriter(new FileWriter(f, true));
-            MyApplication.madcapLogger.d(TAG, "Writing CSV file to:" + f.getAbsolutePath());
-            writer.writeAll(toWrite);
-            writer.flush();
-            writer.close();
-            MyApplication.madcapLogger.d(TAG, "CSV write completed");
-        }
-    }
-
 
     /**
      * This method should not be called by clients.
