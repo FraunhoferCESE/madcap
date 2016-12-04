@@ -13,4 +13,7 @@ public class IntentFactory implements MadcapFactory {
         return new Intent();
     }
 
+    @Inject
+    public IntentFactory(){
+    }
 }

@@ -145,7 +145,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service");
 
         synchronized (listeners) {
-            listeners.add(new LocationListener(this, new CacheFactory(cache, this, authManager),
+            listeners.add(new LocationListener(this, new CacheFactory(cache, authManager),
                     locationClient,
                     snapshotApi,
                     timedLocationTaskFactory,
@@ -156,7 +156,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
                     madcapSensorNoAnswerReceivedHandler));
 
 
-            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this, authManager),
+            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, authManager),
                     timedApplicationTaskFactory, madcapPermissionDeniedHandler));
         }
 //        madcapAuthManager.setCallbackClass(this);
