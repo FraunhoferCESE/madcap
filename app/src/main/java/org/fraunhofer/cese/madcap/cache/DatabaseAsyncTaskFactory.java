@@ -49,7 +49,7 @@ class DatabaseAsyncTaskFactory {
      * @return a new instance of an asynchronous database writing task
      * @see DatabaseWriteResult
      */
-    AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> createWriteTask(final Context context, final Cache cache, final Cache.UploadStrategy uploadStrategy) {
+    AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> createWriteTask(final Context context, final Cache cache, final UploadStrategy uploadStrategy) {
 
         return new AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult>() {
             private final String TAG = "Fraunhofer.DBWrite";

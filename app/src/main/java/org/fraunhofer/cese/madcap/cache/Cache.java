@@ -2,11 +2,10 @@ package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
-
-import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableMap;
@@ -132,8 +131,9 @@ public class Cache {
         last_db_write_attempt = System.currentTimeMillis();
         last_upload_attempt = 0;
 
-        if (checkUploadConditions(Cache.UploadStrategy.NORMAL) == UPLOAD_READY)
+        if (checkUploadConditions(UploadStrategy.NORMAL) == UPLOAD_READY) {
             upload();
+        }
     }
 
     /**
@@ -142,12 +142,13 @@ public class Cache {
      * @param entry the entry to save to the cache.
      */
     public void add(CacheEntry entry) {
-        if (entry == null)
+        if (entry == null) {
             return;
+        }
 
         memcache.put(entry.getId(), entry);
-        if (memcache.size() > config.getMaxMemEntries() && System.currentTimeMillis() - last_db_write_attempt > config.getDbWriteInterval()) {
-            flush(Cache.UploadStrategy.NORMAL);
+        if ((memcache.size() > config.getMaxMemEntries()) && ((System.currentTimeMillis() - last_db_write_attempt) > config.getDbWriteInterval())) {
+            flush(UploadStrategy.NORMAL);
         }
     }
 
@@ -156,18 +157,19 @@ public class Cache {
      *
      * @param uploadStrategy The upload strategy to use
      */
-    public void flush(Cache.UploadStrategy uploadStrategy) {
+    public void flush(UploadStrategy uploadStrategy) {
         MyApplication.madcapLogger.d(TAG, "Cache now flushing.");
         last_db_write_attempt = System.currentTimeMillis();
 
-        MyApplication.madcapLogger.d(TAG, "Upload strategy"+ uploadStrategy.toString());
-        MyApplication.madcapLogger.d(TAG, "Context is "+ context);
+        MyApplication.madcapLogger.d(TAG, "Upload strategy" + uploadStrategy);
+        MyApplication.madcapLogger.d(TAG, "Context is " + context);
         AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> task = dbTaskFactory.createWriteTask(context, this, uploadStrategy);
-        MyApplication.madcapLogger.d(TAG, "Task "+task);
-        MyApplication.madcapLogger.d(TAG, "Memcache" + memcache.toString());
+        MyApplication.madcapLogger.d(TAG, "Task " + task);
+        MyApplication.madcapLogger.d(TAG, "Memcache" + memcache);
 
+        //noinspection unchecked
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ImmutableMap.copyOf(memcache));
-        MyApplication.madcapLogger.d(TAG, task.getStatus()+"");
+        MyApplication.madcapLogger.d(TAG, task.getStatus() + "");
 
     }
 
@@ -178,10 +180,10 @@ public class Cache {
      * @param result         object containing information on successfully saved entries (if any) and errors that occured
      * @param uploadStrategy the upload strategy to use
      */
-    void doPostDatabaseWrite(DatabaseWriteResult result, Cache.UploadStrategy uploadStrategy) {
+    void doPostDatabaseWrite(DatabaseWriteResult result, UploadStrategy uploadStrategy) {
 
         // 1. Remove ids written to DB from memory
-        if (result.getSavedEntries() != null && !result.getSavedEntries().isEmpty()) {
+        if ((result.getSavedEntries() != null) && !result.getSavedEntries().isEmpty()) {
             MyApplication.madcapLogger.d(TAG, "{doPostDatabaseWrite} entries saved to database: " + result.getSavedEntries().size() + ", new database size: " + result.getDatabaseSize());
             memcache.keySet().removeAll(result.getSavedEntries());
         }
@@ -196,7 +198,7 @@ public class Cache {
 
                 // Remove the oldest entries so that config.getMemForcedCleanupLimit() / 2 entries remain
                 Iterator<String> iterator = memcache.keySet().iterator();
-                while (iterator.hasNext() && memcache.size() > config.getMemForcedCleanupLimit() / 2) {
+                while (iterator.hasNext() && (memcache.size() > (config.getMemForcedCleanupLimit() / 2))) {
                     iterator.next();
                     iterator.remove();
                 }
@@ -205,8 +207,9 @@ public class Cache {
         }
 
         // 3. Do upload if conditions are met.
-        if (checkUploadConditions(uploadStrategy) == UPLOAD_READY)
+        if (checkUploadConditions(uploadStrategy) == UPLOAD_READY) {
             upload();
+        }
     }
 
 
@@ -216,11 +219,13 @@ public class Cache {
      * @return the total number of cached entries, or -1 if the number cannot be determined (i.e., there is an error reading the database cache)
      */
     public long getSize() {
-        if (getHelper() == null || getHelper().getDao() == null)
+        if ((getHelper() == null) || (getHelper().getDao() == null)) {
             return -1;
+        }
         try {
             return getHelper().getDao().countOf() + memcache.size();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
+            MyApplication.madcapLogger.e(TAG, e.getMessage());
             return -1;
         }
     }
@@ -232,8 +237,9 @@ public class Cache {
      * @param listener the listener to add
      */
     public void addUploadListener(UploadStatusListener listener) {
-        if (uploadStatusListeners == null)
+        if (uploadStatusListeners == null) {
             uploadStatusListeners = new ArrayList<>();
+        }
         uploadStatusListeners.add(listener);
     }
 
@@ -244,7 +250,7 @@ public class Cache {
      * @return {@code true} if this {@code listener} was removed from the list of listeners, {@code false} otherwise.
      */
     public boolean removeUploadListener(UploadStatusListener listener) {
-        return uploadStatusListeners != null && uploadStatusListeners.remove(listener);
+        return (uploadStatusListeners != null) && uploadStatusListeners.remove(listener);
     }
 
     /**
@@ -286,13 +292,14 @@ public class Cache {
      * Wait interval in millis between successfive upload attempts in "immediate" configuration
      */
     private static final int IMMEDIATE_UPLOAD_INTERVAL = 5000;
+
     /**
      * This method checks if the conditions are met to trigger a remote upload, and then starts an asynchronous task to perform
      * the upload if so
      *
      * @param strategy the upload strategy to use
      */
-    public int checkUploadConditions(Cache.UploadStrategy strategy) {
+    public int checkUploadConditions(UploadStrategy strategy) {
         // 1. Check preconditions
         if (appEngineApi == null) {
             MyApplication.madcapLogger.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
@@ -320,7 +327,7 @@ public class Cache {
         boolean wifiOnly = config.isUploadWifiOnly();
 
 
-        if (strategy == Cache.UploadStrategy.IMMEDIATE) {
+        if (strategy == UploadStrategy.IMMEDIATE) {
             maxDbEntries = IMMEDIATE_MAX_DB_ENTRIES;
             uploadInterval = IMMEDIATE_UPLOAD_INTERVAL;
         } else {
@@ -331,22 +338,24 @@ public class Cache {
         int status = UPLOAD_READY;
         try {
             long numEntries = getHelper().getDao().countOf();
-            if (strategy == Cache.UploadStrategy.IMMEDIATE)
+            if (strategy == UploadStrategy.IMMEDIATE) {
                 numEntries += memcache.size();
+            }
 
             if (numEntries < maxDbEntries) {
                 status |= DATABASE_LIMIT_NOT_MET;
             }
 
-            if (System.currentTimeMillis() - last_upload_attempt <= uploadInterval) {
+            if ((System.currentTimeMillis() - last_upload_attempt) <= uploadInterval) {
                 status |= UPLOAD_INTERVAL_NOT_MET;
             }
-            if (wifiOnly && !connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected()) {
-                status |= NO_INTERNET_CONNECTION;
-            } else if (connManager.getActiveNetworkInfo() == null || !connManager.getActiveNetworkInfo().isConnected()) {
+
+            NetworkInfo activeNetwork = connManager.getActiveNetworkInfo();
+            //noinspection OverlyComplexBooleanExpression
+            if ((activeNetwork == null) || !activeNetwork.isConnected() || (wifiOnly && (activeNetwork.getType() != ConnectivityManager.TYPE_WIFI))) {
                 status |= NO_INTERNET_CONNECTION;
             }
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             MyApplication.madcapLogger.e(TAG, "{uploadIfNeeded}  Unable to get count of database entries.", e);
             status |= INTERNAL_ERROR;
         }
@@ -413,13 +422,14 @@ public class Cache {
      */
     void doPostUpload(RemoteUploadResult uploadResult) {
         uploadTask = null;
-        if (uploadStatusListeners != null && !uploadStatusListeners.isEmpty()) {
+        if ((uploadStatusListeners != null) && !uploadStatusListeners.isEmpty()) {
             for (UploadStatusListener listener : uploadStatusListeners) {
                 listener.uploadFinished(uploadResult);
             }
         }
-        if (uploadResult == null)
+        if (uploadResult == null) {
             return;
+        }
 
         if (!uploadResult.isUploadAttempted()) {
             MyApplication.madcapLogger.i(TAG, "{doPostUpload} Upload aborted: no entries were sent to be uploaded.");
@@ -439,7 +449,7 @@ public class Cache {
      * Should be called when the app is destroyed, or other events when the cache is no longer needed.
      */
     public void close() {
-        flush(Cache.UploadStrategy.NORMAL);
+        flush(UploadStrategy.NORMAL);
         if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;
@@ -464,9 +474,5 @@ public class Cache {
             databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
         }
         return databaseHelper;
-    }
-
-    public enum UploadStrategy {
-        NORMAL, IMMEDIATE
     }
 }
