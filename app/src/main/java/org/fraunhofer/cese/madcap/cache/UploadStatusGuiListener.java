@@ -1,7 +1,5 @@
 package org.fraunhofer.cese.madcap.cache;
 
-import java.util.Date;
-
 /**
  * Created by MMueller on 11/23/2016.
  *

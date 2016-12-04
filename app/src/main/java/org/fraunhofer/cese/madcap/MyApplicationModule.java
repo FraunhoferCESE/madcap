@@ -3,7 +3,6 @@ package org.fraunhofer.cese.madcap;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 
 import com.google.android.gms.auth.api.Auth;
@@ -54,7 +53,7 @@ class MyApplicationModule {
     }
 
     /**
-     * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache} and {@link org.fraunhofer.cese.madcap.appengine.GoogleAppEnginePipeline}
+     * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
      *
      * @return a Context object (probably the Application) to be used
      */
@@ -170,7 +169,6 @@ class MyApplicationModule {
 //        Resources res = application.getResources();
 
         config.setUploadWifiOnly(true);
-        config.setWriteToFile(false);
 
         return config;
     }

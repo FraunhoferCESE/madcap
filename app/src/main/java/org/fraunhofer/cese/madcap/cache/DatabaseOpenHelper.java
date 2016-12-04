@@ -73,7 +73,7 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
      *
      * @return the dao used to access the SQLLite database
      */
-    public RuntimeExceptionDao<CacheEntry, String> getDao() {
+    RuntimeExceptionDao<CacheEntry, String> getDao() {
         if(dao == null) {
 //            dao = getDao(CacheEntry.class);
             dao = getRuntimeExceptionDao(CacheEntry.class);

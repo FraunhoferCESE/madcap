@@ -6,7 +6,6 @@ import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeSaveResult;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Class for capturing the results of remote upload attempts by the cache.
@@ -20,7 +19,7 @@ public class RemoteUploadResult {
     private ProbeSaveResult saveResult;
     private Throwable exception;
 
-    public RemoteUploadResult() {  }
+    RemoteUploadResult() {  }
 
     public boolean isUploadAttempted() {
         return uploadAttempted;
@@ -34,15 +33,15 @@ public class RemoteUploadResult {
         return exception;
     }
 
-    public void setUploadAttempted(boolean uploadAttempted) {
+    void setUploadAttempted(boolean uploadAttempted) {
         this.uploadAttempted = uploadAttempted;
     }
 
-    public void setSaveResult(ProbeSaveResult saveResult) {
+    void setSaveResult(ProbeSaveResult saveResult) {
         this.saveResult = saveResult;
     }
 
-    public void setException(Throwable exception) {
+    void setException(Throwable exception) {
         this.exception = exception;
     }
 }

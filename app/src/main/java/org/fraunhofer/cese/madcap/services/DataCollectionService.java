@@ -29,6 +29,7 @@ import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
+import org.fraunhofer.cese.madcap.cache.UploadStrategy;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
@@ -221,13 +222,13 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      */
     public int requestUpload() {
         MyApplication.madcapLogger.d(TAG, "Upload requested");
-        int status = cache.checkUploadConditions(Cache.UploadStrategy.IMMEDIATE);
+        int status = cache.checkUploadConditions(UploadStrategy.IMMEDIATE);
 
         String text = "Result: ";
         MyApplication.madcapLogger.d(TAG, "Status: " + status);
 
         if (status == Cache.UPLOAD_READY) {
-            cache.flush(Cache.UploadStrategy.IMMEDIATE);
+            cache.flush(UploadStrategy.IMMEDIATE);
             text += "Upload started...";
         } else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS) {
             text += "Upload in progress...";
@@ -282,7 +283,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      * Should be called when the OS triggers onTrimMemory in the app
      */
     public void onTrimMemory() {
-        cache.flush(Cache.UploadStrategy.NORMAL);
+        cache.flush(UploadStrategy.NORMAL);
     }
 
     /**
