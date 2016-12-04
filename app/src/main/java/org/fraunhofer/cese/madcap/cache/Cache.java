@@ -51,7 +51,7 @@ public class Cache {
 
     private static final String TAG = "Fraunhofer." + Cache.class.getSimpleName();
 
-    private Collection<UploadStatusListener> uploadStatusListeners = new ArrayList<>();
+    private Collection<UploadStatusListener> uploadStatusListeners;
 
     /**
      * Background task holder for the remote upload task. Stored to query for uploads in progress.
@@ -72,7 +72,7 @@ public class Cache {
     /**
      * In-memory representation of the cache. Entries are held here prior to being written to the persistent database.
      */
-    private final Map<String, CacheEntry> memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>());
+    private final Map<String, CacheEntry> memcache;
 
     /**
      * Main object for accessing the SQLite database.
@@ -130,6 +130,8 @@ public class Cache {
 
         last_db_write_attempt = System.currentTimeMillis();
         last_upload_attempt = 0;
+
+        memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>());
 
         if (checkUploadConditions(UploadStrategy.NORMAL) == UPLOAD_READY) {
             upload();
@@ -238,7 +240,7 @@ public class Cache {
      */
     public void addUploadListener(UploadStatusListener listener) {
         if (uploadStatusListeners == null) {
-            uploadStatusListeners = new ArrayList<>();
+            uploadStatusListeners = new ArrayList<>(2);
         }
         uploadStatusListeners.add(listener);
     }
