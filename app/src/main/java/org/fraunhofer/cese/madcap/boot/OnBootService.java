@@ -47,6 +47,7 @@ public class OnBootService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
         MyApplication.madcapLogger.d(TAG, "onHandleIntent");
 

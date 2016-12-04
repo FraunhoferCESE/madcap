@@ -140,6 +140,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public void onCreate() {
+        //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
         MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service");
 

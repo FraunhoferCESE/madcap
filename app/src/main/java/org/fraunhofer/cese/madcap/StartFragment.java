@@ -118,6 +118,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //noinspection CastToConcreteClass
         ((MyApplication) getActivity().getApplication()).getComponent().inject(this);
 
         mConnection = new ServiceConnection() {
