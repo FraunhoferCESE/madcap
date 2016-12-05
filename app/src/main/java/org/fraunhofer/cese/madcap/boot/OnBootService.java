@@ -89,6 +89,7 @@ public class OnBootService extends IntentService {
                         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
                             Intent intent = new Intent(context, DataCollectionService.class);
                             intent.putExtra("callee",TAG);
+
                             startService(intent);
                         }
                         // TODO: Create reminder notification to enable MADCAP data collection?
