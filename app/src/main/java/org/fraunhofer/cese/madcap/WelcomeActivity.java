@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 import android.view.View;
@@ -26,6 +25,7 @@ import javax.inject.Inject;
 public class WelcomeActivity extends AppCompatActivity {
     private static final String TAG = "WelcomeActivity";
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     MadcapAuthManager madcapAuthManager;
     private TextView errorTextView;
@@ -81,41 +81,27 @@ public class WelcomeActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onConnected(@Nullable Bundle bundle) {
-                    MyApplication.madcapLogger.d(TAG, "onStart.onConnected: successfully connected to Google Play Services.");
-                    errorTextView.setText("Connected to Google Signin services...");
-                }
-
-                @Override
-                public void onConnectionSuspended(int i) {
-                    MyApplication.madcapLogger.w(TAG, "onStart.onConnectionSuspended: Connection suspended. Error code: " + i);
-                    errorTextView.setText("Lost connection to Google Signin services. Please sign in manually.");
-                    startActivity(new Intent(context, SignInActivity.class));
-                    finish();
-                }
-
-                @Override
                 public void onServicesUnavailable(int connectionResult) {
                     String text;
 
-                    switch(connectionResult) {
+                    switch (connectionResult) {
                         case ConnectionResult.SERVICE_MISSING:
-                            text =  "Play services not available, please install them.";
+                            text = "Play services not available, please install them.";
                             break;
                         case ConnectionResult.SERVICE_UPDATING:
-                            text =   "Play services are currently updating, please wait.";
+                            text = "Play services are currently updating, please wait.";
                             break;
                         case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-                            text =   "Play services not up to date. Please update.";
+                            text = "Play services not up to date. Please update.";
                             break;
                         case ConnectionResult.SERVICE_DISABLED:
-                            text =   "Play services are disabled. Please enable.";
+                            text = "Play services are disabled. Please enable.";
                             break;
                         case ConnectionResult.SERVICE_INVALID:
-                            text =   "Play services are invalid. Please reinstall them";
+                            text = "Play services are invalid. Please reinstall them";
                             break;
                         default:
-                            text =   "Unknown Play Services return code.";
+                            text = "Unknown Play Services return code.";
                     }
 
                     MyApplication.madcapLogger.e(TAG, text);
@@ -130,9 +116,8 @@ public class WelcomeActivity extends AppCompatActivity {
                         MyApplication.madcapLogger.d(TAG, "User successfully signed in and authenticated to MADCAP.");
                         errorTextView.setText("Welcome");
                         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
-                            //TODO start only if not already started
                             Intent intent = new Intent(context, DataCollectionService.class);
-                            intent.putExtra("callee",TAG);
+                            intent.putExtra("callee", TAG);
                             startService(intent);
                         }
                         startActivity(new Intent(context, MainActivity.class));

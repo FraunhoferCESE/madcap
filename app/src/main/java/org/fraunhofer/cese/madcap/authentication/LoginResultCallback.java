@@ -9,7 +9,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
  * Created by llayman on 11/28/2016.
  */
 
-public interface LoginResultCallback extends GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+public interface LoginResultCallback extends GoogleApiClient.OnConnectionFailedListener {
     void onServicesUnavailable(int connectionResult);
     void onLoginResult(GoogleSignInResult signInResult);
 }

@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.authentication;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,91 +10,89 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.CommonStatusCodes;
+import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 /**
+ * Main entry point for authentication and getting the currently signed in user.
+ * <p>
  * Created by MMueller on 9/29/2016.
  */
 @Singleton
 public class MadcapAuthManager {
 
-    private static final String TAG = "MADCAP Auth Manager";
+    private static final String TAG = "MadcapAuthManager";
 
-    private final GoogleApiClient mGoogleApiClient;
+    private final GoogleSigninProvider googleSigninProvider;
 
+    @Nullable
     private volatile GoogleSignInAccount user;
 
     //private static GoogleSignInApi googleSignInApi = Auth.GoogleSignInApi;
 
     @Inject
-    MadcapAuthManager(@Named("SigninApi") GoogleApiClient googleApiClient) {
-        mGoogleApiClient = googleApiClient;
-    }
-
-
-    private synchronized void signin(@NonNull final LoginResultCallback callback) {
-        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
-
-        if (opr.isDone()) {
-            // In Case there is a result available intermediately. This should happen if they signed in before.
-            GoogleSignInResult result = opr.get();
-            MyApplication.madcapLogger.d(TAG, "Immediate result available: " + result);
-            user = result.getSignInAccount();  // will be null if failed
-            callback.onLoginResult(result);
-        } else {
-            MyApplication.madcapLogger.d(TAG, "silentLogin: Immediate results are not evailable.");
-            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
-                @Override
-                public void onResult(@NonNull GoogleSignInResult r) {
-                    MyApplication.madcapLogger.d(TAG, "silentLogin: Received asynchronous login result. Code: " + r.getStatus().getStatusCode() + ", message: " + r.getStatus().getStatusMessage());
-                    user = r.getSignInAccount();  // will be null if failed
-                    callback.onLoginResult(r);
-                }
-            });
-        }
+    MadcapAuthManager(GoogleSigninProvider googleSigninProvider) {
+        this.googleSigninProvider = googleSigninProvider;
     }
 
     /**
      * Performs a silent login with cached credentials
      */
     public void silentLogin(@NonNull Context context, @NonNull final LoginResultCallback callback) {
-        MyApplication.madcapLogger.d(TAG, "silentLogin initiated");
+        googleSigninProvider.silentSignIn(context, new LoginResultCallback() {
+            @Override
+            public void onServicesUnavailable(int connectionResult) {
+                callback.onServicesUnavailable(connectionResult);
+            }
 
-        int connectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
-        if (connectionResult != ConnectionResult.SUCCESS) {
-            callback.onServicesUnavailable(connectionResult);
-            return;
-        }
+            @Override
+            public void onLoginResult(GoogleSignInResult signInResult) {
+                callback.onLoginResult(signInResult);
+                user = signInResult.getSignInAccount();  // will be null if failed
+                MyApplication.madcapLogger.d(TAG, "User set to " + user);
+            }
 
-        if (mGoogleApiClient.isConnected()) {
-            signin(callback);
-        } else {
-            mGoogleApiClient.registerConnectionFailedListener(callback);
-            mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                @Override
-                public void onConnected(@Nullable Bundle bundle) {
-                    mGoogleApiClient.unregisterConnectionCallbacks(this);
-                    callback.onConnected(bundle);
-                    signin(callback);
-                }
+            @Override
+            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                callback.onConnectionFailed(connectionResult);
 
-                @Override
-                public void onConnectionSuspended(int i) {
-                    MyApplication.madcapLogger.w(TAG, "onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
-                }
-            });
-            mGoogleApiClient.connect();
-        }
+            }
+        });
     }
+
+    public void signout(@NonNull Context context, @NonNull final LogoutResultCallback callback) {
+        googleSigninProvider.signout(context, new LogoutResultCallback() {
+            @Override
+            public void onServicesUnavailable(int connectionResult) {
+                callback.onServicesUnavailable(connectionResult);
+            }
+
+            @Override
+            public void onSignOut(Status result) {
+                if (result.getStatusCode() == CommonStatusCodes.SUCCESS) {
+                    user = null;
+                }
+                callback.onSignOut(result);
+
+            }
+
+            @Override
+            public void onRevokeAccess(Status result) {
+                callback.onRevokeAccess(result);
+            }
+
+            @Override
+            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                callback.onConnectionFailed(connectionResult);
+            }
+        });
+    }
+
 
 
     /**
@@ -101,14 +100,10 @@ public class MadcapAuthManager {
      *
      * @return User ID.
      */
+    @SuppressWarnings("ConstantConditions")
+    @Nullable
     public String getUserId() {
-        String result = null;
-        if (user != null) {
-            result = user.getId();
-        }
-
-        return result;
-
+        return (user == null) ? null : user.getId();
     }
 
     /**
@@ -116,21 +111,18 @@ public class MadcapAuthManager {
      *
      * @return the last users name.
      */
+    @SuppressWarnings({"TypeMayBeWeakened", "ConstantConditions"})
     @Nullable
     public String getLastSignedInUsersName() {
-        String result = null;
-        if (user != null) {
-            result = user.getGivenName() + ' ' + user.getFamilyName();
-        }
-        return result;
+        return (user == null) ? null : (user.getGivenName() + ' ' + user.getFamilyName());
     }
 
+    @Nullable
     public GoogleSignInAccount getUser() {
         return user;
     }
 
-    public synchronized void setUser(GoogleSignInAccount user) {
-        this.user = user;
-    }
+
+
 
 }
