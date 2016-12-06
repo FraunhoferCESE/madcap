@@ -28,7 +28,9 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 
@@ -138,6 +140,12 @@ class MyApplicationModule {
     @Provides
     MadcapSensorNoAnswerReceivedHandler provideSensorNoAnswerReceivedHandler(){ return  new MadcapSensorNoAnswerReceivedHandler();}
 
+    @Provides
+    IntentFilterFactory provideIntentFilterFactory() {
+        return new IntentFilterFactory();
+    }
+
+
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
      *
@@ -148,6 +156,8 @@ class MyApplicationModule {
     final ConnectivityManager provideConnectivityManager() {
         return (ConnectivityManager) application.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
+
+
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
@@ -211,6 +221,11 @@ class MyApplicationModule {
     @Provides
     BluetoothAdapter provideBluetoothAdapter(){
         return BluetoothAdapter.getDefaultAdapter();
+    }
+
+    @Provides
+    BluetoothInformationReceiverFactory provideBluetoothInformationReceiverFactory() {
+        return new BluetoothInformationReceiverFactory();
     }
 
     @Provides

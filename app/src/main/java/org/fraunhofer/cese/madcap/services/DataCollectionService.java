@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,9 +46,12 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
+import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
@@ -105,6 +109,15 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     @Inject
     Calendar calendar;
 
+    @Inject
+    BluetoothAdapter bluetoothAdapter;
+
+    @Inject
+    BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory;
+
+    @Inject
+    IntentFilterFactory intentFilterFactory;
+
     /**
      * Return the communication channel to the service.  May return null if
      * clients can not bind to the service.  The returned
@@ -158,6 +171,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
             listeners.add(new ApplicationsListener(this, new CacheFactory(cache, authManager),
                     timedApplicationTaskFactory, madcapPermissionDeniedHandler));
+
+            listeners.add(new BluetoothListener(this, new CacheFactory(cache, this, authManager),
+                    bluetoothAdapter,
+                    madcapPermissionDeniedHandler,
+                    bluetoothInformationReceiverFactory,
+                    intentFilterFactory));
         }
 //        madcapAuthManager.setCallbackClass(this);
 
@@ -182,7 +201,9 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
         cache.close();
 
-        hideRunNotification();
+        //hideRunNotification();
+
+        //MyApplication.dataCollectionRunning = false;
     }
 
     @Override
@@ -194,7 +215,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         MyApplication.madcapLogger.d(TAG, "OnStartCommand. Intent callee: " + (intent == null ? "null" : intent.getStringExtra("callee")));
-        showRunNotification();
+
+        startForeground(1337, getRunNotification());
 
         synchronized (listeners) {
             for (Listener l : listeners) {
@@ -213,6 +235,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         return START_STICKY;
         //return super.onStartCommand(intent, flags, startId);
     }
+
 
     /**
      * Requests an on-demand upload of cached data.
@@ -412,6 +435,42 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         note.flags |= Notification.FLAG_NO_CLEAR;
 
         mNotificationManager.notify(RUN_CODE, note);
+    }
+
+    private Notification getRunNotification() {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+        mBuilder.setContentTitle("MADCAP is running in the background.");
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        mBuilder.setPriority(Notification.PRIORITY_LOW);
+
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, WelcomeActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(WelcomeActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        Notification note = mBuilder.build();
+        note.flags |= Notification.FLAG_NO_CLEAR;
+
+        return note;
     }
 
     /**

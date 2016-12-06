@@ -22,6 +22,7 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
     private Context context;
 
     private boolean actionUsagePrompted;
+    private boolean bluetoothPermissionPrompted;
 
     public MadcapPermissionDeniedHandler(Context context){
         this.context = context;
@@ -52,6 +53,11 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
                     }
                 }
                 break;
+            case Manifest.permission.BLUETOOTH:
+                if(!bluetoothPermissionPrompted){
+                    MyApplication.madcapLogger.e(TAG, "Bluetooth permission deniedd");
+                    bluetoothPermissionPrompted = true;
+                }
             default:
                 MyApplication.madcapLogger.e(TAG, "Unknown permission denied");
                 break;

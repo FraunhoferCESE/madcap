@@ -11,6 +11,8 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.cmd.LoadType;
 
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
@@ -130,6 +132,22 @@ public class ProbeDataSetEndpoint {
                     Collection<ForegroundBackgroundEventEntry> clist = entryMap.get(entry.getProbeType());
                     ForegroundBackgroundEventEntry foregroundBackgroundEventEntry = new ForegroundBackgroundEventEntry(entry);
                     clist.add(foregroundBackgroundEventEntry);
+                    break;
+                case "BluetoothState":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothStateEntry>());
+                    }
+                    Collection<BluetoothStateEntry> btlist = entryMap.get(entry.getProbeType());
+                    BluetoothStateEntry bluetoothStateEntry = new BluetoothStateEntry(entry);
+                    btlist.add(bluetoothStateEntry);
+                    break;
+                case "BluetoothStaticAttributes":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothStaticAtributesEntry>());
+                    }
+                    Collection<BluetoothStaticAtributesEntry> bsalist = entryMap.get(entry.getProbeType());
+                    BluetoothStaticAtributesEntry bluetoothStaticAtributesEntry = new BluetoothStaticAtributesEntry(entry);
+                    bsalist.add(bluetoothStaticAtributesEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();
