@@ -75,7 +75,7 @@ public class BluetoothStaticAttributesProbe extends Probe {
     @Override
     public String toString() {
         return "{\"name\": " + name +
-                ", \"address\": " + address +
+                ", \"address\": " + "\"" + address + "\"" +
                 '}';
     }
 }

@@ -107,7 +107,7 @@ public class BluetoothListener implements Listener {
         //Bluetooth Static Attributes Probe
         BluetoothStaticAttributesProbe bluetoothStaticAttributesProbe = new BluetoothStaticAttributesProbe();
         bluetoothStaticAttributesProbe.setDate(System.currentTimeMillis());
-        bluetoothStaticAttributesProbe.setAddress(bluetoothAdapter.getAddress());
+        bluetoothStaticAttributesProbe.setAddress(bluetoothAdapter.getAddress()+"");
         bluetoothStaticAttributesProbe.setName(bluetoothAdapter.getName());
         onUpdate(bluetoothStaticAttributesProbe);
 
