@@ -1,12 +1,14 @@
 package edu.umd.fcmd.sensorlisteners.listener.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.model.BluetoothStateProbe;
+import edu.umd.fcmd.sensorlisteners.model.BluetoothStaticAttributesProbe;
 
 import static android.content.ContentValues.TAG;
 
@@ -38,9 +40,12 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
 //                    sendData(intent);
                     break;
                 case BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED:
-//                    intent.putExtra(bluetoothListener.getTAG(), "adapter name changed");
-//                    intent.putExtra("new name: ", bluetoothListener.getBluetoothAdapter().getName());
-//                    sendData(intent);
+                    Log.d(TAG, "Bluetooth Name changed.");
+                    BluetoothStaticAttributesProbe bluetoothStaticAttributesProbe = new BluetoothStaticAttributesProbe();
+                    bluetoothStaticAttributesProbe.setDate(System.currentTimeMillis());
+                    bluetoothStaticAttributesProbe.setAddress(bluetoothListener.getBluetoothAdapter().getAddress());
+                    bluetoothStaticAttributesProbe.setName(bluetoothListener.getBluetoothAdapter().getName());
+                    bluetoothListener.onUpdate(bluetoothStaticAttributesProbe);
                     break;
                 case BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE:
 //                    intent.putExtra(bluetoothListener.getTAG(), "discoverability requested.");
@@ -68,5 +73,6 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
             }
         }
     }
+
 }
 

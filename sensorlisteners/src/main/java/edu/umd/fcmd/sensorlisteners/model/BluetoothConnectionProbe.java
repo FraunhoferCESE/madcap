@@ -1,12 +1,10 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
 /**
- * Created by MMueller on 12/2/2016.
- *
- * The BluetoothDiscoveryProbe tracks events
+ * Created by MMueller on 12/6/2016.
  */
 
-public class BluetoothDiscoveryProbe extends Probe {
+public class BluetoothConnectionProbe extends Probe {
     /**
      * Gets the type of an state e.g. Accelerometer
      *
@@ -14,7 +12,7 @@ public class BluetoothDiscoveryProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothDiscovery";
+        return null;
     }
 
     /**
