@@ -1,7 +1,5 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
-import static android.R.attr.name;
-
 /**
  * Created by MMueller on 12/6/2016.
  */

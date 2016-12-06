@@ -11,6 +11,7 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.cmd.LoadType;
 
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothDiscoveryEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
@@ -148,6 +149,14 @@ public class ProbeDataSetEndpoint {
                     Collection<BluetoothStaticAtributesEntry> bsalist = entryMap.get(entry.getProbeType());
                     BluetoothStaticAtributesEntry bluetoothStaticAtributesEntry = new BluetoothStaticAtributesEntry(entry);
                     bsalist.add(bluetoothStaticAtributesEntry);
+                    break;
+                case "BluetoothDiscoveryProbe":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothDiscoveryEntry>());
+                    }
+                    Collection<BluetoothDiscoveryEntry> bsdlist = entryMap.get(entry.getProbeType());
+                    BluetoothDiscoveryEntry bluetoothDiscoveryEntry = new BluetoothDiscoveryEntry(entry);
+                    bsdlist.add(bluetoothDiscoveryEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();
