@@ -1,46 +1,30 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
+import static android.R.attr.name;
+
 /**
  * Created by MMueller on 12/6/2016.
- *
- * Model Class for static attributes of a Bluetooth Adapter.
  */
 
-public class BluetoothStaticAttributesProbe extends Probe {
-    private String name;
-    private String address;
+public class BluetoothDiscoveryProbe extends Probe {
+    private String state;
 
     /**
-     * Getter for the name th user can configure.
-     * Something like "Bob's phone"
-     * @return the bleutooth device name.
+     * Getter for the state. Typically something like
+     * started/finished.
+     *
+     * @return the state.
      */
-    public String getName() {
-        return name;
+    public String getState() {
+        return state;
     }
 
     /**
-     * Setter for the name.
-     * @param name name to be set.
+     * Setter for the state.
+     * @param state to set to.
      */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Getter for the bluetooth Adapter address.
-     * @return the address.
-     */
-    public String getAddress() {
-        return address;
-    }
-
-    /**
-     * Setter for the Address.
-     * @param address to be set.
-     */
-    public void setAddress(String address) {
-        this.address = address;
+    public void setState(String state) {
+        this.state = state;
     }
 
     /**
@@ -50,7 +34,7 @@ public class BluetoothStaticAttributesProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothStaticAttributes";
+        return "BluetoothDiscoveryProbe";
     }
 
     /**
@@ -76,8 +60,7 @@ public class BluetoothStaticAttributesProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"name\": " + name +
-                ", \"address\": " + "\"" + address + "\"" +
+        return "{\"state\": " + state +
                 '}';
     }
 }

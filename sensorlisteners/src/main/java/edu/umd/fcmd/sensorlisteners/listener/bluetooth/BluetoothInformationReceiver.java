@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import edu.umd.fcmd.sensorlisteners.model.BluetoothDiscoveryProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothStaticAttributesProbe;
 
@@ -18,6 +19,8 @@ import static android.content.ContentValues.TAG;
 
 public class BluetoothInformationReceiver extends BroadcastReceiver {
     private final BluetoothListener bluetoothListener;
+    private final String STARTED = "STARTED";
+    private final String FINISHED = "FINISHED";
 
     public BluetoothInformationReceiver(BluetoothListener bluetoothListener) {
         this.bluetoothListener = bluetoothListener;
@@ -32,12 +35,18 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
 //                    sendData(intent);
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
-//                    intent.putExtra(bluetoothListener.getTAG(), "searching for remote devices.");
-//                    sendData(intent);
+                    Log.d(TAG, "Bluetooth Discovery started changed.");
+                    BluetoothDiscoveryProbe bluetoothDiscoveryProbe = new BluetoothDiscoveryProbe();
+                    bluetoothDiscoveryProbe.setDate(System.currentTimeMillis());
+                    bluetoothDiscoveryProbe.setState(STARTED);
+                    bluetoothListener.onUpdate(bluetoothDiscoveryProbe);
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
-//                    intent.putExtra(bluetoothListener.getTAG(), "search for devices finished.");
-//                    sendData(intent);
+                    Log.d(TAG, "Bluetooth Discovery started changed.");
+                    BluetoothDiscoveryProbe bluetoothDiscoveryProbe2 = new BluetoothDiscoveryProbe();
+                    bluetoothDiscoveryProbe2.setDate(System.currentTimeMillis());
+                    bluetoothDiscoveryProbe2.setState(FINISHED);
+                    bluetoothListener.onUpdate(bluetoothDiscoveryProbe2);
                     break;
                 case BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED:
                     Log.d(TAG, "Bluetooth Name changed.");
