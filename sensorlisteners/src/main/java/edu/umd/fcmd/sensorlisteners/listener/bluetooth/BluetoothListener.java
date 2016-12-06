@@ -9,10 +9,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
 
+import java.util.Set;
+
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
+import edu.umd.fcmd.sensorlisteners.model.BluetoothConnectionProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothStaticAttributesProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
@@ -110,6 +113,29 @@ public class BluetoothListener implements Listener {
         bluetoothStaticAttributesProbe.setAddress(bluetoothAdapter.getAddress()+"");
         bluetoothStaticAttributesProbe.setName(bluetoothAdapter.getName());
         onUpdate(bluetoothStaticAttributesProbe);
+
+        //Possible connected Bluetooth Devices
+        Set<BluetoothDevice> boundDevices = bluetoothAdapter.getBondedDevices();
+        for(BluetoothDevice b : boundDevices){
+            BluetoothConnectionProbe bluetoothConnectionProbe = new BluetoothConnectionProbe();
+            bluetoothConnectionProbe.setDate(System.currentTimeMillis());
+            int bondState = b.getBondState();
+            String state;
+            if(bondState == BluetoothDevice.BOND_BONDING){
+                state = "BONDING";
+            }else if(bondState == BluetoothDevice.BOND_BONDED){
+                state = "BONDED";
+            }else{
+                state = "NONE";
+            }
+            bluetoothConnectionProbe.setState(state);
+            if(b.getAddress() != null){
+                bluetoothConnectionProbe.setForeignAddress(b.getAddress());
+            }
+            bluetoothConnectionProbe.setForeignName(b.getName());
+            onUpdate(bluetoothConnectionProbe);
+        }
+
 
     }
 

@@ -2,9 +2,63 @@ package edu.umd.fcmd.sensorlisteners.model;
 
 /**
  * Created by MMueller on 12/6/2016.
+ *
+ * Probe modelling a bluetooth connection.
  */
 
 public class BluetoothConnectionProbe extends Probe {
+    private String state;
+    private String foreignAddress;
+    private String foreignName;
+
+    /**
+     * Getter for the state.
+     * @return the state.
+     */
+    public String getState() {
+        return state;
+    }
+
+    /**
+     * Setter for the state.
+     * @param state the state to set to.
+     */
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    /**
+     * Getter for the connected devices address.
+     * @return the connected devices address.
+     */
+    public String getForeignAddress() {
+        return foreignAddress;
+    }
+
+    /**
+     * Setter for the connected devices address.
+     * @param foreignAddress the address to set to.
+     */
+    public void setForeignAddress(String foreignAddress) {
+        this.foreignAddress = foreignAddress;
+    }
+
+    /**
+     * Getter for the connected devices name.
+     * @return the connected devices name.
+     */
+    public String getForeignName() {
+        return foreignName;
+    }
+
+    /**
+     * Setter for the connected devices name.
+     * @param foreignName the name to set to.
+     */
+    public void setForeignName(String foreignName) {
+        this.foreignName = foreignName;
+    }
+
     /**
      * Gets the type of an state e.g. Accelerometer
      *
@@ -12,7 +66,7 @@ public class BluetoothConnectionProbe extends Probe {
      */
     @Override
     public String getType() {
-        return null;
+        return "BluetoothConnection";
     }
 
     /**
@@ -38,6 +92,9 @@ public class BluetoothConnectionProbe extends Probe {
      */
     @Override
     public String toString() {
-        return null;
+        return "{\"state\": " + state +
+                ", \"foreignName\": " + foreignName +
+                ", \"foreignAddress\": " + "\""+(foreignAddress != null ? foreignAddress : "-") +"\"" +
+                '}';
     }
 }

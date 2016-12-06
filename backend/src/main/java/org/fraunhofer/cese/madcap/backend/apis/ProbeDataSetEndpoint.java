@@ -11,7 +11,9 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.cmd.LoadType;
 
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothConnectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothDiscoveryEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
@@ -158,6 +160,21 @@ public class ProbeDataSetEndpoint {
                     BluetoothDiscoveryEntry bluetoothDiscoveryEntry = new BluetoothDiscoveryEntry(entry);
                     bsdlist.add(bluetoothDiscoveryEntry);
                     break;
+                case "BluetoothConnection":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothConnectionEntry>());
+                    }
+                    Collection<BluetoothConnectionEntry> bcelist = entryMap.get(entry.getProbeType());
+                    BluetoothConnectionEntry bluetoothConnectionEntry = new BluetoothConnectionEntry(entry);
+                    bcelist.add(bluetoothConnectionEntry);
+                    break;
+                case "Bluetoothrequest":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothRequestEntry>());
+                    }
+                    Collection<BluetoothRequestEntry> brlist = entryMap.get(entry.getProbeType());
+                    BluetoothRequestEntry bluetoothRequestEntry = new BluetoothRequestEntry(entry);
+                    brlist.add(bluetoothRequestEntry);
                 default:
                     throw new IllegalArgumentException();
             }
