@@ -14,6 +14,7 @@ import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothConnectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothDiscoveryEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothScanModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
@@ -175,6 +176,15 @@ public class ProbeDataSetEndpoint {
                     Collection<BluetoothRequestEntry> brlist = entryMap.get(entry.getProbeType());
                     BluetoothRequestEntry bluetoothRequestEntry = new BluetoothRequestEntry(entry);
                     brlist.add(bluetoothRequestEntry);
+                    break;
+                case "BluetoothScanMode":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothScanModeEntry>());
+                    }
+                    Collection<BluetoothScanModeEntry> bsmlist = entryMap.get(entry.getProbeType());
+                    BluetoothScanModeEntry bluetoothScanModeEntry = new BluetoothScanModeEntry(entry);
+                    bsmlist.add(bluetoothScanModeEntry);
+                    break;
                 default:
                     throw new IllegalArgumentException();
             }

@@ -12,6 +12,7 @@ import android.util.Log;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothConnectionProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothDiscoveryProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothRequestProbe;
+import edu.umd.fcmd.sensorlisteners.model.BluetoothScanModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothStaticAttributesProbe;
 
@@ -23,6 +24,7 @@ import static android.content.ContentValues.TAG;
  */
 
 public class BluetoothInformationReceiver extends BroadcastReceiver {
+    private final String TAG = getClass().getSimpleName();
     private final BluetoothListener bluetoothListener;
     private final String STARTED = "STARTED";
     private final String FINISHED = "FINISHED";
@@ -41,9 +43,6 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
                     //Bundle deviceBundle = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                     Bundle deviceBundle = intent.getExtras();
                     BluetoothDevice device = deviceBundle.getParcelable("android.bluetooth.BluetoothDevice");
-
-                    //device.getAddress();
-                    //device.getName();
                     BluetoothConnectionProbe bluetoothConnectionProbe = new BluetoothConnectionProbe();
                     bluetoothConnectionProbe.setDate(System.currentTimeMillis());
                     bluetoothConnectionProbe.setState(state);
@@ -90,8 +89,24 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
                     bluetoothListener.onUpdate(bluetoothRequestProbe2);
                     break;
                 case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
-//                    intent = bluetoothListener.getScanModeChangeInformation(intent);
-//                    sendData(intent);
+                    Log.d(TAG, "Bluetooth scan mode changed.");
+                    BluetoothScanModeProbe bluetoothScanModeProbe = new BluetoothScanModeProbe();
+                    bluetoothScanModeProbe.setDate(System.currentTimeMillis());
+                    switch (intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0)) {
+                        case BluetoothAdapter.SCAN_MODE_NONE:
+                            bluetoothScanModeProbe.setState("INVISIBLE");
+                            break;
+                        case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
+                            bluetoothScanModeProbe.setState("INVISABLE BUT CONNECTABLE");
+                            break;
+                        case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
+                            bluetoothScanModeProbe.setState("VISIBLE");
+                            break;
+                        default:
+                            Log.d(TAG, "Not switched intent cached.");
+                            break;
+                    }
+                    bluetoothListener.onUpdate(bluetoothScanModeProbe);
                     break;
                 case BluetoothAdapter.ACTION_STATE_CHANGED:
                     Log.d(TAG, "Bluetooth State changed.");
@@ -101,8 +116,7 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
                     bluetoothListener.onUpdate(bluetoothStateProbe);
                     break;
                 default:
-//                    intent.putExtra(bluetoothListener.getTAG(), intent.getAction());
-//                    sendData(intent);
+                    Log.d(TAG, "Unknown Bluetooth intent caught.");
                     break;
             }
         }
