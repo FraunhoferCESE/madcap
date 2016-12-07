@@ -123,6 +123,7 @@ public class LocationProbe extends Probe {
 
     /**
      * Getter for the speed.
+     *
      * @return the speed.
      */
     public double getSpeed() {
@@ -131,6 +132,7 @@ public class LocationProbe extends Probe {
 
     /**
      * Setter for the speed.
+     *
      * @param speed the speed to be set to.
      */
     public void setSpeed(double speed) {
@@ -139,6 +141,7 @@ public class LocationProbe extends Probe {
 
     /**
      * Gets the origin provider of the location data
+     *
      * @return origin.
      */
     public String getOrigin() {
@@ -147,6 +150,7 @@ public class LocationProbe extends Probe {
 
     /**
      * Set the origin provider of the data.
+     *
      * @param origin to be set to.
      */
     public void setOrigin(String origin) {
@@ -193,40 +197,24 @@ public class LocationProbe extends Probe {
                 ", \"bearing\": " + bearing +
                 ", \"speed\": " + speed +
                 ", \"origin\": " + origin +
-                ", \"extras\": " + "\""+processExtras(this)+"\""+
+                ", \"extras\": " + "\"" + processExtras(this) + "\"" +
                 '}';
     }
 
-    private String processExtras(LocationProbe locationProbe){
+    private String processExtras(LocationProbe locationProbe) {
         Bundle extras = locationProbe.getExtras();
 
-        if(locationProbe.getOrigin().equals("gps") && extras.containsKey("satellites")){
-                int satAm = extras.getInt("satellites");
-
-                if(satAm < 0 && satAm<10){
-                    return "00"+satAm;
-                }else if(10 <= satAm && satAm <100){
-                    return "0"+satAm;
-                }else{
-                    return satAm+"";
-                }
-        }else {
-            if (locationProbe.getOrigin().equals("network") && extras.containsKey("networkLocationType")) {
-                return extras.getString("networkLocationType");
-            } else {
-                Set<String> set = extras.keySet();
-
-                String r = "";
-                for (String s : set) {
-                    r = r.concat(s + " ");
-                    try {
-                        r = r.concat(" : "+extras.get(s) + " , ");
-                    } catch (NullPointerException n) {
-                        r = r.concat("");
-                    }
-                }
-                return r;
+        if (locationProbe.getOrigin().equals("gps") && extras.containsKey("satellites")) {
+            return Integer.toString(extras.getInt("satellites"));
+        } else if (locationProbe.getOrigin().equals("network") && extras.containsKey("networkLocationType")) {
+            return extras.getString("networkLocationType");
+        } else {
+            String r = "";
+            for (String key : extras.keySet()) {
+                r = r + key + ':'+ ((extras.get(key) == null) ? "null" : extras.get(key)) + " ,";
             }
+            return r;
         }
     }
 }
+
