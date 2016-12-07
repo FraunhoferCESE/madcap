@@ -142,7 +142,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 5, this);
             }
 
             sendInitialProbes();
