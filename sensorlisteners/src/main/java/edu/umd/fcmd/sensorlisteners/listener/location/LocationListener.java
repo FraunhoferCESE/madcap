@@ -117,7 +117,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
             //Method for LocationManager
             if (useGps) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
@@ -126,13 +126,12 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     //                                          int[] grantResults)
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
-                }else{
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, this);
                 }
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, this);
 
             }
             if (useNetwork) {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
@@ -142,9 +141,8 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
 
-                }else{
-                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 5, this);
                 }
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 5, this);
             }
 
             sendInitialProbes();
@@ -183,7 +181,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
             context.unregisterReceiver(locationServiceStatusReceiver);
 
             //Method Location Manager
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -192,9 +190,8 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
-            }else{
-                locationManager.removeUpdates(this);
-            }
+            }locationManager.removeUpdates(this);
+
 
         }
         runningStatus = false;
