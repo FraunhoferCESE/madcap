@@ -173,11 +173,13 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
     @Override
     public void stopListening() {
-        if (timedLocationTask != null && runningStatus) {
-            // Method Google Awareness API
-//            Log.d(TAG, "Timed location task is not null");
+        if (runningStatus) {
+            if(timedLocationTask != null){
+                // Method Google Awareness API
+            Log.d(TAG, "Timed location task is not null");
 //            timedLocationTask.cancel(true);
 //            mGoogleApiClient.disconnect();
+            }
             context.unregisterReceiver(locationServiceStatusReceiver);
 
             //Method Location Manager
