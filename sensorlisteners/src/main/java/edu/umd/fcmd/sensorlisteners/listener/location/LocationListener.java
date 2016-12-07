@@ -128,7 +128,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     // for ActivityCompat#requestPermissions for more details.
                     return;
                 }
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, this);
             }
             if (useNetwork) {
                 if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -240,29 +240,6 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         }
     }
 
-    /**
-     * Called when the provider status changes. This method is called when
-     * a provider is unable to fetch a location or if the provider has recently
-     * become available after a period of unavailability.
-     *
-     * @param provider the name of the location provider associated with this
-     *                 update.
-     * @param status   {@link LocationProvider#OUT_OF_SERVICE} if the
-     *                 provider is out of service, and this is not expected to change in the
-     *                 near future; {@link LocationProvider#TEMPORARILY_UNAVAILABLE} if
-     *                 the provider is temporarily unavailable but is expected to be available
-     *                 shortly; and {@link LocationProvider#AVAILABLE} if the
-     *                 provider is currently available.
-     * @param extras   an optional Bundle which will contain provider specific
-     *                 status variables.
-     *                 <p>
-     *                 <p> A number of common key/value pairs for the extras Bundle are listed
-     *                 below. Providers that use any of the keys on this list must
-     *                 provide the corresponding value as described below.
-     *                 <p>
-     *                 <ul>
-     *                 <li> satellites - the number of satellites used to derive the fix
-     */
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
 

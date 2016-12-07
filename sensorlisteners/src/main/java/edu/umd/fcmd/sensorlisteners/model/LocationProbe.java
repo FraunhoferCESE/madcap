@@ -1,6 +1,9 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
+import android.location.Location;
 import android.os.Bundle;
+
+import java.util.Set;
 
 /**
  * Created by MMueller on 11/4/2016.
@@ -190,7 +193,40 @@ public class LocationProbe extends Probe {
                 ", \"bearing\": " + bearing +
                 ", \"speed\": " + speed +
                 ", \"origin\": " + origin +
-                ", \"extras\": " + (extras != null ? "\""+extras.toString()+"\"" : "-") +
+                ", \"extras\": " + processExtras(this)+
                 '}';
+    }
+
+    private String processExtras(LocationProbe locationProbe){
+        Bundle extras = locationProbe.getExtras();
+
+        if(locationProbe.getOrigin().equals("gps") && extras.containsKey("satellites")){
+                int satAm = extras.getInt("satellites");
+
+                if(satAm < 0 && satAm<10){
+                    return "00"+satAm;
+                }else if(10 <= satAm && satAm <100){
+                    return "0"+satAm;
+                }else{
+                    return satAm+"";
+                }
+        }else {
+            if (locationProbe.getOrigin().equals("network") && extras.containsKey("networkLocationType")) {
+                return extras.getString("networkLocationType");
+            } else {
+                Set<String> set = extras.keySet();
+
+                String r = "";
+                for (String s : set) {
+                    r = r.concat(s + " ");
+                    try {
+                        r = r.concat(" : "+extras.get(s) + " , ");
+                    } catch (NullPointerException n) {
+                        r = r.concat("");
+                    }
+                }
+                return r;
+            }
+        }
     }
 }
