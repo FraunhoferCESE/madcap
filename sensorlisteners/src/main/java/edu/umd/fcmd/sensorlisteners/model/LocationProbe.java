@@ -16,9 +16,11 @@ public class LocationProbe extends Probe {
     private double accuracy;
     private double altitude;
     private double bearing;
+    private double speed;
     private Bundle extras;
     private double latitude;
     private double longitude;
+    private String origin;
 
     /**
      * Gets the Accuracy.
@@ -117,6 +119,38 @@ public class LocationProbe extends Probe {
     }
 
     /**
+     * Getter for the speed.
+     * @return the speed.
+     */
+    public double getSpeed() {
+        return speed;
+    }
+
+    /**
+     * Setter for the speed.
+     * @param speed the speed to be set to.
+     */
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
+
+    /**
+     * Gets the origin provider of the location data
+     * @return origin.
+     */
+    public String getOrigin() {
+        return origin;
+    }
+
+    /**
+     * Set the origin provider of the data.
+     * @param origin to be set to.
+     */
+    public void setOrigin(String origin) {
+        this.origin = origin;
+    }
+
+    /**
      * Gets the type of an state e.g. Location
      *
      * @return the type of state.
@@ -154,7 +188,9 @@ public class LocationProbe extends Probe {
                 ", \"altitude\": " + altitude +
                 ", \"accuracy\": " + accuracy +
                 ", \"bearing\": " + bearing +
-                ", \"extras\": " + (extras != null ? extras.toString() : "-") +
+                ", \"speed\": " + speed +
+                ", \"origin\": " + origin +
+                ", \"extras\": " + (extras != null ? "\""+extras.toString()+"\"" : "-") +
                 '}';
     }
 }
