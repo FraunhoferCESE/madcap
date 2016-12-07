@@ -193,7 +193,7 @@ public class LocationProbe extends Probe {
                 ", \"bearing\": " + bearing +
                 ", \"speed\": " + speed +
                 ", \"origin\": " + origin +
-                ", \"extras\": " + processExtras(this)+
+                ", \"extras\": " + "\""+processExtras(this)+"\""+
                 '}';
     }
 
