@@ -83,7 +83,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         mGoogleApiClient.registerConnectionFailedListener(connectionFailedCallbackClass);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
-        context.registerReceiver(locationServiceStatusReceiver, intentFilter);
+        this.context.registerReceiver(locationServiceStatusReceiver, intentFilter);
     }
 
     /**
@@ -126,9 +126,10 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     //                                          int[] grantResults)
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
-                    return;
+                }else{
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, this);
                 }
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, this);
+
             }
             if (useNetwork) {
                 if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -140,9 +141,10 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     //                                          int[] grantResults)
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
-                    return;
+
+                }else{
+                    locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 5, this);
                 }
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 5, this);
             }
 
             sendInitialProbes();
@@ -188,9 +190,10 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
-                return;
+            }else{
+                locationManager.removeUpdates(this);
             }
-            locationManager.removeUpdates(this);
+
         }
         runningStatus = false;
     }
