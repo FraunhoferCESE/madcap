@@ -2,6 +2,8 @@ package edu.umd.fcmd.sensorlisteners.model;
 
 /**
  * Created by MMueller on 12/6/2016.
+ *
+ * Model class for the discovery function of a bluetooth device.
  */
 
 public class BluetoothDiscoveryProbe extends Probe {
