@@ -2,8 +2,10 @@ package edu.umd.fcmd.sensorlisteners.model;
 
 /**
  * Created by MMueller on 12/6/2016.
+ *
+ * Model class representing requests by other apps to
+ * invoke methods with the Bluetooth.
  */
-
 public class BluetoothRequestProbe extends Probe {
     private String kind;
 
