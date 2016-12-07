@@ -23,23 +23,25 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
  * Created by MMueller on 12/2/2016.
+ *
+ * BluetoothListener listening to certain bluetooth events.
  */
 
 public class BluetoothListener implements Listener {
     private final String TAG = getClass().getSimpleName();
 
-    public static final String CONNECTED = "connected";
-    public static final String CONNECTING = "connecting";
-    public static final String DISCONNECTED = "disconnected";
-    public static final String CACHE_CLOSING = "cacheClosing";
-    public static final String NEW_CONNECTION_STATE = "new ConnectionState: ";
+    private static final String CONNECTED = "connected";
+    private static final String CONNECTING = "connecting";
+    private static final String DISCONNECTED = "disconnected";
+    private static final String CACHE_CLOSING = "cacheClosing";
+    private static final String NEW_CONNECTION_STATE = "new ConnectionState: ";
 
-    private Context context;
-    private BluetoothAdapter bluetoothAdapter;
-    private ProbeManager<Probe> probeManager;
-    private PermissionDeniedHandler permissionDeniedHandler;
-    private BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory;
-    private IntentFilterFactory intenFilterFactory;
+    private final Context context;
+    private final BluetoothAdapter bluetoothAdapter;
+    private final ProbeManager<Probe> probeManager;
+    private final PermissionDeniedHandler permissionDeniedHandler;
+    private final BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory;
+    private final IntentFilterFactory intenFilterFactory;
     private BluetoothInformationReceiver receiver;
 
     private boolean runningState;
@@ -65,7 +67,7 @@ public class BluetoothListener implements Listener {
 
     @Override
     public void startListening() throws NoSensorFoundException {
-        if(!runningState && bluetoothAdapter != null){
+        if(!runningState && (bluetoothAdapter != null)){
             receiver = bluetoothInformationReceiverFactory.create(this);
             IntentFilter intentFilter = intenFilterFactory.create();
             intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
@@ -94,7 +96,7 @@ public class BluetoothListener implements Listener {
 
     @Override
     public boolean isRunning() {
-        return false;
+        return runningState;
     }
 
     /**
@@ -110,16 +112,16 @@ public class BluetoothListener implements Listener {
         //Bluetooth Static Attributes Probe
         BluetoothStaticAttributesProbe bluetoothStaticAttributesProbe = new BluetoothStaticAttributesProbe();
         bluetoothStaticAttributesProbe.setDate(System.currentTimeMillis());
-        bluetoothStaticAttributesProbe.setAddress(bluetoothAdapter.getAddress()+"");
+        bluetoothStaticAttributesProbe.setAddress(bluetoothAdapter.getAddress());
         bluetoothStaticAttributesProbe.setName(bluetoothAdapter.getName());
         onUpdate(bluetoothStaticAttributesProbe);
 
         //Possible connected Bluetooth Devices
         Set<BluetoothDevice> boundDevices = bluetoothAdapter.getBondedDevices();
-        for(BluetoothDevice b : boundDevices){
+        for(BluetoothDevice bluetoothDevice : boundDevices){
             BluetoothConnectionProbe bluetoothConnectionProbe = new BluetoothConnectionProbe();
             bluetoothConnectionProbe.setDate(System.currentTimeMillis());
-            int bondState = b.getBondState();
+            int bondState = bluetoothDevice.getBondState();
             String state;
             if(bondState == BluetoothDevice.BOND_BONDING){
                 state = "BONDING";
@@ -129,23 +131,22 @@ public class BluetoothListener implements Listener {
                 state = "NONE";
             }
             bluetoothConnectionProbe.setState(state);
-            if(b.getAddress() != null){
-                bluetoothConnectionProbe.setForeignAddress(b.getAddress());
+            if(bluetoothDevice.getAddress() != null){
+                bluetoothConnectionProbe.setForeignAddress(bluetoothDevice.getAddress());
             }
-            bluetoothConnectionProbe.setForeignName(b.getName());
+            bluetoothConnectionProbe.setForeignName(bluetoothDevice.getName());
             onUpdate(bluetoothConnectionProbe);
         }
 
-
     }
 
-    public BluetoothAdapter getBluetoothAdapter() {
+    BluetoothAdapter getBluetoothAdapter() {
         return bluetoothAdapter;
     }
 
     /**
-     * Gets the state from the BluetoothAdapter
-     * @return
+     * Gets the state from the BluetoothAdapter.
+     * @return the state of the BluetoothAdapter.
      */
     public int getState(){
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED){
@@ -154,41 +155,5 @@ public class BluetoothListener implements Listener {
             permissionDeniedHandler.onPermissionDenied(Manifest.permission.BLUETOOTH);
             return 0;
         }
-    }
-
-    void getConnectionStateCInformation(Intent intent) {
-        intent.putExtra(TAG, "ConnectionState changed");
-        int intExtra = intent.getIntExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE, 0);
-        switch (intExtra) {
-            case BluetoothAdapter.STATE_CONNECTED:
-                intent.putExtra(NEW_CONNECTION_STATE, CONNECTED);
-                intent.putExtra("connected device:", getDeviceName(intent));
-                break;
-            case BluetoothAdapter.STATE_CONNECTING:
-                intent.putExtra(NEW_CONNECTION_STATE, CONNECTING);
-                break;
-            case BluetoothAdapter.STATE_DISCONNECTED:
-                intent.putExtra(NEW_CONNECTION_STATE, DISCONNECTED);
-                intent.putExtra("disconnected device:", getDeviceName(intent));
-                break;
-            case BluetoothAdapter.STATE_DISCONNECTING:
-                intent.putExtra(NEW_CONNECTION_STATE, CACHE_CLOSING);
-                break;
-            default:
-                intent.putExtra(NEW_CONNECTION_STATE, intExtra);
-                break;
-        }
-    }
-
-    /**
-     * Gets tje current device name for intent.
-     *
-     * @param intent to get the device name from.
-     * @return "-" if no device bond, else the devices name.
-     */
-    String getDeviceName(Intent intent) {
-        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-
-        return (device == null) ? "-" : device.getName();
     }
 }
