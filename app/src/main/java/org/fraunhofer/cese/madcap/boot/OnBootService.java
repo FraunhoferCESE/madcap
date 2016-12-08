@@ -7,10 +7,8 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -19,9 +17,9 @@ import com.google.android.gms.common.ConnectionResult;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
-import org.fraunhofer.cese.madcap.SignInActivity;
-import org.fraunhofer.cese.madcap.authentication.LoginResultCallback;
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationManager;
+import org.fraunhofer.cese.madcap.authentication.SignInActivity;
+import org.fraunhofer.cese.madcap.authentication.SilentLoginResultCallback;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
@@ -39,7 +37,7 @@ public class OnBootService extends IntentService {
     private static final String TAG = "OnBootService";
 
     @Inject
-    MadcapAuthManager authManager;
+    AuthenticationManager authManager;
 
     public OnBootService() {
         super(TAG);
@@ -57,28 +55,17 @@ public class OnBootService extends IntentService {
             startService(sintent);
         } else {
             final Context context = this;
-            authManager.silentLogin(this, new LoginResultCallback() {
+            authManager.silentLogin(this, new SilentLoginResultCallback() {
                 @Override
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                     MyApplication.madcapLogger.w(TAG, "Google Play Services connection failed. Error code: " + connectionResult);
                     loginFailed();
-                    // TODO: Unregister this listener from mGoogleClientApi in MadcapAuthManager?
-                }
-
-                @Override
-                public void onConnected(@Nullable Bundle bundle) {
-                    MyApplication.madcapLogger.d(TAG, "Successfully connected to Google Play Services.");
-                }
-
-                @Override
-                public void onConnectionSuspended(int i) {
-                    MyApplication.madcapLogger.w(TAG, "Google SignIn API Connection suspended. Error code: " + i);
-                    loginFailed();
+                    // TODO: Unregister this listener from mGoogleClientApi in AuthenticationManager?
                 }
 
                 @Override
                 public void onServicesUnavailable(int connectionResult) {
-                    MyApplication.madcapLogger.w(TAG, "Google SignIn API Connection suspended. Error code: " + i);
+                    MyApplication.madcapLogger.w(TAG, "Google SignIn API is unavailable. Error code: " + i);
                     loginFailed();
                 }
 
@@ -101,12 +88,12 @@ public class OnBootService extends IntentService {
                 }
 
                 private void loginFailed() {
-                    Toast.makeText(context, "MADCAP failed to login automatically. Please open the MADCAP application to sign in.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.silent_signin_failed, Toast.LENGTH_SHORT).show();
 
                     NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
                     mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-                    mBuilder.setContentTitle("MADCAP Automatic SignIn Failed");
-                    mBuilder.setContentText("MADCAP failed to login automatically. Please open the MADCAP application to sign in.");
+                    mBuilder.setContentTitle(getString(R.string.silent_signin_failed_notification_title));
+                    mBuilder.setContentText(getString(R.string.silent_signin_failed));
                     mBuilder.setDefaults(Notification.DEFAULT_ALL);
                     mBuilder.setPriority(Notification.PRIORITY_MAX);
                     mBuilder.setAutoCancel(true);

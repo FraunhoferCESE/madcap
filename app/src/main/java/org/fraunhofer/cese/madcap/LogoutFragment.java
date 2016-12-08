@@ -15,7 +15,8 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.authentication.LogoutResultCallback;
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationManager;
+import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
@@ -29,7 +30,7 @@ public class LogoutFragment extends Fragment {
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
-    MadcapAuthManager madcapAuthManager;
+    AuthenticationManager authenticationManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,29 +55,29 @@ public class LogoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MyApplication.madcapLogger.d(TAG, "Logout clicked");
-                madcapAuthManager.signout(getActivity(), new LogoutResultCallback() {
+                authenticationManager.signout(getActivity(), new LogoutResultCallback() {
                     @Override
                     public void onServicesUnavailable(int connectionResult) {
                         String text;
 
                         switch (connectionResult) {
                             case ConnectionResult.SERVICE_MISSING:
-                                text = "Play services not available, please install them and retry.";
+                                text = getString(R.string.play_services_missing);
                                 break;
                             case ConnectionResult.SERVICE_UPDATING:
-                                text = "Play services are currently updating, please wait and try again.";
+                                text = getString(R.string.play_services_updating);
                                 break;
                             case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-                                text = "Play services not up to date. Please update your system and try again.";
+                                text = getString(R.string.play_services_need_updated);
                                 break;
                             case ConnectionResult.SERVICE_DISABLED:
-                                text = "Play services are disabled. Please enable and try again.";
+                                text = getString(R.string.play_services_disabled);
                                 break;
                             case ConnectionResult.SERVICE_INVALID:
-                                text = "Play services are invalid. Please reinstall them and try again.";
+                                text = getString(R.string.play_services_invalid);
                                 break;
                             default:
-                                text = "Play services connection failed. Error code: " + connectionResult;
+                                text = String.format(getString(R.string.play_services_connection_failed), connectionResult);
                         }
 
                         MyApplication.madcapLogger.e(TAG, text);
@@ -89,7 +90,7 @@ public class LogoutFragment extends Fragment {
                     public void onSignOut(Status result) {
                         if (result.getStatusCode() == CommonStatusCodes.SUCCESS) {
                             MyApplication.madcapLogger.d(TAG, "Logout succeeded. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
-                            Toast.makeText(getActivity(), "You are now signed out of MADCAP.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), R.string.post_sign_out, Toast.LENGTH_SHORT).show();
 
                             // TODO: What to do with the user's data?
                             getActivity().stopService(new Intent(getActivity(), DataCollectionService.class));

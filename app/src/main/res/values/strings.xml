@@ -29,6 +29,8 @@
     <string name="signed_in">Signed in</string>
     <string name="signing_in">Signing in…</string>
     <string name="signed_out">Signed out</string>
+    <string name="post_sign_out">You are now signed out of MADCAP.</string>
+    <string name="signing_out">Signing out...</string>
     <string name="signed_in_err">"Error: please check logs."</string>
     <string name="error_null_person">
         Error: Plus.PeopleApi.getCurrentPerson returned null. Ensure that the Google+ API is
@@ -38,9 +40,20 @@
     <string name="loading">Loading…</string>
     <string name="auth_code_fmt">Auth Code: %s</string>
     <string name="id_token_fmt">ID Token: %s</string>
+    <string name="signin_service_unavailable">Google SignIn services are unavailable. Please try again.</string>
+    <string name="signin_service_connection_failed">Could not connect to Google SignIn service. Please try again.</string>
+    <string name="logout_failed">Logout from MADCAP failed. Error code: %i. Please try again.</string>
+    <string name="silent_signin_failed">MADCAP failed to login automatically. Please open the MADCAP application to sign in.</string>
+    <string name="silent_signin_failed_notification_title">MADCAP Automatic SignIn Failed</string>
 
-    <!-- Google Play Services error for Toast -->
+    <!-- Google Play Services errors -->
     <string name="play_services_error_fmt">Google Play Services Error: %i</string>
+    <string name="play_services_missing">Play services not available, please install them and retry.</string>
+    <string name="play_services_updating">Play services are currently updating, please wait and try again.</string>
+    <string name="play_services_need_updated">Play services not up to date. Please update your system and try again.</string>
+    <string name="play_services_disabled">Play services are disabled. Please enable and try again.</string>
+    <string name="play_services_invalid">Play services are invalid. Please reinstall them and try again.</string>
+    <string name="play_services_connection_failed">Play services connection failed. Error code: %i</string>
 
     <!-- Button labels -->
     <string name="sign_out">Sign Out</string>

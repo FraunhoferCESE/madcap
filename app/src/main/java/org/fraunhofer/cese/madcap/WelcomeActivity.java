@@ -16,8 +16,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 
-import org.fraunhofer.cese.madcap.authentication.LoginResultCallback;
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.SignInActivity;
+import org.fraunhofer.cese.madcap.authentication.SilentLoginResultCallback;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
@@ -27,7 +28,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
-    MadcapAuthManager madcapAuthManager;
+    AuthenticationManager authenticationManager;
     private TextView errorTextView;
 
     @Override
@@ -65,19 +66,19 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onStart();
         MyApplication.madcapLogger.d(TAG, "onStart");
 
-        GoogleSignInAccount user = madcapAuthManager.getUser();
+        GoogleSignInAccount user = authenticationManager.getUser();
         if (user != null) {
             MyApplication.madcapLogger.d(TAG, "User already signed in. Starting MainActivity.");
             errorTextView.setText("Welcome " + user.getGivenName() + ' ' + user.getFamilyName());
             startActivity(new Intent(this, MainActivity.class));
         } else {
             final Context context = this;
-            madcapAuthManager.silentLogin(this, new LoginResultCallback() {
+            authenticationManager.silentLogin(this, new SilentLoginResultCallback() {
                 @Override
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                    errorTextView.setText("Unable to connect to Google Signin services. Error code: " + connectionResult);
+                    errorTextView.setText(String.format(getString(R.string.play_services_connection_failed), connectionResult));
                     MyApplication.madcapLogger.e(TAG, "onStart.onConnectionFailed: Unable to connect to Google Play services. Error code: " + connectionResult);
-                    // TODO: Unregister this listener from mGoogleClientApi in MadcapAuthManager?
+                    // TODO: Unregister this listener from mGoogleClientApi in AuthenticationManager?
                 }
 
                 @Override
@@ -86,22 +87,22 @@ public class WelcomeActivity extends AppCompatActivity {
 
                     switch (connectionResult) {
                         case ConnectionResult.SERVICE_MISSING:
-                            text = "Play services not available, please install them.";
+                            text = getString(R.string.play_services_missing);
                             break;
                         case ConnectionResult.SERVICE_UPDATING:
-                            text = "Play services are currently updating, please wait.";
+                            text = getString(R.string.play_services_updating);
                             break;
                         case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-                            text = "Play services not up to date. Please update.";
+                            text = getString(R.string.play_services_need_updated);
                             break;
                         case ConnectionResult.SERVICE_DISABLED:
-                            text = "Play services are disabled. Please enable.";
+                            text = getString(R.string.play_services_disabled);
                             break;
                         case ConnectionResult.SERVICE_INVALID:
-                            text = "Play services are invalid. Please reinstall them";
+                            text = getString(R.string.play_services_invalid);
                             break;
                         default:
-                            text = "Unknown Play Services return code.";
+                            text = String.format(getString(R.string.play_services_connection_failed), connectionResult);
                     }
 
                     MyApplication.madcapLogger.e(TAG, text);

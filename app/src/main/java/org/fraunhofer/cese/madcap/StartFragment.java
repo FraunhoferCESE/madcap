@@ -23,7 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationManager;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
@@ -56,7 +56,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
     boolean mBound = false;
 
     @Inject
-    MadcapAuthManager madcapAuthManager;
+    AuthenticationManager authenticationManager;
     private boolean isCollectingData;
 
     //Ui elements
@@ -181,8 +181,8 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
 
         //Parse the greeting information
         nameTextView = (TextView) view.findViewById(R.id.usernameTextview);
-        if (madcapAuthManager.getLastSignedInUsersName() != null) {
-            nameTextView.setText(madcapAuthManager.getLastSignedInUsersName());
+        if (authenticationManager.getLastSignedInUsersName() != null) {
+            nameTextView.setText(authenticationManager.getLastSignedInUsersName());
         }
 
         collectionDataStatusText = (TextView) view.findViewById(R.id.collectionDataStatusText);

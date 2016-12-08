@@ -13,8 +13,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
-import org.fraunhofer.cese.madcap.authentication.GoogleSignInFacade;
-import org.fraunhofer.cese.madcap.authentication.GoogleSigninProvider;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
@@ -246,10 +244,5 @@ class MyApplicationModule {
                 //.enableAutoManage(this /* FragmentActivity */, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, options)
                 .build();
-    }
-
-    @Provides
-    GoogleSigninProvider provideGoogleSigninProvider() {
-        return new GoogleSignInFacade(providesGoogleSigninApiClient());
     }
 }

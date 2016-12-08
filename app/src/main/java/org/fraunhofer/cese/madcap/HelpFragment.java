@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationManager;
 
 import javax.inject.Inject;
 
@@ -31,7 +31,7 @@ public class HelpFragment extends Fragment {
     private Button onlineHelpButton;
 
     @Inject
-    MadcapAuthManager madcapAuthManager;
+    AuthenticationManager authenticationManager;
 
     public HelpFragment() {
         // Required empty public constructor
@@ -80,8 +80,8 @@ public class HelpFragment extends Fragment {
                 i.putExtra(Intent.EXTRA_EMAIL  , new String[]{getString(R.string.contactEmail1), getString(R.string.contactEmail2)});
                 i.putExtra(Intent.EXTRA_SUBJECT, "Pocket Security Contact");
                 i.putExtra(Intent.EXTRA_TEXT   , "Hello Pocket Security Team, \n \n (write your question here.) \n" +
-                        " \n \n " +madcapAuthManager.getLastSignedInUsersName()+" \n" +
-                        " \n Reference User ID: "+ madcapAuthManager.getUserId()+" (please do not remove this)");
+                        " \n \n " + authenticationManager.getLastSignedInUsersName()+" \n" +
+                        " \n Reference User ID: "+ authenticationManager.getUserId()+" (please do not remove this)");
                 try {
                     startActivity(Intent.createChooser(i, "Send mail..."));
                 } catch (android.content.ActivityNotFoundException ex) {
