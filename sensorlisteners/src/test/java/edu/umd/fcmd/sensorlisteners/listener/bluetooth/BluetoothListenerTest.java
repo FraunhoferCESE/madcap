@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.Set;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
@@ -93,18 +94,13 @@ public class BluetoothListenerTest {
         IntentFilter mockIntentFilter = mock(IntentFilter.class);
         when(mockIntenFilterFactory.create()).thenReturn(mockIntentFilter);
 
-        cut.startListening();
-        Assert.assertTrue(cut.isRunning());
-
         //Testing for create inital probes
         BluetoothDevice mockBluetoothDevice1 = mock(BluetoothDevice.class);
         BluetoothDevice mockBluetoothDevice2 = mock(BluetoothDevice.class);
         BluetoothDevice mockBluetoothDevice3 = mock(BluetoothDevice.class);
 
         Set<BluetoothDevice> mockSet = (Set<BluetoothDevice>) mock(Set.class);
-        mockSet.add(mockBluetoothDevice1);
-        mockSet.add(mockBluetoothDevice2);
-        mockSet.add(mockBluetoothDevice3);
+        when(mockBluetoothAdapter.getBondedDevices()).thenReturn(mockSet);
 
         when(mockBluetoothDevice1.getBondState()).thenReturn(BluetoothDevice.BOND_BONDING);
         when(mockBluetoothDevice2.getBondState()).thenReturn(BluetoothDevice.BOND_BONDED);
@@ -114,10 +110,22 @@ public class BluetoothListenerTest {
         when(mockBluetoothDevice2.getAddress()).thenReturn(null);
         when(mockBluetoothDevice1.getAddress()).thenReturn("AA");
 
-        when(mockBluetoothAdapter.getBondedDevices()).thenReturn(mockSet);
+        Iterator<BluetoothDevice> mockIterator = mock(Iterator.class);
+
+        when(mockIterator.hasNext()).thenReturn(true, true, true, false);
+        when(mockIterator.next()).thenReturn(mockBluetoothDevice1)
+                .thenReturn(mockBluetoothDevice2)
+                .thenReturn(mockBluetoothDevice3);
+
+        when(mockSet.iterator()).thenReturn(mockIterator);
 
         cut.startListening();
+        Assert.assertTrue(cut.isRunning());
 
+
+
+
+        cut.startListening();
     }
 
     @Test
