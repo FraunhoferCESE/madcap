@@ -157,6 +157,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         ((MyApplication) getApplication()).getComponent().inject(this);
         MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service");
 
+        listeners.clear();
+
         synchronized (listeners) {
             listeners.add(new LocationListener(this, new CacheFactory(cache, authManager),
                     locationClient,
@@ -172,7 +174,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             listeners.add(new ApplicationsListener(this, new CacheFactory(cache, authManager),
                     timedApplicationTaskFactory, madcapPermissionDeniedHandler));
 
-            listeners.add(new BluetoothListener(this, new CacheFactory(cache, this, authManager),
+            listeners.add(new BluetoothListener(this, new CacheFactory(cache, authManager),
                     bluetoothAdapter,
                     madcapPermissionDeniedHandler,
                     bluetoothInformationReceiverFactory,

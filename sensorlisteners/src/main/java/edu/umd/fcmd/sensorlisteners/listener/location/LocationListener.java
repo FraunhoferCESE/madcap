@@ -1,8 +1,15 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.awareness.SnapshotApi;
@@ -22,9 +29,8 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
  *
  * A listener for Locations. Retrieving updates in a certain defined period.
  */
-
 @SuppressWarnings({"ClassNamePrefixedWithPackageName", "rawtypes", "ThisEscapedInObjectConstruction"})
-public class LocationListener implements Listener<LocationProbe> {
+public class LocationListener implements Listener<LocationProbe>, android.location.LocationListener {
     private static final String TAG = LocationListener.class.getSimpleName();
 
     private final Context context;
@@ -37,7 +43,13 @@ public class LocationListener implements Listener<LocationProbe> {
     private final LocationServiceStatusReceiver locationServiceStatusReceiver;
     private final PermissionDeniedHandler permissionDeniedHandler;
     private final SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler;
+
+    private LocationManager locationManager;
     private boolean runningStatus;
+
+    private boolean useGps = true;
+    private boolean useNetwork = true;
+    private boolean useCache = true;
 
     /**
      * Default constructor which should be used.
@@ -63,14 +75,15 @@ public class LocationListener implements Listener<LocationProbe> {
         this.snapshotApi = snapshotApi;
         this.permissionDeniedHandler = permissionDeniedHandler;
         this.sensorNoAnswerReceivedHandler = sensorNoAnswerReceivedHandler;
-        locationServiceStatusReceiver =  locationServiceStatusReceiverFactory.create(this);
+        locationServiceStatusReceiver = locationServiceStatusReceiverFactory.create(this);
         locationServiceStatusReceiver.sendInitialProbe(context);
         timedLocationTaskFactory = timedTaskFactory;
+        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         mGoogleApiClient.registerConnectionCallbacks(connectionCallbackClass);
         mGoogleApiClient.registerConnectionFailedListener(connectionFailedCallbackClass);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.location.PROVIDERS_CHANGED");
-        context.registerReceiver(locationServiceStatusReceiver, intentFilter);
+        this.context.registerReceiver(locationServiceStatusReceiver, intentFilter);
     }
 
     /**
@@ -96,22 +109,90 @@ public class LocationListener implements Listener<LocationProbe> {
      */
     @Override
     public void startListening() throws NoSensorFoundException {
-        if(!runningStatus){
-            mGoogleApiClient.connect();
-            timedLocationTask = timedLocationTaskFactory.create(this, snapshotApi, permissionDeniedHandler, sensorNoAnswerReceivedHandler);
-            timedLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (!runningStatus) {
+            // Method Google Awareness API
+//            mGoogleApiClient.connect();
+//            timedLocationTask = timedLocationTaskFactory.create(this, snapshotApi, permissionDeniedHandler, sensorNoAnswerReceivedHandler);
+//            timedLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+            //Method for LocationManager
+            if (useGps) {
+                while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                }
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, this);
+
+            }
+            if (useNetwork) {
+                while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+
+                }
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 5, this);
+            }
+
+            sendInitialProbes();
         }
 
         runningStatus = true;
     }
 
+    private void sendInitialProbes() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+
+        Log.d(TAG, "Sending initial Location Probes");
+        onLocationChanged(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
+        onLocationChanged(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+    }
+
     @Override
     public void stopListening() {
-        if (timedLocationTask != null && runningStatus) {
+        if (runningStatus) {
+            if(timedLocationTask != null){
+                // Method Google Awareness API
             Log.d(TAG, "Timed location task is not null");
-            timedLocationTask.cancel(true);
-            mGoogleApiClient.disconnect();
+//            timedLocationTask.cancel(true);
+//            mGoogleApiClient.disconnect();
+            }
             context.unregisterReceiver(locationServiceStatusReceiver);
+
+            //Method Location Manager
+            while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+            }locationManager.removeUpdates(this);
+
+
         }
         runningStatus = false;
     }
@@ -127,5 +208,66 @@ public class LocationListener implements Listener<LocationProbe> {
 
     GoogleApiClient getmGoogleApiClient() {
         return mGoogleApiClient;
+    }
+
+    /**
+     * Called when the location has changed.
+     * <p>
+     * <p> There are no restrictions on the use of the supplied Location object.
+     *
+     * @param location The new location, as a Location object.
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        if(location != null){
+            String provider = location.getProvider();
+            if (provider == null
+                    || (useGps && LocationManager.GPS_PROVIDER.equals(provider))
+                    || (useNetwork && LocationManager.NETWORK_PROVIDER.equals(provider))) {
+                LocationProbe probe = new LocationProbe();
+                probe.setDate(System.currentTimeMillis());
+                probe.setAccuracy((double) location.getAccuracy());
+                probe.setAltitude(location.getAltitude());
+                probe.setBearing((double) location.getBearing());
+                probe.setLatitude(location.getLatitude());
+                probe.setLongitude(location.getLongitude());
+                probe.setOrigin(location.getProvider());
+                probe.setSpeed((double) location.getSpeed());
+                probe.setExtras(location.getExtras());
+
+                onUpdate(probe);
+            }
+        }else{
+            Log.d(TAG, "location is null");
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    /**
+     * Called when the provider is enabled by the user.
+     *
+     * @param provider the name of the location provider associated with this
+     *                 update.
+     */
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    /**
+     * Called when the provider is disabled by the user. If requestLocationUpdates
+     * is called on an already disabled provider, this method is called
+     * immediately.
+     *
+     * @param provider the name of the location provider associated with this
+     *                 update.
+     */
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }
