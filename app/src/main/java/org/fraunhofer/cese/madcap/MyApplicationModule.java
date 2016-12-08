@@ -9,6 +9,7 @@ import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.awareness.Awareness;
 import com.google.android.gms.awareness.SnapshotApi;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -37,6 +38,7 @@ import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 /**
  * This class defines the providers to use for dependency injection
  */
+@SuppressWarnings({"SameReturnValue", "InstanceMethodNamingConvention", "MethodMayBeStatic"})
 @Module
 class MyApplicationModule {
 
@@ -173,8 +175,8 @@ class MyApplicationModule {
         config.setMemForcedCleanupLimit(5000);
         config.setDbForcedCleanupLimit(30000); // value must ensure that we do not exceed Google API limits for a single request
 
-        config.setDbWriteInterval(2000);
-        config.setUploadInterval(900000);
+        config.setDbWriteInterval(2000L);
+        config.setUploadInterval(900000L);
 
 //        Resources res = application.getResources();
 
@@ -228,6 +230,7 @@ class MyApplicationModule {
         return new BluetoothInformationReceiverFactory();
     }
 
+    @SuppressWarnings("ReturnOfNull")
     @Provides
     JsonObjectFactory provideJsonObjectFactory(){
         return null;
@@ -245,4 +248,10 @@ class MyApplicationModule {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, options)
                 .build();
     }
+
+    @Provides
+    GoogleApiAvailability providesGoogleApiAvailability () {
+        return GoogleApiAvailability.getInstance();
+    }
 }
+

@@ -32,14 +32,17 @@ public class AuthenticationProvider {
 
     private static final String TAG = "AuthenticationProvider";
 
+    private final GoogleApiAvailability googleApiAvailability;
+
     private final GoogleApiClient mGoogleApiClient;
 
     @Nullable
     private volatile GoogleSignInAccount user;
 
     @Inject
-    AuthenticationProvider(@Named("SigninApi") GoogleApiClient googleApiClient) {
+    AuthenticationProvider(@Named("SigninApi") GoogleApiClient googleApiClient, GoogleApiAvailability googleApiAvailability) {
         mGoogleApiClient = googleApiClient;
+        this.googleApiAvailability = googleApiAvailability;
     }
 
     /**
@@ -52,7 +55,7 @@ public class AuthenticationProvider {
     void interactiveSignIn(@NonNull final SignInActivity activity, final int resultCode, @NonNull LoginResultCallback callback) {
         MyApplication.madcapLogger.d(TAG, "interactiveSignIn initiated");
 
-        int connectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity);
+        int connectionResult = googleApiAvailability.isGooglePlayServicesAvailable(activity);
         if (connectionResult != ConnectionResult.SUCCESS) {
             callback.onServicesUnavailable(connectionResult);
             return;
@@ -87,7 +90,7 @@ public class AuthenticationProvider {
     public void silentLogin(@NonNull Context context, @NonNull final SilentLoginResultCallback callback) {
         MyApplication.madcapLogger.d(TAG, "silentSignIn initiated");
 
-        int connectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+        int connectionResult = googleApiAvailability.isGooglePlayServicesAvailable(context);
         if (connectionResult != ConnectionResult.SUCCESS) {
             callback.onServicesUnavailable(connectionResult);
             return;
@@ -128,7 +131,7 @@ public class AuthenticationProvider {
             user = result.getSignInAccount();
             callback.onLoginResult(result);
         } else {
-            MyApplication.madcapLogger.d(TAG, "Immediate results are not evailable.");
+            MyApplication.madcapLogger.d(TAG, "Immediate results are not available.");
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
                 public void onResult(@NonNull GoogleSignInResult r) {
