@@ -5,22 +5,30 @@ import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 
+import edu.umd.fcmd.sensorlisteners.model.BluetoothConnectionProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothDiscoveryProbe;
+import edu.umd.fcmd.sensorlisteners.model.BluetoothRequestProbe;
+import edu.umd.fcmd.sensorlisteners.model.BluetoothScanModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.BluetoothStaticAttributesProbe;
 
-import static android.content.ContentValues.TAG;
+import static android.bluetooth.BluetoothAdapter.EXTRA_CONNECTION_STATE;
 
 /**
  * Created by MMueller on 12/2/2016.
+ *
+ * The receiver listening to the Bluetooth events.
+ * Also creates probes.
  */
 
 public class BluetoothInformationReceiver extends BroadcastReceiver {
+    private final String TAG = getClass().getSimpleName();
     private final BluetoothListener bluetoothListener;
-    private final String STARTED = "STARTED";
-    private final String FINISHED = "FINISHED";
+    private static final String STARTED = "STARTED";
+    private static final String FINISHED = "FINISHED";
 
     public BluetoothInformationReceiver(BluetoothListener bluetoothListener) {
         this.bluetoothListener = bluetoothListener;
@@ -31,18 +39,28 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
         if (bluetoothListener.getBluetoothAdapter() != null) {
             switch (intent.getAction()) {
                 case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED:
-//                    intent = bluetoothListener.getConnectionStateCInformation(intent);
-//                    sendData(intent);
+                    Log.d(TAG, "Bluetooth Connection state changed.");
+                    String state = intent.getStringExtra(EXTRA_CONNECTION_STATE);
+                    Bundle deviceBundle = intent.getExtras();
+                    BluetoothDevice device = deviceBundle.getParcelable("android.bluetooth.BluetoothDevice");
+                    BluetoothConnectionProbe bluetoothConnectionProbe = new BluetoothConnectionProbe();
+                    bluetoothConnectionProbe.setDate(System.currentTimeMillis());
+                    bluetoothConnectionProbe.setState(state);
+                    if (device != null) {
+                        bluetoothConnectionProbe.setForeignAddress(device.getAddress());
+                        bluetoothConnectionProbe.setForeignName(device.getName());
+                    }
+                    bluetoothListener.onUpdate(bluetoothConnectionProbe);
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
-                    Log.d(TAG, "Bluetooth Discovery started changed.");
+                    Log.d(TAG, "Bluetooth Discovery started.");
                     BluetoothDiscoveryProbe bluetoothDiscoveryProbe = new BluetoothDiscoveryProbe();
                     bluetoothDiscoveryProbe.setDate(System.currentTimeMillis());
                     bluetoothDiscoveryProbe.setState(STARTED);
                     bluetoothListener.onUpdate(bluetoothDiscoveryProbe);
                     break;
                 case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
-                    Log.d(TAG, "Bluetooth Discovery started changed.");
+                    Log.d(TAG, "Bluetooth Discovery started.");
                     BluetoothDiscoveryProbe bluetoothDiscoveryProbe2 = new BluetoothDiscoveryProbe();
                     bluetoothDiscoveryProbe2.setDate(System.currentTimeMillis());
                     bluetoothDiscoveryProbe2.setState(FINISHED);
@@ -57,16 +75,38 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
                     bluetoothListener.onUpdate(bluetoothStaticAttributesProbe);
                     break;
                 case BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE:
-//                    intent.putExtra(bluetoothListener.getTAG(), "discoverability requested.");
-//                    sendData(intent);
+                    Log.d(TAG, "Bluetooth discoverable requested.");
+                    BluetoothRequestProbe bluetoothRequestProbe = new BluetoothRequestProbe();
+                    bluetoothRequestProbe.setDate(System.currentTimeMillis());
+                    bluetoothRequestProbe.setKind("DISCOVERABLE");
+                    bluetoothListener.onUpdate(bluetoothRequestProbe);
                     break;
                 case BluetoothAdapter.ACTION_REQUEST_ENABLE:
-//                    intent.putExtra(bluetoothListener.getTAG(), "user asked to enable Bluetooth");
-//                    sendData(intent);
+                    Log.d(TAG, "Bluetooth enable requested.");
+                    BluetoothRequestProbe bluetoothRequestProbe2 = new BluetoothRequestProbe();
+                    bluetoothRequestProbe2.setDate(System.currentTimeMillis());
+                    bluetoothRequestProbe2.setKind("ENABLE");
+                    bluetoothListener.onUpdate(bluetoothRequestProbe2);
                     break;
                 case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
-//                    intent = bluetoothListener.getScanModeChangeInformation(intent);
-//                    sendData(intent);
+                    Log.d(TAG, "Bluetooth scan mode changed.");
+                    BluetoothScanModeProbe bluetoothScanModeProbe = new BluetoothScanModeProbe();
+                    bluetoothScanModeProbe.setDate(System.currentTimeMillis());
+                    switch (intent.getIntExtra(BluetoothAdapter.EXTRA_SCAN_MODE, 0)) {
+                        case BluetoothAdapter.SCAN_MODE_NONE:
+                            bluetoothScanModeProbe.setState("INVISIBLE");
+                            break;
+                        case BluetoothAdapter.SCAN_MODE_CONNECTABLE:
+                            bluetoothScanModeProbe.setState("INVISABLE BUT CONNECTABLE");
+                            break;
+                        case BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE:
+                            bluetoothScanModeProbe.setState("VISIBLE");
+                            break;
+                        default:
+                            Log.d(TAG, "Not switched intent cached.");
+                            break;
+                    }
+                    bluetoothListener.onUpdate(bluetoothScanModeProbe);
                     break;
                 case BluetoothAdapter.ACTION_STATE_CHANGED:
                     Log.d(TAG, "Bluetooth State changed.");
@@ -76,8 +116,7 @@ public class BluetoothInformationReceiver extends BroadcastReceiver {
                     bluetoothListener.onUpdate(bluetoothStateProbe);
                     break;
                 default:
-//                    intent.putExtra(bluetoothListener.getTAG(), intent.getAction());
-//                    sendData(intent);
+                    Log.d(TAG, "Unknown Bluetooth intent caught.");
                     break;
             }
         }

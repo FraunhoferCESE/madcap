@@ -1,62 +1,45 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
 /**
- * Created by MMueller on 12/6/2016.
+ * Created by MMueller on 12/5/2016.
  *
- * Probe modelling a bluetooth connection.
+ * Represents a state of the Bluetooth Adapter.
+ * According to
+ * BluetoothAdapter.STATE_OFF
+ * BluetoothAdapter.STATE_TURNING_ON,
+ * BluetoothAdapter.STATE_ON,
+ * BluetoothAdapter.STATE_TURNING_OFF.
  */
 
-public class BluetoothConnectionProbe extends Probe {
+public class BluetoothScanModeProbe extends Probe {
+    private final String TAG = getClass().getSimpleName();
+
     private String state;
-    private String foreignAddress;
-    private String foreignName;
 
     /**
      * Getter for the state.
-     * @return the state.
+     *
+     * @return a State string.
+     * It is eigther
+     * INVISABLE
+     * INVISABLE BUT CONNECTABLE or
+     * VISABLE
      */
     public String getState() {
         return state;
     }
 
     /**
-     * Setter for the state.
-     * @param state the state to set to.
+     * Sets the state.
+     *
+     * @param state the state to set.
+     * Should be eigther
+     * INVISABLE
+     * INVISiBLE BUT CONNECTABLE or
+     * VISABLE.
      */
     public void setState(String state) {
         this.state = state;
-    }
-
-    /**
-     * Getter for the connected devices address.
-     * @return the connected devices address.
-     */
-    public String getForeignAddress() {
-        return foreignAddress;
-    }
-
-    /**
-     * Setter for the connected devices address.
-     * @param foreignAddress the address to set to.
-     */
-    public void setForeignAddress(String foreignAddress) {
-        this.foreignAddress = foreignAddress;
-    }
-
-    /**
-     * Getter for the connected devices name.
-     * @return the connected devices name.
-     */
-    public String getForeignName() {
-        return foreignName;
-    }
-
-    /**
-     * Setter for the connected devices name.
-     * @param foreignName the name to set to.
-     */
-    public void setForeignName(String foreignName) {
-        this.foreignName = foreignName;
     }
 
     /**
@@ -66,7 +49,7 @@ public class BluetoothConnectionProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothConnection";
+        return "BluetoothScanMode";
     }
 
     /**
@@ -93,8 +76,8 @@ public class BluetoothConnectionProbe extends Probe {
     @Override
     public String toString() {
         return "{\"state\": " + state +
-                ", \"foreignName\": " + foreignName +
-                ", \"foreignAddress\": " + "\""+(foreignAddress != null ? foreignAddress : "-") +"\"" +
                 '}';
     }
+
 }
+

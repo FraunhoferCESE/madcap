@@ -3,29 +3,31 @@ package edu.umd.fcmd.sensorlisteners.model;
 /**
  * Created by MMueller on 12/6/2016.
  *
- * Model class for the discovery function of a bluetooth device.
+ * Model class representing requests by other apps to
+ * invoke methods with the Bluetooth.
  */
-
-public class BluetoothDiscoveryProbe extends Probe {
-    private String state;
+public class BluetoothRequestProbe extends Probe {
+    private String kind;
 
     /**
-     * Getter for the state. Typically something like
-     * started/finished.
-     *
-     * @return the state.
+     * Gets what kind of request it is.
+     * @return the kind.
      */
-    public String getState() {
-        return state;
+    public String getKind() {
+        return kind;
     }
 
     /**
-     * Setter for the state.
-     * @param state to set to.
+     * Sets what kind it is.
+     * Should be
+     * ENABLE or
+     * DISCOVERABle
+     * @param kind
      */
-    public void setState(String state) {
-        this.state = state;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
+
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -34,7 +36,7 @@ public class BluetoothDiscoveryProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothDiscoveryProbe";
+        return "BluetoothRequest";
     }
 
     /**
@@ -60,7 +62,7 @@ public class BluetoothDiscoveryProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"state\": " + state +
+        return "{\"kind\": " + kind +
                 '}';
     }
 }

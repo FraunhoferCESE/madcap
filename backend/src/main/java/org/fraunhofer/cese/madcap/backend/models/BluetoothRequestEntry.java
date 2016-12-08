@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.backend.models;
 
+import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
@@ -10,27 +11,28 @@ import java.util.HashMap;
 /**
  * Created by MMueller on 12/6/2016.
  */
+@Entity
+public class BluetoothRequestEntry implements Comparable<BluetoothRequestEntry>, DatastoreEntry {
 
-public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEntry>, DatastoreEntry {
     @Id
     private String id;
     @Index
     private Long timestamp;
     @Index
-    private String state;
+    private String kind;
     @Index
     private String userID;
 
-    public BluetoothDiscoveryEntry(){
+    public BluetoothRequestEntry(){
     }
 
-    public BluetoothDiscoveryEntry(ProbeEntry probeEntry){
+    public BluetoothRequestEntry(ProbeEntry probeEntry){
         id = probeEntry.getId();
         timestamp = probeEntry.getTimestamp();
         userID = probeEntry.getUserID();
 
         JSONObject dataJsonObject = new JSONObject(probeEntry.getSensorData());
-        state = dataJsonObject.getString("state");
+        kind = dataJsonObject.getString("kind");
     }
 
     /**
@@ -72,7 +74,7 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
      *                              from being compared to this object.
      */
     @Override
-    public int compareTo(BluetoothDiscoveryEntry o) {
+    public int compareTo(BluetoothRequestEntry o) {
         return 0;
     }
 
@@ -106,12 +108,12 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
         userID = s;
     }
 
-    public String getState() {
-        return state;
+    public String getKind() {
+        return kind;
     }
 
-    public void setState(String state) {
-        this.state = state;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
     /**
@@ -165,28 +167,18 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BluetoothDiscoveryEntry that = (BluetoothDiscoveryEntry) o;
-        if(state.equals(that.getState())) return true;
+        BluetoothRequestEntry that = (BluetoothRequestEntry) o;
+        if(kind.equals(that.getKind())) return true;
         else return false;
 
-    }
-
-    @Override
-    public String toString() {
-        return "BluetoothStateEntry{" +
-                "id=" + id +
-                ", timestamp=" + timestamp +
-                ", state='" + state + '\'' +
-                '}';
     }
 
     @Override
     public int hashCode() {
         int result = id.hashCode();
         result = 31 * result + timestamp.hashCode();
-        result = 31 * result + state.hashCode();
+        result = 31 * result + kind.hashCode();
         result = 31 * result + userID.hashCode();
         return result;
     }
-
 }

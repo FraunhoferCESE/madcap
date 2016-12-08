@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.backend.models;
 
+import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
@@ -11,7 +12,9 @@ import java.util.HashMap;
  * Created by MMueller on 12/6/2016.
  */
 
-public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEntry>, DatastoreEntry {
+@Entity
+public class BluetoothScanModeEntry implements Comparable<BluetoothScanModeEntry>, DatastoreEntry {
+
     @Id
     private String id;
     @Index
@@ -21,10 +24,10 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
     @Index
     private String userID;
 
-    public BluetoothDiscoveryEntry(){
+    public BluetoothScanModeEntry(){
     }
 
-    public BluetoothDiscoveryEntry(ProbeEntry probeEntry){
+    public BluetoothScanModeEntry(ProbeEntry probeEntry){
         id = probeEntry.getId();
         timestamp = probeEntry.getTimestamp();
         userID = probeEntry.getUserID();
@@ -72,7 +75,7 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
      *                              from being compared to this object.
      */
     @Override
-    public int compareTo(BluetoothDiscoveryEntry o) {
+    public int compareTo(BluetoothScanModeEntry o) {
         return 0;
     }
 
@@ -165,7 +168,7 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BluetoothDiscoveryEntry that = (BluetoothDiscoveryEntry) o;
+        BluetoothScanModeEntry that = (BluetoothScanModeEntry) o;
         if(state.equals(that.getState())) return true;
         else return false;
 
@@ -173,7 +176,7 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
 
     @Override
     public String toString() {
-        return "BluetoothStateEntry{" +
+        return "BluetoothScanModeEntry{" +
                 "id=" + id +
                 ", timestamp=" + timestamp +
                 ", state='" + state + '\'' +

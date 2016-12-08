@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.backend.models;
 
+import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 
@@ -10,8 +11,8 @@ import java.util.HashMap;
 /**
  * Created by MMueller on 12/6/2016.
  */
-
-public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEntry>, DatastoreEntry {
+@Entity
+public class BluetoothConnectionEntry implements Comparable<BluetoothConnectionEntry>, DatastoreEntry {
     @Id
     private String id;
     @Index
@@ -19,18 +20,24 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
     @Index
     private String state;
     @Index
+    private String foreigneName;
+    @Index
+    private String foreignAddress;
+    @Index
     private String userID;
 
-    public BluetoothDiscoveryEntry(){
+    public BluetoothConnectionEntry(){
     }
 
-    public BluetoothDiscoveryEntry(ProbeEntry probeEntry){
+    public BluetoothConnectionEntry(ProbeEntry probeEntry){
         id = probeEntry.getId();
         timestamp = probeEntry.getTimestamp();
         userID = probeEntry.getUserID();
 
         JSONObject dataJsonObject = new JSONObject(probeEntry.getSensorData());
         state = dataJsonObject.getString("state");
+        foreigneName = dataJsonObject.getString("foreignName");
+        foreignAddress = dataJsonObject.getString("foreignAddress");
     }
 
     /**
@@ -72,7 +79,7 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
      *                              from being compared to this object.
      */
     @Override
-    public int compareTo(BluetoothDiscoveryEntry o) {
+    public int compareTo(BluetoothConnectionEntry o) {
         return 0;
     }
 
@@ -173,10 +180,12 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
 
     @Override
     public String toString() {
-        return "BluetoothStateEntry{" +
+        return "BluetoothConnectionEntry{" +
                 "id=" + id +
                 ", timestamp=" + timestamp +
                 ", state='" + state + '\'' +
+                ", foreignName='" + foreigneName + '\'' +
+                ", foreignAddress='" + foreignAddress + '\'' +
                 '}';
     }
 
@@ -185,8 +194,9 @@ public class BluetoothDiscoveryEntry implements Comparable<BluetoothDiscoveryEnt
         int result = id.hashCode();
         result = 31 * result + timestamp.hashCode();
         result = 31 * result + state.hashCode();
+        result = 31 * result + foreigneName.hashCode();
+        result = 31 * result + foreignAddress.hashCode();
         result = 31 * result + userID.hashCode();
         return result;
     }
-
 }
