@@ -63,7 +63,7 @@ final class DatabaseWriteResult {
      *
      * @return the collection of ids that were saved to the database, or an empty collection if nothing was written
      */
-    public Collection<String> getSavedEntries() {
+    Collection<String> getSavedEntries() {
         return Collections.unmodifiableCollection(savedEntries);
     }
 
@@ -81,7 +81,7 @@ final class DatabaseWriteResult {
      *
      * @return the current database size, or {@code -1} if the size cannot be obtained because the database is not readable
      */
-    public long getDatabaseSize() {
+    long getDatabaseSize() {
         return databaseSize;
     }
 

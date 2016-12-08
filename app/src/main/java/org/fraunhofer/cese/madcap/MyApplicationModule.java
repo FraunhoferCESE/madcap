@@ -175,8 +175,8 @@ class MyApplicationModule {
         config.setMemForcedCleanupLimit(5000);
         config.setDbForcedCleanupLimit(30000); // value must ensure that we do not exceed Google API limits for a single request
 
-        config.setDbWriteInterval(2000L);
-        config.setUploadInterval(900000L);
+        config.setDbWriteInterval(2000);
+        config.setUploadInterval(900000);
 
 //        Resources res = application.getResources();
 

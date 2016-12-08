@@ -11,6 +11,7 @@ import com.google.common.collect.Lists;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -31,6 +32,7 @@ class DatabaseAsyncTaskFactory {
      * Default no-arg constructor.
      * The @Inject annotation tells Dagger2 to use this constructor to create new instances of this class.
      */
+    @SuppressWarnings("RedundantNoArgConstructor")
     @Inject
     DatabaseAsyncTaskFactory() {
 
@@ -51,9 +53,11 @@ class DatabaseAsyncTaskFactory {
      */
     AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> createWriteTask(final Context context, final Cache cache, final UploadStrategy uploadStrategy) {
 
+        //noinspection OverloadedVarargsMethod,OverloadedVarargsMethod
         return new AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult>() {
-            private final String TAG = "Fraunhofer.DBWrite";
+            private static final String TAG = "Fraunhofer.DBWrite";
 
+            @SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
             @Override
             @SafeVarargs
             public final DatabaseWriteResult doInBackground(Map<String, CacheEntry>... memcaches) {
@@ -75,11 +79,11 @@ class DatabaseAsyncTaskFactory {
                     return result;
                 }
 
-                Collection<String> savedEntries = new ArrayList<>();
+                Collection<String> savedEntries = new ArrayList<>(1000);
                 RuntimeExceptionDao<CacheEntry, String> dao;
                 try {
                     dao = databaseHelper.getDao();
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     result.setError(e);
                     return result;
                 }
@@ -93,10 +97,10 @@ class DatabaseAsyncTaskFactory {
                 try {
                     if (memcaches != null) {
                         for (Map<String, CacheEntry> memcache : memcaches) {
-                            if (memcache != null && !memcache.isEmpty()) {
+                            if ((memcache != null) && !memcache.isEmpty()) {
                                 int skippedCount = 0;
                                 for (CacheEntry entry : memcache.values()) {
-                                    if (databaseHelper.isOpen() && dao.queryForId(entry.getId()) == null && dao.create(entry) > 0) {
+                                    if (databaseHelper.isOpen() && (dao.queryForId(entry.getId()) == null) && (dao.create(entry) > 0)) {
                                         savedEntries.add(entry.getId());
                                     } else {
                                         skippedCount++;
@@ -106,7 +110,7 @@ class DatabaseAsyncTaskFactory {
                             }
                         }
                     }
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
                     result.setError(e);
                 } finally {
                     if (databaseHelper.isOpen()) {
@@ -153,8 +157,8 @@ class DatabaseAsyncTaskFactory {
             }
 
             @Override
-            protected void onCancelled(DatabaseWriteResult databaseWriteResult) {
-                super.onCancelled(databaseWriteResult);
+            protected void onCancelled(DatabaseWriteResult result) {
+                super.onCancelled(result);
                 OpenHelperManager.releaseHelper();
                 MyApplication.madcapLogger.d(TAG, "onCancelled dbWriteResult");
             }
@@ -189,30 +193,34 @@ class DatabaseAsyncTaskFactory {
      * @return the new task instance
      */
 
-    AsyncTask<Void, Void, Void> createCleanupTask(final Context context, final Cache cache, final long dbEntryLimit) {
+    AsyncTask<Void, Void, Void> createCleanupTask(final Context context, final Cache cache, final int dbEntryLimit) {
+        //noinspection OverloadedVarargsMethod
         return new AsyncTask<Void, Void, Void>() {
             private static final int CURSOR_INCREMENT = 250;
             private static final String TAG = "Fraunhofer.DBCleanup";
 
+            @android.support.annotation.Nullable
             @Override
-            protected Void doInBackground(Void... voids) {
+            protected Void doInBackground(Void... params) {
                 MyApplication.madcapLogger.d(TAG, "Running task to determine if database is still within size limits");
                 Thread.currentThread().setName(TAG);
 
-                if (dbEntryLimit < 0 || cache == null)
+                if ((dbEntryLimit < 0) || (cache == null)) {
                     return null;
+                }
 
                 DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
-                if (databaseHelper == null || databaseHelper.getDao() == null)
+                if ((databaseHelper == null) || (databaseHelper.getDao() == null)) {
                     return null;
+                }
 
                 RuntimeExceptionDao<CacheEntry, String> dao = databaseHelper.getDao();
                 long size = dao.countOf();
-                if (size < dbEntryLimit) {
+                if (size < (long) dbEntryLimit) {
                     MyApplication.madcapLogger.i(TAG, "No cleanup needed. Database limit: " + dbEntryLimit + " > Database size: " + size);
                 } else {
                     MyApplication.madcapLogger.i(TAG, "Attempting cleanup. Database limit: " + dbEntryLimit + " <= Database size: " + size);
-                    long numToDelete = size - (dbEntryLimit / 2);
+                    long numToDelete = size - (long) (dbEntryLimit / 2);
 
                     try {
                         List<CacheEntry> toDelete = dao.queryBuilder()
@@ -222,6 +230,7 @@ class DatabaseAsyncTaskFactory {
                                 .query();
 
                         List<String> toDeleteIds = Lists.transform(toDelete, new Function<CacheEntry, String>() {
+                            @SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
                             @Nullable
                             @Override
                             public String apply(CacheEntry cacheEntry) {
@@ -232,12 +241,12 @@ class DatabaseAsyncTaskFactory {
                         int cursor = 0;
                         while (cursor < toDeleteIds.size()) {
 
-                            dao.deleteIds(toDeleteIds.subList(cursor, (cursor + CURSOR_INCREMENT > toDeleteIds.size() ? toDeleteIds.size() : cursor + CURSOR_INCREMENT)));
+                            dao.deleteIds(toDeleteIds.subList(cursor, (((cursor + CURSOR_INCREMENT) > toDeleteIds.size()) ? toDeleteIds.size() : (cursor + CURSOR_INCREMENT))));
                             cursor += CURSOR_INCREMENT;
                         }
 
                         MyApplication.madcapLogger.i(TAG, "Cleanup completed. New database size: " + dao.countOf());
-                    } catch (Exception e) {
+                    } catch (SQLException e) {
                         MyApplication.madcapLogger.e(TAG, "Unable to delete entries from database", e);
                     }
                 }
@@ -245,14 +254,14 @@ class DatabaseAsyncTaskFactory {
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
+            protected void onPostExecute(Void result) {
+                super.onPostExecute(result);
                 OpenHelperManager.releaseHelper();
             }
 
             @Override
-            protected void onCancelled(Void aVoid) {
-                super.onCancelled(aVoid);
+            protected void onCancelled(Void result) {
+                super.onCancelled(result);
                 OpenHelperManager.releaseHelper();
             }
         };

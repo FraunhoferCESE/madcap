@@ -122,7 +122,7 @@ public class Cache {
         this.appEngineApi = appEngineApi;
 
         lastDbWriteAttempt = System.currentTimeMillis();
-        lastUploadAttempt = 0;
+        lastUploadAttempt = 0L;
 
         memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>(config.getMaxMemEntries()));
 
@@ -143,7 +143,7 @@ public class Cache {
         }
 
         memcache.put(entry.getId(), entry);
-        if ((memcache.size() > config.getMaxMemEntries()) && ((System.currentTimeMillis() - lastDbWriteAttempt) > config.getDbWriteInterval())) {
+        if ((memcache.size() > config.getMaxMemEntries()) && ((System.currentTimeMillis() - lastDbWriteAttempt) > (long) config.getDbWriteInterval())) {
             flush(UploadStrategy.NORMAL);
         }
     }
@@ -216,13 +216,13 @@ public class Cache {
      */
     public long getSize() {
         if ((getHelper() == null) || (getHelper().getDao() == null)) {
-            return -1;
+            return -1L;
         }
         try {
-            return getHelper().getDao().countOf() + memcache.size();
+            return getHelper().getDao().countOf() + (long) memcache.size();
         } catch (RuntimeException e) {
             MyApplication.madcapLogger.e(TAG, e.getMessage());
-            return -1;
+            return -1L;
         }
     }
 
@@ -321,8 +321,8 @@ public class Cache {
         }
 
         // 3. Determine if an upload is ready based on parameters
-        long maxDbEntries;
-        long uploadInterval;
+        int maxDbEntries;
+        int uploadInterval;
         boolean wifiOnly = config.isUploadWifiOnly();
 
 
@@ -338,14 +338,14 @@ public class Cache {
         try {
             long numEntries = getHelper().getDao().countOf();
             if (strategy == UploadStrategy.IMMEDIATE) {
-                numEntries += memcache.size();
+                numEntries += (long) memcache.size();
             }
 
-            if (numEntries < maxDbEntries) {
+            if (numEntries < (long) maxDbEntries) {
                 status |= DATABASE_LIMIT_NOT_MET;
             }
 
-            if ((System.currentTimeMillis() - lastUploadAttempt) <= uploadInterval) {
+            if ((System.currentTimeMillis() - lastUploadAttempt) <= (long) uploadInterval) {
                 status |= UPLOAD_INTERVAL_NOT_MET;
             }
 

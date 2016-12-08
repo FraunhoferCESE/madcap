@@ -14,8 +14,8 @@ public class CacheConfig {
     private int memForcedCleanupLimit;
     private int dbForcedCleanupLimit;
 
-    private long dbWriteInterval;
-    private long uploadInterval;
+    private int dbWriteInterval;
+    private int uploadInterval;
     private boolean uploadWifiOnly;
 
     public void setMaxMemEntries(int maxMemEntries) {
@@ -34,11 +34,11 @@ public class CacheConfig {
         this.dbForcedCleanupLimit = dbForcedCleanupLimit;
     }
 
-    public void setDbWriteInterval(long dbWriteInterval) {
+    public void setDbWriteInterval(int dbWriteInterval) {
         this.dbWriteInterval = dbWriteInterval;
     }
 
-    public void setUploadInterval(long uploadInterval) {
+    public void setUploadInterval(int uploadInterval) {
         this.uploadInterval = uploadInterval;
     }
 
@@ -87,7 +87,7 @@ public class CacheConfig {
      *
      * @return minimum time in milliseconds between consecutive DB writes
      */
-    long getDbWriteInterval() {
+    int getDbWriteInterval() {
         return dbWriteInterval;
     }
 
@@ -96,7 +96,7 @@ public class CacheConfig {
      *
      * @return minimum time in milliseconds between consecutive upload attempts
      */
-    long getUploadInterval() {
+    int getUploadInterval() {
         return uploadInterval;
     }
 
