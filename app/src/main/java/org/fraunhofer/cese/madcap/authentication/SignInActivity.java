@@ -38,7 +38,7 @@ public class SignInActivity extends AppCompatActivity {
 
     @SuppressWarnings({"WeakerAccess", "unused", "PackageVisibleField"})
     @Inject
-    AuthenticationManager authenticationManager;
+    AuthenticationProvider authenticationProvider;
 
     private TextView mStatusTextView;
 
@@ -65,7 +65,7 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 MyApplication.madcapLogger.d(TAG, "pressed sign in");
                 mStatusTextView.setText(R.string.signing_in);
-                authenticationManager.interactiveSignIn(activity, RC_SIGN_IN, new LoginResultCallback() {
+                authenticationProvider.interactiveSignIn(activity, RC_SIGN_IN, new LoginResultCallback() {
                     @Override
                     public void onServicesUnavailable(int connectionResult) {
                         MyApplication.madcapLogger.w(TAG, "Google SignIn services are unavailable.");
@@ -89,7 +89,7 @@ public class SignInActivity extends AppCompatActivity {
                         MyApplication.madcapLogger.d(TAG, "pressed sign out");
                         mStatusTextView.setText(R.string.signing_out);
 
-                        authenticationManager.signout(context, new LogoutResultCallback() {
+                        authenticationProvider.signout(context, new LogoutResultCallback() {
                             @Override
                             public void onServicesUnavailable(int connectionResult) {
                                 String text;
@@ -178,7 +178,7 @@ public class SignInActivity extends AppCompatActivity {
                     MyApplication.madcapLogger.e(TAG, "Could not get SignIn Result for some reason");
                     throw new NullPointerException("SignIn successful, but account is null. Result: " + result);
                 } else {
-                    authenticationManager.setUser(acct);
+                    authenticationProvider.setUser(acct);
                     findViewById(R.id.sign_in_button).setEnabled(false);
                     findViewById(R.id.sign_out_button).setEnabled(true);
                     findViewById(R.id.to_control_button).setEnabled(true);

@@ -17,7 +17,7 @@ import com.google.android.gms.common.ConnectionResult;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
-import org.fraunhofer.cese.madcap.authentication.AuthenticationManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.authentication.SilentLoginResultCallback;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
@@ -37,7 +37,7 @@ public class OnBootService extends IntentService {
     private static final String TAG = "OnBootService";
 
     @Inject
-    AuthenticationManager authManager;
+    AuthenticationProvider authManager;
 
     public OnBootService() {
         super(TAG);
@@ -60,7 +60,7 @@ public class OnBootService extends IntentService {
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                     MyApplication.madcapLogger.w(TAG, "Google Play Services connection failed. Error code: " + connectionResult);
                     loginFailed();
-                    // TODO: Unregister this listener from mGoogleClientApi in AuthenticationManager?
+                    // TODO: Unregister this listener from mGoogleClientApi in AuthenticationProvider?
                 }
 
                 @Override

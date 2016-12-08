@@ -18,7 +18,7 @@ import com.google.android.gms.common.ConnectionResult;
 
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.authentication.SilentLoginResultCallback;
-import org.fraunhofer.cese.madcap.authentication.AuthenticationManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
@@ -28,7 +28,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
-    AuthenticationManager authenticationManager;
+    AuthenticationProvider authenticationProvider;
     private TextView errorTextView;
 
     @Override
@@ -66,19 +66,19 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onStart();
         MyApplication.madcapLogger.d(TAG, "onStart");
 
-        GoogleSignInAccount user = authenticationManager.getUser();
+        GoogleSignInAccount user = authenticationProvider.getUser();
         if (user != null) {
             MyApplication.madcapLogger.d(TAG, "User already signed in. Starting MainActivity.");
             errorTextView.setText("Welcome " + user.getGivenName() + ' ' + user.getFamilyName());
             startActivity(new Intent(this, MainActivity.class));
         } else {
             final Context context = this;
-            authenticationManager.silentLogin(this, new SilentLoginResultCallback() {
+            authenticationProvider.silentLogin(this, new SilentLoginResultCallback() {
                 @Override
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                     errorTextView.setText(String.format(getString(R.string.play_services_connection_failed), connectionResult));
                     MyApplication.madcapLogger.e(TAG, "onStart.onConnectionFailed: Unable to connect to Google Play services. Error code: " + connectionResult);
-                    // TODO: Unregister this listener from mGoogleClientApi in AuthenticationManager?
+                    // TODO: Unregister this listener from mGoogleClientApi in AuthenticationProvider?
                 }
 
                 @Override

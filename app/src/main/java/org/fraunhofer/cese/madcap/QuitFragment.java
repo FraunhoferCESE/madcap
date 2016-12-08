@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import org.fraunhofer.cese.madcap.authentication.AuthenticationManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 
 import javax.inject.Inject;
 
@@ -29,7 +29,7 @@ public class QuitFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     @Inject
-    AuthenticationManager authenticationManager;
+    AuthenticationProvider authenticationProvider;
 
     public QuitFragment() {
         // Required empty public constructor
@@ -63,8 +63,8 @@ public class QuitFragment extends Fragment {
                 i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.contactEmail1), getString(R.string.contactEmail2)});
                 i.putExtra(Intent.EXTRA_SUBJECT, "QUIT Pocket Security ");
                 i.putExtra(Intent.EXTRA_TEXT, "Hello Pocket Security Team, \n \n I want to quit Pocket Security. \n(You may write your reasons here.) \n" +
-                        " \n \n " + authenticationManager.getLastSignedInUsersName() + " \n" +
-                        " \n Reference User ID: " + authenticationManager.getUserId() + " (please do not remove this)");
+                        " \n \n " + authenticationProvider.getLastSignedInUsersName() + " \n" +
+                        " \n Reference User ID: " + authenticationProvider.getUserId() + " (please do not remove this)");
                 try {
                     startActivity(Intent.createChooser(i, "Send mail..."));
                 } catch (android.content.ActivityNotFoundException ex) {

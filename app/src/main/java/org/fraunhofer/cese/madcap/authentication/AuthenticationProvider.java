@@ -28,9 +28,9 @@ import javax.inject.Singleton;
  * Created by MMueller on 9/29/2016.
  */
 @Singleton
-public class AuthenticationManager {
+public class AuthenticationProvider {
 
-    private static final String TAG = "AuthenticationManager";
+    private static final String TAG = "AuthenticationProvider";
 
     private final GoogleApiClient mGoogleApiClient;
 
@@ -38,7 +38,7 @@ public class AuthenticationManager {
     private volatile GoogleSignInAccount user;
 
     @Inject
-    AuthenticationManager(@Named("SigninApi") GoogleApiClient googleApiClient) {
+    AuthenticationProvider(@Named("SigninApi") GoogleApiClient googleApiClient) {
         mGoogleApiClient = googleApiClient;
     }
 

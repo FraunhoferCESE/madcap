@@ -21,7 +21,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.WelcomeActivity;
-import org.fraunhofer.cese.madcap.authentication.AuthenticationManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
@@ -75,7 +75,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
     Cache cache;
 
     @Inject
-    AuthenticationManager authManager;
+    AuthenticationProvider authManager;
 
     @Inject
     @Named("AwarenessApi")

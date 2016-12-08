@@ -15,7 +15,7 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.authentication.LogoutResultCallback;
-import org.fraunhofer.cese.madcap.authentication.AuthenticationManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
@@ -30,7 +30,7 @@ public class LogoutFragment extends Fragment {
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
-    AuthenticationManager authenticationManager;
+    AuthenticationProvider authenticationProvider;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +55,7 @@ public class LogoutFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 MyApplication.madcapLogger.d(TAG, "Logout clicked");
-                authenticationManager.signout(getActivity(), new LogoutResultCallback() {
+                authenticationProvider.signout(getActivity(), new LogoutResultCallback() {
                     @Override
                     public void onServicesUnavailable(int connectionResult) {
                         String text;
