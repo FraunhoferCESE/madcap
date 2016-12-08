@@ -196,6 +196,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             listeners.add(new ActivityListener(this, new CacheFactory(cache, authManager),
                     activityClient,
                     fenceApi,
+                    snapshotApi,
                     activityFenceReceiverFactory,
                     madcapPermissionDeniedHandler));
         }

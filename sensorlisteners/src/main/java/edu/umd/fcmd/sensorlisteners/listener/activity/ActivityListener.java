@@ -56,6 +56,7 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
     private GoogleApiClient googleApiClient;
     private PermissionDeniedHandler permissionDeniedHandler;
     private FenceApi fenceApi;
+    private SnapshotApi snapshotApi;
 
     private ActivityFenceReceiverFactory activityFenceReceiverFactory;
     private ActivityFenceReceiver activityFenceReceiver;
@@ -72,6 +73,7 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
                             ProbeManager<Probe> probeManager,
                             GoogleApiClient googleApiClient,
                             FenceApi fenceApi,
+                            SnapshotApi snapshotApi,
                             ActivityFenceReceiverFactory activityFenceReceiverFactory,
                             PermissionDeniedHandler permissionDeniedHandler){
         this.context = context;
@@ -79,6 +81,7 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
         this.googleApiClient = googleApiClient;
         this.permissionDeniedHandler = permissionDeniedHandler;
         this.fenceApi = fenceApi;
+        this.snapshotApi = snapshotApi;
         this.activityFenceReceiverFactory = activityFenceReceiverFactory;
     }
 
@@ -183,7 +186,7 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
         mPendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
         // The broadcast receiver that will receive intents when a fence is triggered.
-        activityFenceReceiver = activityFenceReceiverFactory.create();
+        activityFenceReceiver = activityFenceReceiverFactory.create(snapshotApi, this, googleApiClient);
         registerFence(STILL_KEY, stillFence, googleApiClient, mPendingIntent);
         //TODO add here more fences
         context.registerReceiver(activityFenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
