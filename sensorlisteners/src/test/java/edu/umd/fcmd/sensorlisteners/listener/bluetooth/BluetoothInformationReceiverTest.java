@@ -89,5 +89,4 @@ public class BluetoothInformationReceiverTest {
         when(mockIntent.getAction()).thenReturn("aasodhskjfhs");
         cut.onReceive(mockContext, mockIntent);
     }
-
 }
