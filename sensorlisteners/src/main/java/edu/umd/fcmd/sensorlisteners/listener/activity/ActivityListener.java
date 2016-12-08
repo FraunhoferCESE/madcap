@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -21,6 +23,7 @@ import com.google.android.gms.awareness.fence.FenceState;
 import com.google.android.gms.awareness.fence.FenceStateMap;
 import com.google.android.gms.awareness.fence.FenceUpdateRequest;
 import com.google.android.gms.awareness.fence.LocationFence;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.ResultCallbacks;
@@ -44,7 +47,7 @@ import static android.provider.Settings.System.DATE_FORMAT;
  * Created by MMueller on 12/8/2016.
  */
 
-public class ActivityListener implements Listener {
+public class ActivityListener implements Listener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private final String TAG = getClass().getSimpleName();
     private boolean runningState;
 
@@ -87,9 +90,8 @@ public class ActivityListener implements Listener {
     @Override
     public void startListening() throws NoSensorFoundException {
         if(!runningState){
-            Intent intent = new Intent(FENCE_RECEIVER_ACTION);
-            activityFenceReceiver = activityFenceReceiverFactory.create();
-            context.registerReceiver(activityFenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+            googleApiClient.registerConnectionCallbacks(this);
+            googleApiClient.registerConnectionFailedListener(this);
 
             googleApiClient.connect();
         }
@@ -100,7 +102,7 @@ public class ActivityListener implements Listener {
     public void stopListening() {
         if(runningState){
             context.unregisterReceiver(activityFenceReceiver);
-            registerFence(STILL_KEY, stillFence, googleApiClient, mPendingIntent);
+            unregisterFence(STILL_KEY, googleApiClient);
 
             googleApiClient.disconnect();
         }
@@ -131,7 +133,7 @@ public class ActivityListener implements Listener {
     }
 
     protected void queryFence(final String fenceKey, GoogleApiClient mGoogleApiClient) {
-        Awareness.FenceApi.queryFences(mGoogleApiClient,
+        fenceApi.queryFences(mGoogleApiClient,
                 FenceQueryRequest.forFences(Arrays.asList(fenceKey)))
                 .setResultCallback(new ResultCallback<FenceQueryResult>() {
                     @Override
@@ -170,5 +172,30 @@ public class ActivityListener implements Listener {
                 Log.i(TAG, "Fence " + fenceKey + " could NOT be removed.");
             }
         });
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d(TAG, "GoogleApiClient connected for fences");
+
+        // Set up the PendingIntent that will be fired when the fence is triggered.
+        Intent intent = new Intent(FENCE_RECEIVER_ACTION);
+        mPendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+
+        // The broadcast receiver that will receive intents when a fence is triggered.
+        activityFenceReceiver = activityFenceReceiverFactory.create();
+        registerFence(STILL_KEY, stillFence, googleApiClient, mPendingIntent);
+        //TODO add here more fences
+        context.registerReceiver(activityFenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d(TAG, "GoogleApiClient connection suspended");
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d(TAG, "GoogleApiClient connection failed");
     }
 }

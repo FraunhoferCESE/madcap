@@ -8,6 +8,7 @@ import android.net.ConnectivityManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.extensions.android.http.AndroidHttp;
@@ -17,7 +18,7 @@ import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
 import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
-import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
+import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 
@@ -29,6 +30,7 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
+import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityFenceReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
@@ -90,6 +92,16 @@ class MyApplicationModule {
     /**
      * Needed by the DataCollectionService.
      *
+     * @return a static FenceApi
+     */
+    @Provides
+    FenceApi provideFenceApi(){
+        return Awareness.FenceApi;
+    }
+
+    /**
+     * Needed by the DataCollectionService.
+     *
      * @return a statuc SnapshotApi
      */
     @Provides
@@ -124,10 +136,20 @@ class MyApplicationModule {
     /**
      * Needed by the DataCollectionService.
      *
+     * @return a factory.
+     */
+    @Provides
+    ActivityFenceReceiverFactory provideActivityFenceReceiverFactory(){
+        return new ActivityFenceReceiverFactory();
+    }
+
+    /**
+     * Needed by the DataCollectionService.
+     *
      * @return an issuemanager.
      */
     @Provides
-    GoogleApiClientConnectionIssueManager provideGoogleConnectionIssueManager(){return new GoogleApiClientConnectionIssueManager();}
+    GoogleApiClientConnectionIssueManagerLocation provideGoogleConnectionIssueManager(){return new GoogleApiClientConnectionIssueManagerLocation();}
 
     /**
      * Needed by the DataCollectionService.

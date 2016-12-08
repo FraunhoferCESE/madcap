@@ -16,6 +16,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
@@ -32,7 +33,7 @@ import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.cache.UploadStrategy;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
-import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
+import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 
@@ -48,6 +49,8 @@ import javax.inject.Singleton;
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
+import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityFenceReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityListener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
@@ -86,7 +89,14 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     GoogleApiClient locationClient;
 
     @Inject
+    @Named("AwarenessApi")
+    GoogleApiClient activityClient;
+
+    @Inject
     SnapshotApi snapshotApi;
+
+    @Inject
+    FenceApi fenceApi;
 
     @Inject
     TimedLocationTaskFactory timedLocationTaskFactory;
@@ -95,7 +105,10 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory;
 
     @Inject
-    GoogleApiClientConnectionIssueManager googleApiClientConnectionIssueManager;
+    ActivityFenceReceiverFactory activityFenceReceiverFactory;
+
+    @Inject
+    GoogleApiClientConnectionIssueManagerLocation googleApiClientConnectionIssueManagerLocation;
 
     @Inject
     MadcapPermissionDeniedHandler madcapPermissionDeniedHandler;
@@ -165,8 +178,8 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
                     snapshotApi,
                     timedLocationTaskFactory,
                     locationServiceStatusReceiverFactory,
-                    googleApiClientConnectionIssueManager,
-                    googleApiClientConnectionIssueManager,
+                    googleApiClientConnectionIssueManagerLocation,
+                    googleApiClientConnectionIssueManagerLocation,
                     madcapPermissionDeniedHandler,
                     madcapSensorNoAnswerReceivedHandler));
 
@@ -179,6 +192,12 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
                     madcapPermissionDeniedHandler,
                     bluetoothInformationReceiverFactory,
                     intentFilterFactory));
+
+            listeners.add(new ActivityListener(this, new CacheFactory(cache, authManager),
+                    activityClient,
+                    fenceApi,
+                    activityFenceReceiverFactory,
+                    madcapPermissionDeniedHandler));
         }
 //        madcapAuthManager.setCallbackClass(this);
 

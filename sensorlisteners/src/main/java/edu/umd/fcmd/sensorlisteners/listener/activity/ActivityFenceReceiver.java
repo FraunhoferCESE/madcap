@@ -12,7 +12,6 @@ import com.google.android.gms.awareness.fence.FenceState;
 /**
  * Created by MMueller on 12/8/2016.
  */
-
 public class ActivityFenceReceiver extends BroadcastReceiver {
     private final String TAG = getClass().getSimpleName();
 
