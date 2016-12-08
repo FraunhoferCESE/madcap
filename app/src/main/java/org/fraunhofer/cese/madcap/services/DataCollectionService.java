@@ -63,54 +63,69 @@ import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completen
 public class DataCollectionService extends Service implements UploadStatusListener {
     private static final String TAG = "Madcap DataColl Service";
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
-    private final int RUN_CODE = 1;
+    private static final int RUN_CODE = 1;
+    private static final int NOTIFICATION_ID = 918273;
 
     private NotificationManager mNotificationManager;
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
-    private List<Listener> listeners = new CopyOnWriteArrayList<>();
+    private final List<Listener> listeners = new CopyOnWriteArrayList<>();
     private UploadStatusGuiListener uploadStatusGuiListener;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     Cache cache;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     AuthenticationProvider authManager;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     @Named("AwarenessApi")
     GoogleApiClient locationClient;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     SnapshotApi snapshotApi;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     TimedLocationTaskFactory timedLocationTaskFactory;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     GoogleApiClientConnectionIssueManager googleApiClientConnectionIssueManager;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     MadcapPermissionDeniedHandler madcapPermissionDeniedHandler;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     MadcapSensorNoAnswerReceivedHandler madcapSensorNoAnswerReceivedHandler;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     TimedApplicationTaskFactory timedApplicationTaskFactory;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     Calendar calendar;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     BluetoothAdapter bluetoothAdapter;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     IntentFilterFactory intentFilterFactory;
 
@@ -147,6 +162,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
         }
     }
 
+    @SuppressWarnings({"unchecked", "NonPrivateFieldAccessedInSynchronizedContext"})
     @Override
     public void onCreate() {
         //noinspection CastToConcreteClass
@@ -186,9 +202,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
         super.onDestroy();
 
         synchronized (listeners) {
-            for (Listener l : listeners) {
-                l.stopListening();
-                MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " stopped listening");
+            for (Listener listener : listeners) {
+                listener.stopListening();
+                MyApplication.madcapLogger.d(TAG, listener.getClass().getSimpleName() + " stopped listening");
             }
             listeners.clear();
         }
@@ -214,14 +230,14 @@ public class DataCollectionService extends Service implements UploadStatusListen
     public int onStartCommand(Intent intent, int flags, int startId) {
         MyApplication.madcapLogger.d(TAG, "OnStartCommand. Intent callee: " + (intent == null ? "null" : intent.getStringExtra("callee")));
 
-        startForeground(1337, getRunNotification());
+        startForeground(NOTIFICATION_ID, getRunNotification());
 
         synchronized (listeners) {
-            for (Listener l : listeners) {
+            for (Listener listener : listeners) {
                 try {
                     MyApplication.madcapLogger.d(TAG, "numListeners: " + listeners.size());
-                    l.startListening();
-                    MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " started listening");
+                    listener.startListening();
+                    MyApplication.madcapLogger.d(TAG, listener.getClass().getSimpleName() + " started listening");
                 } catch (NoSensorFoundException nsf) {
                     MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
                 }
@@ -246,9 +262,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
         MyApplication.madcapLogger.d(TAG, "Upload requested");
         int status = cache.checkUploadConditions(UploadStrategy.IMMEDIATE);
 
-        String text = "Result: ";
         MyApplication.madcapLogger.d(TAG, "Status: " + status);
 
+        String text = "Result: ";
         if (status == Cache.UPLOAD_READY) {
             cache.flush(UploadStrategy.IMMEDIATE);
             text += "Upload started...";
@@ -256,27 +272,35 @@ public class DataCollectionService extends Service implements UploadStatusListen
             text += "Upload in progress...";
         } else {
             String errorText = "";
-            if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
-                errorText += "\n- An internal error occurred and data could not be uploaded.";
-            if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET)
-                errorText += "\n- An upload was just requested; please wait a few seconds.";
-            if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION)
-                errorText += "\n- No WiFi connection detected.";
-            if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
-                errorText += "\n- No entries to upload";
+            if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR) {
+                //noinspection AccessOfSystemProperties
+                errorText += System.getProperty("line.separator") + "- An internal error occurred and data could not be uploaded.";
+            }
+            if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET) {
+                //noinspection AccessOfSystemProperties
+                errorText += System.getProperty("line.separator") + "- An upload was just requested; please wait a few seconds.";
+            }
+            if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION) {
+                //noinspection AccessOfSystemProperties
+                errorText += System.getProperty("line.separator") + "- No WiFi connection detected.";
+            }
+            if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET) {
+                //noinspection AccessOfSystemProperties
+                errorText += System.getProperty("line.separator") + "- No entries to upload";
+            }
 
-            text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
+            text += errorText.isEmpty() ? "No status to report. Please wait." : ("Error:" + errorText);
         }
 
-        String date = new Date() + "";
+        String date = String.valueOf(new Date());
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.last_upload_date), date);
-        editor.commit();
+        editor.apply();
         uploadStatusGuiListener.onUploadStatusDateUpdate(date);
 
         editor.putString(getString(R.string.last_upload_result), text);
-        editor.commit();
+        editor.apply();
         uploadStatusGuiListener.onUploadStatusResultUpdate(text);
 
         uploadStatusGuiListener.onUploadStatusProgressUpdate(0);
@@ -323,31 +347,33 @@ public class DataCollectionService extends Service implements UploadStatusListen
             text += "Result: No entries to upload.";
         } else if (result.getException() != null) {
             String exceptionMessage;
-            if (result.getException().getMessage() != null)
+            if (result.getException().getMessage() != null) {
                 exceptionMessage = result.getException().getMessage();
-            else if (result.getException().toString() != null)
+            } else if (result.getException().toString() != null) {
                 exceptionMessage = result.getException().toString();
-            else
+            } else {
                 exceptionMessage = "Unspecified error";
+            }
 
             text += "Result: Upload failed due to " + (exceptionMessage.length() > MAX_EXCEPTION_MESSAGE_LENGTH ? exceptionMessage.substring(0, MAX_EXCEPTION_MESSAGE_LENGTH - 1) : exceptionMessage);
         } else if (result.getSaveResult() == null) {
             text += "Result: An error occurred on the remote server.";
         } else {
-            text += "Result:\n";
+            //noinspection AccessOfSystemProperties
+            text += "Result:" + System.getProperty("line.separator");
             text += "\t" + (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
-            if (result.getSaveResult().getAlreadyExists() != null)
-                text += "\n\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
+            if (result.getSaveResult().getAlreadyExists() != null) {
+                //noinspection AccessOfSystemProperties
+                text += System.getProperty("line.separator") + "\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
+            }
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.last_upload_completeness), getString(R.string.status_complete));
-        editor.commit();
         editor.putString(getString(R.string.last_upload_result), text);
-        editor.commit();
         editor.putInt(getString(R.string.last_upload_progress), 100);
-        editor.commit();
+        editor.apply();
 
         if (uploadStatusGuiListener != null) {
             uploadStatusGuiListener.onUploadStatusCompletenessUpdate(COMPLETE);
@@ -378,7 +404,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(getString(R.string.last_upload_progress), value);
-        editor.commit();
+        editor.apply();
 
         if (uploadStatusGuiListener != null) {
             uploadStatusGuiListener.onUploadStatusProgressUpdate(value);
