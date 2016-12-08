@@ -127,7 +127,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     // to handle the case where the user grants the permission. See the documentation
                     // for ActivityCompat#requestPermissions for more details.
                 }
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 5, this);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15, 5, this);
 
             }
             if (useNetwork) {
@@ -142,7 +142,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     // for ActivityCompat#requestPermissions for more details.
 
                 }
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 5, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 15, 5, this);
             }
 
             sendInitialProbes();
