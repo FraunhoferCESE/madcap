@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -56,6 +57,8 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
 
     private ActivityFenceReceiverFactory activityFenceReceiverFactory;
     private ActivityFenceReceiver activityFenceReceiver;
+
+    private TimedActivityTask timedActivityTask;
 
     private final String FENCE_RECEIVER_ACTION = BuildConfig.APPLICATION_ID + "FENCE_RECEIVER_ACTION";
 
@@ -114,15 +117,19 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
     @Override
     public void stopListening() {
         if(runningState){
-            context.unregisterReceiver(activityFenceReceiver);
-            unregisterFence(STILL_KEY, googleApiClient);
-            unregisterFence(ON_BICYCLE_KEY, googleApiClient);
-            unregisterFence(IN_VEHICLE_KEY, googleApiClient);
-            unregisterFence(ON_FOOT_KEY, googleApiClient);
-            unregisterFence(RUNNING_KEY, googleApiClient);
-            unregisterFence(TILTING_KEY, googleApiClient);
-            unregisterFence(WALKING_KEY, googleApiClient);
-            unregisterFence(UNKOWN_KEY, googleApiClient);
+            //EVENT DRIVEN
+//            context.unregisterReceiver(activityFenceReceiver);
+//            unregisterFence(STILL_KEY, googleApiClient);
+//            unregisterFence(ON_BICYCLE_KEY, googleApiClient);
+//            unregisterFence(IN_VEHICLE_KEY, googleApiClient);
+//            unregisterFence(ON_FOOT_KEY, googleApiClient);
+//            unregisterFence(RUNNING_KEY, googleApiClient);
+//            unregisterFence(TILTING_KEY, googleApiClient);
+//            unregisterFence(WALKING_KEY, googleApiClient);
+//            unregisterFence(UNKOWN_KEY, googleApiClient);
+
+            //TIMED
+            timedActivityTask.cancel(true);
 
             googleApiClient.disconnect();
         }
@@ -196,24 +203,29 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d(TAG, "GoogleApiClient connected for fences");
+        //EVENTDRIVEN
+//        Log.d(TAG, "GoogleApiClient connected for fences");
+//
+//        // Set up the PendingIntent that will be fired when the fence is triggered.
+//        Intent intent = new Intent(FENCE_RECEIVER_ACTION);
+//        mPendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+//
+//        // The broadcast receiver that will receive intents when a fence is triggered.
+//        activityFenceReceiver = activityFenceReceiverFactory.create(snapshotApi, this, googleApiClient);
+//        registerFence(STILL_KEY, stillFence, googleApiClient, mPendingIntent);
+//        registerFence(ON_BICYCLE_KEY, onBicycleFence, googleApiClient, mPendingIntent);
+//        registerFence(IN_VEHICLE_KEY, inVehicleFence, googleApiClient, mPendingIntent);
+//        registerFence(ON_FOOT_KEY, onFootFence, googleApiClient, mPendingIntent);
+//        registerFence(RUNNING_KEY, runningFence, googleApiClient, mPendingIntent);
+//        registerFence(TILTING_KEY, tiltingFence, googleApiClient, mPendingIntent);
+//        registerFence(WALKING_KEY, walkingFence, googleApiClient, mPendingIntent);
+//        registerFence(UNKOWN_KEY, unknownFence, googleApiClient, mPendingIntent);
+//
+//        context.registerReceiver(activityFenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
 
-        // Set up the PendingIntent that will be fired when the fence is triggered.
-        Intent intent = new Intent(FENCE_RECEIVER_ACTION);
-        mPendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-
-        // The broadcast receiver that will receive intents when a fence is triggered.
-        activityFenceReceiver = activityFenceReceiverFactory.create(snapshotApi, this, googleApiClient);
-        registerFence(STILL_KEY, stillFence, googleApiClient, mPendingIntent);
-        registerFence(ON_BICYCLE_KEY, onBicycleFence, googleApiClient, mPendingIntent);
-        registerFence(IN_VEHICLE_KEY, inVehicleFence, googleApiClient, mPendingIntent);
-        registerFence(ON_FOOT_KEY, onFootFence, googleApiClient, mPendingIntent);
-        registerFence(RUNNING_KEY, runningFence, googleApiClient, mPendingIntent);
-        registerFence(TILTING_KEY, tiltingFence, googleApiClient, mPendingIntent);
-        registerFence(WALKING_KEY, walkingFence, googleApiClient, mPendingIntent);
-        registerFence(UNKOWN_KEY, unknownFence, googleApiClient, mPendingIntent);
-
-        context.registerReceiver(activityFenceReceiver, new IntentFilter(FENCE_RECEIVER_ACTION));
+        //TIMED
+        timedActivityTask = new TimedActivityTask(this, snapshotApi, context);
+        timedActivityTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -224,5 +236,9 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "GoogleApiClient connection failed");
+    }
+
+    public GoogleApiClient getGoogleApiClient() {
+        return googleApiClient;
     }
 }
