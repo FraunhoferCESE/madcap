@@ -19,7 +19,6 @@ import com.google.android.gms.location.DetectedActivity;
 
 import java.util.List;
 
-import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.model.ActivityProbe;
 
 /**
@@ -33,6 +32,8 @@ public class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult
     private final ActivityListener activityListener;
     private final SnapshotApi snapshotApi;
     private final Context context;
+
+    private ActivityProbe lastActivityProbe;
 
     public TimedActivityTask(ActivityListener activityListener, SnapshotApi snapshotApi, Context context) {
         this.activityListener = activityListener;
@@ -75,7 +76,7 @@ public class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult
                             publishProgress(ar);
                         }
                     });
-            Log.d(TAG, "Attempt to get location");
+            Log.d(TAG, "Attempt to get activity");
             try {
                 //Log.d(TAG, "Sleep now");
                 //noinspection BusyWait
@@ -101,7 +102,7 @@ public class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult
     protected void onProgressUpdate(ActivityRecognitionResult... values) {
         ActivityRecognitionResult activityRecognitionResult = values[0];
         List<DetectedActivity> activityList = activityRecognitionResult.getProbableActivities();
-        Log.d(TAG, "List "+activityList.toString()+" has size "+activityList.size());
+        //Log.d(TAG, "List "+activityList.toString()+" has size "+activityList.size());
 
         ActivityProbe activityProbe = new ActivityProbe();
         activityProbe.setDate(System.currentTimeMillis());
@@ -142,6 +143,16 @@ public class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult
             }
         }
 
-        activityListener.onUpdate(activityProbe);
+        checkSignificance(activityProbe, lastActivityProbe);
+
+        //activityListener.onUpdate(activityProbe);
+    }
+
+    private void checkSignificance(ActivityProbe newActivityProbe, ActivityProbe oldActivityProbe){
+
+        if(!newActivityProbe.equals(oldActivityProbe)){
+            lastActivityProbe = newActivityProbe;
+            activityListener.onUpdate(newActivityProbe);
+        }
     }
 }
