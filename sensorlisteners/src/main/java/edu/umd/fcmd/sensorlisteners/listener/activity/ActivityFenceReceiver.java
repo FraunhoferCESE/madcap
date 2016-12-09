@@ -3,7 +3,6 @@ package edu.umd.fcmd.sensorlisteners.listener.activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,9 +27,9 @@ import edu.umd.fcmd.sensorlisteners.model.ActivityProbe;
 public class ActivityFenceReceiver extends BroadcastReceiver {
     private final String TAG = getClass().getSimpleName();
 
-    private SnapshotApi snapshotApi;
-    private ActivityListener activityListener;
-    private GoogleApiClient googleApiClient;
+    private final SnapshotApi snapshotApi;
+    private final ActivityListener activityListener;
+    private final GoogleApiClient googleApiClient;
 
     public ActivityFenceReceiver(SnapshotApi snapshotApi, ActivityListener activityListener, GoogleApiClient googleApiClient){
         this.snapshotApi = snapshotApi;
@@ -40,11 +39,11 @@ public class ActivityFenceReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        FenceState fenceState = FenceState.extract(intent);
+        FenceState fenceStateReceived = FenceState.extract(intent);
 
         Log.d(TAG, "new activity received");
 
-        if (TextUtils.equals(fenceState.getFenceKey(), ActivityListener.STILL_KEY)) {
+        if (TextUtils.equals(fenceStateReceived.getFenceKey(), ActivityListener.STILL_KEY)) {
             snapshotApi.getDetectedActivity(googleApiClient)
                     .setResultCallback(new ResultCallback<DetectedActivityResult>() {
                         @Override
