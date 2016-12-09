@@ -216,32 +216,32 @@ public class ActivityEntry implements Comparable<ActivityEntry>, DatastoreEntry 
 
     @Override
     public String getId() {
-        return null;
+        return id;
     }
 
     @Override
     public void setId(String s) {
-
+        id = s;
     }
 
     @Override
     public Long getTimestamp() {
-        return null;
+        return timestamp;
     }
 
     @Override
     public void setTimestamp(Long l) {
-
+        timestamp = l;
     }
 
     @Override
     public String getUserID() {
-        return null;
+        return userID;
     }
 
     @Override
     public void setUserID(String s) {
-
+        userID = s;
     }
 
     /**
@@ -324,7 +324,7 @@ public class ActivityEntry implements Comparable<ActivityEntry>, DatastoreEntry 
      * general contract for the {@code hashCode} method, which states
      * that equal objects must have equal hash codes.
      *
-     * @param obj the reference object with which to compare.
+     * @param o the reference object with which to compare.
      * @return {@code true} if this object is the same as the obj
      * argument; {@code false} otherwise.
      * @see #hashCode()
