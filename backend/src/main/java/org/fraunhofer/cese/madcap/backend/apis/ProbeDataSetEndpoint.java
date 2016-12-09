@@ -87,7 +87,6 @@ public class ProbeDataSetEndpoint {
         logger.fine("Logging request received. Data: " + entryList);
         logger.info("Number of entries received: " + entryList.size() + ", Request size: " + humanReadableByteCount(Long.parseLong(req.getHeader("Content-Length")), false));
 
-        //TODO parse probe entries
 
         Collection<String> saved = new ArrayList<>();
         Collection<String> alreadyExists = new ArrayList<>();
@@ -193,6 +192,7 @@ public class ProbeDataSetEndpoint {
                     Collection<ActivityEntry> aclist = entryMap.get(entry.getProbeType());
                     ActivityEntry activityEntry = new ActivityEntry(entry);
                     aclist.add(activityEntry);
+                    break;
                 default:
                     throw new IllegalArgumentException();
             }

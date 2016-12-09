@@ -348,7 +348,9 @@ public class ActivityEntry implements Comparable<ActivityEntry>, DatastoreEntry 
 
     @Override
     public String toString() {
-        return "ActivityEntry{\"onBicycle\": " + onBicycle +
+        return "ActivityEntry{"+
+                "id=" + id +
+                "\"onBicycle\": " + onBicycle +
                 ", \"inVehicle\": " + inVehicle +
                 ", \"onFoot\": " + onFoot +
                 ", \"running\": " + running +
