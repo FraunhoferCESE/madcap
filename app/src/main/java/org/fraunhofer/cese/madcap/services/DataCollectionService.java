@@ -19,14 +19,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.WelcomeActivity;
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthEventHandler;
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
@@ -67,7 +64,7 @@ import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completen
  */
 
 @Singleton
-public class DataCollectionService extends Service implements MadcapAuthEventHandler, UploadStatusListener {
+public class DataCollectionService extends Service implements UploadStatusListener {
     private static final String TAG = "Madcap DataColl Service";
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
     private final int RUN_CODE = 1;
@@ -82,7 +79,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
     Cache cache;
 
     @Inject
-    MadcapAuthManager authManager;
+    AuthenticationProvider authManager;
 
     @Inject
     @Named("AwarenessApi")
@@ -502,63 +499,5 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         mNotificationManager.cancel(RUN_CODE);
     }
 
-    /**
-     * Specifies what the class is expected to do, when the silent login was sucessfull.
-     *
-     * @param result
-     */
-    @Override
-    public void onSilentLoginSuccessfull(GoogleSignInResult result) {
 
-    }
-
-    /**
-     * Specifies what the class is expected to do, when the silent login was not successfull.
-     *
-     * @param opr
-     */
-    @Override
-    public void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr) {
-
-    }
-
-    /**
-     * Specifies what the class is expected to do, when the regular sign in was successful.
-     */
-    @Override
-    public void onSignInSucessfull() {
-
-    }
-
-    /**
-     * Specifies what the app is expected to do when the Signout was sucessfull.
-     *
-     * @param status
-     */
-    @Override
-    public void onSignOutResults(Status status) {
-        MyApplication.madcapLogger.d(TAG, "Sign out callback");
-        stopSelf();
-    }
-
-    /**
-     * Specifies what the class is expected to do, when disconnected.
-     *
-     * @param status
-     */
-    @Override
-    public void onRevokeAccess(Status status) {
-
-    }
-
-    /**
-     * There the sign in intent has to be sent.
-     *
-     * @param intent
-     * @param requestCode
-     */
-    @Override
-    public void onSignInIntent(Intent intent, int requestCode) {
-
-    }
 }

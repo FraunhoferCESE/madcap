@@ -2,7 +2,7 @@ package org.fraunhofer.cese.madcap.factories;
 
 import android.util.Log;
 
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheEntry;
 
@@ -22,17 +22,17 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 public class CacheFactory implements ProbeManager {
     private static final String TAG = CacheFactory.class.getSimpleName();
 
-    private final MadcapAuthManager madcapAuthManager;
+    private final AuthenticationProvider authenticationProvider;
     private final Cache cache;
 
     @Override
     public void save(Probe probe) {
-        //Log.i(TAG, "UID "+madcapAuthManager.getUserId());
-        if (madcapAuthManager.getUserId() != null) {
+        //Log.i(TAG, "UID "+authenticationProvider.getUserId());
+        if (authenticationProvider.getUserId() != null) {
             CacheEntry probeEntry = new CacheEntry();
             probeEntry.setId(UUID.randomUUID().toString());
             probeEntry.setTimestamp(probe.getDate());
-            probeEntry.setUserID(madcapAuthManager.getUserId());
+            probeEntry.setUserID(authenticationProvider.getUserId());
             probeEntry.setProbeType(probe.getType());
             probeEntry.setSensorData(probe.toString());
 
@@ -46,8 +46,8 @@ public class CacheFactory implements ProbeManager {
     }
 
     @Inject
-    public CacheFactory(Cache cache, MadcapAuthManager madcapAuthManager) {
+    public CacheFactory(Cache cache, AuthenticationProvider authenticationProvider) {
         this.cache = cache;
-        this.madcapAuthManager = madcapAuthManager;
+        this.authenticationProvider = authenticationProvider;
     }
 }

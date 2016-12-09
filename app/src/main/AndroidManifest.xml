@@ -87,7 +87,7 @@
             android:value="@integer/google_play_services_version" />
 
         <activity
-            android:name=".SignInActivity"
+            android:name=".authentication.SignInActivity"
             android:label="@string/name_sign_in_activity"
             android:screenOrientation="portrait"
             android:theme="@style/MadcapTheme" />
@@ -120,6 +120,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/MadcapTheme.NoActionBar">
         </activity>
+
     </application>
 
 </manifest>

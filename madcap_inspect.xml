@@ -166,7 +166,6 @@
   <inspection_tool class="ClassWithMultipleLoggers" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="loggerNamesString" value="java.util.logging.Logger,org.slf4j.Logger,org.apache.commons.logging.Log,org.apache.log4j.Logger" />
   </inspection_tool>
-  <inspection_tool class="ClassWithOnlyPrivateConstructors" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="ClassWithTooManyDependencies" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="limit" value="10" />
   </inspection_tool>
@@ -951,9 +950,6 @@
   <inspection_tool class="UnpredictableBigDecimalConstructorCall" enabled="true" level="WARNING" enabled_by_default="true">
     <option name="ignoreReferences" value="true" />
     <option name="ignoreComplexLiterals" value="false" />
-  </inspection_tool>
-  <inspection_tool class="UnqualifiedInnerClassAccess" enabled="true" level="WARNING" enabled_by_default="true">
-    <option name="ignoreReferencesToLocalInnerClasses" value="false" />
   </inspection_tool>
   <inspection_tool class="UnsecureRandomNumberGeneration" enabled="true" level="WARNING" enabled_by_default="true" />
   <inspection_tool class="UnusedAssignment" enabled="true" level="ERROR" enabled_by_default="true">

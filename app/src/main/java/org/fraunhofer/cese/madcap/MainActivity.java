@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         StartFragment.OnFragmentInteractionListener,
         HelpFragment.OnFragmentInteractionListener,
-        LogoutFragment.OnFragmentInteractionListener,
         QuitFragment.OnFragmentInteractionListener{
     private final String TAG = getClass().getSimpleName();
 
