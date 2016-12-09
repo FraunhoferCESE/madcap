@@ -22,6 +22,8 @@ import edu.umd.fcmd.sensorlisteners.model.ActivityProbe;
 
 /**
  * Created by MMueller on 12/8/2016.
+ *
+ * A broadcast receiver which is listening to activity updates.
  */
 public class ActivityFenceReceiver extends BroadcastReceiver {
     private final String TAG = getClass().getSimpleName();
