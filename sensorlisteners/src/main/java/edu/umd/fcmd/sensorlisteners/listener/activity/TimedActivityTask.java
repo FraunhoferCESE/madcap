@@ -1,8 +1,8 @@
 package edu.umd.fcmd.sensorlisteners.listener.activity;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.gms.awareness.SnapshotApi;
@@ -21,9 +21,11 @@ import edu.umd.fcmd.sensorlisteners.model.ActivityProbe;
  * Get the activity in a certain time period and evaultes if there
  * is a significant change to the last detected activity.
  */
+@SuppressWarnings("OverloadedVarargsMethod")
 class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult, Void> {
     private final String TAG = getClass().getSimpleName();
     private static final int ACTIVITY_SLEEP_TIME = 5000;
+    private static final double PERCENT = 100.0;
 
     private final ActivityListener activityListener;
     private final SnapshotApi snapshotApi;
@@ -49,6 +51,8 @@ class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult, Void>
      * @see #onPostExecute
      * @see #publishProgress
      */
+    @SuppressWarnings("ObjectAllocationInLoop")
+    @Nullable
     @Override
     protected Void doInBackground(Void... params) {
         Log.d(TAG, "Doing in background");
@@ -56,12 +60,12 @@ class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult, Void>
             snapshotApi.getDetectedActivity(activityListener.getGoogleApiClient())
                     .setResultCallback(new ResultCallback<DetectedActivityResult>() {
                         @Override
-                        public void onResult(@NonNull DetectedActivityResult detectedActivityResult) {
-                            if (!detectedActivityResult.getStatus().isSuccess()) {
+                        public void onResult(@NonNull DetectedActivityResult r) {
+                            if (!r.getStatus().isSuccess()) {
                                 Log.e(TAG, "Could not get the current activity.");
                                 return;
                             }
-                            ActivityRecognitionResult ar = detectedActivityResult.getActivityRecognitionResult();
+                            ActivityRecognitionResult ar = r.getActivityRecognitionResult();
                             publishProgress(ar);
                         }
                     });
@@ -101,28 +105,28 @@ class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult, Void>
 
             switch(type){
                 case DetectedActivity.IN_VEHICLE:
-                    activityProbe.setInVehicle(((double) detectedActivity.getConfidence())/100);
+                    activityProbe.setInVehicle((double) detectedActivity.getConfidence() / PERCENT);
                     break;
                 case DetectedActivity.ON_BICYCLE:
-                    activityProbe.setOnBicycle(((double) detectedActivity.getConfidence())/100);
+                    activityProbe.setOnBicycle((double) detectedActivity.getConfidence() / PERCENT);
                     break;
                 case DetectedActivity.ON_FOOT:
-                    activityProbe.setOnFoot(((double) detectedActivity.getConfidence())/100);
+                    activityProbe.setOnFoot((double) detectedActivity.getConfidence() / PERCENT);
                     break;
                 case DetectedActivity.RUNNING:
-                    activityProbe.setRunning(((double) detectedActivity.getConfidence())/100);
+                    activityProbe.setRunning((double) detectedActivity.getConfidence() / PERCENT);
                     break;
                 case DetectedActivity.STILL:
-                    activityProbe.setStill(((double) detectedActivity.getConfidence())/100);
+                    activityProbe.setStill((double) detectedActivity.getConfidence() / PERCENT);
                     break;
                 case DetectedActivity.TILTING:
-                    activityProbe.setTilting(((double) detectedActivity.getConfidence())/100);
+                    activityProbe.setTilting((double) detectedActivity.getConfidence() / PERCENT);
                     break;
                 case DetectedActivity.WALKING:
-                    activityProbe.setWalking(((double) detectedActivity.getConfidence())/100);
+                    activityProbe.setWalking((double) detectedActivity.getConfidence() / PERCENT);
                     break;
                 case DetectedActivity.UNKNOWN:
-                    activityProbe.setUnknown(((double) detectedActivity.getConfidence())/100);
+                    activityProbe.setUnknown((double) detectedActivity.getConfidence() / PERCENT);
                     break;
                 case -1000:
                     break;
