@@ -54,6 +54,7 @@ import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.INCOMPLETE;
@@ -195,7 +196,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     madcapPermissionDeniedHandler,
                     madcapSensorNoAnswerReceivedHandler));
 
-
             listeners.add(new ApplicationsListener(this, new CacheFactory(cache, authManager),
                     timedApplicationTaskFactory, madcapPermissionDeniedHandler));
 
@@ -209,6 +209,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     activityClient,
                     snapshotApi,
                     timedActivityTaskFactory));
+
+            listeners.add(new PowerListener(this, new CacheFactory(cache, authManager)));
         }
 //        madcapAuthManager.setCallbackClass(this);
 
