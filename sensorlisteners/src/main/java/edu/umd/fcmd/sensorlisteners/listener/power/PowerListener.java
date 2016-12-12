@@ -13,8 +13,6 @@ import edu.umd.fcmd.sensorlisteners.model.PowerProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
-import static android.R.attr.level;
-
 /**
  * Created by MMueller on 12/12/2016.
  *
@@ -23,8 +21,8 @@ import static android.R.attr.level;
 public class PowerListener implements Listener {
     private final String TAG = getClass().getSimpleName();
 
-    private Context context;
-    private ProbeManager<Probe> probeManager;
+    private final Context context;
+    private final ProbeManager<Probe> probeManager;
 
     private PowerInformationReceiver receiver;
 
@@ -52,7 +50,6 @@ public class PowerListener implements Listener {
             Intent batteryIntent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
             receiver = new PowerInformationReceiver(this, getInitialPowerLevel(batteryIntent));
             context.registerReceiver(receiver, intentFilter);
-
         }
         runningState = true;
     }
@@ -72,8 +69,8 @@ public class PowerListener implements Listener {
 
     /**
      * Gets the initial power level.
-     * @param batteryIntent
-     * @return
+     * @param batteryIntent the passed battery intentn.
+     * @return the initial power level.
      */
     private int getInitialPowerLevel(Intent batteryIntent){
         int level = -1;
