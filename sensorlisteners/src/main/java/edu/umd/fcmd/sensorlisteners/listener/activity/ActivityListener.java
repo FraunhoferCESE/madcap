@@ -1,26 +1,16 @@
 package edu.umd.fcmd.sensorlisteners.listener.activity;
 
-import android.Manifest;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.google.android.gms.awareness.Awareness;
-import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
@@ -34,7 +24,6 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
     private final String TAG = getClass().getSimpleName();
     private boolean runningState;
 
-    private final Context context;
     private final ProbeManager<Probe> probeManager;
     private final GoogleApiClient googleApiClient;
     private final SnapshotApi snapshotApi;
@@ -42,12 +31,10 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
     private final TimedActivityTaskFactory timedActivityTaskFactory;
     private TimedActivityTask timedActivityTask;
 
-    public ActivityListener(Context context,
-                            ProbeManager<Probe> probeManager,
+    public ActivityListener(ProbeManager<Probe> probeManager,
                             GoogleApiClient googleApiClient,
                             SnapshotApi snapshotApi,
                             TimedActivityTaskFactory timedActivityTaskFactory){
-        this.context = context;
         this.probeManager = probeManager;
         this.googleApiClient = googleApiClient;
         this.snapshotApi = snapshotApi;
@@ -78,7 +65,7 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
 
             googleApiClient.disconnect();
         }
-        runningState = true;
+        runningState = false;
     }
 
     @Override

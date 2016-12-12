@@ -189,7 +189,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     bluetoothInformationReceiverFactory,
                     intentFilterFactory));
 
-            listeners.add(new ActivityListener(this, new CacheFactory(cache, authManager),
+            listeners.add(new ActivityListener(new CacheFactory(cache, authManager),
                     activityClient,
                     snapshotApi,
                     timedActivityTaskFactory));
