@@ -15,7 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -46,7 +45,6 @@ import javax.inject.Singleton;
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityFenceReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityListener;
 import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
@@ -101,9 +99,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @Inject
     LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory;
-
-    @Inject
-    ActivityFenceReceiverFactory activityFenceReceiverFactory;
 
     @Inject
     TimedActivityTaskFactory timedActivityTaskFactory;

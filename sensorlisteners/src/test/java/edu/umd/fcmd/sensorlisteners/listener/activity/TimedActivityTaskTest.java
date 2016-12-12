@@ -1,7 +1,5 @@
 package edu.umd.fcmd.sensorlisteners.listener.activity;
 
-import android.content.Context;
-
 import com.google.android.gms.awareness.SnapshotApi;
 
 import org.junit.After;

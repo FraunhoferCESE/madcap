@@ -30,7 +30,6 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
-import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityFenceReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
@@ -134,15 +133,6 @@ class MyApplicationModule {
     @Provides
     LocationServiceStatusReceiverFactory provideLocationServiceStatusReceiverFactory(){ return new LocationServiceStatusReceiverFactory(); }
 
-    /**
-     * Needed by the DataCollectionService.
-     *
-     * @return a factory.
-     */
-    @Provides
-    ActivityFenceReceiverFactory provideActivityFenceReceiverFactory(){
-        return new ActivityFenceReceiverFactory();
-    }
 
     /**
      * Needed by the DataCollectionService.
