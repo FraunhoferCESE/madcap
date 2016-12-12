@@ -1,7 +1,5 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
-import edu.umd.fcmd.sensorlisteners.model.Probe;
-
 /**
  * Created by MMueller on 12/12/2016.
  *
@@ -10,9 +8,10 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 public class ChargingProbe extends Probe {
     public static final String USB = "USB";
     public static final String AC = "AC";
+    public static final String WIRELESS = "WIRELESS";
     public static final String NONE = "-";
 
-    private String charging = NONE;
+    private String charging;
 
     /**
      * Gets the charging method.
@@ -27,9 +26,6 @@ public class ChargingProbe extends Probe {
      * @param charging to set to.
      */
     public void setCharging(String charging) {
-        if(charging == null){
-            this.charging = NONE;
-        }
         this.charging = charging;
     }
 
@@ -66,7 +62,7 @@ public class ChargingProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"charging\": " + charging +
+        return "{\"charging\": " + (charging != null ? charging : "-")  +
                 '}';
     }
 }
