@@ -18,10 +18,12 @@ import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothScanModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
+import org.fraunhofer.cese.madcap.backend.models.ChargingEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
@@ -192,6 +194,22 @@ public class ProbeDataSetEndpoint {
                     Collection<ActivityEntry> aclist = entryMap.get(entry.getProbeType());
                     ActivityEntry activityEntry = new ActivityEntry(entry);
                     aclist.add(activityEntry);
+                    break;
+                case "Power":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<PowerEntry>());
+                    }
+                    Collection<PowerEntry> powlist = entryMap.get(entry.getProbeType());
+                    PowerEntry powerEntry = new PowerEntry(entry);
+                    powlist.add(powerEntry);
+                    break;
+                case "Charging":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<ChargingEntry>());
+                    }
+                    Collection<ChargingEntry> charlist = entryMap.get(entry.getProbeType());
+                    ChargingEntry chargingEntry = new ChargingEntry(entry);
+                    charlist.add(chargingEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();

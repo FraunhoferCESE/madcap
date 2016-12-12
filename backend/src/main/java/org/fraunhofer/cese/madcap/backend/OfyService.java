@@ -11,9 +11,11 @@ import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothScanModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
+import org.fraunhofer.cese.madcap.backend.models.ChargingEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 
@@ -36,6 +38,8 @@ public class OfyService {
         ObjectifyService.register(BluetoothRequestEntry.class);
         ObjectifyService.register(BluetoothScanModeEntry.class);
         ObjectifyService.register(ActivityEntry.class);
+        ObjectifyService.register(PowerEntry.class);
+        ObjectifyService.register(ChargingEntry.class);
     }
 
     /**
