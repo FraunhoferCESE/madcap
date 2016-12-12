@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.BatteryManager;
 
 import junit.framework.Assert;
 
@@ -55,9 +56,26 @@ public class PowerListenerTest {
 
         Assert.assertTrue(cut.isRunning());
 
+        cut.stopListening();
         Intent mockIntent = mock(Intent.class);
         when(mockContext.registerReceiver(any(BroadcastReceiver.class), any(IntentFilter.class))).thenReturn(mockIntent);
         cut.startListening();
+
+        cut.stopListening();
+        when(mockIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)).thenReturn(0);
+        stopListening();
+
+        cut.stopListening();
+        when(mockIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)).thenReturn(BatteryManager.BATTERY_PLUGGED_AC);
+        stopListening();
+
+        cut.stopListening();
+        when(mockIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)).thenReturn(BatteryManager.BATTERY_PLUGGED_USB);
+        stopListening();
+
+        cut.stopListening();
+        when(mockIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1)).thenReturn(1598);
+        stopListening();
     }
 
     @Test
