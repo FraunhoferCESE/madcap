@@ -12,8 +12,10 @@ import edu.umd.fcmd.sensorlisteners.model.PowerProbe;
 
 /**
  * Created by MMueller on 12/12/2016.
+ *
+ * A broadcast receiver for handeling battery related events.
+ * Pluggin in an out of any charger and changes in actual battery state.
  */
-
 public class PowerInformationReceiver extends BroadcastReceiver {
     private final String TAG = getClass().getSimpleName();
 
