@@ -11,6 +11,7 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.cmd.LoadType;
 
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
+import org.fraunhofer.cese.madcap.backend.models.ActivityEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothConnectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothDiscoveryEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
@@ -86,7 +87,6 @@ public class ProbeDataSetEndpoint {
         logger.fine("Logging request received. Data: " + entryList);
         logger.info("Number of entries received: " + entryList.size() + ", Request size: " + humanReadableByteCount(Long.parseLong(req.getHeader("Content-Length")), false));
 
-        //TODO parse probe entries
 
         Collection<String> saved = new ArrayList<>();
         Collection<String> alreadyExists = new ArrayList<>();
@@ -184,6 +184,14 @@ public class ProbeDataSetEndpoint {
                     Collection<BluetoothScanModeEntry> bsmlist = entryMap.get(entry.getProbeType());
                     BluetoothScanModeEntry bluetoothScanModeEntry = new BluetoothScanModeEntry(entry);
                     bsmlist.add(bluetoothScanModeEntry);
+                    break;
+                case "Activity":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<ActivityEntry>());
+                    }
+                    Collection<ActivityEntry> aclist = entryMap.get(entry.getProbeType());
+                    ActivityEntry activityEntry = new ActivityEntry(entry);
+                    aclist.add(activityEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();

@@ -22,6 +22,7 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
     private Context context;
 
     private boolean actionUsagePrompted;
+    private boolean activityUsagePrompted;
     private boolean bluetoothPermissionPrompted;
 
     public MadcapPermissionDeniedHandler(Context context){

@@ -5,6 +5,7 @@ import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
+import org.fraunhofer.cese.madcap.backend.models.ActivityEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothConnectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothScanModeEntry;
@@ -34,6 +35,7 @@ public class OfyService {
         ObjectifyService.register(BluetoothConnectionEntry.class);
         ObjectifyService.register(BluetoothRequestEntry.class);
         ObjectifyService.register(BluetoothScanModeEntry.class);
+        ObjectifyService.register(ActivityEntry.class);
     }
 
     /**

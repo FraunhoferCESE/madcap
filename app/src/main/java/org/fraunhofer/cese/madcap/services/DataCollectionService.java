@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
+import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -28,7 +29,7 @@ import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.cache.UploadStrategy;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
-import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
+import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 
@@ -44,6 +45,8 @@ import javax.inject.Singleton;
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
+import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityListener;
+import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
@@ -87,9 +90,16 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
+    @Named("AwarenessApi")
+    GoogleApiClient activityClient;
+
+    @Inject
     SnapshotApi snapshotApi;
 
     @SuppressWarnings("PackageVisibleField")
+    @Inject
+    FenceApi fenceApi;
+
     @Inject
     TimedLocationTaskFactory timedLocationTaskFactory;
 
@@ -99,7 +109,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
-    GoogleApiClientConnectionIssueManager googleApiClientConnectionIssueManager;
+    TimedActivityTaskFactory timedActivityTaskFactory;
+
+    @Inject
+    GoogleApiClientConnectionIssueManagerLocation googleApiClientConnectionIssueManagerLocation;
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
@@ -177,8 +190,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     snapshotApi,
                     timedLocationTaskFactory,
                     locationServiceStatusReceiverFactory,
-                    googleApiClientConnectionIssueManager,
-                    googleApiClientConnectionIssueManager,
+                    googleApiClientConnectionIssueManagerLocation,
+                    googleApiClientConnectionIssueManagerLocation,
                     madcapPermissionDeniedHandler,
                     madcapSensorNoAnswerReceivedHandler));
 
@@ -191,6 +204,11 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     madcapPermissionDeniedHandler,
                     bluetoothInformationReceiverFactory,
                     intentFilterFactory));
+
+            listeners.add(new ActivityListener(new CacheFactory(cache, authManager),
+                    activityClient,
+                    snapshotApi,
+                    timedActivityTaskFactory));
         }
 //        madcapAuthManager.setCallbackClass(this);
 
