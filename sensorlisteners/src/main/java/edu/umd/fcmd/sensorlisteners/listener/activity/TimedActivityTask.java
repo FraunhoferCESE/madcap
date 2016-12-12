@@ -1,18 +1,12 @@
 package edu.umd.fcmd.sensorlisteners.listener.activity;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.awareness.snapshot.DetectedActivityResult;
-import com.google.android.gms.awareness.snapshot.LocationResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
@@ -23,22 +17,22 @@ import edu.umd.fcmd.sensorlisteners.model.ActivityProbe;
 
 /**
  * Created by MMueller on 12/9/2016.
+ *
+ * Get the activity in a certain time period and evaultes if there
+ * is a significant change to the last detected activity.
  */
-
-public class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult, Void> {
+class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult, Void> {
     private final String TAG = getClass().getSimpleName();
-    private final int ACTIVITY_SLEEP_TIME = 5000;
+    private static final int ACTIVITY_SLEEP_TIME = 5000;
 
     private final ActivityListener activityListener;
     private final SnapshotApi snapshotApi;
-    private final Context context;
 
     private ActivityProbe lastActivityProbe;
 
-    public TimedActivityTask(ActivityListener activityListener, SnapshotApi snapshotApi, Context context) {
+    TimedActivityTask(ActivityListener activityListener, SnapshotApi snapshotApi) {
         this.activityListener = activityListener;
         this.snapshotApi = snapshotApi;
-        this.context = context;
     }
 
     /**
@@ -59,11 +53,6 @@ public class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult
     protected Void doInBackground(Void... params) {
         Log.d(TAG, "Doing in background");
         while (!isCancelled()) {
-            //noinspection ObjectAllocationInLoop
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                return null;
-            }
             snapshotApi.getDetectedActivity(activityListener.getGoogleApiClient())
                     .setResultCallback(new ResultCallback<DetectedActivityResult>() {
                         @Override
@@ -112,28 +101,28 @@ public class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult
 
             switch(type){
                 case DetectedActivity.IN_VEHICLE:
-                    activityProbe.setInVehicle((double) detectedActivity.getConfidence()/100);
+                    activityProbe.setInVehicle(((double) detectedActivity.getConfidence())/100);
                     break;
                 case DetectedActivity.ON_BICYCLE:
-                    activityProbe.setOnBicycle((double) detectedActivity.getConfidence()/100);
+                    activityProbe.setOnBicycle(((double) detectedActivity.getConfidence())/100);
                     break;
                 case DetectedActivity.ON_FOOT:
-                    activityProbe.setOnFoot((double) detectedActivity.getConfidence()/100);
+                    activityProbe.setOnFoot(((double) detectedActivity.getConfidence())/100);
                     break;
                 case DetectedActivity.RUNNING:
-                    activityProbe.setRunning((double) detectedActivity.getConfidence()/100);
+                    activityProbe.setRunning(((double) detectedActivity.getConfidence())/100);
                     break;
                 case DetectedActivity.STILL:
-                    activityProbe.setStill((double) detectedActivity.getConfidence()/100);
+                    activityProbe.setStill(((double) detectedActivity.getConfidence())/100);
                     break;
                 case DetectedActivity.TILTING:
-                    activityProbe.setTilting((double) detectedActivity.getConfidence()/100);
+                    activityProbe.setTilting(((double) detectedActivity.getConfidence())/100);
                     break;
                 case DetectedActivity.WALKING:
-                    activityProbe.setWalking((double) detectedActivity.getConfidence()/100);
+                    activityProbe.setWalking(((double) detectedActivity.getConfidence())/100);
                     break;
                 case DetectedActivity.UNKNOWN:
-                    activityProbe.setUnknown((double) detectedActivity.getConfidence()/100);
+                    activityProbe.setUnknown(((double) detectedActivity.getConfidence())/100);
                     break;
                 case -1000:
                     break;
@@ -143,13 +132,17 @@ public class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult
             }
         }
 
-        checkSignificance(activityProbe, lastActivityProbe);
+        createIfSignificant(activityProbe, lastActivityProbe);
 
-        //activityListener.onUpdate(activityProbe);
     }
 
-    private void checkSignificance(ActivityProbe newActivityProbe, ActivityProbe oldActivityProbe){
-
+    /**
+     * Method for checking if there is a siginificant deviation from
+     * the last detected activity.
+     * @param newActivityProbe the last detected activity.
+     * @param oldActivityProbe the currently detected activity.
+     */
+    private void createIfSignificant(ActivityProbe newActivityProbe, ActivityProbe oldActivityProbe){
         if(!newActivityProbe.equals(oldActivityProbe)){
             lastActivityProbe = newActivityProbe;
             activityListener.onUpdate(newActivityProbe);

@@ -48,6 +48,7 @@ import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityFenceReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityListener;
+import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
@@ -103,6 +104,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @Inject
     ActivityFenceReceiverFactory activityFenceReceiverFactory;
+
+    @Inject
+    TimedActivityTaskFactory timedActivityTaskFactory;
 
     @Inject
     GoogleApiClientConnectionIssueManagerLocation googleApiClientConnectionIssueManagerLocation;
@@ -192,10 +196,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
             listeners.add(new ActivityListener(this, new CacheFactory(cache, authManager),
                     activityClient,
-                    fenceApi,
                     snapshotApi,
-                    activityFenceReceiverFactory,
-                    madcapPermissionDeniedHandler));
+                    timedActivityTaskFactory));
         }
 //        madcapAuthManager.setCallbackClass(this);
 

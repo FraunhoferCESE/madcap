@@ -31,6 +31,7 @@ import dagger.Module;
 import dagger.Provides;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityFenceReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
@@ -166,6 +167,9 @@ class MyApplicationModule {
     IntentFilterFactory provideIntentFilterFactory() {
         return new IntentFilterFactory();
     }
+
+    @Provides
+    TimedActivityTaskFactory provideTimedActivityTaskFactory(){ return  new TimedActivityTaskFactory();}
 
 
     /**
