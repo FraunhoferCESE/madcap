@@ -24,7 +24,9 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
+import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
+import org.fraunhofer.cese.madcap.factories.CacheFactory;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import java.text.DateFormat;
@@ -58,6 +60,8 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
     @Inject
     AuthenticationProvider authenticationProvider;
     private boolean isCollectingData;
+
+    private CacheFactory cacheFactory;
 
     //Ui elements
     private OnFragmentInteractionListener mListener;
