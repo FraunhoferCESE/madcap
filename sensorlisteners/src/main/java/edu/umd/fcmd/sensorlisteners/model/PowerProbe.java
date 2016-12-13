@@ -7,6 +7,57 @@ package edu.umd.fcmd.sensorlisteners.model;
  */
 public class PowerProbe extends Probe {
     private double remainingPower;
+    private double voltage;
+    private double temperature;
+    private double health;
+
+    /**
+     * Gets the battery health.
+     * @return battery health.
+     */
+    public double getHealth() {
+        return health;
+    }
+
+    /**
+     * Sets the battery health.
+     * @param health the health to set to.
+     */
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    /**
+     * Get the voltage.
+     * @return voltage.
+     */
+    public double getVoltage() {
+        return voltage;
+    }
+
+    /**
+     * Sets the voltage.
+     * @param voltage to be set to.
+     */
+    public void setVoltage(double voltage) {
+        this.voltage = voltage;
+    }
+
+    /**
+     * Gets the battery temperature.
+     * @return the battery temperature.
+     */
+    public double getTemperature() {
+        return temperature;
+    }
+
+    /**
+     * Sets the battery temperature.
+     * @param temperature the temperature to set to.
+     */
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
+    }
 
     /**
      * Getter for percentage of power remaining.
@@ -58,6 +109,9 @@ public class PowerProbe extends Probe {
     @Override
     public String toString() {
         return "{\"remainingPower\": " + remainingPower +
+                ", \"voltage\": " + voltage +
+                ", \"health\": " + health +
+                ", \"temperature\": " + temperature +
                 '}';
     }
 }

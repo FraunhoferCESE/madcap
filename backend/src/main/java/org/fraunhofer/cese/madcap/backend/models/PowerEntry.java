@@ -18,6 +18,9 @@ public class PowerEntry implements  Comparable<PowerEntry>, DatastoreEntry{
     @Index
     private Long timestamp;
     private double remainingPower;
+    private double voltage;
+    private double temperature;
+    private double health;
     @Index
     private String userID;
 
@@ -31,6 +34,9 @@ public class PowerEntry implements  Comparable<PowerEntry>, DatastoreEntry{
 
         JSONObject dataJsonObject = new JSONObject(probeEntry.getSensorData());
         remainingPower = dataJsonObject.getDouble("remainingPower");
+        voltage = dataJsonObject.getDouble("voltage");
+        temperature = dataJsonObject.getDouble("temperature");
+        health = dataJsonObject.getDouble("health");
     }
 
     @Override
@@ -74,6 +80,54 @@ public class PowerEntry implements  Comparable<PowerEntry>, DatastoreEntry{
 
     public void setRemainingPower(double remainingPower) {
         this.remainingPower = remainingPower;
+    }
+
+    /**
+     * Gets the battery health.
+     * @return battery health.
+     */
+    public double getHealth() {
+        return health;
+    }
+
+    /**
+     * Sets the battery health.
+     * @param health the health to set to.
+     */
+    public void setHealth(double health) {
+        this.health = health;
+    }
+
+    /**
+     * Get the voltage.
+     * @return voltage.
+     */
+    public double getVoltage() {
+        return voltage;
+    }
+
+    /**
+     * Sets the voltage.
+     * @param voltage to be set to.
+     */
+    public void setVoltage(double voltage) {
+        this.voltage = voltage;
+    }
+
+    /**
+     * Gets the battery temperature.
+     * @return the battery temperature.
+     */
+    public double getTemperature() {
+        return temperature;
+    }
+
+    /**
+     * Sets the battery temperature.
+     * @param temperature the temperature to set to.
+     */
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
     }
 
     /**

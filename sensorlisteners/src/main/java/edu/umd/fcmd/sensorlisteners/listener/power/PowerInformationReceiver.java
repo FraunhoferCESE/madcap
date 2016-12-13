@@ -50,9 +50,13 @@ public class PowerInformationReceiver extends BroadcastReceiver {
             case Intent.ACTION_BATTERY_CHANGED:
                 if (intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1) != powerLevel) {
                     int level = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                    int scale = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
                     PowerProbe powerProbe = new PowerProbe();
                     powerProbe.setDate(System.currentTimeMillis());
-                    powerProbe.setRemainingPower(level);
+                    powerProbe.setRemainingPower(level / (double)scale);
+                    powerProbe.setVoltage(intent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1));
+                    powerProbe.setTemperature(intent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1));
+                    powerProbe.setHealth(intent.getIntExtra(BatteryManager.EXTRA_HEALTH, -1));
                     powerLevel = level;
                     powerListener.onUpdate(powerProbe);
                 }

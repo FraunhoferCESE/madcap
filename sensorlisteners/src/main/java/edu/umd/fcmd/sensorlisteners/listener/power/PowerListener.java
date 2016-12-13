@@ -86,19 +86,20 @@ public class PowerListener implements Listener {
      * @return the initial batterylevel.
      */
     private int sendInitialProbes(Intent batteryIntent){
-        int level = -1;
-        int plugged = -1;
-
-        level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
         PowerProbe powerProbe = new PowerProbe();
         powerProbe.setDate(System.currentTimeMillis());
-        powerProbe.setRemainingPower(level);
+        powerProbe.setRemainingPower(level / (double)scale);
+        powerProbe.setVoltage(batteryIntent.getIntExtra(BatteryManager.EXTRA_VOLTAGE, -1));
+        powerProbe.setTemperature(batteryIntent.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, -1));
+        powerProbe.setHealth(batteryIntent.getIntExtra(BatteryManager.EXTRA_HEALTH, -1));
 
         onUpdate(powerProbe);
 
         ChargingProbe chargingProbe = new ChargingProbe();
         chargingProbe.setDate(System.currentTimeMillis());
-        plugged = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+        int plugged = batteryIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
         switch (plugged){
             case 0:
                 chargingProbe.setCharging(ChargingProbe.NONE);
