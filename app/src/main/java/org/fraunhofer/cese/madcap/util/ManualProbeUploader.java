@@ -4,8 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 
-
-import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.cache.Cache;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
