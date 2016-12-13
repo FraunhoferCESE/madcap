@@ -186,29 +186,29 @@ public class DataCollectionService extends Service implements UploadStatusListen
         listeners.clear();
 
         synchronized (listeners) {
-            listeners.add(new LocationListener(this, new CacheFactory(cache, authManager),
-                    locationClient,
-                    snapshotApi,
-                    timedLocationTaskFactory,
-                    locationServiceStatusReceiverFactory,
-                    googleApiClientConnectionIssueManagerLocation,
-                    googleApiClientConnectionIssueManagerLocation,
-                    madcapPermissionDeniedHandler,
-                    madcapSensorNoAnswerReceivedHandler));
-
-            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, authManager),
-                    timedApplicationTaskFactory, madcapPermissionDeniedHandler));
-
-            listeners.add(new BluetoothListener(this, new CacheFactory(cache, authManager),
-                    bluetoothAdapter,
-                    madcapPermissionDeniedHandler,
-                    bluetoothInformationReceiverFactory,
-                    intentFilterFactory));
-
-            listeners.add(new ActivityListener(new CacheFactory(cache, authManager),
-                    activityClient,
-                    snapshotApi,
-                    timedActivityTaskFactory));
+//            listeners.add(new LocationListener(this, new CacheFactory(cache, authManager),
+//                    locationClient,
+//                    snapshotApi,
+//                    timedLocationTaskFactory,
+//                    locationServiceStatusReceiverFactory,
+//                    googleApiClientConnectionIssueManagerLocation,
+//                    googleApiClientConnectionIssueManagerLocation,
+//                    madcapPermissionDeniedHandler,
+//                    madcapSensorNoAnswerReceivedHandler));
+//
+//            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, authManager),
+//                    timedApplicationTaskFactory, madcapPermissionDeniedHandler));
+//
+//            listeners.add(new BluetoothListener(this, new CacheFactory(cache, authManager),
+//                    bluetoothAdapter,
+//                    madcapPermissionDeniedHandler,
+//                    bluetoothInformationReceiverFactory,
+//                    intentFilterFactory));
+//
+//            listeners.add(new ActivityListener(new CacheFactory(cache, authManager),
+//                    activityClient,
+//                    snapshotApi,
+//                    timedActivityTaskFactory));
 
             listeners.add(new PowerListener(this, new CacheFactory(cache, authManager)));
         }
