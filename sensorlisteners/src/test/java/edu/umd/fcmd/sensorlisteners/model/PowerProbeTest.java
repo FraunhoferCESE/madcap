@@ -48,10 +48,80 @@ public class PowerProbeTest {
     }
 
     @Test
+    public void setVoltage() throws Exception {
+        PowerProbe cut = new PowerProbe();
+
+        cut.setVoltage(1.0);
+
+        Assert.assertEquals(cut.getVoltage(), 1.0);
+    }
+
+    @Test
+    public void getVoltage() throws Exception {
+        PowerProbe cut = new PowerProbe();
+
+        cut.setVoltage(1.0);
+
+        Assert.assertEquals(cut.getVoltage(), 1.0);
+    }
+
+    @Test
+    public void setTemperature() throws Exception {
+        PowerProbe cut = new PowerProbe();
+
+        cut.setTemperature(1.0);
+
+        Assert.assertEquals(cut.getTemperature(), 1.0);
+    }
+
+    @Test
+    public void getTemperature() throws Exception {
+        PowerProbe cut = new PowerProbe();
+
+        cut.setTemperature(1.0);
+
+        Assert.assertEquals(cut.getTemperature(), 1.0);
+    }
+
+    @Test
+    public void setHealth() throws Exception {
+        PowerProbe cut = new PowerProbe();
+
+        cut.setHealth(1.0);
+
+        Assert.assertEquals(cut.getHealth(), 1.0);
+    }
+
+    @Test
+    public void getHealth() throws Exception {
+        PowerProbe cut = new PowerProbe();
+
+        cut.setHealth(1.0);
+
+        Assert.assertEquals(cut.getHealth(), 1.0);
+    }
+
+    @Test
     public void testToString() throws Exception {
         PowerProbe cut = new PowerProbe();
 
-        Assert.assertEquals(cut.toString(), "{\"remainingPower\": " + 0.0 + '}');
+        Assert.assertEquals(cut.toString(), "{\"remainingPower\": " + 0.0 +
+                ", \"voltage\": " + 0.0 +
+                ", \"health\": " + 0.0 +
+                ", \"temperature\": " + 0.0 +
+                '}');
+
+        cut.setHealth(1.0);
+        cut.setRemainingPower(1.0);
+        cut.setVoltage(1.0);
+        cut.setTemperature(1.0);
+
+        Assert.assertEquals(cut.toString(), "{\"remainingPower\": " + 1.0 +
+                ", \"voltage\": " + 1.0 +
+                ", \"health\": " + 1.0 +
+                ", \"temperature\": " + 1.0 +
+                '}');
+
     }
 
 }
