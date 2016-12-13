@@ -28,11 +28,14 @@ import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.text.DateFormat;
 import java.util.Date;
 
 import javax.inject.Inject;
+
+import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,9 +62,8 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
 
     @Inject
     AuthenticationProvider authenticationProvider;
-    private boolean isCollectingData;
 
-    private CacheFactory cacheFactory;
+    private boolean isCollectingData;
 
     //Ui elements
     private OnFragmentInteractionListener mListener;

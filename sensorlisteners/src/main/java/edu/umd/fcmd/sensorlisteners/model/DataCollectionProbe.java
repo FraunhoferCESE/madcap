@@ -1,5 +1,7 @@
 package edu.umd.fcmd.sensorlisteners.model;
 
+import android.util.Log;
+
 /**
  * Created by MMueller on 12/13/2016.
  *
@@ -7,6 +9,8 @@ package edu.umd.fcmd.sensorlisteners.model;
  *  running or not.
  */
 public class DataCollectionProbe extends Probe {
+    private final String TAG = getClass().getSimpleName();
+
     public static final String ON = "ON";
     public static final String OFF = "OFF";
     private String state;
@@ -24,6 +28,7 @@ public class DataCollectionProbe extends Probe {
      * @param state DataCollectionProbe.ON or DataCollectionProbe.OFF
      */
     public void setState(String state) {
+        Log.d(TAG, "Set DataCollectionProbe state to "+state);
         this.state = state;
     }
 
@@ -34,7 +39,7 @@ public class DataCollectionProbe extends Probe {
      */
     @Override
     public String getType() {
-        return null;
+        return "DataCollection";
     }
 
     /**

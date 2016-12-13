@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.services;
 
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -32,6 +33,7 @@ import org.fraunhofer.cese.madcap.factories.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
+import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -55,7 +57,9 @@ import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
+import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
 
+import static com.pathsense.locationengine.lib.detectionLogic.b.v;
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.INCOMPLETE;
 
@@ -83,6 +87,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @SuppressWarnings("PackageVisibleField")
     @Inject
     AuthenticationProvider authManager;
+
+    @Inject
+    ManualProbeUploader manualProbeUploader;
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
@@ -221,6 +228,11 @@ public class DataCollectionService extends Service implements UploadStatusListen
         MyApplication.madcapLogger.d(TAG, "onDestroy");
         super.onDestroy();
 
+        DataCollectionProbe probe = new DataCollectionProbe();
+        probe.setState(DataCollectionProbe.OFF);
+        probe.setDate(System.currentTimeMillis());
+        manualProbeUploader.uploadManual(probe, getApplication(), cache);
+
         synchronized (listeners) {
             for (Listener listener : listeners) {
                 listener.stopListening();
@@ -249,6 +261,11 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         MyApplication.madcapLogger.d(TAG, "OnStartCommand. Intent callee: " + (intent == null ? "null" : intent.getStringExtra("callee")));
+
+        DataCollectionProbe probe = new DataCollectionProbe();
+        probe.setState(DataCollectionProbe.ON);
+        probe.setDate(System.currentTimeMillis());
+        manualProbeUploader.uploadManual(probe, getApplication(), cache);
 
         startForeground(NOTIFICATION_ID, getRunNotification());
 

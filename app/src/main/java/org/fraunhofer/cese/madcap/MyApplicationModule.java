@@ -22,6 +22,7 @@ import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
+import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.util.Calendar;
 
@@ -162,6 +163,11 @@ class MyApplicationModule {
 
     @Provides
     TimedActivityTaskFactory provideTimedActivityTaskFactory(){ return  new TimedActivityTaskFactory();}
+
+    @Provides
+    ManualProbeUploader provideManualProbeUploader(){
+        return new ManualProbeUploader();
+    }
 
 
     /**

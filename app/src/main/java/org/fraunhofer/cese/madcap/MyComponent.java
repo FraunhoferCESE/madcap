@@ -5,6 +5,7 @@ import org.fraunhofer.cese.madcap.Probe.BluetoothProbe;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.boot.OnBootService;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.util.ManualProbeUploadTask;
 
 import javax.inject.Singleton;
 
@@ -30,4 +31,5 @@ public interface MyComponent {
     void inject(SignInActivity signInActivity);
     void inject(WelcomeActivity welcomeActivity);
     void inject(OnBootService onBootService);
+    void inject(ManualProbeUploadTask manualProbeUploadTask);
 }
