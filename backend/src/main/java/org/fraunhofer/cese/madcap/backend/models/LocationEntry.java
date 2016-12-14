@@ -28,6 +28,8 @@ public class LocationEntry implements Comparable<LocationEntry>, DatastoreEntry 
     private Double accuracy;
     private String extras;
     private Double bearing;
+    private Double speed;
+    private String origin;
     @Index
     private String userID;
 
@@ -47,6 +49,8 @@ public class LocationEntry implements Comparable<LocationEntry>, DatastoreEntry 
         accuracy = dataJsonObject.getDouble("accuracy");
         extras =  dataJsonObject.getString("extras");
         bearing = dataJsonObject.getDouble("bearing");
+        speed = dataJsonObject.getDouble("speed");
+        origin = dataJsonObject.getString("origin");
 
 //        try{
 //            extras =  dataJsonObject.getString("extras");
@@ -126,6 +130,22 @@ public class LocationEntry implements Comparable<LocationEntry>, DatastoreEntry 
 
     public void setUserID(String userID) {
         this.userID = userID;
+    }
+
+    public Double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(Double speed) {
+        this.speed = speed;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
     }
 
     /**
@@ -278,6 +298,10 @@ public class LocationEntry implements Comparable<LocationEntry>, DatastoreEntry 
             return false;
         if (extras != null ? !extras.equals(that.extras) : that.extras !=null)
             return false;
+        if (speed != null ? !speed.equals(that.speed) : that.speed !=null)
+            return false;
+        if (origin != null ? !origin.equals(that.origin) : that.origin !=null)
+            return false;
         return (userID != null ? !userID.equals(that.userID) : that.userID !=null);
 
     }
@@ -291,6 +315,8 @@ public class LocationEntry implements Comparable<LocationEntry>, DatastoreEntry 
                 ", longitude='" + longitude + '\'' +
                 ", altitude='" + altitude + '\'' +
                 ", accuracy='" + accuracy + '\'' +
+                ", speed='" + speed + '\'' +
+                ", origin='" + origin + '\'' +
                 ", extras='" + extras.toString() + '\'' +
                 '}';
     }

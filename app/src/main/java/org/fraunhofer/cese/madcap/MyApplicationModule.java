@@ -3,13 +3,14 @@ package org.fraunhofer.cese.madcap;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.ConnectivityManager;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.awareness.Awareness;
+import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -18,9 +19,10 @@ import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
 import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
-import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
+import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
+import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.util.Calendar;
 
@@ -29,7 +31,10 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
+import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
@@ -37,6 +42,7 @@ import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFacto
 /**
  * This class defines the providers to use for dependency injection
  */
+@SuppressWarnings({"SameReturnValue", "InstanceMethodNamingConvention", "MethodMayBeStatic"})
 @Module
 class MyApplicationModule {
 
@@ -55,7 +61,7 @@ class MyApplicationModule {
     }
 
     /**
-     * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache} and {@link org.fraunhofer.cese.madcap.appengine.GoogleAppEnginePipeline}
+     * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
      *
      * @return a Context object (probably the Application) to be used
      */
@@ -86,6 +92,16 @@ class MyApplicationModule {
         return Calendar.getInstance();
     }
 
+
+    /**
+     * Needed by the DataCollectionService.
+     *
+     * @return a static FenceApi
+     */
+    @Provides
+    FenceApi provideFenceApi(){
+        return Awareness.FenceApi;
+    }
 
     /**
      * Needed by the DataCollectionService.
@@ -121,13 +137,14 @@ class MyApplicationModule {
     @Provides
     LocationServiceStatusReceiverFactory provideLocationServiceStatusReceiverFactory(){ return new LocationServiceStatusReceiverFactory(); }
 
+
     /**
      * Needed by the DataCollectionService.
      *
      * @return an issuemanager.
      */
     @Provides
-    GoogleApiClientConnectionIssueManager provideGoogleConnectionIssueManager(){return new GoogleApiClientConnectionIssueManager();}
+    GoogleApiClientConnectionIssueManagerLocation provideGoogleConnectionIssueManager(){return new GoogleApiClientConnectionIssueManagerLocation();}
 
     /**
      * Needed by the DataCollectionService.
@@ -145,6 +162,18 @@ class MyApplicationModule {
         return new ConnectionInfoReceiverFactory();
     }
 
+    IntentFilterFactory provideIntentFilterFactory() {
+        return new IntentFilterFactory();
+    }
+
+    @Provides
+    TimedActivityTaskFactory provideTimedActivityTaskFactory(){ return  new TimedActivityTaskFactory();}
+
+    @Provides
+    ManualProbeUploader provideManualProbeUploader(){
+        return new ManualProbeUploader();
+    }
+
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
      *
@@ -155,6 +184,8 @@ class MyApplicationModule {
     final ConnectivityManager provideConnectivityManager() {
         return (ConnectivityManager) application.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
+
+
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
@@ -176,7 +207,6 @@ class MyApplicationModule {
 //        Resources res = application.getResources();
 
         config.setUploadWifiOnly(true);
-        config.setWriteToFile(false);
 
         return config;
     }
@@ -222,6 +252,12 @@ class MyApplicationModule {
     }
 
     @Provides
+    BluetoothInformationReceiverFactory provideBluetoothInformationReceiverFactory() {
+        return new BluetoothInformationReceiverFactory();
+    }
+
+    @SuppressWarnings("ReturnOfNull")
+    @Provides
     JsonObjectFactory provideJsonObjectFactory(){
         return null;
     }
@@ -238,4 +274,10 @@ class MyApplicationModule {
                 .addApi(Auth.GOOGLE_SIGN_IN_API, options)
                 .build();
     }
+
+    @Provides
+    GoogleApiAvailability providesGoogleApiAvailability () {
+        return GoogleApiAvailability.getInstance();
+    }
 }
+

@@ -55,27 +55,28 @@ public class RemoteUploadAsyncTaskFactory {
      */
     AsyncTask<Void, Integer, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeEndpoint appEngineApi, final Collection<UploadStatusListener> listeners) {
         return new AsyncTask<Void, Integer, RemoteUploadResult>() {
-            private final String TAG = "Fraunhofer.UploadTask";
+            private static final String TAG = "Fraunhofer.UploadTask";
             private static final int BUFFER_SIZE = 250;
 
+            @SuppressWarnings("OverloadedVarargsMethod")
             @Override
             protected RemoteUploadResult doInBackground(Void... params) {
                 Log.d(TAG, "DoInBackground started");
-                if (context == null || cache == null){
+                if ((context == null) || (cache == null)){
                     Log.e(TAG, "Cache or context null");
                     return new RemoteUploadResult();
                 }
 
 
                 DatabaseOpenHelper databaseHelper = OpenHelperManager.getHelper(context, DatabaseOpenHelper.class);
-                if (databaseHelper == null || databaseHelper.getDao() == null){
+                if ((databaseHelper == null) || (databaseHelper.getDao() == null)){
                     Log.e(TAG, "DatabaseHelper or Dao null");
                     return new RemoteUploadResult();
                 }
 
                 RemoteUploadResult result = new RemoteUploadResult();
                 long numCachedEntries = databaseHelper.getDao().countOf();
-                if (numCachedEntries == 0){
+                if (numCachedEntries == 0L){
                     Log.e(TAG, "numCache Entries is 0");
                     return result;
                 }
@@ -84,17 +85,17 @@ public class RemoteUploadAsyncTaskFactory {
                 MyApplication.madcapLogger.i(TAG, "Attempting to upload " + numCachedEntries + " to " + appEngineApi.getRootUrl());
 
                 ProbeSaveResult saveResult = new ProbeSaveResult();
-                saveResult.setSaved(new ArrayList<String>());
-                saveResult.setAlreadyExists(new ArrayList<String>());
+                saveResult.setSaved(new ArrayList<String>(250));
+                saveResult.setAlreadyExists(new ArrayList<String>(100));
 
-                databaseHelper.getDao().iterator();
-                long offset = 0;
-                while (offset < numCachedEntries && result.getException() == null) {
-                    long limit = offset + BUFFER_SIZE > numCachedEntries ? numCachedEntries - offset : BUFFER_SIZE;
+                long offset = 0L;
+                while ((offset < numCachedEntries) && (result.getException() == null)) {
+                    long limit = ((offset + (long) BUFFER_SIZE) > numCachedEntries) ? (numCachedEntries - offset) : (long) BUFFER_SIZE;
                     try {
-                        List<ProbeEntry> toUpload = Lists.transform(
+                        @SuppressWarnings("ParameterNameDiffersFromOverriddenParameter") List<ProbeEntry> toUpload = Lists.transform(
                                 databaseHelper.getDao().queryBuilder().offset(offset).limit(limit).query(),
                                 new Function<CacheEntry, ProbeEntry>() {
+                                    @SuppressWarnings("ParameterNameDiffersFromOverriddenParameter")
                                     @Nullable
                                     @Override
                                     public ProbeEntry apply(CacheEntry cacheEntry) {
@@ -115,11 +116,11 @@ public class RemoteUploadAsyncTaskFactory {
                         if (remoteResult.getAlreadyExists() != null) {
                             saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
                         }
-                        MyApplication.madcapLogger.i(TAG, "Uploaded chunk " + ((offset / BUFFER_SIZE) + 1) + " (" + offset + "-" + (offset + BUFFER_SIZE > numCachedEntries ? numCachedEntries : offset + BUFFER_SIZE) + ") - " +
+                        MyApplication.madcapLogger.i(TAG, "Uploaded chunk " + ((offset / (long) BUFFER_SIZE) + 1L) + " (" + offset + '-' + (offset + (long) BUFFER_SIZE > numCachedEntries ? numCachedEntries : offset + (long) BUFFER_SIZE) + ") - " +
                                 "Saved: " + (remoteResult.getSaved() == null ? 0 : remoteResult.getSaved().size()) +
                                 ", Already existed: " + (remoteResult.getAlreadyExists() == null ? 0 : remoteResult.getAlreadyExists().size()));
-                        offset += BUFFER_SIZE;
-                        publishProgress(offset > numCachedEntries ? 100 : Math.round(((float) offset / (float) numCachedEntries) * 100));
+                        offset += (long) BUFFER_SIZE;
+                        publishProgress((offset > numCachedEntries) ? 100 : Math.round(((float) offset / (float) numCachedEntries) * 100.0F));
 
                     } catch (IOException | SQLException e) {
                         result.setException(e);
@@ -143,14 +144,15 @@ public class RemoteUploadAsyncTaskFactory {
                 return result;
             }
 
+            @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
             @SafeVarargs
             private final int removeIds(DatabaseOpenHelper databaseHelper, List<String>... lists) {
                 int result = 0;
                 for (List<String> ids : lists) {
-                    if (ids != null && !ids.isEmpty() && databaseHelper.isOpen()) {
+                    if ((ids != null) && !ids.isEmpty() && databaseHelper.isOpen()) {
                         int cursor = 0;
                         while (cursor < ids.size()) {
-                            result += databaseHelper.getDao().deleteIds(ids.subList(cursor, cursor + BUFFER_SIZE > ids.size() ? ids.size() : cursor + BUFFER_SIZE));
+                            result += databaseHelper.getDao().deleteIds(ids.subList(cursor, ((cursor + BUFFER_SIZE) > ids.size()) ? ids.size() : (cursor + BUFFER_SIZE)));
                             cursor += BUFFER_SIZE;
                         }
                     }
@@ -170,10 +172,12 @@ public class RemoteUploadAsyncTaskFactory {
                 cache.doPostUpload(result);
             }
 
+            @SuppressWarnings("OverloadedVarargsMethod")
             @Override
             protected void onProgressUpdate(Integer... values) {
-                if (listeners == null || listeners.isEmpty())
+                if ((listeners == null) || listeners.isEmpty()) {
                     return;
+                }
 
                 for (UploadStatusListener listener : listeners) {
                     listener.progressUpdate(values[0]);

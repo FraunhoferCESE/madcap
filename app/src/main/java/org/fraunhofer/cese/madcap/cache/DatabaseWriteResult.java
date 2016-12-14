@@ -5,15 +5,17 @@ import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Captures the results of writing cache entries to a persistent backing database.
  *
  * @author Lucas
  * @see Cache
- * @see DatabaseAsyncTaskFactory#createWriteTask(Context, Cache, Cache.UploadStrategy)
+ * @see DatabaseAsyncTaskFactory#createWriteTask(Context, Cache, UploadStrategy)
  */
-public class DatabaseWriteResult {
+@SuppressWarnings("FinalClass")
+final class DatabaseWriteResult {
 
     private Collection<String> savedEntries;
     private long databaseSize;
@@ -24,8 +26,8 @@ public class DatabaseWriteResult {
      * Direct constructor calls are not supported.
      */
     private DatabaseWriteResult() {
-        savedEntries = new ArrayList<>();
-        databaseSize = -1;
+        savedEntries = new ArrayList<>(1000);
+        databaseSize = -1L;
         error = null;
     }
 
@@ -41,7 +43,7 @@ public class DatabaseWriteResult {
     /**
      * Returns an Exception associated with an error, if any, that occurred during writing to the database.
      *
-     * @return the exception that occurred, or <code>null</code> if no write errors were encountered
+     * @return the exception that occurred, or {@code null} if no write errors were encountered
      */
     public Throwable getError() {
         return error;
@@ -52,7 +54,7 @@ public class DatabaseWriteResult {
      *
      * @param error the observed exception to pass on
      */
-    void setError(Exception error) {
+    void setError(@Nullable Exception error) {
         this.error = error;
     }
 
@@ -61,8 +63,8 @@ public class DatabaseWriteResult {
      *
      * @return the collection of ids that were saved to the database, or an empty collection if nothing was written
      */
-    public Collection<String> getSavedEntries() {
-        return savedEntries;
+    Collection<String> getSavedEntries() {
+        return Collections.unmodifiableCollection(savedEntries);
     }
 
     /**
@@ -71,15 +73,15 @@ public class DatabaseWriteResult {
      * @param savedEntries the ids of entries saved
      */
     void setSavedEntries(Collection<String> savedEntries) {
-        this.savedEntries = savedEntries;
+        this.savedEntries = Collections.unmodifiableCollection(savedEntries);
     }
 
     /**
      * Gets the current database size (number of entries) after attempting to write to the database.
      *
-     * @return the current database size, or <code>-1</code> if the size cannot be obtained because the database is not readable
+     * @return the current database size, or {@code -1} if the size cannot be obtained because the database is not readable
      */
-    public long getDatabaseSize() {
+    long getDatabaseSize() {
         return databaseSize;
     }
 

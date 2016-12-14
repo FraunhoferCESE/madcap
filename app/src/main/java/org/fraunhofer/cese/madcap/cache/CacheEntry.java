@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.cache;
 
+import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeEntry;
 
 import com.j256.ormlite.field.DatabaseField;
@@ -16,6 +17,7 @@ import com.j256.ormlite.table.DatabaseTable;
 @DatabaseTable(tableName = "probedata")
 public class CacheEntry {
 
+    @SuppressWarnings("InstanceVariableNamingConvention")
     @DatabaseField(id = true)
     private String id;
     static final String ID_FIELD_NAME = "id";
@@ -41,6 +43,7 @@ public class CacheEntry {
         this.id = id;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public Long getTimestamp() {
         return timestamp;
     }
@@ -49,6 +52,7 @@ public class CacheEntry {
         this.timestamp = timestamp;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public String getProbeType() {
         return probeType;
     }
@@ -57,6 +61,7 @@ public class CacheEntry {
         this.probeType = probeType;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public String getSensorData() {
         return sensorData;
     }
@@ -65,6 +70,7 @@ public class CacheEntry {
         this.sensorData = sensorData;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public String getUserID() {
         return userID;
     }
@@ -73,9 +79,12 @@ public class CacheEntry {
         this.userID = userID;
     }
 
-    public static ProbeEntry createProbeEntry(CacheEntry entry) {
-        if(entry == null)
-            return null;
+    @SuppressWarnings("CallToSimpleGetterFromWithinClass")
+    static ProbeEntry createProbeEntry(CacheEntry entry) {
+        if(entry == null) {
+            MyApplication.madcapLogger.e("CacheEntry","createProbeEntry: CacheEntry parameter is null.");
+            throw new NullPointerException("createProbeEntry: CacheEntry parameter is null.");
+        }
 
         ProbeEntry probeEntry = new ProbeEntry();
         probeEntry.setId(entry.getId());

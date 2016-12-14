@@ -8,25 +8,15 @@ package org.fraunhofer.cese.madcap.cache;
  */
 public class CacheConfig {
 
-    private long maxMemEntries;
-    private long maxDbEntries;
+    private int maxMemEntries;
+    private int maxDbEntries;
 
-    private long memForcedCleanupLimit;
-    private long dbForcedCleanupLimit;
+    private int memForcedCleanupLimit;
+    private int dbForcedCleanupLimit;
 
-    private long dbWriteInterval;
-    private long uploadInterval;
+    private int dbWriteInterval;
+    private int uploadInterval;
     private boolean uploadWifiOnly;
-
-    private boolean writeToFile;
-
-    public boolean getWriteToFile() {
-        return writeToFile;
-    }
-
-    public void setWriteToFile(boolean writeToFile) {
-        this.writeToFile = writeToFile;
-    }
 
     public void setMaxMemEntries(int maxMemEntries) {
         this.maxMemEntries = maxMemEntries;
@@ -44,11 +34,11 @@ public class CacheConfig {
         this.dbForcedCleanupLimit = dbForcedCleanupLimit;
     }
 
-    public void setDbWriteInterval(long dbWriteInterval) {
+    public void setDbWriteInterval(int dbWriteInterval) {
         this.dbWriteInterval = dbWriteInterval;
     }
 
-    public void setUploadInterval(long uploadInterval) {
+    public void setUploadInterval(int uploadInterval) {
         this.uploadInterval = uploadInterval;
     }
 
@@ -61,7 +51,7 @@ public class CacheConfig {
      *
      * @return the maximum number of entries to be held in memory
      */
-    public long getMaxMemEntries() {
+    int getMaxMemEntries() {
         return maxMemEntries;
     }
 
@@ -70,7 +60,7 @@ public class CacheConfig {
      *
      * @return the maximum number of entries to be held in the database
      */
-    public long getMaxDbEntries() {
+    int getMaxDbEntries() {
         return maxDbEntries;
     }
 
@@ -79,7 +69,7 @@ public class CacheConfig {
      *
      * @return the limit for number of entries to be stored in memory
      */
-    public long getMemForcedCleanupLimit() {
+    int getMemForcedCleanupLimit() {
         return memForcedCleanupLimit;
     }
 
@@ -88,7 +78,7 @@ public class CacheConfig {
      *
      * @return the limit for number of entries to be stored in the database
      */
-    public long getDbForcedCleanupLimit() {
+    int getDbForcedCleanupLimit() {
         return dbForcedCleanupLimit;
     }
 
@@ -97,7 +87,7 @@ public class CacheConfig {
      *
      * @return minimum time in milliseconds between consecutive DB writes
      */
-    public long getDbWriteInterval() {
+    int getDbWriteInterval() {
         return dbWriteInterval;
     }
 
@@ -106,7 +96,7 @@ public class CacheConfig {
      *
      * @return minimum time in milliseconds between consecutive upload attempts
      */
-    public long getUploadInterval() {
+    int getUploadInterval() {
         return uploadInterval;
     }
 
@@ -114,9 +104,9 @@ public class CacheConfig {
      * Determines whether uploads should be attempted when connected to WiFi only, or over any data connection (which may result in user's
      * data plan being consumed)
      *
-     * @return <code>true</code> if uploads should happen on WiFi only, <code>false</code> if uploads can happen over any data connection.
+     * @return {@code true} if uploads should happen on WiFi only, {@code false} if uploads can happen over any data connection.
      */
-    public boolean isUploadWifiOnly() {
+    boolean isUploadWifiOnly() {
         return uploadWifiOnly;
     }
 }

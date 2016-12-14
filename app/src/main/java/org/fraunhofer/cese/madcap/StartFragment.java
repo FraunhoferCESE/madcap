@@ -23,14 +23,19 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
+import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
+import org.fraunhofer.cese.madcap.factories.CacheFactory;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.text.DateFormat;
 import java.util.Date;
 
 import javax.inject.Inject;
+
+import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,7 +61,8 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
     boolean mBound = false;
 
     @Inject
-    MadcapAuthManager madcapAuthManager;
+    AuthenticationProvider authenticationProvider;
+
     private boolean isCollectingData;
 
     //Ui elements
@@ -118,6 +124,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //noinspection CastToConcreteClass
         ((MyApplication) getActivity().getApplication()).getComponent().inject(this);
 
         mConnection = new ServiceConnection() {
@@ -180,8 +187,8 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
 
         //Parse the greeting information
         nameTextView = (TextView) view.findViewById(R.id.usernameTextview);
-        if (madcapAuthManager.getLastSignedInUsersName() != null) {
-            nameTextView.setText(madcapAuthManager.getLastSignedInUsersName());
+        if (authenticationProvider.getLastSignedInUsersName() != null) {
+            nameTextView.setText(authenticationProvider.getLastSignedInUsersName());
         }
 
         collectionDataStatusText = (TextView) view.findViewById(R.id.collectionDataStatusText);
@@ -218,6 +225,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
 
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now " + isCollectingData);
                             Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
+                            intent.putExtra("callee",TAG);
                             getActivity().getApplicationContext().startService(intent);
                             bindConnection(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));

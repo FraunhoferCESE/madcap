@@ -29,6 +29,7 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
 
     private RuntimeExceptionDao<CacheEntry,String> dao;
 
+    @SuppressWarnings("WeakerAccess")
     public DatabaseOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION, R.raw.ormlist_config);
     }
@@ -38,13 +39,14 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
      * the tables that will store your data.
      */
     @Override
-    public void onCreate(SQLiteDatabase db, ConnectionSource connectionSource) {
+    public void onCreate(SQLiteDatabase database, @SuppressWarnings("ParameterHidesMemberVariable") ConnectionSource connectionSource) {
         try {
             MyApplication.madcapLogger.i(TAG, "{onCreate}");
             TableUtils.createTable(connectionSource, CacheEntry.class);
 
         } catch (SQLException e) {
             MyApplication.madcapLogger.e(TAG, "Can't create database", e);
+            //noinspection ProhibitedExceptionThrown
             throw new RuntimeException(e);
         }
     }
@@ -54,14 +56,15 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
      * the various data to match the new version number.
      */
     @Override
-    public void onUpgrade(SQLiteDatabase db, ConnectionSource connectionSource, int oldVersion, int newVersion) {
+    public void onUpgrade(SQLiteDatabase database, @SuppressWarnings("ParameterHidesMemberVariable") ConnectionSource connectionSource, int oldVersion, int newVersion) {
         try {
             MyApplication.madcapLogger.i(TAG, "{onUpgrade}");
             TableUtils.dropTable(connectionSource, CacheEntry.class, true);
             // after we drop the old databases, we create the new ones
-            onCreate(db, connectionSource);
+            onCreate(database, connectionSource);
         } catch (SQLException e) {
             MyApplication.madcapLogger.e(TAG, "Can't drop databases", e);
+            //noinspection ProhibitedExceptionThrown
             throw new RuntimeException(e);
         }
 
@@ -73,7 +76,7 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
      *
      * @return the dao used to access the SQLLite database
      */
-    public RuntimeExceptionDao<CacheEntry, String> getDao() {
+    RuntimeExceptionDao<CacheEntry, String> getDao() {
         if(dao == null) {
 //            dao = getDao(CacheEntry.class);
             dao = getRuntimeExceptionDao(CacheEntry.class);

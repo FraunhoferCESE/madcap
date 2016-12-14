@@ -5,9 +5,9 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
 import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 /**
@@ -15,15 +15,15 @@ import org.fraunhofer.cese.madcap.util.MadcapLogger;
  * <p>
  * Created by llayman on 9/23/2016.
  */
-//@ReportsCrashes(
-//        formUri = "https://madcap.cloudant.com/acra-madcap/_design/acra-storage/_update/report",
-//        reportType = org.acra.sender.HttpSender.Type.JSON,
-//        httpMethod = org.acra.sender.HttpSender.Method.PUT,
-//        formUriBasicAuthLogin="agioneciellacenclichasem",
-//        formUriBasicAuthPassword="69f1b42d55cdfb9d7e1dc3f0a9deccb0750a64fe",
-//        mode = ReportingInteractionMode.TOAST,
-//        resToastText = R.string.crash_toast_text
-//)
+@ReportsCrashes(
+        formUri = "https://madcap.cloudant.com/acra-madcap/_design/acra-storage/_update/report",
+        reportType = org.acra.sender.HttpSender.Type.JSON,
+        httpMethod = org.acra.sender.HttpSender.Method.PUT,
+        formUriBasicAuthLogin="agioneciellacenclichasem",
+        formUriBasicAuthPassword="69f1b42d55cdfb9d7e1dc3f0a9deccb0750a64fe",
+        mode = ReportingInteractionMode.TOAST,
+        resToastText = R.string.crash_toast_text
+)
 public class MyApplication extends Application {
     private static final String TAG = "MADCAP.MyApplication";
     private MyComponent component;
@@ -39,7 +39,7 @@ public class MyApplication extends Application {
         madcapLogger.d(TAG, "on create of My application has been called");
 
         //Initialize Acra
-//        ACRA.init(this);
+        ACRA.init(this);
 
         //Initializations for the Google Authentification
         // Initialize the Component used to inject dependencies.

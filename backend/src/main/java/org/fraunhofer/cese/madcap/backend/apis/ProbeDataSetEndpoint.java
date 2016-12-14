@@ -11,10 +11,20 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.cmd.LoadType;
 
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
+import org.fraunhofer.cese.madcap.backend.models.ActivityEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothConnectionEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothDiscoveryEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothScanModeEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
+import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
+import org.fraunhofer.cese.madcap.backend.models.ChargingEntry;
+import org.fraunhofer.cese.madcap.backend.models.DataCollectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
@@ -80,7 +90,6 @@ public class ProbeDataSetEndpoint {
         logger.fine("Logging request received. Data: " + entryList);
         logger.info("Number of entries received: " + entryList.size() + ", Request size: " + humanReadableByteCount(Long.parseLong(req.getHeader("Content-Length")), false));
 
-        //TODO parse probe entries
 
         Collection<String> saved = new ArrayList<>();
         Collection<String> alreadyExists = new ArrayList<>();
@@ -130,6 +139,86 @@ public class ProbeDataSetEndpoint {
                     Collection<ForegroundBackgroundEventEntry> clist = entryMap.get(entry.getProbeType());
                     ForegroundBackgroundEventEntry foregroundBackgroundEventEntry = new ForegroundBackgroundEventEntry(entry);
                     clist.add(foregroundBackgroundEventEntry);
+                    break;
+                case "BluetoothState":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothStateEntry>());
+                    }
+                    Collection<BluetoothStateEntry> btlist = entryMap.get(entry.getProbeType());
+                    BluetoothStateEntry bluetoothStateEntry = new BluetoothStateEntry(entry);
+                    btlist.add(bluetoothStateEntry);
+                    break;
+                case "BluetoothStaticAttributes":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothStaticAtributesEntry>());
+                    }
+                    Collection<BluetoothStaticAtributesEntry> bsalist = entryMap.get(entry.getProbeType());
+                    BluetoothStaticAtributesEntry bluetoothStaticAtributesEntry = new BluetoothStaticAtributesEntry(entry);
+                    bsalist.add(bluetoothStaticAtributesEntry);
+                    break;
+                case "BluetoothDiscoveryProbe":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothDiscoveryEntry>());
+                    }
+                    Collection<BluetoothDiscoveryEntry> bsdlist = entryMap.get(entry.getProbeType());
+                    BluetoothDiscoveryEntry bluetoothDiscoveryEntry = new BluetoothDiscoveryEntry(entry);
+                    bsdlist.add(bluetoothDiscoveryEntry);
+                    break;
+                case "BluetoothConnection":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothConnectionEntry>());
+                    }
+                    Collection<BluetoothConnectionEntry> bcelist = entryMap.get(entry.getProbeType());
+                    BluetoothConnectionEntry bluetoothConnectionEntry = new BluetoothConnectionEntry(entry);
+                    bcelist.add(bluetoothConnectionEntry);
+                    break;
+                case "Bluetoothrequest":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothRequestEntry>());
+                    }
+                    Collection<BluetoothRequestEntry> brlist = entryMap.get(entry.getProbeType());
+                    BluetoothRequestEntry bluetoothRequestEntry = new BluetoothRequestEntry(entry);
+                    brlist.add(bluetoothRequestEntry);
+                    break;
+                case "BluetoothScanMode":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<BluetoothScanModeEntry>());
+                    }
+                    Collection<BluetoothScanModeEntry> bsmlist = entryMap.get(entry.getProbeType());
+                    BluetoothScanModeEntry bluetoothScanModeEntry = new BluetoothScanModeEntry(entry);
+                    bsmlist.add(bluetoothScanModeEntry);
+                    break;
+                case "Activity":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<ActivityEntry>());
+                    }
+                    Collection<ActivityEntry> aclist = entryMap.get(entry.getProbeType());
+                    ActivityEntry activityEntry = new ActivityEntry(entry);
+                    aclist.add(activityEntry);
+                    break;
+                case "Power":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<PowerEntry>());
+                    }
+                    Collection<PowerEntry> powlist = entryMap.get(entry.getProbeType());
+                    PowerEntry powerEntry = new PowerEntry(entry);
+                    powlist.add(powerEntry);
+                    break;
+                case "Charging":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<ChargingEntry>());
+                    }
+                    Collection<ChargingEntry> charlist = entryMap.get(entry.getProbeType());
+                    ChargingEntry chargingEntry = new ChargingEntry(entry);
+                    charlist.add(chargingEntry);
+                    break;
+                case "DataCollection":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<DataCollectionEntry>());
+                    }
+                    Collection<DataCollectionEntry> dalist = entryMap.get(entry.getProbeType());
+                    DataCollectionEntry dataCollectionEntry = new DataCollectionEntry(entry);
+                    dalist.add(dataCollectionEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();

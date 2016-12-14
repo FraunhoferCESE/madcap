@@ -2,6 +2,9 @@ package org.fraunhofer.cese.madcap.cache;
 
 import com.j256.ormlite.android.apptools.OrmLiteConfigUtil;
 
+import java.io.IOException;
+import java.sql.SQLException;
+
 /**
  *
  * This utility is needed to create a config file for OrmLite which speeds up the creation of the DAO.
@@ -17,11 +20,14 @@ import com.j256.ormlite.android.apptools.OrmLiteConfigUtil;
  *
  * Created by Lucas on 10/5/2015.
  */
+@SuppressWarnings("ExtendsUtilityClass")
 public class DatabaseConfigUtil extends OrmLiteConfigUtil {
 
+    @SuppressWarnings("ConstantNamingConvention")
     private static final Class<?> [] classes = new Class[] {CacheEntry.class};
 
-    public static void main(String... args) throws Exception {
+    @SuppressWarnings("MethodOverridesStaticMethodOfSuperclass")
+    public static void main(String... args) throws SQLException, IOException {
         writeConfigFile("ormlite_config.txt", classes);
     }
 }

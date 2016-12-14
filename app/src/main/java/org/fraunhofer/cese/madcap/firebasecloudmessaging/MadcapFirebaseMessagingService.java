@@ -15,8 +15,8 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
-import org.fraunhofer.cese.madcap.SignInActivity;
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
+import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 
 import java.util.Map;
 
@@ -32,7 +32,7 @@ public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MFirebaseMsgService";
 
     @Inject
-    MadcapAuthManager madcapAuthManager;
+    AuthenticationProvider authenticationProvider;
 
     /**
      * Called when message is received.
@@ -58,7 +58,7 @@ public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             MyApplication.madcapLogger.d(TAG, "Message data payload: " + remoteMessage.getData());
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (madcapAuthManager.getUserId() != null && prefs.getBoolean(getString(R.string.data_collection_pref), true)) {
+            if (authenticationProvider.getUserId() != null && prefs.getBoolean(getString(R.string.data_collection_pref), true)) {
                 processIncomingMessage(remoteMessage.getData());
             }
         }

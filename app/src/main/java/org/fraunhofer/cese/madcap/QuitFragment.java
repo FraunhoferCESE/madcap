@@ -10,10 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 
 /**
@@ -30,7 +29,7 @@ public class QuitFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     @Inject
-    MadcapAuthManager madcapAuthManager;
+    AuthenticationProvider authenticationProvider;
 
     public QuitFragment() {
         // Required empty public constructor
@@ -40,6 +39,7 @@ public class QuitFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //noinspection CastToConcreteClass
         ((MyApplication) getActivity().getApplication()).getComponent().inject(this);
     }
 
@@ -63,8 +63,8 @@ public class QuitFragment extends Fragment {
                 i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.contactEmail1), getString(R.string.contactEmail2)});
                 i.putExtra(Intent.EXTRA_SUBJECT, "QUIT Pocket Security ");
                 i.putExtra(Intent.EXTRA_TEXT, "Hello Pocket Security Team, \n \n I want to quit Pocket Security. \n(You may write your reasons here.) \n" +
-                        " \n \n " + madcapAuthManager.getLastSignedInUsersName() + " \n" +
-                        " \n Reference User ID: " + madcapAuthManager.getUserId() + " (please do not remove this)");
+                        " \n \n " + authenticationProvider.getLastSignedInUsersName() + " \n" +
+                        " \n Reference User ID: " + authenticationProvider.getUserId() + " (please do not remove this)");
                 try {
                     startActivity(Intent.createChooser(i, "Send mail..."));
                 } catch (android.content.ActivityNotFoundException ex) {

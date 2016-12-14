@@ -15,7 +15,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
  *
  * A issue manager for some callbacks from the GoogleApiClient
  */
-public class GoogleApiClientConnectionIssueManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class GoogleApiClientConnectionIssueManagerLocation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private final String TAG = getClass().getSimpleName();
 
     @Override

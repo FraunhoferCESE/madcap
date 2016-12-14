@@ -116,7 +116,7 @@ public class ForegroundBackgroundEventsProbe extends Probe{
     @Override
     public String toString() {
         String classNameString;
-        if(className == null){
+        if(className == null || className.equals("")){
             classNameString = "-";
         }else{
             classNameString = className;
