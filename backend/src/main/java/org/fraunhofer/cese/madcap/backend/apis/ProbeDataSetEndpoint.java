@@ -19,6 +19,7 @@ import org.fraunhofer.cese.madcap.backend.models.BluetoothScanModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
 import org.fraunhofer.cese.madcap.backend.models.ChargingEntry;
+import org.fraunhofer.cese.madcap.backend.models.DataCollectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
@@ -210,6 +211,14 @@ public class ProbeDataSetEndpoint {
                     Collection<ChargingEntry> charlist = entryMap.get(entry.getProbeType());
                     ChargingEntry chargingEntry = new ChargingEntry(entry);
                     charlist.add(chargingEntry);
+                    break;
+                case "DataCollection":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<DataCollectionEntry>());
+                    }
+                    Collection<DataCollectionEntry> dalist = entryMap.get(entry.getProbeType());
+                    DataCollectionEntry dataCollectionEntry = new DataCollectionEntry(entry);
+                    dalist.add(dataCollectionEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();
