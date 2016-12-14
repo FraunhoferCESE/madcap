@@ -65,9 +65,11 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         switch (intent.getAction()) {
             case ConnectivityManager.CONNECTIVITY_ACTION:
+                // Any network connection changed
                 networkListener.onUpdate(createCurrentNetworkProbe(intent));
                 break;
             case WifiManager.WIFI_STATE_CHANGED_ACTION:
+                // WIFI enabled/disabled/enabling/disabling/... changed
                 WiFiProbe wiFiProbe = new WiFiProbe();
                 wiFiProbe.setDate(System.currentTimeMillis());
                 wiFiProbe.setIp(networkListener.getIpAddress());
@@ -78,6 +80,7 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
                 networkListener.onUpdate(createCurrentCellularProbe());
                 break;
             case WifiManager.RSSI_CHANGED_ACTION:
+                // WiFi signal strength changed
                 WiFiProbe wiFiProbe2 = new WiFiProbe();
                 wiFiProbe2.setDate(System.currentTimeMillis());
                 wiFiProbe2.setIp(networkListener.getIpAddress());
@@ -89,6 +92,7 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
                 networkListener.onUpdate(createCurrentCellularProbe());
                 break;
             case WifiManager.NETWORK_STATE_CHANGED_ACTION:
+                // WiFi Network connection changed
                 WiFiProbe wiFiProbe3 = new WiFiProbe();
                 wiFiProbe3.setDate(System.currentTimeMillis());
                 wiFiProbe3.setIp(networkListener.getIpAddress());
@@ -102,6 +106,7 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
                 networkListener.onUpdate(createCurrentNetworkProbe(intent));
                 break;
             case WifiManager.SUPPLICANT_STATE_CHANGED_ACTION:
+                // wifi trying to establish a connection changed.
                 WiFiProbe wiFiProbe4 = new WiFiProbe();
                 wiFiProbe4.setDate(System.currentTimeMillis());
                 wiFiProbe4.setIp(networkListener.getIpAddress());

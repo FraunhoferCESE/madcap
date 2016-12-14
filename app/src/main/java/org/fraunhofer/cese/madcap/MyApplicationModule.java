@@ -162,6 +162,7 @@ class MyApplicationModule {
         return new ConnectionInfoReceiverFactory();
     }
 
+    @Provides
     IntentFilterFactory provideIntentFilterFactory() {
         return new IntentFilterFactory();
     }
@@ -173,6 +174,7 @@ class MyApplicationModule {
     ManualProbeUploader provideManualProbeUploader(){
         return new ManualProbeUploader();
     }
+
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}

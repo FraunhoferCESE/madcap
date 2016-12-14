@@ -1,9 +1,11 @@
 package org.fraunhofer.cese.madcap.services;
 
+import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,25 +16,24 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.OptionalPendingResult;
-import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.WelcomeActivity;
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthEventHandler;
-import org.fraunhofer.cese.madcap.authentication.MadcapAuthManager;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
+import org.fraunhofer.cese.madcap.cache.UploadStrategy;
 import org.fraunhofer.cese.madcap.factories.CacheFactory;
-import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManager;
+import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
+import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -44,15 +45,21 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
+import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
+import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityListener;
+import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.NetworkListener;
+import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
+import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
 
+import static com.pathsense.locationengine.lib.detectionLogic.b.v;
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.INCOMPLETE;
 
@@ -61,53 +68,87 @@ import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completen
  */
 
 @Singleton
-public class DataCollectionService extends Service implements MadcapAuthEventHandler, UploadStatusListener {
+public class DataCollectionService extends Service implements UploadStatusListener {
     private static final String TAG = "Madcap DataColl Service";
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
-    private final int RUN_CODE = 1;
+    private static final int RUN_CODE = 1;
+    private static final int NOTIFICATION_ID = 918273;
 
     private NotificationManager mNotificationManager;
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
-    private List<Listener> listeners = new CopyOnWriteArrayList<>();
+    private final List<Listener> listeners = new CopyOnWriteArrayList<>();
     private UploadStatusGuiListener uploadStatusGuiListener;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     Cache cache;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
-    MadcapAuthManager authManager;
+    AuthenticationProvider authManager;
 
+    @Inject
+    ManualProbeUploader manualProbeUploader;
+
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     @Named("AwarenessApi")
     GoogleApiClient locationClient;
 
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    @Named("AwarenessApi")
+    GoogleApiClient activityClient;
+
     @Inject
     SnapshotApi snapshotApi;
+
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    FenceApi fenceApi;
 
     @Inject
     TimedLocationTaskFactory timedLocationTaskFactory;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
-    GoogleApiClientConnectionIssueManager googleApiClientConnectionIssueManager;
+    TimedActivityTaskFactory timedActivityTaskFactory;
 
+    @Inject
+    GoogleApiClientConnectionIssueManagerLocation googleApiClientConnectionIssueManagerLocation;
+
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     MadcapPermissionDeniedHandler madcapPermissionDeniedHandler;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     MadcapSensorNoAnswerReceivedHandler madcapSensorNoAnswerReceivedHandler;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     TimedApplicationTaskFactory timedApplicationTaskFactory;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
     Calendar calendar;
 
+    @SuppressWarnings("PackageVisibleField")
     @Inject
-    ConnectionInfoReceiverFactory connectionInfoReceiverFactory;
+    BluetoothAdapter bluetoothAdapter;
+
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory;
+
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    IntentFilterFactory intentFilterFactory;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -142,29 +183,41 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         }
     }
 
+    @SuppressWarnings({"unchecked", "NonPrivateFieldAccessedInSynchronizedContext"})
     @Override
     public void onCreate() {
+        //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
         MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service");
 
+        listeners.clear();
+
         synchronized (listeners) {
-            listeners.add(new LocationListener(this, new CacheFactory(cache, this, authManager),
+            listeners.add(new LocationListener(this, new CacheFactory(cache, authManager),
                     locationClient,
                     snapshotApi,
                     timedLocationTaskFactory,
                     locationServiceStatusReceiverFactory,
-                    googleApiClientConnectionIssueManager,
-                    googleApiClientConnectionIssueManager,
+                    googleApiClientConnectionIssueManagerLocation,
+                    googleApiClientConnectionIssueManagerLocation,
                     madcapPermissionDeniedHandler,
                     madcapSensorNoAnswerReceivedHandler));
 
-
-            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, this, authManager),
+            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, authManager),
                     timedApplicationTaskFactory, madcapPermissionDeniedHandler));
 
-            listeners.add(new NetworkListener(this, new CacheFactory(cache, this, authManager),
-                    connectionInfoReceiverFactory,
-                    madcapPermissionDeniedHandler));
+            listeners.add(new BluetoothListener(this, new CacheFactory(cache, authManager),
+                    bluetoothAdapter,
+                    madcapPermissionDeniedHandler,
+                    bluetoothInformationReceiverFactory,
+                    intentFilterFactory));
+
+            listeners.add(new ActivityListener(new CacheFactory(cache, authManager),
+                    activityClient,
+                    snapshotApi,
+                    timedActivityTaskFactory));
+
+            listeners.add(new PowerListener(this, new CacheFactory(cache, authManager)));
         }
 //        madcapAuthManager.setCallbackClass(this);
 
@@ -172,18 +225,31 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        disableAllListeners();
-        removeUploadListener(this);
-
-        // Any closeout or disconnect operations
         MyApplication.madcapLogger.d(TAG, "onDestroy");
-        cache.close();
+        super.onDestroy();
 
-        hideRunNotification();
+        DataCollectionProbe probe = new DataCollectionProbe();
+        probe.setState(DataCollectionProbe.OFF);
+        probe.setDate(System.currentTimeMillis());
+        manualProbeUploader.uploadManual(probe, getApplication(), cache);
+
         synchronized (listeners) {
+            for (Listener listener : listeners) {
+                listener.stopListening();
+                MyApplication.madcapLogger.d(TAG, listener.getClass().getSimpleName() + " stopped listening");
+            }
             listeners.clear();
         }
+
+        cache.removeUploadListener(this);
+
+        // Any closeout or disconnect operations
+
+        cache.close();
+
+        //hideRunNotification();
+
+        //MyApplication.dataCollectionRunning = false;
     }
 
     @Override
@@ -194,44 +260,33 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        MyApplication.madcapLogger.d(TAG, "OnStartCommand");
-        showRunNotification();
+        MyApplication.madcapLogger.d(TAG, "OnStartCommand. Intent callee: " + (intent == null ? "null" : intent.getStringExtra("callee")));
 
-        enableAllListeners();
-        addUploadListener(this);
+        DataCollectionProbe probe = new DataCollectionProbe();
+        probe.setState(DataCollectionProbe.ON);
+        probe.setDate(System.currentTimeMillis());
+        manualProbeUploader.uploadManual(probe, getApplication(), cache);
 
-        return START_STICKY;
-        //return super.onStartCommand(intent, flags, startId);
-    }
+        startForeground(NOTIFICATION_ID, getRunNotification());
 
-    /**
-     * Starts all listeners.
-     */
-    private void enableAllListeners() {
         synchronized (listeners) {
-            for (Listener l : listeners) {
+            for (Listener listener : listeners) {
                 try {
                     MyApplication.madcapLogger.d(TAG, "numListeners: " + listeners.size());
-                    l.startListening();
-                    MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " started listening");
+                    listener.startListening();
+                    MyApplication.madcapLogger.d(TAG, listener.getClass().getSimpleName() + " started listening");
                 } catch (NoSensorFoundException nsf) {
                     MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
                 }
             }
         }
+
+        cache.addUploadListener(this);
+
+        return START_STICKY;
+        //return super.onStartCommand(intent, flags, startId);
     }
 
-    /**
-     * Stops all listeners.
-     */
-    private void disableAllListeners() {
-        synchronized (listeners) {
-            for (Listener l : listeners) {
-                l.stopListening();
-                MyApplication.madcapLogger.d(TAG, l.getClass().getSimpleName() + " stopped listening");
-            }
-        }
-    }
 
     /**
      * Requests an on-demand upload of cached data.
@@ -242,70 +297,53 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      */
     public int requestUpload() {
         MyApplication.madcapLogger.d(TAG, "Upload requested");
-        int status = cache.checkUploadConditions(Cache.UploadStrategy.IMMEDIATE);
+        int status = cache.checkUploadConditions(UploadStrategy.IMMEDIATE);
 
-        String text = "Result: ";
         MyApplication.madcapLogger.d(TAG, "Status: " + status);
 
+        String text = "Result: ";
         if (status == Cache.UPLOAD_READY) {
-            cache.flush(Cache.UploadStrategy.IMMEDIATE);
+            cache.flush(UploadStrategy.IMMEDIATE);
             text += "Upload started...";
         } else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS) {
             text += "Upload in progress...";
         } else {
             String errorText = "";
-            if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
-                errorText += "\n- An internal error occurred and data could not be uploaded.";
-            if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET)
-                errorText += "\n- An upload was just requested; please wait a few seconds.";
-            if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION)
-                errorText += "\n- No WiFi connection detected.";
-            if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
-                errorText += "\n- No entries to upload";
+            if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR) {
+                //noinspection AccessOfSystemProperties
+                errorText += System.getProperty("line.separator") + "- An internal error occurred and data could not be uploaded.";
+            }
+            if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET) {
+                //noinspection AccessOfSystemProperties
+                errorText += System.getProperty("line.separator") + "- An upload was just requested; please wait a few seconds.";
+            }
+            if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION) {
+                //noinspection AccessOfSystemProperties
+                errorText += System.getProperty("line.separator") + "- No WiFi connection detected.";
+            }
+            if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET) {
+                //noinspection AccessOfSystemProperties
+                errorText += System.getProperty("line.separator") + "- No entries to upload";
+            }
 
-            text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
+            text += errorText.isEmpty() ? "No status to report. Please wait." : ("Error:" + errorText);
         }
 
-        String date = new Date() + "";
+        String date = String.valueOf(new Date());
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.last_upload_date), date);
-        editor.commit();
+        editor.apply();
         uploadStatusGuiListener.onUploadStatusDateUpdate(date);
 
         editor.putString(getString(R.string.last_upload_result), text);
-        editor.commit();
+        editor.apply();
         uploadStatusGuiListener.onUploadStatusResultUpdate(text);
 
         uploadStatusGuiListener.onUploadStatusProgressUpdate(0);
         uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
 
         return status;
-    }
-
-    /**
-     * Attempts to add an upload status listener to the cache.
-     * <p>
-     * From LL: This method is called from MainActivity to get upload status information. It
-     * should be moved to the DataCollectionService and the reference updated in the MainActivity.
-     *
-     * @param listener the listener to add
-     * @see Cache#addUploadListener(UploadStatusListener)
-     */
-    public void addUploadListener(UploadStatusListener listener) {
-        cache.addUploadListener(listener);
-    }
-
-    /**
-     * Attempts to remove an upload status listener from the cache.
-     * <p>
-     * From LL: same as addUploadListener()...
-     *
-     * @param listener the listener to remove
-     * @return {@code true} if the listener was removed, {@code false} otherwise.
-     */
-    public boolean removeUploadListener(UploadStatusListener listener) {
-        return cache.removeUploadListener(listener);
     }
 
     /**
@@ -328,7 +366,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
      * Should be called when the OS triggers onTrimMemory in the app
      */
     public void onTrimMemory() {
-        cache.flush(Cache.UploadStrategy.NORMAL);
+        cache.flush(UploadStrategy.NORMAL);
     }
 
     /**
@@ -346,31 +384,33 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             text += "Result: No entries to upload.";
         } else if (result.getException() != null) {
             String exceptionMessage;
-            if (result.getException().getMessage() != null)
+            if (result.getException().getMessage() != null) {
                 exceptionMessage = result.getException().getMessage();
-            else if (result.getException().toString() != null)
+            } else if (result.getException().toString() != null) {
                 exceptionMessage = result.getException().toString();
-            else
+            } else {
                 exceptionMessage = "Unspecified error";
+            }
 
             text += "Result: Upload failed due to " + (exceptionMessage.length() > MAX_EXCEPTION_MESSAGE_LENGTH ? exceptionMessage.substring(0, MAX_EXCEPTION_MESSAGE_LENGTH - 1) : exceptionMessage);
         } else if (result.getSaveResult() == null) {
             text += "Result: An error occurred on the remote server.";
         } else {
-            text += "Result:\n";
+            //noinspection AccessOfSystemProperties
+            text += "Result:" + System.getProperty("line.separator");
             text += "\t" + (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
-            if (result.getSaveResult().getAlreadyExists() != null)
-                text += "\n\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
+            if (result.getSaveResult().getAlreadyExists() != null) {
+                //noinspection AccessOfSystemProperties
+                text += System.getProperty("line.separator") + "\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
+            }
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.last_upload_completeness), getString(R.string.status_complete));
-        editor.commit();
         editor.putString(getString(R.string.last_upload_result), text);
-        editor.commit();
         editor.putInt(getString(R.string.last_upload_progress), 100);
-        editor.commit();
+        editor.apply();
 
         if (uploadStatusGuiListener != null) {
             uploadStatusGuiListener.onUploadStatusCompletenessUpdate(COMPLETE);
@@ -401,7 +441,7 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(getString(R.string.last_upload_progress), value);
-        editor.commit();
+        editor.apply();
 
         if (uploadStatusGuiListener != null) {
             uploadStatusGuiListener.onUploadStatusProgressUpdate(value);
@@ -412,10 +452,6 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
         }
 
-    }
-
-    public UploadStatusGuiListener getUploadStatusGuiListener() {
-        return uploadStatusGuiListener;
     }
 
     public void setUploadStatusGuiListener(UploadStatusGuiListener uploadStatusGuiListener) {
@@ -462,6 +498,42 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         mNotificationManager.notify(RUN_CODE, note);
     }
 
+    private Notification getRunNotification() {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+        mBuilder.setContentTitle("MADCAP is running in the background.");
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        mBuilder.setPriority(Notification.PRIORITY_LOW);
+
+        // Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, WelcomeActivity.class);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+
+        // Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(WelcomeActivity.class);
+        // Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+
+        mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // mId allows you to update the notification later on.
+        Notification note = mBuilder.build();
+        note.flags |= Notification.FLAG_NO_CLEAR;
+
+        return note;
+    }
+
     /**
      * Hides the madcap logo in the notification bar.
      */
@@ -469,63 +541,4 @@ public class DataCollectionService extends Service implements MadcapAuthEventHan
         mNotificationManager.cancel(RUN_CODE);
     }
 
-    /**
-     * Specifies what the class is expected to do, when the silent login was sucessfull.
-     *
-     * @param result
-     */
-    @Override
-    public void onSilentLoginSuccessfull(GoogleSignInResult result) {
-
-    }
-
-    /**
-     * Specifies what the class is expected to do, when the silent login was not successfull.
-     *
-     * @param opr
-     */
-    @Override
-    public void onSilentLoginFailed(OptionalPendingResult<GoogleSignInResult> opr) {
-
-    }
-
-    /**
-     * Specifies what the class is expected to do, when the regular sign in was successful.
-     */
-    @Override
-    public void onSignInSucessfull() {
-
-    }
-
-    /**
-     * Specifies what the app is expected to do when the Signout was sucessfull.
-     *
-     * @param status
-     */
-    @Override
-    public void onSignOutResults(Status status) {
-        MyApplication.madcapLogger.d(TAG, "Sign out callback");
-        stopSelf();
-    }
-
-    /**
-     * Specifies what the class is expected to do, when disconnected.
-     *
-     * @param status
-     */
-    @Override
-    public void onRevokeAccess(Status status) {
-
-    }
-
-    /**
-     * There the sign in intent has to be sent.
-     *
-     * @param intent
-     * @param requestCode
-     */
-    @Override
-    public void onSignInIntent(Intent intent, int requestCode) {
-
-    }
 }
