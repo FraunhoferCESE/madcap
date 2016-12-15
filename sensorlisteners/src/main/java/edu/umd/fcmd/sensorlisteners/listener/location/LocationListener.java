@@ -47,7 +47,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     private LocationManager locationManager;
     private boolean runningStatus;
 
-    private boolean useGps = true;
+    private boolean useGps = false;
     private boolean useNetwork = true;
     private boolean useCache = true;
 

@@ -193,15 +193,15 @@ public class DataCollectionService extends Service implements UploadStatusListen
         listeners.clear();
 
         synchronized (listeners) {
-//            listeners.add(new LocationListener(this, new CacheFactory(cache, authManager),
-//                    locationClient,
-//                    snapshotApi,
-//                    timedLocationTaskFactory,
-//                    locationServiceStatusReceiverFactory,
-//                    googleApiClientConnectionIssueManagerLocation,
-//                    googleApiClientConnectionIssueManagerLocation,
-//                    madcapPermissionDeniedHandler,
-//                    madcapSensorNoAnswerReceivedHandler));
+            listeners.add(new LocationListener(this, new CacheFactory(cache, authManager),
+                    locationClient,
+                    snapshotApi,
+                    timedLocationTaskFactory,
+                    locationServiceStatusReceiverFactory,
+                    googleApiClientConnectionIssueManagerLocation,
+                    googleApiClientConnectionIssueManagerLocation,
+                    madcapPermissionDeniedHandler,
+                    madcapSensorNoAnswerReceivedHandler));
 //
 //            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, authManager),
 //                    timedApplicationTaskFactory, madcapPermissionDeniedHandler));
