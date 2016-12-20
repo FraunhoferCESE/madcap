@@ -1,6 +1,5 @@
 package org.fraunhofer.cese.madcap;
 
-import org.fraunhofer.cese.madcap.Probe.ActivityProbe.ActivityProbe;
 import org.fraunhofer.cese.madcap.Probe.BluetoothProbe;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.boot.OnBootService;
@@ -22,7 +21,6 @@ import dagger.Component;
 public interface MyComponent {
     void inject(MainActivity activity);
     void inject(BluetoothProbe bluetoothProbe);
-    void inject(ActivityProbe activityProbe);
     void inject(DataCollectionService dataCollectionService);
     void inject(StartFragment startFragment);
     void inject(HelpFragment helpFragment);
