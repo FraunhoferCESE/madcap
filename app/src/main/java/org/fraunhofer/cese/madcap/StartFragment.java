@@ -23,6 +23,8 @@ import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
@@ -287,7 +289,6 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         );
 
         restoreLastUpload();
-
         return view;
     }
 
@@ -306,6 +307,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         }
         dataCountView.setText(dataCountText);
         //uploadResultView.setText(uploadResultText);
+
     }
 
     @Override
