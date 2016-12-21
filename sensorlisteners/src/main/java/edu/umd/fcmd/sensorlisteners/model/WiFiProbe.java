@@ -8,11 +8,10 @@ package edu.umd.fcmd.sensorlisteners.model;
  */
 
 public class WiFiProbe extends Probe {
-    private static final String NETWORK_TYPE = "Network";
+    private static final String NETWORK_TYPE = "WiFi";
     private String state;
     private String ssid;
-    private String info;
-    private String quality;
+    private String networkSecurity;
     private String ip;
     private String networkState;
 
@@ -53,15 +52,15 @@ public class WiFiProbe extends Probe {
      *
      * @return the SecurityLevel.
      */
-    public String getInfo() {
-        return info;
+    public String getNetworkSecurity() {
+        return networkSecurity;
     }
 
     /**
      * Sets the SecurityLevel.
      */
-    public void setInfo(String info) {
-        this.info = info;
+    public void setNetworkSecurity(String networkSecurity) {
+        this.networkSecurity = networkSecurity;
     }
 
     /**
@@ -78,22 +77,6 @@ public class WiFiProbe extends Probe {
      */
     public void setNetworkState(String networkState) {
         this.networkState = networkState;
-    }
-
-    /**
-     * Gets the WiFi quality.
-     * @return quality.
-     */
-    public String getQuality() {
-        return quality;
-    }
-
-    /**
-     * Sets the Quality.
-     * @param quality the Quality.
-     */
-    public void setQuality(String quality) {
-        this.quality = quality;
     }
 
     /**
@@ -147,8 +130,7 @@ public class WiFiProbe extends Probe {
     public String toString() {
         return "{\"state\": " + (state != null ? state : "-") +
                 ", \"ssid\": " + (ssid != null ? ssid : "-") +
-                ", \"info\": " + (info != null ? info : "-") +
-                ", \"quality\": " + (quality != null ? quality : "-") +
+                ", \"networkSecurity\": " + (networkSecurity != null ? networkSecurity : "-") +
                 ", \"ip\": " + (ip != null ? ip : "-") +
                 '}';
     }

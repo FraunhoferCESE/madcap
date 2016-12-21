@@ -6,9 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
-import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -16,17 +16,15 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteOrder;
+import java.util.List;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.model.CellularProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.WiFiProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Created by MMueller on 12/2/2016.
@@ -113,7 +111,7 @@ public class NetworkListener implements Listener {
         WiFiProbe wiFiProbe = new WiFiProbe();
         wiFiProbe.setDate(System.currentTimeMillis());
         wiFiProbe.setIp(getIpAddress());
-        wiFiProbe.setInfo(getCurrentWiFiInfo());
+        wiFiProbe.setNetworkSecurity(getCurrentWiFiInfo());
         wiFiProbe.setState(getWifiState(((WifiManager) context.getSystemService(Context.WIFI_SERVICE)).getWifiState()));
         wiFiProbe.setSsid(getCurrentSSID());
 
@@ -138,16 +136,16 @@ public class NetworkListener implements Listener {
 
         switch (telephonyManager.getDataState()) {
             case TelephonyManager.DATA_CONNECTED:
-                result = "connected.";
+                result = "CONNECTED";
                 break;
             case TelephonyManager.DATA_DISCONNECTED:
-                result = "disconnected.";
+                result = "DISCONNECTED";
                 break;
             case TelephonyManager.DATA_CONNECTING:
-                result = "connecting.";
+                result = "CONNECTING";
                 break;
             case TelephonyManager.DATA_SUSPENDED:
-                result = "suspended.";
+                result = "DISCONNECTING";
                 break;
             default:
                 result = "Something went wrong.";
@@ -187,6 +185,40 @@ public class NetworkListener implements Listener {
                 break;
         }
         return result;
+    }
+
+    String getCurrentSecurityLevel() {
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        List<ScanResult> networkList = wifi.getScanResults();
+
+        //get current connected SSID for comparison to ScanResult
+        WifiInfo wi = wifi.getConnectionInfo();
+        String currentSSID = wi.getSSID();
+
+        //Log.d(TAG, "Own ssid "+currentSSID);
+
+        if (networkList != null) {
+            for (ScanResult network : networkList) {
+                //check if current connected SSID.
+                //Log.d(TAG, "Other ssid "+network.SSID);
+                if (currentSSID.equals("\""+network.SSID+"\"")) {
+                    //get capabilities of current connection
+                    String capabilities = network.capabilities;
+                    Log.d(TAG, network.SSID + " capabilities : " + capabilities);
+
+                    if (capabilities.contains("WPA2")) {
+                        return  "WPA2";
+                    } else if (capabilities.contains("WPA")) {
+                        return "WPA2";
+                    } else if (capabilities.contains("WEP")) {
+                        return "WEP";
+                    }else if(capabilities.contains("Open")){
+                        return "OPEN";
+                    }
+                }
+            }
+        }
+        return "-";
     }
 
     String getCurrentWiFiInfo(){
