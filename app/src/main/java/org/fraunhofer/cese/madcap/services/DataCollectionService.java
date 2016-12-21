@@ -56,6 +56,8 @@ import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.listener.network.NetworkListener;
 import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
 
@@ -149,6 +151,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @Inject
     IntentFilterFactory intentFilterFactory;
 
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    ConnectionInfoReceiverFactory connectionInfoReceiverFactory;
+
     /**
      * Return the communication channel to the service.  May return null if
      * clients can not bind to the service.  The returned
@@ -217,6 +223,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     timedActivityTaskFactory));
 
             listeners.add(new PowerListener(this, new CacheFactory(cache, authManager)));
+
+            listeners.add(new NetworkListener(this, new CacheFactory(cache, authManager),
+                    connectionInfoReceiverFactory,
+                    madcapPermissionDeniedHandler));
         }
 //        madcapAuthManager.setCallbackClass(this);
 

@@ -73,8 +73,10 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
                 wiFiProbe3.setState(networkListener.getWifiState(intent));
                 wiFiProbe3.setInfo(networkListener.getCurrentWiFiInfo());
                 wiFiProbe3.setSsid(networkListener.getCurrentSSID());
-                NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                wiFiProbe3.setNetworkState(networkInfo.toString());
+                if(intent.hasExtra(WifiManager.EXTRA_NETWORK_INFO)){
+                    NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                    wiFiProbe3.setNetworkState(networkInfo.toString());
+                }
                 networkListener.onUpdate(wiFiProbe3);
                 networkListener.onUpdate(createCurrentCellularProbe());
                 networkListener.onUpdate(createCurrentNetworkProbe(intent));
@@ -88,8 +90,10 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
                 wiFiProbe4.setInfo(networkListener.getCurrentWiFiInfo());
                 wiFiProbe4.setQuality(intent.getIntExtra(WifiManager.EXTRA_NEW_RSSI, 0)+"");
                 wiFiProbe4.setSsid(networkListener.getCurrentSSID());
-                NetworkInfo networkInfo2 = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                wiFiProbe4.setNetworkState(networkInfo2.toString());
+                if(intent.hasExtra(WifiManager.EXTRA_NETWORK_INFO)){
+                    NetworkInfo networkInfo2 = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+                    wiFiProbe4.setNetworkState(networkInfo2.toString());
+                }
                 networkListener.onUpdate(wiFiProbe4);
                 networkListener.onUpdate(createCurrentCellularProbe());
                 break;
