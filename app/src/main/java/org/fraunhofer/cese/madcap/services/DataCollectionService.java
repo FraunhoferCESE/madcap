@@ -350,8 +350,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
         } else {
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
         }
-
-
         return status;
     }
 
