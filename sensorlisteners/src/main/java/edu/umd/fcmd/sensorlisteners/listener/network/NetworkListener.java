@@ -96,7 +96,7 @@ public class NetworkListener implements Listener {
 
         IntentFilter intentFilter = new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
         intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
-//        intentFilter.addAction("android.net.wifi.RSSI_CHANGED");
+        intentFilter.addAction("android.net.wifi.RSSI_CHANGED");
         intentFilter.addAction("android.net.wifi.STATE_CHANGED");
         intentFilter.addAction("android.net.wifi.NETWORK_STATE_CHANGED_ACTION");
         intentFilter.addAction("android.net.wifi.supplicant.STATE_CHANGED");

@@ -17,8 +17,9 @@ import static android.content.ContentValues.TAG;
 
 /**
  * Created by MMueller on 12/2/2016.
+ *
+ * Receiver for the Network Connections
  */
-
 public class ConnectionInfoReceiver extends BroadcastReceiver {
     private NetworkListener networkListener;
 
@@ -26,57 +27,30 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
         this.networkListener = networkListener;
     }
 
-    /**
-     * This method is called when the BroadcastReceiver is receiving an Intent
-     * broadcast.  During this time you can use the other methods on
-     * BroadcastReceiver to view/modify the current result values.  This method
-     * is always called within the main thread of its process, unless you
-     * explicitly asked for it to be scheduled on a different thread using
-     * {@link Context#registerReceiver(BroadcastReceiver,
-     * IntentFilter, String, Handler)}. When it runs on the main
-     * thread you should
-     * never perform long-running operations in it (there is a timeout of
-     * 10 seconds that the system allows before considering the receiver to
-     * be blocked and a candidate to be killed). You cannot launch a popup dialog
-     * in your implementation of onReceive().
-     * <p>
-     * <p><b>If this BroadcastReceiver was launched through a &lt;receiver&gt; tag,
-     * then the object is no longer alive after returning from this
-     * function.</b>  This means you should not perform any operations that
-     * return a result to you asynchronously -- in particular, for interacting
-     * with services, you should use
-     * {@link Context#startService(Intent)} instead of
-     * {@link Context#bindService(Intent, ServiceConnection, int)}.  If you wish
-     * to interact with a service that is already running, you can use
-     * {@link #peekService}.
-     * <p>
-     * <p>The Intent filters used in {@link Context#registerReceiver}
-     * and in application manifests are <em>not</em> guaranteed to be exclusive. They
-     * are hints to the operating system about how to find suitable recipients. It is
-     * possible for senders to force delivery to specific recipients, bypassing filter
-     * resolution.  For this reason, {@link #onReceive(Context, Intent) onReceive()}
-     * implementations should respond only to known actions, ignoring any unexpected
-     * Intents that they may receive.
-     *
-     * @param context The Context in which the receiver is running.
-     * @param intent  The Intent being received.
-     */
     @Override
     public void onReceive(Context context, Intent intent) {
         switch (intent.getAction()) {
             case ConnectivityManager.CONNECTIVITY_ACTION:
                 // Any network connection changed
                 networkListener.onUpdate(createCurrentNetworkProbe(intent));
+                networkListener.onUpdate(createCurrentCellularProbe());
+                WiFiProbe wiFiProbe0 = new WiFiProbe();
+                wiFiProbe0.setDate(System.currentTimeMillis());
+                wiFiProbe0.setIp(networkListener.getIpAddress());
+                wiFiProbe0.setState(networkListener.getWifiState(intent));
+                wiFiProbe0.setInfo(networkListener.getCurrentWiFiInfo());
+                wiFiProbe0.setSsid(networkListener.getCurrentSSID());
+                networkListener.onUpdate(wiFiProbe0);
                 break;
             case WifiManager.WIFI_STATE_CHANGED_ACTION:
-                // WIFI enabled/disabled/enabling/disabling/... changed
-                WiFiProbe wiFiProbe = new WiFiProbe();
-                wiFiProbe.setDate(System.currentTimeMillis());
-                wiFiProbe.setIp(networkListener.getIpAddress());
-                wiFiProbe.setState(networkListener.getWifiState(intent));
-                wiFiProbe.setInfo(networkListener.getCurrentWiFiInfo());
-                wiFiProbe.setSsid(networkListener.getCurrentSSID());
-                networkListener.onUpdate(wiFiProbe);
+                // WIFI enabled/disabled/enabling/disabling/... changedcel
+                WiFiProbe wiFiProbe1 = new WiFiProbe();
+                wiFiProbe1.setDate(System.currentTimeMillis());
+                wiFiProbe1.setIp(networkListener.getIpAddress());
+                wiFiProbe1.setState(networkListener.getWifiState(intent));
+                wiFiProbe1.setInfo(networkListener.getCurrentWiFiInfo());
+                wiFiProbe1.setSsid(networkListener.getCurrentSSID());
+                networkListener.onUpdate(wiFiProbe1);
                 networkListener.onUpdate(createCurrentCellularProbe());
                 break;
             case WifiManager.RSSI_CHANGED_ACTION:
