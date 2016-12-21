@@ -4,6 +4,7 @@ import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.support.annotation.Nullable;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -242,6 +243,7 @@ class MyApplicationModule {
         return builder.build();
     }
 
+    @Nullable
     @Provides
     BluetoothAdapter provideBluetoothAdapter(){
         return BluetoothAdapter.getDefaultAdapter();
@@ -250,12 +252,6 @@ class MyApplicationModule {
     @Provides
     BluetoothInformationReceiverFactory provideBluetoothInformationReceiverFactory() {
         return new BluetoothInformationReceiverFactory();
-    }
-
-    @SuppressWarnings("ReturnOfNull")
-    @Provides
-    JsonObjectFactory provideJsonObjectFactory(){
-        return null;
     }
 
     @Provides @Named("SigninApi")

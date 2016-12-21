@@ -139,6 +139,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
+    @Nullable
     BluetoothAdapter bluetoothAdapter;
 
     @SuppressWarnings("PackageVisibleField")

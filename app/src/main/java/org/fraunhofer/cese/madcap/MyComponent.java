@@ -6,6 +6,7 @@ import org.fraunhofer.cese.madcap.boot.OnBootService;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploadTask;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 
 import dagger.Component;
