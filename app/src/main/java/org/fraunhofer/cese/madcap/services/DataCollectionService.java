@@ -333,14 +333,24 @@ public class DataCollectionService extends Service implements UploadStatusListen
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.last_upload_date), date);
         editor.apply();
-        uploadStatusGuiListener.onUploadStatusDateUpdate(date);
+        if (uploadStatusGuiListener != null) {
+            uploadStatusGuiListener.onUploadStatusDateUpdate(date);
+        } else {
+            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+        }
+
 
         editor.putString(getString(R.string.last_upload_result), text);
         editor.apply();
-        uploadStatusGuiListener.onUploadStatusResultUpdate(text);
 
-        uploadStatusGuiListener.onUploadStatusProgressUpdate(0);
-        uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
+        if (uploadStatusGuiListener != null) {
+            uploadStatusGuiListener.onUploadStatusResultUpdate(text);
+            uploadStatusGuiListener.onUploadStatusProgressUpdate(0);
+            uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
+        } else {
+            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+        }
+
 
         return status;
     }
