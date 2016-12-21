@@ -47,7 +47,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     private LocationManager locationManager;
     private boolean runningStatus;
 
-    private boolean useGps = false;
+    private boolean useGps = true;
     private boolean useNetwork = true;
     private boolean useCache = true;
 
@@ -130,20 +130,21 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 15000, 5, this);
 
             }
-            if (useNetwork) {
-                while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
 
-                }
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 15000, 5, this);
-            }
+//            if (useNetwork) {
+//                while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+//                    // TODO: Consider calling
+//                    //    ActivityCompat#requestPermissions
+//                    // here to request the missing permissions, and then overriding
+//                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                    //                                          int[] grantResults)
+//                    // to handle the case where the user grants the permission. See the documentation
+//                    // for ActivityCompat#requestPermissions for more details.
+//
+//                }
+//                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 15000, 5, this);
+//            }
 
             sendInitialProbes();
         }
@@ -219,6 +220,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
      */
     @Override
     public void onLocationChanged(Location location) {
+        Log.d(TAG, "location changed");
         if(location != null){
             String provider = location.getProvider();
             if (provider == null
