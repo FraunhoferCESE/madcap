@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
+import com.google.firebase.crash.FirebaseCrash;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
@@ -94,22 +95,28 @@ public class ManualProbeUploadTask extends AsyncTask<Probe, Void, Void> {
 
         ProbeSaveResult remoteResult;
 
-        try {
-            remoteResult = appEngineApi.insertProbeDataset(dataSet).execute();
+        if(probeEntry.getUserID() != null){
+            try {
+                remoteResult = appEngineApi.insertProbeDataset(dataSet).execute();
 
-            Log.d(TAG, "DataCollectionProbe upload succeeded");
+                Log.d(TAG, "DataCollectionProbe upload succeeded");
 
-            if (remoteResult.getSaved() != null) {
-                saveResult.getSaved().addAll(ImmutableList.copyOf(remoteResult.getSaved()));
+                if (remoteResult.getSaved() != null) {
+                    saveResult.getSaved().addAll(ImmutableList.copyOf(remoteResult.getSaved()));
+                }
+
+                if (remoteResult.getAlreadyExists() != null) {
+                    saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
+                }
+            } catch (IOException e) {
+                Log.d(TAG, "Manual DataCollectionProbe upload failed. Save now to cache.");
+                cacheFactory.save(probe);
             }
-
-            if (remoteResult.getAlreadyExists() != null) {
-                saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
-            }
-        } catch (IOException e) {
-            Log.d(TAG, "Manual DataCollectionProbe upload failed. Save now to cache.");
-            cacheFactory.save(probe);
+        }else{
+            FirebaseCrash.report(new Exception("Attempt to save an DataCollectionEnty with a null user"));
         }
+
+
 
         return null;
     }
