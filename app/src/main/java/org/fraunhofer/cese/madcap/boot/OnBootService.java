@@ -24,7 +24,6 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
-import static com.pathsense.locationengine.lib.detectionLogic.b.i;
 
 /**
  * Service to attempt automatic login and start of MADCAP data collection on boot.
@@ -66,7 +65,7 @@ public class OnBootService extends IntentService {
 
                 @Override
                 public void onServicesUnavailable(int connectionResult) {
-                    MyApplication.madcapLogger.w(TAG, "Google SignIn API is unavailable. Error code: " + i);
+                    MyApplication.madcapLogger.w(TAG, "Google SignIn API is unavailable. Error code: " + connectionResult);
                     loginFailed();
                 }
 
