@@ -1,48 +1,49 @@
-package edu.umd.fcmd.sensorlisteners.model.Bluetooth;
+package edu.umd.fcmd.sensorlisteners.model.networkN;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/6/2016.
- *
- * Model Class for static attributes of a Bluetooth Adapter.
+ * Created by MMueller on 12/2/2016.
  */
 
-public class BluetoothStaticAttributesProbe extends Probe {
-    private String name;
-    private String address;
+public class NetworkProbe extends Probe {
+    public static final String NOT_CONNECTED = "NOT_CONNECTED";
+    public static final String CONNECTED = "CONNECTED";
+
+    private final String NETWORK_TYPE = "Network";
+    private String state;
+    private String info;
 
     /**
-     * Getter for the name th user can configure.
-     * Something like "Bob's phone"
-     * @return the bleutooth device name.
+     * Gets the state.
+     * @return state.
      */
-    public String getName() {
-        return name;
+    public String getState() {
+        return state;
     }
 
     /**
-     * Setter for the name.
-     * @param name name to be set.
+     * Sets the state.
+     * @param state to be set.
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setState(String state) {
+        this.state = state;
     }
 
     /**
-     * Getter for the bluetooth Adapter address.
-     * @return the address.
+     * Gets the SecurityLevel.
+     *
+     * @return the SecurityLevel.
      */
-    public String getAddress() {
-        return address;
+    public String getInfo() {
+        return info;
     }
 
     /**
-     * Setter for the Address.
-     * @param address to be set.
+     * Sets the SecurityLevel.
      */
-    public void setAddress(String address) {
-        this.address = address;
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     /**
@@ -52,7 +53,7 @@ public class BluetoothStaticAttributesProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothStaticAttributes";
+        return NETWORK_TYPE;
     }
 
     /**
@@ -78,8 +79,8 @@ public class BluetoothStaticAttributesProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"name\": " + name +
-                ", \"address\": " + "\"" + address + "\"" +
+        return "{\"state\": " + (state != null ? state : "-") +
+                ", \"info\": " + (info != null ? info : "-") +
                 '}';
     }
 }

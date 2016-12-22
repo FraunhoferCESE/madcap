@@ -1,37 +1,35 @@
-package edu.umd.fcmd.sensorlisteners.model.Location;
+package edu.umd.fcmd.sensorlisteners.model.powerC;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 11/14/2016.
- * <p>
- * Is indicating if the user turned location status on
- * or off.
+ * Created by MMueller on 12/12/2016.
+ *
+ * Model class showing the the device is now charging.
  */
+public class ChargingProbe extends Probe {
+    public static final String USB = "USB";
+    public static final String AC = "AC";
+    public static final String WIRELESS = "WIRELESS";
+    public static final String NONE = "-";
 
-public class LocationServiceStatusProbe extends Probe {
-    public static final String ON = "ON";
-    public static final String OFF = "OFF";
-    public static final String NO_PROVIDER = "NO PROVIDER";
-    private static final String LOCATION_SERVICE_TYPE = "LocationService";
-    private String locationServiceStatus;
+    private String charging;
 
     /**
-     * Gets the LocationServiceStatus.
-     *
-     * @return ON or OFF.
+     * Gets the charging method.
+     * @return the charging.
      */
-    String getLocationServiceStatus() {
-        return locationServiceStatus;
+    public String getCharging() {
+        return charging;
     }
 
     /**
-     * Sets the LocationServiceStatus.
+     * Sets the charging method
+     * @param charging to set to.
      */
-    public void setLocationServiceStatus(String locationSerStatus) {
-        locationServiceStatus = locationSerStatus;
+    public void setCharging(String charging) {
+        this.charging = charging;
     }
-
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -40,7 +38,7 @@ public class LocationServiceStatusProbe extends Probe {
      */
     @Override
     public String getType() {
-        return LOCATION_SERVICE_TYPE;
+        return "Charging";
     }
 
     /**
@@ -66,7 +64,7 @@ public class LocationServiceStatusProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"LocationServiceStatus\": " + locationServiceStatus +
+        return "{\"charging\": " + (charging != null ? charging : "-")  +
                 '}';
     }
 }

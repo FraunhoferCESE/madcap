@@ -8,9 +8,9 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
-import edu.umd.fcmd.sensorlisteners.model.Network.CellularProbe;
-import edu.umd.fcmd.sensorlisteners.model.Network.NetworkProbe;
-import edu.umd.fcmd.sensorlisteners.model.Network.WiFiProbe;
+import edu.umd.fcmd.sensorlisteners.model.networkN.CellularProbe;
+import edu.umd.fcmd.sensorlisteners.model.networkN.NetworkProbe;
+import edu.umd.fcmd.sensorlisteners.model.networkN.WiFiProbe;
 
 import static android.content.ContentValues.TAG;
 

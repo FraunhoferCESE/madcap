@@ -16,8 +16,8 @@ import org.mockito.MockitoAnnotations;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
-import edu.umd.fcmd.sensorlisteners.model.Location.LocationProbe;
-import edu.umd.fcmd.sensorlisteners.model.Location.LocationServiceStatusProbe;
+import edu.umd.fcmd.sensorlisteners.model.locationC.LocationProbe;
+import edu.umd.fcmd.sensorlisteners.model.locationC.LocationServiceStatusProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 

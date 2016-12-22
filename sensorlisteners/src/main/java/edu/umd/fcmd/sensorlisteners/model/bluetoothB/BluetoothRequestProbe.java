@@ -1,29 +1,33 @@
-package edu.umd.fcmd.sensorlisteners.model.Network;
+package edu.umd.fcmd.sensorlisteners.model.bluetoothB;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/2/2016.
+ * Created by MMueller on 12/6/2016.
+ *
+ * Model class representing requests by other apps to
+ * invoke methods with the Bluetooth.
  */
-
-public class CellularProbe extends Probe {
-    private final String CELLULAR_TYPE = "Cellular";
-    private String state;
+public class BluetoothRequestProbe extends Probe {
+    private String kind;
 
     /**
-     * Gets the state.
-     * @return state.
+     * Gets what kind of request it is.
+     * @return the kind.
      */
-    public String getState() {
-        return state;
+    public String getKind() {
+        return kind;
     }
 
     /**
-     * Sets the state.
-     * @param state to be set.
+     * Sets what kind it is.
+     * Should be
+     * ENABLE or
+     * DISCOVERABle
+     * @param kind
      */
-    public void setState(String state) {
-        this.state = state;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
 
@@ -34,7 +38,7 @@ public class CellularProbe extends Probe {
      */
     @Override
     public String getType() {
-        return CELLULAR_TYPE;
+        return "BluetoothRequest";
     }
 
     /**
@@ -60,7 +64,7 @@ public class CellularProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"state\": " + (state != null ? state : "-") +
+        return "{\"kind\": " + kind +
                 '}';
     }
 }

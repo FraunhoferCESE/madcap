@@ -1,4 +1,4 @@
-package edu.umd.fcmd.sensorlisteners.model.Network;
+package edu.umd.fcmd.sensorlisteners.model.networkN;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
@@ -6,13 +6,9 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
  * Created by MMueller on 12/2/2016.
  */
 
-public class NetworkProbe extends Probe {
-    public static final String NOT_CONNECTED = "NOT_CONNECTED";
-    public static final String CONNECTED = "CONNECTED";
-
-    private final String NETWORK_TYPE = "Network";
+public class CellularProbe extends Probe {
+    private final String CELLULAR_TYPE = "Cellular";
     private String state;
-    private String info;
 
     /**
      * Gets the state.
@@ -30,21 +26,6 @@ public class NetworkProbe extends Probe {
         this.state = state;
     }
 
-    /**
-     * Gets the SecurityLevel.
-     *
-     * @return the SecurityLevel.
-     */
-    public String getInfo() {
-        return info;
-    }
-
-    /**
-     * Sets the SecurityLevel.
-     */
-    public void setInfo(String info) {
-        this.info = info;
-    }
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -53,7 +34,7 @@ public class NetworkProbe extends Probe {
      */
     @Override
     public String getType() {
-        return NETWORK_TYPE;
+        return CELLULAR_TYPE;
     }
 
     /**
@@ -80,7 +61,6 @@ public class NetworkProbe extends Probe {
     @Override
     public String toString() {
         return "{\"state\": " + (state != null ? state : "-") +
-                ", \"info\": " + (info != null ? info : "-") +
                 '}';
     }
 }

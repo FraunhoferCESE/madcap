@@ -1,4 +1,4 @@
-package edu.umd.fcmd.sensorlisteners.model.Network;
+package edu.umd.fcmd.sensorlisteners.model.networkN;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 

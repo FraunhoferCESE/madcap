@@ -8,8 +8,8 @@ import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.model.ChargingProbe;
-import edu.umd.fcmd.sensorlisteners.model.PowerProbe;
+import edu.umd.fcmd.sensorlisteners.model.powerC.ChargingProbe;
+import edu.umd.fcmd.sensorlisteners.model.powerC.PowerProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 

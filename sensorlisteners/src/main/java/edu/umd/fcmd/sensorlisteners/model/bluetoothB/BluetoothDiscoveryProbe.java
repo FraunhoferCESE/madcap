@@ -1,44 +1,28 @@
-package edu.umd.fcmd.sensorlisteners.model.Bluetooth;
+package edu.umd.fcmd.sensorlisteners.model.bluetoothB;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/5/2016.
+ * Created by MMueller on 12/6/2016.
  *
- * Represents a state of the Bluetooth Adapter.
- * According to
- * BluetoothAdapter.STATE_OFF
- * BluetoothAdapter.STATE_TURNING_ON,
- * BluetoothAdapter.STATE_ON,
- * BluetoothAdapter.STATE_TURNING_OFF.
+ * Model class for the discovery function of a bluetooth device.
  */
-
-public class BluetoothScanModeProbe extends Probe {
-    private final String TAG = getClass().getSimpleName();
-
+public class BluetoothDiscoveryProbe extends Probe {
     private String state;
 
     /**
-     * Getter for the state.
+     * Getter for the state. Typically something like
+     * started/finished.
      *
-     * @return a State string.
-     * It is eigther
-     * INVISABLE
-     * INVISABLE BUT CONNECTABLE or
-     * VISABLE
+     * @return the state.
      */
     public String getState() {
         return state;
     }
 
     /**
-     * Sets the state.
-     *
-     * @param state the state to set.
-     * Should be eigther
-     * INVISABLE
-     * INVISiBLE BUT CONNECTABLE or
-     * VISABLE.
+     * Setter for the state.
+     * @param state to set to.
      */
     public void setState(String state) {
         this.state = state;
@@ -51,7 +35,7 @@ public class BluetoothScanModeProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothScanMode";
+        return "BluetoothDiscoveryProbe";
     }
 
     /**
@@ -80,6 +64,4 @@ public class BluetoothScanModeProbe extends Probe {
         return "{\"state\": " + state +
                 '}';
     }
-
 }
-

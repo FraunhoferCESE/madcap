@@ -13,7 +13,7 @@ import com.google.android.gms.location.DetectedActivity;
 
 import java.util.List;
 
-import edu.umd.fcmd.sensorlisteners.model.ActivityProbe;
+import edu.umd.fcmd.sensorlisteners.model.activityA.ActivityProbe;
 
 /**
  * Created by MMueller on 12/9/2016.

@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import edu.umd.fcmd.sensorlisteners.model.powerC.ChargingProbe;
 
 /**
  * Created by MMueller on 12/12/2016.

@@ -22,9 +22,9 @@ import java.util.List;
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.model.Network.CellularProbe;
+import edu.umd.fcmd.sensorlisteners.model.networkN.CellularProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
-import edu.umd.fcmd.sensorlisteners.model.Network.WiFiProbe;
+import edu.umd.fcmd.sensorlisteners.model.networkN.WiFiProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 import static android.content.Context.TELEPHONY_SERVICE;

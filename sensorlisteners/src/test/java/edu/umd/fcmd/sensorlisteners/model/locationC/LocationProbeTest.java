@@ -1,4 +1,4 @@
-package edu.umd.fcmd.sensorlisteners.model.Location;
+package edu.umd.fcmd.sensorlisteners.model.locationC;
 
 import android.os.Bundle;
 
@@ -7,8 +7,6 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import edu.umd.fcmd.sensorlisteners.model.Location.LocationProbe;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;

@@ -8,7 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.umd.fcmd.sensorlisteners.model.Location.LocationServiceStatusProbe;
+import edu.umd.fcmd.sensorlisteners.model.locationC.LocationServiceStatusProbe;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;

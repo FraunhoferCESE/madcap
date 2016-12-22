@@ -1,35 +1,49 @@
-package edu.umd.fcmd.sensorlisteners.model.Bluetooth;
+package edu.umd.fcmd.sensorlisteners.model.bluetoothB;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
  * Created by MMueller on 12/6/2016.
  *
- * Model class representing requests by other apps to
- * invoke methods with the Bluetooth.
+ * Model Class for static attributes of a Bluetooth Adapter.
  */
-public class BluetoothRequestProbe extends Probe {
-    private String kind;
+
+public class BluetoothStaticAttributesProbe extends Probe {
+    private String name;
+    private String address;
 
     /**
-     * Gets what kind of request it is.
-     * @return the kind.
+     * Getter for the name th user can configure.
+     * Something like "Bob's phone"
+     * @return the bleutooth device name.
      */
-    public String getKind() {
-        return kind;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Sets what kind it is.
-     * Should be
-     * ENABLE or
-     * DISCOVERABle
-     * @param kind
+     * Setter for the name.
+     * @param name name to be set.
      */
-    public void setKind(String kind) {
-        this.kind = kind;
+    public void setName(String name) {
+        this.name = name;
     }
 
+    /**
+     * Getter for the bluetooth Adapter address.
+     * @return the address.
+     */
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * Setter for the Address.
+     * @param address to be set.
+     */
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -38,7 +52,7 @@ public class BluetoothRequestProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothRequest";
+        return "BluetoothStaticAttributes";
     }
 
     /**
@@ -64,7 +78,8 @@ public class BluetoothRequestProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"kind\": " + kind +
+        return "{\"name\": " + name +
+                ", \"address\": " + "\"" + address + "\"" +
                 '}';
     }
 }
