@@ -12,6 +12,12 @@ import android.util.Log;
 
 import java.util.List;
 
+import edu.umd.fcmd.sensorlisteners.model.network.CallStateProbe;
+import edu.umd.fcmd.sensorlisteners.model.network.CellProbe;
+import edu.umd.fcmd.sensorlisteners.model.network.TelecomServiceProbe;
+
+import static android.content.Context.TELEPHONY_SERVICE;
+
 /**
  * Created by MMueller on 12/22/2016.
  *
@@ -36,7 +42,7 @@ public class TelephonyListener extends PhoneStateListener {
     @Override
     public void onCellInfoChanged(List<CellInfo> cellInfo) {
         super.onCellInfoChanged(cellInfo);
-        Log.i(LOG_TAG, "onCellInfoChanged: " + cellInfo);
+        //Log.i(LOG_TAG, "onCellInfoChanged: " + cellInfo);
     }
 
     /**
@@ -45,6 +51,7 @@ public class TelephonyListener extends PhoneStateListener {
      */
     @Override
     public void onDataActivity(int direction) {
+        //TODO: Do we want to capture this?
         super.onDataActivity(direction);
         switch (direction) {
             case TelephonyManager.DATA_ACTIVITY_NONE:
@@ -77,57 +84,32 @@ public class TelephonyListener extends PhoneStateListener {
     @Override
     public void onDataConnectionStateChanged(int state, int networkType) {
         super.onDataConnectionStateChanged(state, networkType);
+
+        CellProbe cellProbe = createNewCellularProbe();
+        networkListener.onUpdate(cellProbe);
     }
 
     @Override
     public void onServiceStateChanged(ServiceState serviceState) {
         super.onServiceStateChanged(serviceState);
-//        Log.d(LOG_TAG, "onServiceStateChanged: " + serviceState.toString());
-//        Log.d(LOG_TAG, "onServiceStateChanged: getOperatorAlphaLong "
-//                + serviceState.getOperatorAlphaLong());
-//        Log.d(LOG_TAG, "onServiceStateChanged: getOperatorAlphaShort "
-//                + serviceState.getOperatorAlphaShort());
-//        Log.d(LOG_TAG, "onServiceStateChanged: getOperatorNumeric "
-//                + serviceState.getOperatorNumeric());
-//        Log.d(LOG_TAG, "onServiceStateChanged: getIsManualSelection "
-//                + serviceState.getIsManualSelection());
-//        Log.d(LOG_TAG,
-//                "onServiceStateChanged: getRoaming "
-//                        + serviceState.getRoaming());
 
-        switch (serviceState.getState()) {
-            case ServiceState.STATE_IN_SERVICE:
-                Log.i(LOG_TAG, "onServiceStateChanged: STATE_IN_SERVICE");
-                break;
-            case ServiceState.STATE_OUT_OF_SERVICE:
-                Log.i(LOG_TAG, "onServiceStateChanged: STATE_OUT_OF_SERVICE");
-                break;
-            case ServiceState.STATE_EMERGENCY_ONLY:
-                Log.i(LOG_TAG, "onServiceStateChanged: STATE_EMERGENCY_ONLY");
-                break;
-            case ServiceState.STATE_POWER_OFF:
-                Log.i(LOG_TAG, "onServiceStateChanged: STATE_POWER_OFF");
-                break;
-        }
+        TelecomServiceProbe telecomServiceProbe = createNewServiceProbe(serviceState);
+
+        networkListener.onUpdate(telecomServiceProbe);
     }
 
+    /**
+     * Callback invoked when device call state changes.
+     * @param state the call state.
+     * @param incomingNumber the incoming number if available.
+     */
     @Override
     public void onCallStateChanged(int state, String incomingNumber) {
         super.onCallStateChanged(state, incomingNumber);
-        switch (state) {
-            case TelephonyManager.CALL_STATE_IDLE:
-                Log.i(LOG_TAG, "onCallStateChanged: CALL_STATE_IDLE");
-                break;
-            case TelephonyManager.CALL_STATE_RINGING:
-                Log.i(LOG_TAG, "onCallStateChanged: CALL_STATE_RINGING");
-                break;
-            case TelephonyManager.CALL_STATE_OFFHOOK:
-                Log.i(LOG_TAG, "onCallStateChanged: CALL_STATE_OFFHOOK");
-                break;
-            default:
-                Log.i(LOG_TAG, "UNKNOWN_STATE: " + state);
-                break;
-        }
+
+        CallStateProbe callStateProbe = createNewCallStateProbe(state, incomingNumber);
+
+        networkListener.onUpdate(callStateProbe);
     }
 
     @Override
@@ -171,14 +153,104 @@ public class TelephonyListener extends PhoneStateListener {
 
     @Override
     public void onCallForwardingIndicatorChanged(boolean cfi) {
+        //TODO: do we want to capture this?
+
         super.onCallForwardingIndicatorChanged(cfi);
-        Log.i(LOG_TAG, "onCallForwardingIndicatorChanged: " + cfi);
+        //Log.i(LOG_TAG, "onCallForwardingIndicatorChanged: " + cfi);
     }
 
     @Override
     public void onMessageWaitingIndicatorChanged(boolean mwi) {
+        //TODO: do we want to capture this?
+
         super.onMessageWaitingIndicatorChanged(mwi);
-        Log.i(LOG_TAG, "onMessageWaitingIndicatorChanged: " + mwi);
+        //Log.i(LOG_TAG, "onMessageWaitingIndicatorChanged: " + mwi);
     }
+
+    /**
+     * Method for creating a new TelecomServiceProbe.
+     * @param serviceState the state.
+     * @return a new probe.
+     */
+    TelecomServiceProbe createNewServiceProbe(ServiceState serviceState) {
+        TelecomServiceProbe telecomServiceProbe = new TelecomServiceProbe();
+        telecomServiceProbe.setDate(System.currentTimeMillis());
+
+        if(serviceState.getRoaming()){
+            telecomServiceProbe.setRoaming("ROAMING");
+        }else{
+            telecomServiceProbe.setRoaming("NO_ROAMING");
+        }
+
+
+        switch (serviceState.getState()) {
+            case ServiceState.STATE_IN_SERVICE:
+                telecomServiceProbe.setService("STATE_IN_SERVICE");
+                break;
+            case ServiceState.STATE_OUT_OF_SERVICE:
+                telecomServiceProbe.setService("STATE_OUT_OF_SERVICE");
+                break;
+            case ServiceState.STATE_EMERGENCY_ONLY:
+                telecomServiceProbe.setService("STATE_EMERGENCY_ONLY");
+                break;
+            case ServiceState.STATE_POWER_OFF:
+                telecomServiceProbe.setService("STATE_POWER_OFF");
+                break;
+        }
+
+        return telecomServiceProbe;
+    }
+
+    CallStateProbe createNewCallStateProbe(int state, String incomingNumber) {
+        CallStateProbe callStateProbe = new CallStateProbe();
+        callStateProbe.setDate(System.currentTimeMillis());
+
+        switch (state) {
+            case TelephonyManager.CALL_STATE_IDLE:
+                callStateProbe.setState("IDLE");
+                break;
+            case TelephonyManager.CALL_STATE_RINGING:
+                callStateProbe.setState("RINGING");
+                break;
+            case TelephonyManager.CALL_STATE_OFFHOOK:
+                callStateProbe.setState("OFFHOOK");
+                break;
+            default:
+                callStateProbe.setState("UNKNOWN");
+                break;
+        }
+
+        return callStateProbe;
+    }
+
+    /**
+     * Creates a Cellular Probe.
+     * @return the created Probe.
+     */
+    CellProbe createNewCellularProbe(){
+        CellProbe cellProbe = new CellProbe();
+        cellProbe.setDate(System.currentTimeMillis());
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
+
+        switch (telephonyManager.getDataState()) {
+            case TelephonyManager.DATA_CONNECTED:
+                cellProbe.setState("CONNECTED");
+                break;
+            case TelephonyManager.DATA_DISCONNECTED:
+                cellProbe.setState("DISCONNECTED");
+                break;
+            case TelephonyManager.DATA_CONNECTING:
+                cellProbe.setState("CONNECTING");
+                break;
+            case TelephonyManager.DATA_SUSPENDED:
+                cellProbe.setState("DISCONNECTING");
+                break;
+            default:
+                cellProbe.setState("UNKNOWN");
+                break;
+        }
+        return cellProbe;
+    }
+
 }
 

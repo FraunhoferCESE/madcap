@@ -10,6 +10,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.telephony.PhoneStateListener;
+import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -22,7 +23,8 @@ import java.util.List;
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.model.network.CellularProbe;
+import edu.umd.fcmd.sensorlisteners.model.network.CallStateProbe;
+import edu.umd.fcmd.sensorlisteners.model.network.CellProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.network.WiFiProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
@@ -62,8 +64,6 @@ public class NetworkListener implements Listener {
         this.connectionInfoReceiverFactory = connectionInfoReceiverFactory;
         this.telephonyListenerFactory = telephonyListenerFactory;
         this.permissionDeniedHandler = permissionDeniedHandler;
-
-        sendInitalProbes();
     }
 
 
@@ -77,6 +77,8 @@ public class NetworkListener implements Listener {
         if(!runningStatus){
             instanciateNetworkReceiver(this, context);
             instaciateTelephonyListener();
+
+            sendInitalProbes();
         }
 
         runningStatus = true;
@@ -111,6 +113,7 @@ public class NetworkListener implements Listener {
                         | PhoneStateListener.LISTEN_SIGNAL_STRENGTHS
                         | PhoneStateListener.LISTEN_CALL_FORWARDING_INDICATOR
                         | PhoneStateListener.LISTEN_MESSAGE_WAITING_INDICATOR);
+
     }
 
     /**
@@ -139,6 +142,7 @@ public class NetworkListener implements Listener {
      * Sends the inital probes. Should be triggered on the start listening event.
      */
     private void sendInitalProbes() {
+        //WiFi
         WiFiProbe wiFiProbe = new WiFiProbe();
         wiFiProbe.setDate(System.currentTimeMillis());
         wiFiProbe.setIp(getIpAddress());
@@ -148,43 +152,20 @@ public class NetworkListener implements Listener {
 
         onUpdate(wiFiProbe);
 
-        CellularProbe cellularProbe = new CellularProbe();
-        cellularProbe.setDate(System.currentTimeMillis());
-        cellularProbe.setState(getCellDataState());
+        //Cell
+        CellProbe cellProbe = telephonyListener.createNewCellularProbe();
 
-        onUpdate(cellularProbe);
+        onUpdate(cellProbe);
 
+        //TelecomService
+        ServiceState serviceState;
+
+        //CallState
+        CallStateProbe callStateProbe = telephonyListener.createNewCallStateProbe(telephonyManager.getCallState(), "");
+
+        onUpdate(callStateProbe);
     }
 
-    /**
-     * Returns the state of the cellular network as a string.
-     *
-     * @return cellular network state
-     */
-    String getCellDataState() {
-        String result;
-        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
-
-        switch (telephonyManager.getDataState()) {
-            case TelephonyManager.DATA_CONNECTED:
-                result = "CONNECTED";
-                break;
-            case TelephonyManager.DATA_DISCONNECTED:
-                result = "DISCONNECTED";
-                break;
-            case TelephonyManager.DATA_CONNECTING:
-                result = "CONNECTING";
-                break;
-            case TelephonyManager.DATA_SUSPENDED:
-                result = "DISCONNECTING";
-                break;
-            default:
-                result = "Something went wrong.";
-                break;
-        }
-
-        return result;
-    }
 
     /**
      * Returns the current wifi state as a String for adding it to an intent.

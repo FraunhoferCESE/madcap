@@ -8,7 +8,6 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
-import edu.umd.fcmd.sensorlisteners.model.network.CellularProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.NetworkProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.WiFiProbe;
 
@@ -32,7 +31,7 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
             case ConnectivityManager.CONNECTIVITY_ACTION:
                 // Any network connection changed
                 networkListener.onUpdate(createCurrentNetworkProbe(intent));
-                //networkListener.onUpdate(createCurrentCellularProbe());
+                //networkListener.onUpdate(createNewCellularProbe());
                 break;
             case WifiManager.WIFI_STATE_CHANGED_ACTION:
                 // WIFI enabled/disabled/enabling/disabling/... change
@@ -43,7 +42,6 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
                 wiFiProbe1.setNetworkSecurity(networkListener.getCurrentSecurityLevel());
                 wiFiProbe1.setSsid(networkListener.getCurrentSSID());
                 networkListener.onUpdate(wiFiProbe1);
-                networkListener.onUpdate(createCurrentCellularProbe());
                 break;
             case WifiManager.NETWORK_STATE_CHANGED_ACTION:
                 // WiFi Network connection changed
@@ -58,7 +56,7 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
                     wiFiProbe3.setNetworkState(networkInfo.toString());
                 }
                 networkListener.onUpdate(wiFiProbe3);
-                //networkListener.onUpdate(createCurrentCellularProbe());
+                //networkListener.onUpdate(createNewCellularProbe());
                 networkListener.onUpdate(createCurrentNetworkProbe(intent));
                 break;
             case WifiManager.SUPPLICANT_STATE_CHANGED_ACTION:
@@ -74,24 +72,12 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
                     wiFiProbe4.setNetworkState(networkInfo2.toString());
                 }
                 networkListener.onUpdate(wiFiProbe4);
-                //networkListener.onUpdate(createCurrentCellularProbe());
+                //networkListener.onUpdate(createNewCellularProbe());
                 break;
             default:
                 Log.e(TAG, "something went wrong.");
                 break;
         }
-    }
-
-    /**
-     * Creates a Cellular Probe.
-     * @return the created Probe.
-     */
-    private CellularProbe createCurrentCellularProbe(){
-        CellularProbe cellularProbe = new CellularProbe();
-        cellularProbe.setDate(System.currentTimeMillis());
-        cellularProbe.setState(networkListener.getCellDataState());
-
-        return cellularProbe;
     }
 
     /**
