@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -26,10 +27,16 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.WiFiProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
+import static android.content.Context.TELEPHONY_SERVICE;
+
 /**
  * Created by MMueller on 12/2/2016.
+ *
+ * Listener Class for everything network related like:
+ *
+ * Internet, Calls, SMS
+ *
  */
-
 public class NetworkListener implements Listener {
     private final String TAG = getClass().getSimpleName();
     private boolean runningStatus;
@@ -39,16 +46,21 @@ public class NetworkListener implements Listener {
     private ProbeManager<Probe> probeProbeManager;
     private ConnectionInfoReceiverFactory connectionInfoReceiverFactory;
     private PermissionDeniedHandler permissionDeniedHandler;
+    private TelephonyManager telephonyManager;
+    private TelephonyListenerFactory telephonyListenerFactory;
+    private TelephonyListener telephonyListener;
 
     private static final boolean isLittleEndian = ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN);
 
     public NetworkListener(Context context,
                            ProbeManager<Probe> probeProbeManager,
                            ConnectionInfoReceiverFactory connectionInfoReceiverFactory,
+                           TelephonyListenerFactory telephonyListenerFactory,
                            PermissionDeniedHandler permissionDeniedHandler){
         this.context = context;
         this.probeProbeManager = probeProbeManager;
         this.connectionInfoReceiverFactory = connectionInfoReceiverFactory;
+        this.telephonyListenerFactory = telephonyListenerFactory;
         this.permissionDeniedHandler = permissionDeniedHandler;
 
         sendInitalProbes();
@@ -63,7 +75,8 @@ public class NetworkListener implements Listener {
     @Override
     public void startListening() throws NoSensorFoundException {
         if(!runningStatus){
-            instanciateReceiver(this, context);
+            instanciateNetworkReceiver(this, context);
+            instaciateTelephonyListener();
         }
 
         runningStatus = true;
@@ -73,6 +86,7 @@ public class NetworkListener implements Listener {
     public void stopListening() {
         if(runningStatus){
             context.unregisterReceiver(receiver);
+            telephonyManager.listen(telephonyListener, PhoneStateListener.LISTEN_NONE);
         }
         runningStatus = false;
     }
@@ -82,6 +96,23 @@ public class NetworkListener implements Listener {
         return runningStatus;
     }
 
+    private void instaciateTelephonyListener() {
+        telephonyManager = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
+
+        telephonyListener = telephonyListenerFactory.create(context, this);
+
+        telephonyManager.listen(telephonyListener,
+                PhoneStateListener.LISTEN_CALL_STATE
+                        | PhoneStateListener.LISTEN_CELL_INFO
+                        | PhoneStateListener.LISTEN_CELL_LOCATION
+                        | PhoneStateListener.LISTEN_DATA_ACTIVITY
+                        | PhoneStateListener.LISTEN_DATA_CONNECTION_STATE
+                        | PhoneStateListener.LISTEN_SERVICE_STATE
+                        | PhoneStateListener.LISTEN_SIGNAL_STRENGTHS
+                        | PhoneStateListener.LISTEN_CALL_FORWARDING_INDICATOR
+                        | PhoneStateListener.LISTEN_MESSAGE_WAITING_INDICATOR);
+    }
+
     /**
      * Instanciation of the receiver.
      * Seperation of this into another method due to reduction of complexity and
@@ -89,7 +120,7 @@ public class NetworkListener implements Listener {
      * @param networkListener
      * @param context
      */
-    private void instanciateReceiver(NetworkListener networkListener, Context context){
+    private void instanciateNetworkReceiver(NetworkListener networkListener, Context context){
         receiver = connectionInfoReceiverFactory.create(networkListener);
 
         IntentFilter intentFilter = new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
@@ -132,7 +163,7 @@ public class NetworkListener implements Listener {
      */
     String getCellDataState() {
         String result;
-        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
 
         switch (telephonyManager.getDataState()) {
             case TelephonyManager.DATA_CONNECTED:

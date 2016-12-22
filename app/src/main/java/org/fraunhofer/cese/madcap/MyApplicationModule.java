@@ -39,6 +39,7 @@ import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationRecei
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListenerFactory;
 
 /**
  * This class defines the providers to use for dependency injection
@@ -157,6 +158,9 @@ class MyApplicationModule {
 
     @Provides
     MadcapSensorNoAnswerReceivedHandler provideSensorNoAnswerReceivedHandler(){ return  new MadcapSensorNoAnswerReceivedHandler();}
+
+    @Provides
+    TelephonyListenerFactory provideTelephonyListenerFactory(){ return new TelephonyListenerFactory();}
 
     @Provides
     ConnectionInfoReceiverFactory provideConnectionInfoReceiverFactory(){
