@@ -7,8 +7,8 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.util.Log;
 
-import edu.umd.fcmd.sensorlisteners.model.powerC.ChargingProbe;
-import edu.umd.fcmd.sensorlisteners.model.powerC.PowerProbe;
+import edu.umd.fcmd.sensorlisteners.model.power.ChargingProbe;
+import edu.umd.fcmd.sensorlisteners.model.power.PowerProbe;
 
 /**
  * Created by MMueller on 12/12/2016.

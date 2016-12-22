@@ -1,31 +1,32 @@
-package edu.umd.fcmd.sensorlisteners.model.networkN;
+package edu.umd.fcmd.sensorlisteners.model.bluetooth;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/2/2016.
+ * Created by MMueller on 12/6/2016.
+ *
+ * Model class for the discovery function of a bluetooth device.
  */
-
-public class CellularProbe extends Probe {
-    private final String CELLULAR_TYPE = "Cellular";
+public class BluetoothDiscoveryProbe extends Probe {
     private String state;
 
     /**
-     * Gets the state.
-     * @return state.
+     * Getter for the state. Typically something like
+     * started/finished.
+     *
+     * @return the state.
      */
     public String getState() {
         return state;
     }
 
     /**
-     * Sets the state.
-     * @param state to be set.
+     * Setter for the state.
+     * @param state to set to.
      */
     public void setState(String state) {
         this.state = state;
     }
-
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -34,7 +35,7 @@ public class CellularProbe extends Probe {
      */
     @Override
     public String getType() {
-        return CELLULAR_TYPE;
+        return "BluetoothDiscoveryProbe";
     }
 
     /**
@@ -60,7 +61,7 @@ public class CellularProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"state\": " + (state != null ? state : "-") +
+        return "{\"state\": " + state +
                 '}';
     }
 }

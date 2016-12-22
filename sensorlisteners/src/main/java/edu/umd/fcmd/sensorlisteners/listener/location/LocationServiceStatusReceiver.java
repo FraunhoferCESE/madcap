@@ -9,7 +9,7 @@ import android.util.Log;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import edu.umd.fcmd.sensorlisteners.model.locationC.LocationServiceStatusProbe;
+import edu.umd.fcmd.sensorlisteners.model.location.LocationServiceStatusProbe;
 
 /**
  * Created by MMueller on 11/14/2016.

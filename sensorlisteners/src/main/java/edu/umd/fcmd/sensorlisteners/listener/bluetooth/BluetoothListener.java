@@ -14,9 +14,9 @@ import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.model.bluetoothB.BluetoothConnectionProbe;
-import edu.umd.fcmd.sensorlisteners.model.bluetoothB.BluetoothStateProbe;
-import edu.umd.fcmd.sensorlisteners.model.bluetoothB.BluetoothStaticAttributesProbe;
+import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothConnectionProbe;
+import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothStateProbe;
+import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothStaticAttributesProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 

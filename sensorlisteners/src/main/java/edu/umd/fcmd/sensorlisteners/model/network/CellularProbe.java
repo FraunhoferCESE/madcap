@@ -1,49 +1,31 @@
-package edu.umd.fcmd.sensorlisteners.model.bluetoothB;
+package edu.umd.fcmd.sensorlisteners.model.network;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/6/2016.
- *
- * Model Class for static attributes of a Bluetooth Adapter.
+ * Created by MMueller on 12/2/2016.
  */
 
-public class BluetoothStaticAttributesProbe extends Probe {
-    private String name;
-    private String address;
+public class CellularProbe extends Probe {
+    private final String CELLULAR_TYPE = "Cellular";
+    private String state;
 
     /**
-     * Getter for the name th user can configure.
-     * Something like "Bob's phone"
-     * @return the bleutooth device name.
+     * Gets the state.
+     * @return state.
      */
-    public String getName() {
-        return name;
+    public String getState() {
+        return state;
     }
 
     /**
-     * Setter for the name.
-     * @param name name to be set.
+     * Sets the state.
+     * @param state to be set.
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setState(String state) {
+        this.state = state;
     }
 
-    /**
-     * Getter for the bluetooth Adapter address.
-     * @return the address.
-     */
-    public String getAddress() {
-        return address;
-    }
-
-    /**
-     * Setter for the Address.
-     * @param address to be set.
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -52,7 +34,7 @@ public class BluetoothStaticAttributesProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothStaticAttributes";
+        return CELLULAR_TYPE;
     }
 
     /**
@@ -78,8 +60,7 @@ public class BluetoothStaticAttributesProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"name\": " + name +
-                ", \"address\": " + "\"" + address + "\"" +
+        return "{\"state\": " + (state != null ? state : "-") +
                 '}';
     }
 }

@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.umd.fcmd.sensorlisteners.model.powerC.PowerProbe;
+import edu.umd.fcmd.sensorlisteners.model.power.PowerProbe;
 
 /**
  * Created by MMueller on 12/12/2016.

@@ -1,47 +1,48 @@
-package edu.umd.fcmd.sensorlisteners.model.bluetoothB;
+package edu.umd.fcmd.sensorlisteners.model.bluetooth;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/5/2016.
+ * Created by MMueller on 12/6/2016.
  *
- * Represents a state of the Bluetooth Adapter.
- * According to
- * BluetoothAdapter.STATE_OFF
- * BluetoothAdapter.STATE_TURNING_ON,
- * BluetoothAdapter.STATE_ON,
- * BluetoothAdapter.STATE_TURNING_OFF.
+ * Model Class for static attributes of a Bluetooth Adapter.
  */
 
-public class BluetoothScanModeProbe extends Probe {
-    private final String TAG = getClass().getSimpleName();
-
-    private String state;
+public class BluetoothStaticAttributesProbe extends Probe {
+    private String name;
+    private String address;
 
     /**
-     * Getter for the state.
-     *
-     * @return a State string.
-     * It is eigther
-     * INVISABLE
-     * INVISABLE BUT CONNECTABLE or
-     * VISABLE
+     * Getter for the name th user can configure.
+     * Something like "Bob's phone"
+     * @return the bleutooth device name.
      */
-    public String getState() {
-        return state;
+    public String getName() {
+        return name;
     }
 
     /**
-     * Sets the state.
-     *
-     * @param state the state to set.
-     * Should be eigther
-     * INVISABLE
-     * INVISiBLE BUT CONNECTABLE or
-     * VISABLE.
+     * Setter for the name.
+     * @param name name to be set.
      */
-    public void setState(String state) {
-        this.state = state;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * Getter for the bluetooth Adapter address.
+     * @return the address.
+     */
+    public String getAddress() {
+        return address;
+    }
+
+    /**
+     * Setter for the Address.
+     * @param address to be set.
+     */
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     /**
@@ -51,7 +52,7 @@ public class BluetoothScanModeProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothScanMode";
+        return "BluetoothStaticAttributes";
     }
 
     /**
@@ -77,9 +78,8 @@ public class BluetoothScanModeProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"state\": " + state +
+        return "{\"name\": " + name +
+                ", \"address\": " + "\"" + address + "\"" +
                 '}';
     }
-
 }
-

@@ -8,12 +8,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import edu.umd.fcmd.sensorlisteners.model.bluetoothB.BluetoothConnectionProbe;
-import edu.umd.fcmd.sensorlisteners.model.bluetoothB.BluetoothDiscoveryProbe;
-import edu.umd.fcmd.sensorlisteners.model.bluetoothB.BluetoothRequestProbe;
-import edu.umd.fcmd.sensorlisteners.model.bluetoothB.BluetoothScanModeProbe;
-import edu.umd.fcmd.sensorlisteners.model.bluetoothB.BluetoothStateProbe;
-import edu.umd.fcmd.sensorlisteners.model.bluetoothB.BluetoothStaticAttributesProbe;
+import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothConnectionProbe;
+import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothDiscoveryProbe;
+import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothRequestProbe;
+import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothScanModeProbe;
+import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothStateProbe;
+import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothStaticAttributesProbe;
 
 import static android.bluetooth.BluetoothAdapter.EXTRA_CONNECTION_STATE;
 

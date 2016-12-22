@@ -1,4 +1,4 @@
-package edu.umd.fcmd.sensorlisteners.model.activityA;
+package edu.umd.fcmd.sensorlisteners.model.activity;
 
 import java.util.HashMap;
 

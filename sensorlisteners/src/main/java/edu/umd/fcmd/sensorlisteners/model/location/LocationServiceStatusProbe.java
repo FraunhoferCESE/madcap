@@ -1,33 +1,35 @@
-package edu.umd.fcmd.sensorlisteners.model.bluetoothB;
+package edu.umd.fcmd.sensorlisteners.model.location;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/6/2016.
- *
- * Model class representing requests by other apps to
- * invoke methods with the Bluetooth.
+ * Created by MMueller on 11/14/2016.
+ * <p>
+ * Is indicating if the user turned location status on
+ * or off.
  */
-public class BluetoothRequestProbe extends Probe {
-    private String kind;
+
+public class LocationServiceStatusProbe extends Probe {
+    public static final String ON = "ON";
+    public static final String OFF = "OFF";
+    public static final String NO_PROVIDER = "NO PROVIDER";
+    private static final String LOCATION_SERVICE_TYPE = "LocationService";
+    private String locationServiceStatus;
 
     /**
-     * Gets what kind of request it is.
-     * @return the kind.
+     * Gets the LocationServiceStatus.
+     *
+     * @return ON or OFF.
      */
-    public String getKind() {
-        return kind;
+    String getLocationServiceStatus() {
+        return locationServiceStatus;
     }
 
     /**
-     * Sets what kind it is.
-     * Should be
-     * ENABLE or
-     * DISCOVERABle
-     * @param kind
+     * Sets the LocationServiceStatus.
      */
-    public void setKind(String kind) {
-        this.kind = kind;
+    public void setLocationServiceStatus(String locationSerStatus) {
+        locationServiceStatus = locationSerStatus;
     }
 
 
@@ -38,7 +40,7 @@ public class BluetoothRequestProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothRequest";
+        return LOCATION_SERVICE_TYPE;
     }
 
     /**
@@ -64,7 +66,7 @@ public class BluetoothRequestProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"kind\": " + kind +
+        return "{\"LocationServiceStatus\": " + locationServiceStatus +
                 '}';
     }
 }

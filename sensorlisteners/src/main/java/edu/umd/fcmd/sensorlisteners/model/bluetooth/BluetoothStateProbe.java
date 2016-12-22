@@ -1,4 +1,4 @@
-package edu.umd.fcmd.sensorlisteners.model.bluetoothB;
+package edu.umd.fcmd.sensorlisteners.model.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 

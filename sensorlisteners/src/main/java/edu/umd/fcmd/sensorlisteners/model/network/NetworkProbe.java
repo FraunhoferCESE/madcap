@@ -1,31 +1,49 @@
-package edu.umd.fcmd.sensorlisteners.model.bluetoothB;
+package edu.umd.fcmd.sensorlisteners.model.network;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/6/2016.
- *
- * Model class for the discovery function of a bluetooth device.
+ * Created by MMueller on 12/2/2016.
  */
-public class BluetoothDiscoveryProbe extends Probe {
+
+public class NetworkProbe extends Probe {
+    public static final String NOT_CONNECTED = "NOT_CONNECTED";
+    public static final String CONNECTED = "CONNECTED";
+
+    private final String NETWORK_TYPE = "Network";
     private String state;
+    private String info;
 
     /**
-     * Getter for the state. Typically something like
-     * started/finished.
-     *
-     * @return the state.
+     * Gets the state.
+     * @return state.
      */
     public String getState() {
         return state;
     }
 
     /**
-     * Setter for the state.
-     * @param state to set to.
+     * Sets the state.
+     * @param state to be set.
      */
     public void setState(String state) {
         this.state = state;
+    }
+
+    /**
+     * Gets the SecurityLevel.
+     *
+     * @return the SecurityLevel.
+     */
+    public String getInfo() {
+        return info;
+    }
+
+    /**
+     * Sets the SecurityLevel.
+     */
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     /**
@@ -35,7 +53,7 @@ public class BluetoothDiscoveryProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothDiscoveryProbe";
+        return NETWORK_TYPE;
     }
 
     /**
@@ -61,7 +79,8 @@ public class BluetoothDiscoveryProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"state\": " + state +
+        return "{\"state\": " + (state != null ? state : "-") +
+                ", \"info\": " + (info != null ? info : "-") +
                 '}';
     }
 }

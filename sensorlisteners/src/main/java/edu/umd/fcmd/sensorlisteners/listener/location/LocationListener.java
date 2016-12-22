@@ -17,8 +17,8 @@ import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.model.locationC.LocationServiceStatusProbe;
-import edu.umd.fcmd.sensorlisteners.model.locationC.LocationProbe;
+import edu.umd.fcmd.sensorlisteners.model.location.LocationServiceStatusProbe;
+import edu.umd.fcmd.sensorlisteners.model.location.LocationProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 

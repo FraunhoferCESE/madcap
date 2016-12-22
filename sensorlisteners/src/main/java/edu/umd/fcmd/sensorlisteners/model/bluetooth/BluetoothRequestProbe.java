@@ -1,50 +1,35 @@
-package edu.umd.fcmd.sensorlisteners.model.networkN;
+package edu.umd.fcmd.sensorlisteners.model.bluetooth;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/2/2016.
+ * Created by MMueller on 12/6/2016.
+ *
+ * Model class representing requests by other apps to
+ * invoke methods with the Bluetooth.
  */
-
-public class NetworkProbe extends Probe {
-    public static final String NOT_CONNECTED = "NOT_CONNECTED";
-    public static final String CONNECTED = "CONNECTED";
-
-    private final String NETWORK_TYPE = "Network";
-    private String state;
-    private String info;
+public class BluetoothRequestProbe extends Probe {
+    private String kind;
 
     /**
-     * Gets the state.
-     * @return state.
+     * Gets what kind of request it is.
+     * @return the kind.
      */
-    public String getState() {
-        return state;
+    public String getKind() {
+        return kind;
     }
 
     /**
-     * Sets the state.
-     * @param state to be set.
+     * Sets what kind it is.
+     * Should be
+     * ENABLE or
+     * DISCOVERABle
+     * @param kind
      */
-    public void setState(String state) {
-        this.state = state;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
-    /**
-     * Gets the SecurityLevel.
-     *
-     * @return the SecurityLevel.
-     */
-    public String getInfo() {
-        return info;
-    }
-
-    /**
-     * Sets the SecurityLevel.
-     */
-    public void setInfo(String info) {
-        this.info = info;
-    }
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -53,7 +38,7 @@ public class NetworkProbe extends Probe {
      */
     @Override
     public String getType() {
-        return NETWORK_TYPE;
+        return "BluetoothRequest";
     }
 
     /**
@@ -79,8 +64,7 @@ public class NetworkProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"state\": " + (state != null ? state : "-") +
-                ", \"info\": " + (info != null ? info : "-") +
+        return "{\"kind\": " + kind +
                 '}';
     }
 }

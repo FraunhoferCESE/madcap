@@ -1,34 +1,47 @@
-package edu.umd.fcmd.sensorlisteners.model.powerC;
+package edu.umd.fcmd.sensorlisteners.model.bluetooth;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/12/2016.
+ * Created by MMueller on 12/5/2016.
  *
- * Model class showing the the device is now charging.
+ * Represents a state of the Bluetooth Adapter.
+ * According to
+ * BluetoothAdapter.STATE_OFF
+ * BluetoothAdapter.STATE_TURNING_ON,
+ * BluetoothAdapter.STATE_ON,
+ * BluetoothAdapter.STATE_TURNING_OFF.
  */
-public class ChargingProbe extends Probe {
-    public static final String USB = "USB";
-    public static final String AC = "AC";
-    public static final String WIRELESS = "WIRELESS";
-    public static final String NONE = "-";
 
-    private String charging;
+public class BluetoothScanModeProbe extends Probe {
+    private final String TAG = getClass().getSimpleName();
+
+    private String state;
 
     /**
-     * Gets the charging method.
-     * @return the charging.
+     * Getter for the state.
+     *
+     * @return a State string.
+     * It is eigther
+     * INVISABLE
+     * INVISABLE BUT CONNECTABLE or
+     * VISABLE
      */
-    public String getCharging() {
-        return charging;
+    public String getState() {
+        return state;
     }
 
     /**
-     * Sets the charging method
-     * @param charging to set to.
+     * Sets the state.
+     *
+     * @param state the state to set.
+     * Should be eigther
+     * INVISABLE
+     * INVISiBLE BUT CONNECTABLE or
+     * VISABLE.
      */
-    public void setCharging(String charging) {
-        this.charging = charging;
+    public void setState(String state) {
+        this.state = state;
     }
 
     /**
@@ -38,7 +51,7 @@ public class ChargingProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "Charging";
+        return "BluetoothScanMode";
     }
 
     /**
@@ -64,7 +77,9 @@ public class ChargingProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"charging\": " + (charging != null ? charging : "-")  +
+        return "{\"state\": " + state +
                 '}';
     }
+
 }
+

@@ -1,4 +1,4 @@
-package edu.umd.fcmd.sensorlisteners.model.locationC;
+package edu.umd.fcmd.sensorlisteners.model.location;
 
 import android.os.Bundle;
 

@@ -15,7 +15,7 @@ import com.google.android.gms.common.api.ResultCallback;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
-import edu.umd.fcmd.sensorlisteners.model.locationC.LocationProbe;
+import edu.umd.fcmd.sensorlisteners.model.location.LocationProbe;
 
 /**
  * A asynchronous timed location task being started to retrieve
