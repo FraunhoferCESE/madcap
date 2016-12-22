@@ -1,47 +1,35 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.Bluetooth;
+
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
  * Created by MMueller on 12/6/2016.
  *
- * Model Class for static attributes of a Bluetooth Adapter.
+ * Model class representing requests by other apps to
+ * invoke methods with the Bluetooth.
  */
-
-public class BluetoothStaticAttributesProbe extends Probe {
-    private String name;
-    private String address;
+public class BluetoothRequestProbe extends Probe {
+    private String kind;
 
     /**
-     * Getter for the name th user can configure.
-     * Something like "Bob's phone"
-     * @return the bleutooth device name.
+     * Gets what kind of request it is.
+     * @return the kind.
      */
-    public String getName() {
-        return name;
+    public String getKind() {
+        return kind;
     }
 
     /**
-     * Setter for the name.
-     * @param name name to be set.
+     * Sets what kind it is.
+     * Should be
+     * ENABLE or
+     * DISCOVERABle
+     * @param kind
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
-    /**
-     * Getter for the bluetooth Adapter address.
-     * @return the address.
-     */
-    public String getAddress() {
-        return address;
-    }
-
-    /**
-     * Setter for the Address.
-     * @param address to be set.
-     */
-    public void setAddress(String address) {
-        this.address = address;
-    }
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -50,7 +38,7 @@ public class BluetoothStaticAttributesProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothStaticAttributes";
+        return "BluetoothRequest";
     }
 
     /**
@@ -76,8 +64,7 @@ public class BluetoothStaticAttributesProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"name\": " + name +
-                ", \"address\": " + "\"" + address + "\"" +
+        return "{\"kind\": " + kind +
                 '}';
     }
 }

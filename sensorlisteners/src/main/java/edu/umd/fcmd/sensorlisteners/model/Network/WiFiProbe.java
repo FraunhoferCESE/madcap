@@ -1,4 +1,6 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.Network;
+
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
  * Created by MMueller on 12/2/2016.

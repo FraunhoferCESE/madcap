@@ -1,29 +1,22 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.Network;
+
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/5/2016.
- *
- * Represents a state of the Bluetooth Adapter.
- * According to
- * BluetoothAdapter.STATE_OFF
- * BluetoothAdapter.STATE_TURNING_ON,
- * BluetoothAdapter.STATE_ON,
- * BluetoothAdapter.STATE_TURNING_OFF.
+ * Created by MMueller on 12/2/2016.
  */
 
-public class BluetoothScanModeProbe extends Probe {
-    private final String TAG = getClass().getSimpleName();
+public class NetworkProbe extends Probe {
+    public static final String NOT_CONNECTED = "NOT_CONNECTED";
+    public static final String CONNECTED = "CONNECTED";
 
+    private final String NETWORK_TYPE = "Network";
     private String state;
+    private String info;
 
     /**
-     * Getter for the state.
-     *
-     * @return a State string.
-     * It is eigther
-     * INVISABLE
-     * INVISABLE BUT CONNECTABLE or
-     * VISABLE
+     * Gets the state.
+     * @return state.
      */
     public String getState() {
         return state;
@@ -31,15 +24,26 @@ public class BluetoothScanModeProbe extends Probe {
 
     /**
      * Sets the state.
-     *
-     * @param state the state to set.
-     * Should be eigther
-     * INVISABLE
-     * INVISiBLE BUT CONNECTABLE or
-     * VISABLE.
+     * @param state to be set.
      */
     public void setState(String state) {
         this.state = state;
+    }
+
+    /**
+     * Gets the SecurityLevel.
+     *
+     * @return the SecurityLevel.
+     */
+    public String getInfo() {
+        return info;
+    }
+
+    /**
+     * Sets the SecurityLevel.
+     */
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     /**
@@ -49,7 +53,7 @@ public class BluetoothScanModeProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothScanMode";
+        return NETWORK_TYPE;
     }
 
     /**
@@ -75,9 +79,8 @@ public class BluetoothScanModeProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"state\": " + state +
+        return "{\"state\": " + (state != null ? state : "-") +
+                ", \"info\": " + (info != null ? info : "-") +
                 '}';
     }
-
 }
-

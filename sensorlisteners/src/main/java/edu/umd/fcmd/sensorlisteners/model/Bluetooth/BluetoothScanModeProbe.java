@@ -1,35 +1,48 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.Bluetooth;
+
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 11/14/2016.
- * <p>
- * Is indicating if the user turned location status on
- * or off.
+ * Created by MMueller on 12/5/2016.
+ *
+ * Represents a state of the Bluetooth Adapter.
+ * According to
+ * BluetoothAdapter.STATE_OFF
+ * BluetoothAdapter.STATE_TURNING_ON,
+ * BluetoothAdapter.STATE_ON,
+ * BluetoothAdapter.STATE_TURNING_OFF.
  */
 
-public class LocationServiceStatusProbe extends Probe {
-    public static final String ON = "ON";
-    public static final String OFF = "OFF";
-    public static final String NO_PROVIDER = "NO PROVIDER";
-    private static final String LOCATION_SERVICE_TYPE = "LocationService";
-    private String locationServiceStatus;
+public class BluetoothScanModeProbe extends Probe {
+    private final String TAG = getClass().getSimpleName();
+
+    private String state;
 
     /**
-     * Gets the LocationServiceStatus.
+     * Getter for the state.
      *
-     * @return ON or OFF.
+     * @return a State string.
+     * It is eigther
+     * INVISABLE
+     * INVISABLE BUT CONNECTABLE or
+     * VISABLE
      */
-    String getLocationServiceStatus() {
-        return locationServiceStatus;
+    public String getState() {
+        return state;
     }
 
     /**
-     * Sets the LocationServiceStatus.
+     * Sets the state.
+     *
+     * @param state the state to set.
+     * Should be eigther
+     * INVISABLE
+     * INVISiBLE BUT CONNECTABLE or
+     * VISABLE.
      */
-    public void setLocationServiceStatus(String locationSerStatus) {
-        locationServiceStatus = locationSerStatus;
+    public void setState(String state) {
+        this.state = state;
     }
-
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -38,7 +51,7 @@ public class LocationServiceStatusProbe extends Probe {
      */
     @Override
     public String getType() {
-        return LOCATION_SERVICE_TYPE;
+        return "BluetoothScanMode";
     }
 
     /**
@@ -64,7 +77,9 @@ public class LocationServiceStatusProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"LocationServiceStatus\": " + locationServiceStatus +
+        return "{\"state\": " + state +
                 '}';
     }
+
 }
+

@@ -1,4 +1,4 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.Bluetooth;
 
 import junit.framework.Assert;
 
@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import edu.umd.fcmd.sensorlisteners.model.Bluetooth.BluetoothRequestProbe;
 
 /**
  * Created by MMueller on 12/7/2016.

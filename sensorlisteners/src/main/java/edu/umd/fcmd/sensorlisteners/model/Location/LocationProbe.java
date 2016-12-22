@@ -1,9 +1,8 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.Location;
 
-import android.location.Location;
 import android.os.Bundle;
 
-import java.util.Set;
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
  * Created by MMueller on 11/4/2016.

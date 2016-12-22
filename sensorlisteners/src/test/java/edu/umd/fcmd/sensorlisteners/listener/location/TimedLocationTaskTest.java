@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
-import edu.umd.fcmd.sensorlisteners.model.LocationProbe;
+import edu.umd.fcmd.sensorlisteners.model.Location.LocationProbe;
 
 import static junit.framework.TestCase.fail;
 import static org.mockito.Matchers.any;

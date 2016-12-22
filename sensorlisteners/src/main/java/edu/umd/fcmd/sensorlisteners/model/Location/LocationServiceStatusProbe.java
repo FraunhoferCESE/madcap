@@ -1,48 +1,37 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.Location;
+
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
- * Created by MMueller on 12/2/2016.
+ * Created by MMueller on 11/14/2016.
+ * <p>
+ * Is indicating if the user turned location status on
+ * or off.
  */
 
-public class NetworkProbe extends Probe {
-    public static final String NOT_CONNECTED = "NOT_CONNECTED";
-    public static final String CONNECTED = "CONNECTED";
-
-    private final String NETWORK_TYPE = "Network";
-    private String state;
-    private String info;
-
-    /**
-     * Gets the state.
-     * @return state.
-     */
-    public String getState() {
-        return state;
-    }
+public class LocationServiceStatusProbe extends Probe {
+    public static final String ON = "ON";
+    public static final String OFF = "OFF";
+    public static final String NO_PROVIDER = "NO PROVIDER";
+    private static final String LOCATION_SERVICE_TYPE = "LocationService";
+    private String locationServiceStatus;
 
     /**
-     * Sets the state.
-     * @param state to be set.
-     */
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    /**
-     * Gets the SecurityLevel.
+     * Gets the LocationServiceStatus.
      *
-     * @return the SecurityLevel.
+     * @return ON or OFF.
      */
-    public String getInfo() {
-        return info;
+    String getLocationServiceStatus() {
+        return locationServiceStatus;
     }
 
     /**
-     * Sets the SecurityLevel.
+     * Sets the LocationServiceStatus.
      */
-    public void setInfo(String info) {
-        this.info = info;
+    public void setLocationServiceStatus(String locationSerStatus) {
+        locationServiceStatus = locationSerStatus;
     }
+
 
     /**
      * Gets the type of an state e.g. Accelerometer
@@ -51,7 +40,7 @@ public class NetworkProbe extends Probe {
      */
     @Override
     public String getType() {
-        return NETWORK_TYPE;
+        return LOCATION_SERVICE_TYPE;
     }
 
     /**
@@ -77,8 +66,7 @@ public class NetworkProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"state\": " + (state != null ? state : "-") +
-                ", \"info\": " + (info != null ? info : "-") +
+        return "{\"LocationServiceStatus\": " + locationServiceStatus +
                 '}';
     }
 }

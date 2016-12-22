@@ -1,4 +1,4 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.Location;
 
 import junit.framework.Assert;
 
@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import edu.umd.fcmd.sensorlisteners.model.Location.LocationServiceStatusProbe;
 
 /**
  * Created by MMueller on 11/15/2016.

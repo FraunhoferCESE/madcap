@@ -1,17 +1,20 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.Bluetooth;
+
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
  * Created by MMueller on 12/6/2016.
  *
- * Model class for the discovery function of a bluetooth device.
+ * Probe modelling a bluetooth connection.
  */
-public class BluetoothDiscoveryProbe extends Probe {
+
+public class BluetoothConnectionProbe extends Probe {
     private String state;
+    private String foreignAddress;
+    private String foreignName;
 
     /**
-     * Getter for the state. Typically something like
-     * started/finished.
-     *
+     * Getter for the state.
      * @return the state.
      */
     public String getState() {
@@ -20,10 +23,42 @@ public class BluetoothDiscoveryProbe extends Probe {
 
     /**
      * Setter for the state.
-     * @param state to set to.
+     * @param state the state to set to.
      */
     public void setState(String state) {
         this.state = state;
+    }
+
+    /**
+     * Getter for the connected devices address.
+     * @return the connected devices address.
+     */
+    public String getForeignAddress() {
+        return foreignAddress;
+    }
+
+    /**
+     * Setter for the connected devices address.
+     * @param foreignAddress the address to set to.
+     */
+    public void setForeignAddress(String foreignAddress) {
+        this.foreignAddress = foreignAddress;
+    }
+
+    /**
+     * Getter for the connected devices name.
+     * @return the connected devices name.
+     */
+    public String getForeignName() {
+        return foreignName;
+    }
+
+    /**
+     * Setter for the connected devices name.
+     * @param foreignName the name to set to.
+     */
+    public void setForeignName(String foreignName) {
+        this.foreignName = foreignName;
     }
 
     /**
@@ -33,7 +68,7 @@ public class BluetoothDiscoveryProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "BluetoothDiscoveryProbe";
+        return "BluetoothConnection";
     }
 
     /**
@@ -60,6 +95,8 @@ public class BluetoothDiscoveryProbe extends Probe {
     @Override
     public String toString() {
         return "{\"state\": " + state +
+                ", \"foreignName\": " + foreignName +
+                ", \"foreignAddress\": " + "\""+(foreignAddress != null ? foreignAddress : "-") +"\"" +
                 '}';
     }
 }

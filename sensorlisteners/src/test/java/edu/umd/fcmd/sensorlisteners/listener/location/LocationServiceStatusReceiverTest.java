@@ -7,11 +7,9 @@ import android.location.LocationManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 
-import edu.umd.fcmd.sensorlisteners.model.LocationServiceStatusProbe;
+import edu.umd.fcmd.sensorlisteners.model.Location.LocationServiceStatusProbe;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;

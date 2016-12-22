@@ -14,8 +14,9 @@ import java.util.List;
 
 /**
  * Created by MMueller on 12/22/2016.
+ *
+ * Listening to changes in the telephone manager of any kind.
  */
-
 public class TelephonyListener extends PhoneStateListener {
     private final String TAG = getClass().getSimpleName();
     private final String LOG_TAG = TAG;
@@ -38,6 +39,10 @@ public class TelephonyListener extends PhoneStateListener {
         Log.i(LOG_TAG, "onCellInfoChanged: " + cellInfo);
     }
 
+    /**
+     * Callback invoked when data activity state changes.
+     * @param direction the direction
+     */
     @Override
     public void onDataActivity(int direction) {
         super.onDataActivity(direction);
@@ -63,21 +68,32 @@ public class TelephonyListener extends PhoneStateListener {
         }
     }
 
+    /**
+     * same as above, but with the network type.  Both called.
+     *
+     * @param state
+     * @param networkType
+     */
+    @Override
+    public void onDataConnectionStateChanged(int state, int networkType) {
+        super.onDataConnectionStateChanged(state, networkType);
+    }
+
     @Override
     public void onServiceStateChanged(ServiceState serviceState) {
         super.onServiceStateChanged(serviceState);
-        Log.d(LOG_TAG, "onServiceStateChanged: " + serviceState.toString());
-        Log.d(LOG_TAG, "onServiceStateChanged: getOperatorAlphaLong "
-                + serviceState.getOperatorAlphaLong());
-        Log.d(LOG_TAG, "onServiceStateChanged: getOperatorAlphaShort "
-                + serviceState.getOperatorAlphaShort());
-        Log.d(LOG_TAG, "onServiceStateChanged: getOperatorNumeric "
-                + serviceState.getOperatorNumeric());
-        Log.d(LOG_TAG, "onServiceStateChanged: getIsManualSelection "
-                + serviceState.getIsManualSelection());
-        Log.d(LOG_TAG,
-                "onServiceStateChanged: getRoaming "
-                        + serviceState.getRoaming());
+//        Log.d(LOG_TAG, "onServiceStateChanged: " + serviceState.toString());
+//        Log.d(LOG_TAG, "onServiceStateChanged: getOperatorAlphaLong "
+//                + serviceState.getOperatorAlphaLong());
+//        Log.d(LOG_TAG, "onServiceStateChanged: getOperatorAlphaShort "
+//                + serviceState.getOperatorAlphaShort());
+//        Log.d(LOG_TAG, "onServiceStateChanged: getOperatorNumeric "
+//                + serviceState.getOperatorNumeric());
+//        Log.d(LOG_TAG, "onServiceStateChanged: getIsManualSelection "
+//                + serviceState.getIsManualSelection());
+//        Log.d(LOG_TAG,
+//                "onServiceStateChanged: getRoaming "
+//                        + serviceState.getRoaming());
 
         switch (serviceState.getState()) {
             case ServiceState.STATE_IN_SERVICE:

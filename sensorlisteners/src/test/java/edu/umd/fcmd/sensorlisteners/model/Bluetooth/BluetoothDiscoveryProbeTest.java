@@ -1,4 +1,4 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.Bluetooth;
 
 import junit.framework.Assert;
 
@@ -6,12 +6,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import edu.umd.fcmd.sensorlisteners.model.Bluetooth.BluetoothDiscoveryProbe;
 
 /**
  * Created by MMueller on 12/7/2016.
  */
-public class BluetoothScanModeProbeTest {
+public class BluetoothDiscoveryProbeTest {
     @Before
     public void setUp() throws Exception {
 
@@ -24,7 +24,7 @@ public class BluetoothScanModeProbeTest {
 
     @Test
     public void getState() throws Exception {
-        BluetoothScanModeProbe cut = new BluetoothScanModeProbe();
+        BluetoothDiscoveryProbe cut = new BluetoothDiscoveryProbe();
 
         cut.setState("state");
 
@@ -33,7 +33,7 @@ public class BluetoothScanModeProbeTest {
 
     @Test
     public void setState() throws Exception {
-        BluetoothScanModeProbe cut = new BluetoothScanModeProbe();
+        BluetoothDiscoveryProbe cut = new BluetoothDiscoveryProbe();
 
         cut.setState("state");
 
@@ -42,19 +42,19 @@ public class BluetoothScanModeProbeTest {
 
     @Test
     public void getType() throws Exception {
-        BluetoothScanModeProbe cut = new BluetoothScanModeProbe();
+        BluetoothDiscoveryProbe cut = new BluetoothDiscoveryProbe();
 
-        Assert.assertEquals(cut.getType(), "BluetoothScanMode");
+        Assert.assertEquals(cut.getType(), "BluetoothDiscoveryProbe");
     }
 
     @Test
     public void testToString() throws Exception {
-        BluetoothScanModeProbe cut = new BluetoothScanModeProbe();
+        BluetoothDiscoveryProbe cut = new BluetoothDiscoveryProbe();
 
         cut.setState("state");
-
         Assert.assertEquals(cut.toString(), "{\"state\": " + "state" +
                 '}');
+
     }
 
 }
