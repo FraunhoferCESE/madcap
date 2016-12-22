@@ -55,7 +55,7 @@ public class ApplicationsListener implements Listener {
         if(!runningStatus){
             timedApplicationTask = timedApplicationTaskFactory.create(this, context, permissionDeniedHandler);
             timedApplicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            timedApplicationTask.checkForNewEvents(context, null, System.currentTimeMillis());
+            timedApplicationTask.sendInitialProbes();
         }
         runningStatus = true;
     }

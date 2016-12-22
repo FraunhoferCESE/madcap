@@ -152,8 +152,6 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
 
     private long getUsageEventsStatsManager(Context context, long lastTime) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            // This does not work
-            //long currentTime = calendar.getTimeInMillis();
             long currentTime = System.currentTimeMillis();
             if (lastTime != 0) {
                 //Retrieve form last time to current time
@@ -227,6 +225,48 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
         } else {
             Log.d(TAG, "getUsageEventsRunningTasks is deprecated for Api level 21+");
             return null;
+        }
+    }
+
+    public void sendInitialProbes(){
+        if(checkPermissions()){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                long currentTime = System.currentTimeMillis();
+                    //Retrieve form last time to current time
+                    UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
+                    UsageEvents usageEvents = usageStatsManager.queryEvents(currentTime-5000, currentTime);
+
+                    while(usageEvents.hasNextEvent()){
+                        UsageEvents.Event event = new UsageEvents.Event();
+                        usageEvents.getNextEvent(event);
+                        ForegroundBackgroundEventsProbe probe = new ForegroundBackgroundEventsProbe();
+                        probe.setAccuracy(1);
+                        probe.setClassName(event.getClassName());
+                        probe.setEventType(event.getEventType());
+                        probe.setPackageName(event.getPackageName());
+                        probe.setDate(event.getTimeStamp());
+                        publishProgress(probe);
+                    }
+                this.lastTime = currentTime;
+                //getUsageEvents();
+            } else {
+                ActivityManager mActivityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+                ComponentName componentName = mActivityManager.getRunningTasks(1).get(0).topActivity;
+
+                long currentTime = System.currentTimeMillis();
+                double acc = computeAccuracy(Build.VERSION.SDK_INT, lastTime, currentTime);
+
+                ForegroundBackgroundEventsProbe newProbe = new ForegroundBackgroundEventsProbe();
+                newProbe.setAccuracy(acc);
+                newProbe.setPackageName(componentName.getPackageName());
+                newProbe.setDate(currentTime);
+                newProbe.setEventType(UsageEvents.Event.MOVE_TO_FOREGROUND);
+                publishProgress(newProbe);
+
+                this.lastComponent = componentName;
+            }
+        }else{
+            permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         }
     }
 
