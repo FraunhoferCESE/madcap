@@ -9,9 +9,11 @@ import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
+import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 import java.math.BigInteger;
@@ -24,6 +26,7 @@ import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.network.CallStateProbe;
+import edu.umd.fcmd.sensorlisteners.model.network.CellLocationProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.CellProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.network.WiFiProbe;
@@ -164,6 +167,11 @@ public class NetworkListener implements Listener {
         CallStateProbe callStateProbe = telephonyListener.createNewCallStateProbe(telephonyManager.getCallState(), "");
 
         onUpdate(callStateProbe);
+
+        //CellLocation
+        CellLocation cellLoc = telephonyManager.getCellLocation();
+        CellLocationProbe cellLocationProbe = telephonyListener.createCellLocationProbe(cellLoc);
+        onUpdate(cellLocationProbe);
     }
 
 
