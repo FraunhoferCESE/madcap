@@ -130,7 +130,6 @@ public class TelephonyListener extends PhoneStateListener {
             telecomServiceProbe.setRoaming("NO_ROAMING");
         }
 
-
         switch (serviceState.getState()) {
             case ServiceState.STATE_IN_SERVICE:
                 telecomServiceProbe.setService("STATE_IN_SERVICE");

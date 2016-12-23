@@ -18,12 +18,16 @@ import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothScanModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
+import org.fraunhofer.cese.madcap.backend.models.CallStateEntry;
+import org.fraunhofer.cese.madcap.backend.models.CellEntry;
+import org.fraunhofer.cese.madcap.backend.models.CellLocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.ChargingEntry;
 import org.fraunhofer.cese.madcap.backend.models.DataCollectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.NetworkEntry;
 import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
@@ -220,8 +224,40 @@ public class ProbeDataSetEndpoint {
                     DataCollectionEntry dataCollectionEntry = new DataCollectionEntry(entry);
                     dalist.add(dataCollectionEntry);
                     break;
+                case "CallState":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<CallStateEntry>());
+                    }
+                    Collection<CallStateEntry> cslist = entryMap.get(entry.getProbeType());
+                    CallStateEntry callStateEntry = new CallStateEntry(entry);
+                    cslist.add(callStateEntry);
+                    break;
+                case "CellLocation":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<CellLocationEntry>());
+                    }
+                    Collection<CellLocationEntry> cllist = entryMap.get(entry.getProbeType());
+                    CellLocationEntry cellLocationEntry = new CellLocationEntry(entry);
+                    cllist.add(cellLocationEntry);
+                    break;
+                case "Cellular":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<CellEntry>());
+                    }
+                    Collection<CellEntry> celist = entryMap.get(entry.getProbeType());
+                    CellEntry cellEntry = new CellEntry(entry);
+                    celist.add(cellEntry);
+                    break;
+                case "Network":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<NetworkEntry>());
+                    }
+                    Collection<NetworkEntry> nelist = entryMap.get(entry.getProbeType());
+                    NetworkEntry networkEntry = new NetworkEntry(entry);
+                    nelist.add(networkEntry);
+                    break;
                 default:
-                    throw new IllegalArgumentException();
+                    throw new IllegalArgumentException("Unmateched Probe Type");
             }
         }
 

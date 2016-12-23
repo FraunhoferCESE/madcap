@@ -5,7 +5,6 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 /**
  * Created by MMueller on 12/22/2016.
  */
-
 public class TelecomServiceProbe extends Probe {
     private String service;
     private String roaming;
