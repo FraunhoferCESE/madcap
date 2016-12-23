@@ -32,6 +32,8 @@ import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
+import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -255,6 +257,22 @@ public class ProbeDataSetEndpoint {
                     Collection<NetworkEntry> nelist = entryMap.get(entry.getProbeType());
                     NetworkEntry networkEntry = new NetworkEntry(entry);
                     nelist.add(networkEntry);
+                    break;
+                case "TelecomService":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<TelecomServiceEntry>());
+                    }
+                    Collection<TelecomServiceEntry> tslist = entryMap.get(entry.getProbeType());
+                    TelecomServiceEntry telecomServiceEntry = new TelecomServiceEntry(entry);
+                    tslist.add(telecomServiceEntry);
+                    break;
+                case "WiFi":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<WiFiEntry>());
+                    }
+                    Collection<WiFiEntry> wflist = entryMap.get(entry.getProbeType());
+                    WiFiEntry wiFiEntry = new WiFiEntry(entry);
+                    wflist.add(wiFiEntry);
                     break;
                 default:
                     throw new IllegalArgumentException("Unmateched Probe Type");

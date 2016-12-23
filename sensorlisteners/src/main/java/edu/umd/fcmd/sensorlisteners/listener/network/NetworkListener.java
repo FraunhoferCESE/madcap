@@ -186,22 +186,23 @@ public class NetworkListener implements Listener {
 
         switch (intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0)) {
             case WifiManager.WIFI_STATE_ENABLED:
-                result = "enabled.";
+                result = "ENABLED";
                 break;
             case WifiManager.WIFI_STATE_DISABLED:
-                result = "disabled.";
+                result = "DISABLED";
                 break;
             case WifiManager.WIFI_STATE_ENABLING:
-                result = "enabling.";
+                result = "ENABLING";
                 break;
             case WifiManager.WIFI_STATE_DISABLING:
-                result = "disabling";
+                result = "DISABLING";
                 break;
             case WifiManager.WIFI_STATE_UNKNOWN:
-                result = "unknown.";
+                result = "UNKNOWN";
                 break;
             default:
-                result = "Something went wrong";
+                Log.d(TAG, "Something went wrong");
+                result = "-";
                 break;
         }
         return result;

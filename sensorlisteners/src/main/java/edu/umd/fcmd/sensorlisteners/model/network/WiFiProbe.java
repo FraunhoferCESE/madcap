@@ -134,6 +134,7 @@ public class WiFiProbe extends Probe {
                 ", \"ssid\": " + (ssid != null ? ssid : "-") +
                 ", \"networkSecurity\": " + (networkSecurity != null ? networkSecurity : "-") +
                 ", \"ip\": " + (ip != null ? ip : "-") +
+                ", \"networkState\": " + (networkState != null ? networkState : "-") +
                 '}';
     }
 }
