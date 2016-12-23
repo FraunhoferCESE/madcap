@@ -132,8 +132,8 @@ public class WiFiProbe extends Probe {
     public String toString() {
         return "{\"state\": " + (state != null ? state : "-") +
                 ", \"ssid\": " + (ssid != null ? ssid : "-") +
-                ", \"networkSecurity\": " + (networkSecurity != null ? networkSecurity : "-") +
-                ", \"ip\": " + (ip != null ? ip : "-") +
+                ", \"networkSecurity\": " + (networkSecurity != null ? "\""+networkSecurity+"\"" : "-") +
+                ", \"ip\": " + (ip != null ? "\""+ip+"\"" : "-") +
                 ", \"networkState\": " + (networkState != null ? networkState : "-") +
                 '}';
     }
