@@ -203,7 +203,7 @@ class MyApplicationModule {
 
 //        Resources res = application.getResources();
 
-        config.setUploadWifiOnly(true);
+        config.setUploadWifiOnly(false);
 
         return config;
     }
