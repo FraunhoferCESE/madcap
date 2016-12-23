@@ -11,14 +11,20 @@ import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothScanModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
+import org.fraunhofer.cese.madcap.backend.models.CallStateEntry;
+import org.fraunhofer.cese.madcap.backend.models.CellEntry;
+import org.fraunhofer.cese.madcap.backend.models.CellLocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.ChargingEntry;
 import org.fraunhofer.cese.madcap.backend.models.DataCollectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.NetworkEntry;
 import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
+import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
 
 /**
  *
@@ -41,6 +47,12 @@ public class OfyService {
         ObjectifyService.register(PowerEntry.class);
         ObjectifyService.register(ChargingEntry.class);
         ObjectifyService.register(DataCollectionEntry.class);
+        ObjectifyService.register(CallStateEntry.class);
+        ObjectifyService.register(CellEntry.class);
+        ObjectifyService.register(CellLocationEntry.class);
+        ObjectifyService.register(TelecomServiceEntry.class);
+        ObjectifyService.register(NetworkEntry.class);
+        ObjectifyService.register(WiFiEntry.class);
     }
 
     /**

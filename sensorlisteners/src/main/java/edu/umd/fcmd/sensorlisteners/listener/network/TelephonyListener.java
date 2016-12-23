@@ -90,7 +90,7 @@ public class TelephonyListener extends PhoneStateListener {
             CellLocationProbe cellLocationProbe = new CellLocationProbe();
             cellLocationProbe.setDate(System.currentTimeMillis());
             cellLocationProbe.setCellType("GSM");
-            cellLocationProbe.setAreaCode(gcLoc.getLac()+"");
+            cellLocationProbe.setAreaCode(gcLoc.getLac()+" ");
 
             return cellLocationProbe;
         } else if (location instanceof CdmaCellLocation) {
@@ -99,7 +99,7 @@ public class TelephonyListener extends PhoneStateListener {
             CellLocationProbe cellLocationProbe = new CellLocationProbe();
             cellLocationProbe.setDate(System.currentTimeMillis());
             cellLocationProbe.setCellType("CDMA");
-            cellLocationProbe.setAreaCode(ccLoc.getBaseStationId()+"");
+            cellLocationProbe.setAreaCode(ccLoc.getBaseStationId()+" ");
             cellLocationProbe.setLat(ccLoc.getBaseStationLongitude());
             cellLocationProbe.setLat(ccLoc.getBaseStationLatitude());
 

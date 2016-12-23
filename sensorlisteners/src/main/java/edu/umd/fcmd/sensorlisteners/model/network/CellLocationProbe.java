@@ -110,7 +110,7 @@ public class CellLocationProbe extends Probe {
     @Override
     public String toString() {
         return "{\"cellType\": " + (cellType != null ? cellType : "-") +
-                ", \"areaCode\": " + (areaCode != null ? areaCode : "-") +
+                ", \"areaCode\": " + (areaCode != null ? "\""+areaCode+"\"" : "-") +
                 ", \"lat\": " + lat +
                 ", \"lng\": " + lng +
                 '}';
