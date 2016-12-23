@@ -149,7 +149,7 @@ public class NetworkListener implements Listener {
         WiFiProbe wiFiProbe = new WiFiProbe();
         wiFiProbe.setDate(System.currentTimeMillis());
         wiFiProbe.setIp(getIpAddress());
-        wiFiProbe.setNetworkSecurity(getCurrentWiFiInfo());
+        wiFiProbe.setNetworkSecurity(getCurrentSecurityLevel());
         wiFiProbe.setState(getWifiState(((WifiManager) context.getSystemService(Context.WIFI_SERVICE)).getWifiState()));
         wiFiProbe.setSsid(getCurrentSSID());
 
