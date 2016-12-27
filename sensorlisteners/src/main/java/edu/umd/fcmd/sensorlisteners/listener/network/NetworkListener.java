@@ -208,55 +208,6 @@ public class NetworkListener implements Listener {
         return result;
     }
 
-    String getCurrentSecurityLevel() {
-        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-        List<ScanResult> networkList = wifi.getScanResults();
-
-        //get current connected SSID for comparison to ScanResult
-        WifiInfo wi = wifi.getConnectionInfo();
-        String currentSSID = wi.getSSID();
-
-        //Log.d(TAG, "Own ssid "+currentSSID);
-
-        if (networkList != null) {
-            for (ScanResult network : networkList) {
-                //check if current connected SSID.
-                //Log.d(TAG, "Other ssid "+network.SSID);
-                if (currentSSID.equals("\""+network.SSID+"\"")) {
-                    //get capabilities of current connection
-                    String capabilities = network.capabilities;
-                    Log.d(TAG, network.SSID + " capabilities : " + capabilities);
-
-                    if (capabilities.contains("WPA2")) {
-                        return  "WPA2";
-                    } else if (capabilities.contains("WPA")) {
-                        return "WPA2";
-                    } else if (capabilities.contains("WEP")) {
-                        return "WEP";
-                    }else if(capabilities.contains("Open")){
-                        return "OPEN";
-                    }
-                }
-            }
-        }
-        return "-";
-    }
-
-    String getCurrentWiFiInfo(){
-        String permissionName = "android.permission.ACCESS_WIFI_STATE";
-        int permission = context.checkCallingOrSelfPermission(permissionName);
-
-        if(permission == PackageManager.PERMISSION_GRANTED){
-            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-
-            return wifiInfo.toString();
-        }else{
-            permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_WIFI_STATE);
-            return "";
-        }
-    }
-
     /**
      * Returns the current wifi state as a String form an int.
      *
@@ -289,6 +240,42 @@ public class NetworkListener implements Listener {
         }
         return result;
     }
+
+    String getCurrentSecurityLevel() {
+        WifiManager wifi = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        List<ScanResult> networkList = wifi.getScanResults();
+
+        //get current connected SSID for comparison to ScanResult
+        WifiInfo wi = wifi.getConnectionInfo();
+        String currentSSID = wi.getSSID();
+
+        //Log.d(TAG, "Own ssid "+currentSSID);
+
+        if (networkList != null) {
+            for (ScanResult network : networkList) {
+                //check if current connected SSID.
+                //Log.d(TAG, "Other ssid "+network.SSID);
+                if (currentSSID.equals("\""+network.SSID+"\"")) {
+                    //get capabilities of current connection
+                    String capabilities = network.capabilities;
+                    Log.d(TAG, network.SSID + " capabilities : " + capabilities);
+
+                    if (capabilities.contains("WPA2")) {
+                        return  "WPA2";
+                    } else if (capabilities.contains("WPA")) {
+                        return "WPA";
+                    } else if (capabilities.contains("WEP")) {
+                        return "WEP";
+                    }else if(capabilities.contains("Open")){
+                        return "OPEN";
+                    }
+                }
+            }
+        }
+        return "-";
+    }
+
+
 
     /**
      * Method for getting the current used IP-Address.
