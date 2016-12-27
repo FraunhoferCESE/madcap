@@ -204,16 +204,20 @@ public class LocationProbe extends Probe {
     private String processExtras(LocationProbe locationProbe) {
         Bundle extras = locationProbe.getExtras();
 
-        if (locationProbe.getOrigin().equals("gps") && extras.containsKey("satellites")) {
-            return Integer.toString(extras.getInt("satellites"));
-        } else if (locationProbe.getOrigin().equals("network") && extras.containsKey("networkLocationType")) {
-            return extras.getString("networkLocationType");
-        } else {
-            String r = "";
-            for (String key : extras.keySet()) {
-                r = r + key + ':'+ ((extras.get(key) == null) ? "null" : extras.get(key)) + " ,";
+        if(locationProbe.getOrigin() != null){
+            if (locationProbe.getOrigin().equals("gps") && extras.containsKey("satellites")) {
+                return Integer.toString(extras.getInt("satellites"));
+            } else if (locationProbe.getOrigin().equals("network") && extras.containsKey("networkLocationType")) {
+                return extras.getString("networkLocationType");
+            } else {
+                String r = "";
+                for (String key : extras.keySet()) {
+                    r = r + key + ':'+ ((extras.get(key) == null) ? "null" : extras.get(key)) + " ,";
+                }
+                return r;
             }
-            return r;
+        }else{
+            return "";
         }
     }
 }
