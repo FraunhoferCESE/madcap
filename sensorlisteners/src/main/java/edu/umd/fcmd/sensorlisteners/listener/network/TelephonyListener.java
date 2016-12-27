@@ -1,7 +1,6 @@
 package edu.umd.fcmd.sensorlisteners.listener.network;
 
 import android.content.Context;
-import android.telephony.CellInfo;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
@@ -10,14 +9,11 @@ import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
-import java.util.List;
-
 import edu.umd.fcmd.sensorlisteners.model.network.CallStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.CellLocationProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.CellProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.TelecomServiceProbe;
 
-import static android.R.attr.type;
 import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
@@ -25,14 +21,13 @@ import static android.content.Context.TELEPHONY_SERVICE;
  *
  * Listening to changes in the telephone manager of any kind.
  */
-public class TelephonyListener extends PhoneStateListener {
+class TelephonyListener extends PhoneStateListener {
     private final String TAG = getClass().getSimpleName();
-    private final String LOG_TAG = TAG;
 
-    private Context context;
-    private NetworkListener networkListener;
+    private final Context context;
+    private final NetworkListener networkListener;
 
-    public TelephonyListener(Context context, NetworkListener networkListener) {
+    TelephonyListener(Context context, NetworkListener networkListener) {
         this.context = context;
         this.networkListener = networkListener;
     }
@@ -40,8 +35,8 @@ public class TelephonyListener extends PhoneStateListener {
     /**
      * same as above, but with the network type.  Both called.
      *
-     * @param state
-     * @param networkType
+     * @param state the new state.
+     * @param networkType the network type.
      */
     @Override
     public void onDataConnectionStateChanged(int state, int networkType) {
@@ -51,6 +46,10 @@ public class TelephonyListener extends PhoneStateListener {
         networkListener.onUpdate(cellProbe);
     }
 
+    /**
+     * Callback for changing of servic states
+     * @param serviceState in service, emergency only, off service...
+     */
     @Override
     public void onServiceStateChanged(ServiceState serviceState) {
         super.onServiceStateChanged(serviceState);
@@ -100,12 +99,12 @@ public class TelephonyListener extends PhoneStateListener {
             cellLocationProbe.setDate(System.currentTimeMillis());
             cellLocationProbe.setCellType("CDMA");
             cellLocationProbe.setAreaCode(ccLoc.getBaseStationId()+" ");
-            cellLocationProbe.setLat(ccLoc.getBaseStationLongitude());
-            cellLocationProbe.setLat(ccLoc.getBaseStationLatitude());
+            cellLocationProbe.setLat((double) ccLoc.getBaseStationLongitude());
+            cellLocationProbe.setLat((double) ccLoc.getBaseStationLatitude());
 
             return cellLocationProbe;
         } else {
-            Log.i(LOG_TAG, "onCellLocationChanged: " + location.toString());
+            Log.i(TAG, "onCellLocationChanged: " + location.toString());
             CellLocationProbe cellLocationProbe = new CellLocationProbe();
             cellLocationProbe.setDate(System.currentTimeMillis());
             cellLocationProbe.setCellType("UNKNOWN");
@@ -120,7 +119,7 @@ public class TelephonyListener extends PhoneStateListener {
      * @param serviceState the state.
      * @return a new probe.
      */
-    TelecomServiceProbe createNewServiceProbe(ServiceState serviceState) {
+    private static TelecomServiceProbe createNewServiceProbe(ServiceState serviceState) {
         TelecomServiceProbe telecomServiceProbe = new TelecomServiceProbe();
         telecomServiceProbe.setDate(System.currentTimeMillis());
 
@@ -142,6 +141,8 @@ public class TelephonyListener extends PhoneStateListener {
                 break;
             case ServiceState.STATE_POWER_OFF:
                 telecomServiceProbe.setService("STATE_POWER_OFF");
+                break;
+            default:
                 break;
         }
 

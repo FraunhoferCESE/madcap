@@ -1,11 +1,10 @@
 package edu.umd.fcmd.sensorlisteners.listener.network;
 
-import android.Manifest;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -13,7 +12,6 @@ import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
-import android.telephony.gsm.GsmCellLocation;
 import android.util.Log;
 
 import java.math.BigInteger;
@@ -47,12 +45,12 @@ public class NetworkListener implements Listener {
     private boolean runningStatus;
 
     private BroadcastReceiver receiver;
-    private Context context;
-    private ProbeManager<Probe> probeProbeManager;
-    private ConnectionInfoReceiverFactory connectionInfoReceiverFactory;
-    private PermissionDeniedHandler permissionDeniedHandler;
+    private final Context context;
+    private final ProbeManager<Probe> probeProbeManager;
+    private final ConnectionInfoReceiverFactory connectionInfoReceiverFactory;
+    private final PermissionDeniedHandler permissionDeniedHandler;
     private TelephonyManager telephonyManager;
-    private TelephonyListenerFactory telephonyListenerFactory;
+    private final TelephonyListenerFactory telephonyListenerFactory;
     private TelephonyListener telephonyListener;
 
     private static final boolean isLittleEndian = ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN);
@@ -101,6 +99,9 @@ public class NetworkListener implements Listener {
         return runningStatus;
     }
 
+    /**
+     * Setup method for TelephonyListener
+     */
     private void instaciateTelephonyListener() {
         telephonyManager = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
 
