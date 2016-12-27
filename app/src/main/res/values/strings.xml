@@ -117,5 +117,6 @@
     <string name="datacollectionstatusoff">Data collection is OFF</string>
     <string name="last_upload_text">Last upload:</string>
     <string name="last_upload_date">lastUploadDate</string>
+    <string name="data_count">dataCount</string>
 
 </resources>
