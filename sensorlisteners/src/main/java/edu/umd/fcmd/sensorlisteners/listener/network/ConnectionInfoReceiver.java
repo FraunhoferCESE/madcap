@@ -19,7 +19,7 @@ import static android.content.ContentValues.TAG;
  * Receiver for the Network Connections
  */
 public class ConnectionInfoReceiver extends BroadcastReceiver {
-    private NetworkListener networkListener;
+    private final NetworkListener networkListener;
 
     ConnectionInfoReceiver(NetworkListener networkListener){
         this.networkListener = networkListener;
@@ -84,7 +84,7 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
      * Creates a Network Probe.
      * @return the created Probe.
      */
-    private NetworkProbe createCurrentNetworkProbe(Intent intent){
+    private static NetworkProbe createCurrentNetworkProbe(Intent intent){
         NetworkProbe networkProbe = new NetworkProbe();
         networkProbe.setDate(System.currentTimeMillis());
         networkProbe.setInfo(intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO));
@@ -93,7 +93,6 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
         }else{
             networkProbe.setState(NetworkProbe.NOT_CONNECTED);
         }
-
         return networkProbe;
     }
 }
