@@ -104,7 +104,7 @@ class TelephonyListener extends PhoneStateListener {
 
             return cellLocationProbe;
         } else {
-            Log.i(TAG, "onCellLocationChanged: " + location.toString());
+            //Log.i(TAG, "onCellLocationChanged: " + location.toString());
             CellLocationProbe cellLocationProbe = new CellLocationProbe();
             cellLocationProbe.setDate(System.currentTimeMillis());
             cellLocationProbe.setCellType("UNKNOWN");
