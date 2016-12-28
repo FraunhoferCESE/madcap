@@ -39,6 +39,7 @@ import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationRecei
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.listener.network.MSMSReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListenerFactory;
 
 /**
@@ -165,6 +166,11 @@ class MyApplicationModule {
     @Provides
     ConnectionInfoReceiverFactory provideConnectionInfoReceiverFactory(){
         return new ConnectionInfoReceiverFactory();
+    }
+
+    @Provides
+    MSMSReceiverFactory provideMSMSReceiverFactory(){
+        return new MSMSReceiverFactory();
     }
 
     @Provides

@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.provider.Telephony;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
@@ -30,6 +31,7 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.network.WiFiProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
+import static android.R.attr.filter;
 import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
@@ -44,10 +46,12 @@ public class NetworkListener implements Listener {
     private final String TAG = getClass().getSimpleName();
     private boolean runningStatus;
 
-    private BroadcastReceiver receiver;
+    private BroadcastReceiver networkReceiver;
+    private BroadcastReceiver msmsReceiver;
     private final Context context;
     private final ProbeManager<Probe> probeProbeManager;
     private final ConnectionInfoReceiverFactory connectionInfoReceiverFactory;
+    private final MSMSReceiverFactory msmsReceiverFactory;
     private final PermissionDeniedHandler permissionDeniedHandler;
     private TelephonyManager telephonyManager;
     private final TelephonyListenerFactory telephonyListenerFactory;
@@ -58,6 +62,7 @@ public class NetworkListener implements Listener {
     public NetworkListener(Context context,
                            ProbeManager<Probe> probeProbeManager,
                            ConnectionInfoReceiverFactory connectionInfoReceiverFactory,
+                           MSMSReceiverFactory msmsReceiverFactory,
                            TelephonyListenerFactory telephonyListenerFactory,
                            PermissionDeniedHandler permissionDeniedHandler){
         this.context = context;
@@ -65,6 +70,7 @@ public class NetworkListener implements Listener {
         this.connectionInfoReceiverFactory = connectionInfoReceiverFactory;
         this.telephonyListenerFactory = telephonyListenerFactory;
         this.permissionDeniedHandler = permissionDeniedHandler;
+        this.msmsReceiverFactory = msmsReceiverFactory;
     }
 
 
@@ -77,6 +83,7 @@ public class NetworkListener implements Listener {
     public void startListening() throws NoSensorFoundException {
         if(!runningStatus){
             instanciateNetworkReceiver(this, context);
+            instanciateMSMSReceiver(this, context);
             instaciateTelephonyListener();
 
             sendInitalProbes();
@@ -85,10 +92,12 @@ public class NetworkListener implements Listener {
         runningStatus = true;
     }
 
+
     @Override
     public void stopListening() {
         if(runningStatus){
-            context.unregisterReceiver(receiver);
+            context.unregisterReceiver(networkReceiver);
+            context.unregisterReceiver(msmsReceiver);
             telephonyManager.listen(telephonyListener, PhoneStateListener.LISTEN_NONE);
         }
         runningStatus = false;
@@ -121,14 +130,14 @@ public class NetworkListener implements Listener {
     }
 
     /**
-     * Instanciation of the receiver.
+     * Instanciation of the networkReceiver.
      * Seperation of this into another method due to reduction of complexity and
      * for better testing.
      * @param networkListener
      * @param context
      */
     private void instanciateNetworkReceiver(NetworkListener networkListener, Context context){
-        receiver = connectionInfoReceiverFactory.create(networkListener);
+        networkReceiver = connectionInfoReceiverFactory.create(networkListener);
 
         IntentFilter intentFilter = new IntentFilter(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
         intentFilter.addAction("android.net.wifi.WIFI_STATE_CHANGED");
@@ -139,7 +148,25 @@ public class NetworkListener implements Listener {
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         intentFilter.addAction("android.net.conn.CONNECTIVITY_ACTION");
 
-        context.registerReceiver(receiver, intentFilter);
+        context.registerReceiver(networkReceiver, intentFilter);
+    }
+
+    /**
+     * Instanciates the msmsReceiver.
+     * @param networkListener as a callback.
+     * @param context for registering.
+     */
+    private void instanciateMSMSReceiver(NetworkListener networkListener, Context context) {
+        msmsReceiver = msmsReceiverFactory.create(this);
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
+        filter.addAction(Telephony.Sms.Intents.DATA_SMS_RECEIVED_ACTION);
+        filter.addAction(Telephony.Sms.Intents.SMS_CB_RECEIVED_ACTION);
+        filter.addAction(Telephony.Sms.Intents.SMS_REJECTED_ACTION);
+        filter.addAction(Telephony.Sms.Intents.WAP_PUSH_RECEIVED_ACTION);
+        filter.addAction(Telephony.Mms.Intents.CONTENT_CHANGED_ACTION);
+        context.registerReceiver(msmsReceiver, filter);
     }
 
     /**

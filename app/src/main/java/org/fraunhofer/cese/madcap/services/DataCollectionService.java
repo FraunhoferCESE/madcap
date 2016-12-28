@@ -57,6 +57,7 @@ import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.listener.network.MSMSReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.NetworkListener;
 import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListenerFactory;
 import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
@@ -161,6 +162,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @Inject
     TelephonyListenerFactory telephonyListenerFactory;
 
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    MSMSReceiverFactory msmsReceiverFactory;
+
     /**
      * Return the communication channel to the service.  May return null if
      * clients can not bind to the service.  The returned
@@ -232,6 +237,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
             listeners.add(new NetworkListener(this, new CacheFactory(cache, authManager),
                     connectionInfoReceiverFactory,
+                    msmsReceiverFactory,
                     telephonyListenerFactory,
                     madcapPermissionDeniedHandler));
         }
