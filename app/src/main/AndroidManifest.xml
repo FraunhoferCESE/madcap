@@ -39,6 +39,10 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_GPS" />
+    <uses-permission android:name="android.permission.ACCESS_LOCATION" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -65,8 +69,6 @@
             android:name="com.google.android.awareness.API_KEY"
             android:value="@string/googleAwarenessApiKey"/>
 
-        <receiver android:name=".Probe.ActivityProbe.PathsenseActivityChangeBroadcastReceiver" />
-        <receiver android:name=".Probe.ActivityProbe.PathsenseActivityUpdateBroadcastReceiver" />
         <receiver android:name=".boot.OnBootCompleteBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -122,5 +124,7 @@
         </activity>
 
     </application>
+
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
 </manifest>

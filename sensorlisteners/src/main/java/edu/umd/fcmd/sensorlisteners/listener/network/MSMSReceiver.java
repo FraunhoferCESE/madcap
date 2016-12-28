@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
+import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.model.network.MSMSProbe;
 
@@ -14,7 +15,7 @@ import edu.umd.fcmd.sensorlisteners.model.network.MSMSProbe;
  */
 
 public class MSMSReceiver extends BroadcastReceiver{
-    private final String Tag = getClass().getSimpleName();
+    private final String TAG = getClass().getSimpleName();
 
     private NetworkListener networkListener;
 
@@ -60,6 +61,7 @@ public class MSMSReceiver extends BroadcastReceiver{
      */
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.e(TAG, "RECEIVED");
         SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
         long timestamp = 0;
         for (SmsMessage message : messages) {
