@@ -33,6 +33,7 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 import static android.R.attr.filter;
 import static android.content.Context.TELEPHONY_SERVICE;
+import static java.security.AccessController.getContext;
 
 /**
  * Created by MMueller on 12/2/2016.
@@ -56,6 +57,10 @@ public class NetworkListener implements Listener {
     private TelephonyManager telephonyManager;
     private final TelephonyListenerFactory telephonyListenerFactory;
     private TelephonyListener telephonyListener;
+    private final SMSOutObserverFactory smsOutObserverFactory;
+    private final MMSOutObserverFactory mmsOutObserverFactory;
+    private SMSOutObserver smsOutObserver;
+    private MMSOutObserver mmsOutObserver;
 
     private static final boolean isLittleEndian = ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN);
 
@@ -64,6 +69,8 @@ public class NetworkListener implements Listener {
                            ConnectionInfoReceiverFactory connectionInfoReceiverFactory,
                            MSMSReceiverFactory msmsReceiverFactory,
                            TelephonyListenerFactory telephonyListenerFactory,
+                           SMSOutObserverFactory smsOutObserverFactory,
+                           MMSOutObserverFactory mmsOutObserverFactory,
                            PermissionDeniedHandler permissionDeniedHandler){
         this.context = context;
         this.probeProbeManager = probeProbeManager;
@@ -71,6 +78,8 @@ public class NetworkListener implements Listener {
         this.telephonyListenerFactory = telephonyListenerFactory;
         this.permissionDeniedHandler = permissionDeniedHandler;
         this.msmsReceiverFactory = msmsReceiverFactory;
+        this.smsOutObserverFactory = smsOutObserverFactory;
+        this.mmsOutObserverFactory = mmsOutObserverFactory;
     }
 
 
@@ -84,6 +93,7 @@ public class NetworkListener implements Listener {
         if(!runningStatus){
             instanciateNetworkReceiver(this, context);
             instanciateMSMSReceiver(this, context);
+            instanciateMSMSObserver(this, context);
             instaciateTelephonyListener();
 
             sendInitalProbes();
@@ -92,12 +102,28 @@ public class NetworkListener implements Listener {
         runningStatus = true;
     }
 
+    /**
+     * Creates the Observers for listening to outgoing messages.
+     * @param networkListener as callback.
+     * @param context Context.
+     */
+    private void instanciateMSMSObserver(NetworkListener networkListener, Context context) {
+        smsOutObserver = smsOutObserverFactory.create(networkListener);
+        mmsOutObserver = mmsOutObserverFactory.create(networkListener);
+
+        context.getContentResolver().registerContentObserver(Telephony.Sms.CONTENT_URI, true, smsOutObserver);
+        context.getContentResolver().registerContentObserver(Telephony.Mms.CONTENT_URI, true, mmsOutObserver);
+
+    }
+
 
     @Override
     public void stopListening() {
         if(runningStatus){
             context.unregisterReceiver(networkReceiver);
             context.unregisterReceiver(msmsReceiver);
+            context.getContentResolver().unregisterContentObserver(smsOutObserver);
+            context.getContentResolver().unregisterContentObserver(mmsOutObserver);
             telephonyManager.listen(telephonyListener, PhoneStateListener.LISTEN_NONE);
         }
         runningStatus = false;

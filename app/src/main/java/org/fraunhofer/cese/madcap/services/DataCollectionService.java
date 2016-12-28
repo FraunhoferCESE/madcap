@@ -57,8 +57,10 @@ import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.listener.network.MMSOutObserverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.MSMSReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.NetworkListener;
+import edu.umd.fcmd.sensorlisteners.listener.network.SMSOutObserverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListenerFactory;
 import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
@@ -166,6 +168,14 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @Inject
     MSMSReceiverFactory msmsReceiverFactory;
 
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    SMSOutObserverFactory smsOutObserverFactory;
+
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    MMSOutObserverFactory mmsOutObserverFactory;
+
     /**
      * Return the communication channel to the service.  May return null if
      * clients can not bind to the service.  The returned
@@ -239,6 +249,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     connectionInfoReceiverFactory,
                     msmsReceiverFactory,
                     telephonyListenerFactory,
+                    smsOutObserverFactory,
+                    mmsOutObserverFactory,
                     madcapPermissionDeniedHandler));
         }
 //        madcapAuthManager.setCallbackClass(this);
