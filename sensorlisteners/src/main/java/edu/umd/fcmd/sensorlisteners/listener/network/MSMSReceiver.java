@@ -3,7 +3,6 @@ package edu.umd.fcmd.sensorlisteners.listener.network;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
 import android.util.Log;
@@ -12,12 +11,13 @@ import edu.umd.fcmd.sensorlisteners.model.network.MSMSProbe;
 
 /**
  * Created by MMueller on 12/28/2016.
+ *
+ * Receiver for SMS and MMS events
  */
-
 public class MSMSReceiver extends BroadcastReceiver{
     private final String TAG = getClass().getSimpleName();
 
-    private NetworkListener networkListener;
+    private final NetworkListener networkListener;
 
     public MSMSReceiver(NetworkListener networkListener){
         this.networkListener = networkListener;
@@ -30,7 +30,7 @@ public class MSMSReceiver extends BroadcastReceiver{
      * BroadcastReceiver to view/modify the current result values.  This method
      * is always called within the main thread of its process, unless you
      * explicitly asked for it to be scheduled on a different thread using
-     * {@link Context#registerReceiver(BroadcastReceiver,
+     * {@link Context registerReceiver(BroadcastReceiver,
      * IntentFilter, String, Handler)}. When it runs on the main
      * thread you should
      * never perform long-running operations in it (there is a timeout of
@@ -44,7 +44,7 @@ public class MSMSReceiver extends BroadcastReceiver{
      * return a result to you asynchronously -- in particular, for interacting
      * with services, you should use
      * {@link Context#startService(Intent)} instead of
-     * {@link Context#bindService(Intent, ServiceConnection, int)}.  If you wish
+     * {@link Context bindService(Intent, ServiceConnection, int)}.  If you wish
      * to interact with a service that is already running, you can use
      * {@link #peekService}.
      * <p>
@@ -52,7 +52,7 @@ public class MSMSReceiver extends BroadcastReceiver{
      * and in application manifests are <em>not</em> guaranteed to be exclusive. They
      * are hints to the operating system about how to find suitable recipients. It is
      * possible for senders to force delivery to specific recipients, bypassing filter
-     * resolution.  For this reason, {@link #onReceive(Context, Intent) onReceive()}
+     * resolution.  For this reason, {#onReceive(Context, Intent) onReceive()}
      * implementations should respond only to known actions, ignoring any unexpected
      * Intents that they may receive.
      *
@@ -63,7 +63,7 @@ public class MSMSReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
         Log.e(TAG, "RECEIVED");
         SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
-        long timestamp = 0;
+        long timestamp = 0L;
         for (SmsMessage message : messages) {
             if (timestamp < message.getTimestampMillis()) {
                 timestamp = message.getTimestampMillis();
@@ -93,6 +93,7 @@ public class MSMSReceiver extends BroadcastReceiver{
             case Telephony.Sms.Intents.WAP_PUSH_RECEIVED_ACTION:
                 // When a MMS is pushed to the phone
                 msmsProbe.setAction("MMS_RECEIVED");
+                break;
             case Telephony.Mms.Intents.CONTENT_CHANGED_ACTION:
                 // When the content of a mms changes.
                 msmsProbe.setAction("MMS_CONTENT_CHANGED");

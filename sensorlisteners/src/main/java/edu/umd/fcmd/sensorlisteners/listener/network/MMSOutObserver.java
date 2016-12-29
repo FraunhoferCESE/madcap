@@ -1,6 +1,5 @@
 package edu.umd.fcmd.sensorlisteners.listener.network;
 
-import android.content.Intent;
 import android.database.ContentObserver;
 import android.os.Handler;
 
@@ -8,8 +7,9 @@ import edu.umd.fcmd.sensorlisteners.model.network.MSMSProbe;
 
 /**
  * Created by MMueller on 12/28/2016.
+ *
+ * Observer for incoming sms and mms actions.
  */
-
 public class MMSOutObserver extends ContentObserver {
     private final String TAG = getClass().getSimpleName();
 

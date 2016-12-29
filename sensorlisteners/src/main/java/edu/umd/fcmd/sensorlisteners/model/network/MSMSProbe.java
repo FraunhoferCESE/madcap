@@ -77,7 +77,7 @@ public class MSMSProbe extends Probe {
     @Override
     public String toString() {
         return "{\"action\": " + (action != null ? action : "-") +
-                ", \"extra\": " + extra +
+                ", \"extra\": " + (extra != null ? extra : "-") +
                 '}';
     }
 }

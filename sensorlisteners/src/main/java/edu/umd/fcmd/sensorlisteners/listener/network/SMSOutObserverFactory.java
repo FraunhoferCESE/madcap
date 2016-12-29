@@ -1,5 +1,7 @@
 package edu.umd.fcmd.sensorlisteners.listener.network;
 
+import android.content.Context;
+
 /**
  * Created by MMueller on 12/28/2016.
  *
@@ -7,7 +9,7 @@ package edu.umd.fcmd.sensorlisteners.listener.network;
  */
 public class SMSOutObserverFactory {
 
-    public SMSOutObserver create(NetworkListener networkListener){
-        return new SMSOutObserver(null, networkListener);
+    public SMSOutObserver create(NetworkListener networkListener, Context context){
+        return new SMSOutObserver(null, networkListener, context);
     }
 }

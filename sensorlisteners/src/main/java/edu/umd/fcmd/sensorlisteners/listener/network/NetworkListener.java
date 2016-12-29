@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
@@ -108,10 +109,10 @@ public class NetworkListener implements Listener {
      * @param context Context.
      */
     private void instanciateMSMSObserver(NetworkListener networkListener, Context context) {
-        smsOutObserver = smsOutObserverFactory.create(networkListener);
+        smsOutObserver = smsOutObserverFactory.create(networkListener, context);
         mmsOutObserver = mmsOutObserverFactory.create(networkListener);
 
-        context.getContentResolver().registerContentObserver(Telephony.Sms.CONTENT_URI, true, smsOutObserver);
+        context.getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, smsOutObserver);
         context.getContentResolver().registerContentObserver(Telephony.Mms.CONTENT_URI, true, mmsOutObserver);
 
     }
