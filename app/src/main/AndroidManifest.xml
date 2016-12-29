@@ -53,20 +53,10 @@
         android:theme="@style/MadcapTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <!-- This section is for the PathsenseAcrivityRecognition -->
-        <meta-data
-            android:name="com.pathsense.android.sdk.CLIENT_ID"
-            android:value="@string/pathsenseClientID" />
-        <meta-data
-            android:name="com.pathsense.android.sdk.API_KEY"
-            android:value="@string/pathsenseAPIKEY" />
-
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
             android:value="@string/googleAwarenessApiKey"/>
 
-        <receiver android:name=".Probe.ActivityProbe.PathsenseActivityChangeBroadcastReceiver" />
-        <receiver android:name=".Probe.ActivityProbe.PathsenseActivityUpdateBroadcastReceiver" />
         <receiver android:name=".boot.OnBootCompleteBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -90,6 +80,7 @@
             android:name=".authentication.SignInActivity"
             android:label="@string/name_sign_in_activity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:theme="@style/MadcapTheme" />
 
         <service android:name=".firebasecloudmessaging.MadcapFirebaseMessagingService">
@@ -106,6 +97,7 @@
         <activity
             android:name=".WelcomeActivity"
             android:screenOrientation="portrait"
+            android:noHistory="true"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

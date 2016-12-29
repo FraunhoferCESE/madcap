@@ -1,32 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <item android:title="MADCAP">
-        <menu>
             <item
                 android:id="@+id/nav_home"
                 android:icon="@drawable/ic_home_black_24dp"
-                android:title="Home" />
+                android:title="Home"
+                android:checkable="true" />
             <item
                 android:id="@+id/nav_help"
                 android:icon="@drawable/ic_help_black_24dp"
-                android:title="Help" />
+                android:title="Help"
+                android:checkable="true" />
 
-        </menu>
-    </item>
-
-    <item android:title="User">
-        <menu>
             <item
                 android:id="@+id/nav_sign_out"
                 android:icon="@drawable/ic_vpn_key_black_24dp"
-                android:title="Sign Out" />
+                android:title="Sign Out"
+                android:checkable="true" />
             <item
                 android:id="@+id/nav_quit"
                 android:icon="@drawable/ic_cancel_black_24dp"
-                android:title="Quit MADCAP" />
-        </menu>
-    </item>
-
-
+                android:title="Quit MADCAP"
+                android:checkable="true" />
 </menu>

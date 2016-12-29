@@ -96,6 +96,7 @@ public class LogoutFragment extends Fragment {
                             getActivity().stopService(new Intent(getActivity(), DataCollectionService.class));
                             MyApplication.madcapLogger.d(TAG, "Now going back to SignInActivity");
                             Intent intent = new Intent(getActivity(), SignInActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             intent.putExtra("distractfromsilentlogin", true);
                             startActivity(intent);
                         } else {
