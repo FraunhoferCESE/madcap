@@ -69,14 +69,14 @@ public class SMSOutObserver extends ContentObserver {
             String protocol = cursor.getString(cursor.getColumnIndex("protocol"));
             int type = cursor.getInt(cursor.getColumnIndex("type"));
 
-            // Only processing outgoing sms event & only when it
-            // is sent successfully (available in SENT box).
+            // If the type is a sent message we return OUT.
             if (protocol != null && type == MESSAGE_TYPE_SENT) {
                 return OUT;
             }
 
             cursor.close();
         }
+
         return NOT_OUT;
     }
 }
