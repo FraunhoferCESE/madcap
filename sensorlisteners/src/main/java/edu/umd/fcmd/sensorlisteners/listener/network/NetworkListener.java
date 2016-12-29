@@ -195,6 +195,7 @@ public class NetworkListener implements Listener {
         filter.addAction(Telephony.Sms.Intents.SMS_REJECTED_ACTION);
         filter.addAction(Telephony.Sms.Intents.WAP_PUSH_RECEIVED_ACTION);
         filter.addAction(Telephony.Mms.Intents.CONTENT_CHANGED_ACTION);
+        filter.addAction("android.provider.Telephony.SMS_SENT");
         context.registerReceiver(msmsReceiver, filter);
     }
 

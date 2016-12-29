@@ -94,6 +94,10 @@ public class MSMSReceiver extends BroadcastReceiver{
                 // When a MMS is pushed to the phone
                 msmsProbe.setAction("MMS_RECEIVED");
                 break;
+            case "android.provider.Telephony.SMS_SENT":
+                // For outgoing sms in addition to the content observers.
+                msmsProbe.setAction("SMS_SENT");
+                break;
             case Telephony.Mms.Intents.CONTENT_CHANGED_ACTION:
                 // When the content of a mms changes.
                 msmsProbe.setAction("MMS_CONTENT_CHANGED");
