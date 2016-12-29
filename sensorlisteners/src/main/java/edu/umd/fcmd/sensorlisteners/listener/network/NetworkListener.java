@@ -121,7 +121,9 @@ public class NetworkListener implements Listener {
     @Override
     public void stopListening() {
         if(runningStatus){
-            context.unregisterReceiver(networkReceiver);
+            if(networkReceiver != null){
+                context.unregisterReceiver(networkReceiver);
+            }
             context.unregisterReceiver(msmsReceiver);
             context.getContentResolver().unregisterContentObserver(smsOutObserver);
             context.getContentResolver().unregisterContentObserver(mmsOutObserver);

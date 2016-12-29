@@ -176,7 +176,10 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 //            timedLocationTask.cancel(true);
 //            mGoogleApiClient.disconnect();
             }
-            context.unregisterReceiver(locationServiceStatusReceiver);
+
+            if(locationServiceStatusReceiver != null){
+                context.unregisterReceiver(locationServiceStatusReceiver);
+            }
 
             //Method Location Manager
             while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

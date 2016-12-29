@@ -87,7 +87,9 @@ public class BluetoothListener implements Listener {
     @Override
     public void stopListening() {
         if(runningState){
-            context.unregisterReceiver(receiver);
+            if(receiver != null){
+                context.unregisterReceiver(receiver);
+            }
             receiver = null;
         }
         runningState = false;
