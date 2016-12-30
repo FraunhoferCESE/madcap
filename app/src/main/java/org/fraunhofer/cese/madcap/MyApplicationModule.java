@@ -38,6 +38,7 @@ import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFa
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
 
 /**
  * This class defines the providers to use for dependency injection
@@ -168,6 +169,11 @@ class MyApplicationModule {
     @Provides
     ManualProbeUploader provideManualProbeUploader(){
         return new ManualProbeUploader();
+    }
+
+    @Provides
+    SystemReceiverFactory provideSystemReceiverFactory(){
+        return new SystemReceiverFactory();
     }
 
 

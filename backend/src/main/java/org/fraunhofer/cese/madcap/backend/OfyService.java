@@ -13,6 +13,7 @@ import org.fraunhofer.cese.madcap.backend.models.BluetoothStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothStaticAtributesEntry;
 import org.fraunhofer.cese.madcap.backend.models.ChargingEntry;
 import org.fraunhofer.cese.madcap.backend.models.DataCollectionEntry;
+import org.fraunhofer.cese.madcap.backend.models.DreamingModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
@@ -41,6 +42,7 @@ public class OfyService {
         ObjectifyService.register(PowerEntry.class);
         ObjectifyService.register(ChargingEntry.class);
         ObjectifyService.register(DataCollectionEntry.class);
+        ObjectifyService.register(DreamingModeEntry.class);
     }
 
     /**

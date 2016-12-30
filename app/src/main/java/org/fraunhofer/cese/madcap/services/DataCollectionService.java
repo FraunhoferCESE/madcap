@@ -57,6 +57,8 @@ import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
+import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
+import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
 
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
@@ -150,6 +152,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @Inject
     IntentFilterFactory intentFilterFactory;
 
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    SystemReceiverFactory systemReceiverFactory;
+
     /**
      * Return the communication channel to the service.  May return null if
      * clients can not bind to the service.  The returned
@@ -218,6 +224,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     timedActivityTaskFactory));
 
             listeners.add(new PowerListener(this, new CacheFactory(cache, authManager)));
+
+            listeners.add(new SystemListener(this, new CacheFactory(cache, authManager),
+                    systemReceiverFactory));
         }
 //        madcapAuthManager.setCallbackClass(this);
 
