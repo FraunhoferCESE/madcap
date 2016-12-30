@@ -183,7 +183,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
             dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
             uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
         } else {
-            dataCountText = "Computing...";
+            dataCountText = getString(R.string.dataCountText) + " " + prefs.getInt(getString(R.string.data_count), 0)+"";
             //isCollectingData = true;
         }
 
@@ -301,7 +301,8 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
             dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
             uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
         } else {
-            dataCountText = "Computing...";
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            dataCountText = getString(R.string.dataCountText) + " " +prefs.getInt(getString(R.string.data_count), 0)+"";
             uploadResultText = "None.";
             //isCollectingData = true;
         }
@@ -436,6 +437,11 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         if (dataCountView != null && dataCountView.isShown()) {
             dataCountText = count < 0 ? "Computing..." : Long.toString(count);
             dataCountView.setText(getString(R.string.dataCountText) + " " + dataCountText);
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putInt(getString(R.string.data_count), (int) count);
+            editor.commit();
         }
     }
 

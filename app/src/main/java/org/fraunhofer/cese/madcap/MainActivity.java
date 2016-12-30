@@ -1,19 +1,21 @@
 package org.fraunhofer.cese.madcap;
 
+import android.content.ClipData;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.FragmentManager;
 import android.view.MenuItem;
+import android.view.View;
 
 import java.util.List;
 
@@ -23,8 +25,9 @@ public class MainActivity extends AppCompatActivity
         HelpFragment.OnFragmentInteractionListener,
         QuitFragment.OnFragmentInteractionListener{
     private final String TAG = getClass().getSimpleName();
+    private String currentTopFragment;
 
-    private FragmentManager mainFragmentManager = getSupportFragmentManager();
+    private FragmentManager mainFragmentManager;
     private StartFragment startFragment;
     private HelpFragment helpFragment;
     private LogoutFragment logoutFragment;
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mainFragmentManager = getSupportFragmentManager();
 
         if (savedInstanceState != null) {
             //Restore the fragment's instance
@@ -66,19 +71,18 @@ public class MainActivity extends AppCompatActivity
 
         //Initial settign up of the main fragement
         FragmentTransaction ft = mainFragmentManager.beginTransaction();
-        ft.add(R.id.fragmentHolder, startFragment);
+        ft.replace(R.id.fragmentHolder, startFragment);
         ft.commit();
+
+        currentTopFragment = "start";
+
+        navigationView.getMenu().getItem(0).setChecked(true);
+
+        navigationView.getMenu().performIdentifierAction(R.id.nav_home, 0);
     }
 
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
+
+
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -86,35 +90,46 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-            goToFragment(startFragment);
+            FragmentTransaction ft = mainFragmentManager.beginTransaction();
+            ft.replace(R.id.fragmentHolder, startFragment);
+            if(!currentTopFragment.equals("start")){
+                ft.addToBackStack("start");
+                currentTopFragment = "start";
+            }
+            ft.commit();
         } else if (id == R.id.nav_help) {
-            goToFragment(helpFragment);
+            FragmentTransaction ft = mainFragmentManager.beginTransaction();
+            ft.replace(R.id.fragmentHolder, helpFragment);
+            if(!currentTopFragment.equals("help")){
+                ft.addToBackStack("help");
+                currentTopFragment = "help";
+            }
+            ft.commit();
         } else if (id == R.id.nav_sign_out) {
-            goToFragment(logoutFragment);
+            FragmentTransaction ft = mainFragmentManager.beginTransaction();
+            ft.replace(R.id.fragmentHolder, logoutFragment);
+            if(!currentTopFragment.equals("logout")){
+                ft.addToBackStack("logout");
+                currentTopFragment ="logout";
+            }
+            ft.commit();
         } else if (id == R.id.nav_quit) {
-            goToFragment(quitFragment);
+            FragmentTransaction ft = mainFragmentManager.beginTransaction();
+            ft.replace(R.id.fragmentHolder, quitFragment);
+            if(!currentTopFragment.equals("quit")){
+                ft.addToBackStack("quit");
+                currentTopFragment = "quit";
+            }
+            ft.commit();
         }
+
+        int checkedID = item.getItemId();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    /**
-     * Sets the main view to a specific fragment.
-     * @param fragment the fragment to switch to.
-     */
-    public void goToFragment(Fragment fragment){
-        List<Fragment> fragmentList = mainFragmentManager.getFragments();
-
-        if(!fragmentList.contains(fragment)){
-            clearMainViewFromFragements();
-
-            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.add(R.id.fragmentHolder, fragment);
-            ft.commit();
-        }
-    }
 
     /**
      * Dispatch onResume() to fragments.  Note that for better inter-operation
@@ -140,16 +155,34 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Removes all fragement currently attatched to the main view.
+     * Take care of popping the fragment back stack or finishing the activity
+     * as appropriate.
      */
-    private void clearMainViewFromFragements(){
-        List<Fragment> fragmentList = mainFragmentManager.getFragments();
-
-        for(Fragment f : fragmentList){
-            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.remove(f);
-            ft.commit();
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+//            int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
+//            if (backStackEntryCount == 0) {
+//                finish();   // write your code to switch between fragments.
+//            } else {
+//                super.onBackPressed();
+//            }
+            super.onBackPressed();
         }
+    }
+
+    private void uncheckAll(){
+        MenuItem nav = (MenuItem) findViewById(R.id.nav_home);
+        nav.setChecked(false);
+        MenuItem sign = (MenuItem) findViewById(R.id.nav_sign_out);
+        sign.setChecked(false);
+        MenuItem hp = (MenuItem) findViewById(R.id.nav_help);
+        hp.setChecked(false);
+        MenuItem qt = (MenuItem) findViewById(R.id.nav_quit);
+        qt.setChecked(false);
     }
 
     @Override
