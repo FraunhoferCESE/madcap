@@ -12,6 +12,7 @@ import com.googlecode.objectify.cmd.LoadType;
 
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ActivityEntry;
+import org.fraunhofer.cese.madcap.backend.models.AirplaneModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothConnectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothDiscoveryEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
@@ -237,6 +238,14 @@ public class ProbeDataSetEndpoint {
                     Collection<ScreenEntry> slist = entryMap.get(entry.getProbeType());
                     ScreenEntry screenEntry = new ScreenEntry(entry);
                     slist.add(screenEntry);
+                    break;
+                case "AirplaneMode":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<AirplaneModeEntry>());
+                    }
+                    Collection<AirplaneModeEntry> apmlist = entryMap.get(entry.getProbeType());
+                    AirplaneModeEntry airplaneModeEntry = new AirplaneModeEntry(entry);
+                    apmlist.add(airplaneModeEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();

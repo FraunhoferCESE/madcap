@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.DreamingModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
 
@@ -88,8 +89,10 @@ public class SystemReceiver extends BroadcastReceiver {
                 systemListener.onUpdate(screenProbeOn);
                 break;
             case Intent.ACTION_AIRPLANE_MODE_CHANGED:
-                // TODO
-                //intent.putExtra("StateProbe: ", "AirplaneMode changed");
+                AirplaneModeProbe airplaneModeProbe = new AirplaneModeProbe();
+                airplaneModeProbe.setDate(System.currentTimeMillis());
+                airplaneModeProbe.setState(systemListener.getCurrentAirplaneModeState());
+                systemListener.onUpdate(airplaneModeProbe);
                 break;
             case Intent.ACTION_BOOT_COMPLETED:
                 // TODO
