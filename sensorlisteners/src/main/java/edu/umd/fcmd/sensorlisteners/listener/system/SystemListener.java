@@ -2,12 +2,19 @@ package edu.umd.fcmd.sensorlisteners.listener.system;
 
 import android.content.Context;
 import android.content.IntentFilter;
+import android.hardware.display.DisplayManager;
+import android.os.Build;
+import android.os.PowerManager;
+import android.view.Display;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.DreamingModeProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
+
+import static android.content.Context.POWER_SERVICE;
 
 /**
  * Created by MMueller on 12/30/2016.
@@ -55,6 +62,8 @@ public class SystemListener implements Listener {
             systemFilter.addAction("android.intent.action.DREAMING_STARTED");
             systemFilter.addAction("android.intent.action.DREAMING_STOPPED");
             systemFilter.addAction("android.intent.action.HEADSET_PLUG");
+            systemFilter.addAction("android.intent.action.SCREEN_ON");
+            systemFilter.addAction("android.intent.action.SCREEN_OFF");
 
             context.registerReceiver(systemReceiver, systemFilter);
 
@@ -69,18 +78,11 @@ public class SystemListener implements Listener {
      * Device dreaming has NO initial probe.
      */
     private void sendInitalProbes() {
-        // start DEBUG
-        DreamingModeProbe dreamingModeProbeOn = new DreamingModeProbe();
-        dreamingModeProbeOn.setDate(System.currentTimeMillis());
-        dreamingModeProbeOn.setState(DreamingModeProbe.ON);
-        onUpdate(dreamingModeProbeOn);
+        ScreenProbe screenProbe = new ScreenProbe();
+        screenProbe.setDate(System.currentTimeMillis());
+        screenProbe.setState(getCurrentScreenStatus());
 
-        DreamingModeProbe dreamingModeProbeOff = new DreamingModeProbe();
-        dreamingModeProbeOff.setDate(System.currentTimeMillis());
-        dreamingModeProbeOff.setState(DreamingModeProbe.OFF);
-        onUpdate(dreamingModeProbeOff);
-        // end DEBUG
-
+        onUpdate(screenProbe);
     }
 
     @Override
@@ -96,5 +98,30 @@ public class SystemListener implements Listener {
     @Override
     public boolean isRunning() {
         return runningState;
+    }
+
+    /**
+     * Gets the current screen status.
+     * @return either ON of OFF.
+     */
+    private String getCurrentScreenStatus(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+            //API 20+
+            DisplayManager dm = (DisplayManager) context.getSystemService(Context.DISPLAY_SERVICE);
+            for (Display display : dm.getDisplays()) {
+                if (display.getState() != Display.STATE_OFF) {
+                    return ScreenProbe.ON;
+                }
+            }
+            return ScreenProbe.OFF;
+        }else{
+            // API 11+
+            PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+            if (powerManager.isScreenOn()){
+                return ScreenProbe.ON;
+            }else{
+                return ScreenProbe.OFF;
+            }
+        }
     }
 }

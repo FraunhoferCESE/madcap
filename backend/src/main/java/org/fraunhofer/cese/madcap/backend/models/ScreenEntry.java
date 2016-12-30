@@ -12,7 +12,7 @@ import java.util.HashMap;
  * Created by MMueller on 12/30/2016.
  */
 @Entity
-public class DreamingModeEntry implements Comparable<DreamingModeEntry>, DatastoreEntry {
+public class ScreenEntry implements Comparable<ScreenEntry>, DatastoreEntry {
 
     @Id
     private String id;
@@ -22,10 +22,10 @@ public class DreamingModeEntry implements Comparable<DreamingModeEntry>, Datasto
     @Index
     private String userID;
 
-    public DreamingModeEntry(){
+    public ScreenEntry(){
     }
 
-    public DreamingModeEntry(ProbeEntry probeEntry){
+    public ScreenEntry(ProbeEntry probeEntry){
         id = probeEntry.getId();
         timestamp = probeEntry.getTimestamp();
         userID = probeEntry.getUserID();
@@ -35,7 +35,7 @@ public class DreamingModeEntry implements Comparable<DreamingModeEntry>, Datasto
     }
 
     @Override
-    public int compareTo(DreamingModeEntry o) {
+    public int compareTo(ScreenEntry o) {
         return 0;
     }
 
@@ -168,7 +168,7 @@ public class DreamingModeEntry implements Comparable<DreamingModeEntry>, Datasto
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        DreamingModeEntry that = (DreamingModeEntry) o;
+        ScreenEntry that = (ScreenEntry) o;
         return (state.equals(that.getState()));
     }
 

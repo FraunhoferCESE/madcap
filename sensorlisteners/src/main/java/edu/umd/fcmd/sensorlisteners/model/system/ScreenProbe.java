@@ -13,7 +13,6 @@ public class ScreenProbe extends Probe {
     public static final String OFF = "OFF";
 
     private String state;
-    private double brightness;
 
     /**
      * Gets the state.
@@ -29,22 +28,6 @@ public class ScreenProbe extends Probe {
      */
     public void setState(String state) {
         this.state = state;
-    }
-
-    /**
-     * Gets the screen's brightness.
-     * @return the brightness.
-     */
-    public double getBrightness() {
-        return brightness;
-    }
-
-    /**
-     * Sets the screens brightness
-     * @param brightness to be in range [0,100]
-     */
-    public void setBrightness(double brightness) {
-        this.brightness = brightness;
     }
 
     /**
@@ -81,7 +64,6 @@ public class ScreenProbe extends Probe {
     @Override
     public String toString() {
         return "{\"state\": " + (state != null? state : "-")+
-                ", \"brightness\": " + brightness +
                 '}';
     }
 }

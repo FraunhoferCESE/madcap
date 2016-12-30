@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.model.system.DreamingModeProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
 
 /**
  * Created by MMueller on 12/30/2016.
@@ -73,6 +74,18 @@ public class SystemReceiver extends BroadcastReceiver {
                 dreamingModeProbeOff.setDate(System.currentTimeMillis());
                 dreamingModeProbeOff.setState(DreamingModeProbe.OFF);
                 systemListener.onUpdate(dreamingModeProbeOff);
+                break;
+            case Intent.ACTION_SCREEN_OFF:
+                ScreenProbe screenProbeOff = new ScreenProbe();
+                screenProbeOff.setDate(System.currentTimeMillis());
+                screenProbeOff.setState(ScreenProbe.OFF);
+                systemListener.onUpdate(screenProbeOff);
+                break;
+            case Intent.ACTION_SCREEN_ON:
+                ScreenProbe screenProbeOn = new ScreenProbe();
+                screenProbeOn.setDate(System.currentTimeMillis());
+                screenProbeOn.setState(ScreenProbe.ON);
+                systemListener.onUpdate(screenProbeOn);
                 break;
             case Intent.ACTION_AIRPLANE_MODE_CHANGED:
                 // TODO

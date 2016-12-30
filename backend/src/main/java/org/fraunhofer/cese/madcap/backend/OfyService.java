@@ -20,6 +20,7 @@ import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
+import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
 
 /**
  *
@@ -43,6 +44,7 @@ public class OfyService {
         ObjectifyService.register(ChargingEntry.class);
         ObjectifyService.register(DataCollectionEntry.class);
         ObjectifyService.register(DreamingModeEntry.class);
+        ObjectifyService.register(ScreenEntry.class);
     }
 
     /**

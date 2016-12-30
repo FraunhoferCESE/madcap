@@ -29,6 +29,7 @@ import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
+import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -228,6 +229,14 @@ public class ProbeDataSetEndpoint {
                     Collection<DreamingModeEntry> drlist = entryMap.get(entry.getProbeType());
                     DreamingModeEntry dreamingModeEntry = new DreamingModeEntry(entry);
                     drlist.add(dreamingModeEntry);
+                    break;
+                case "Screen":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<ScreenEntry>());
+                    }
+                    Collection<ScreenEntry> slist = entryMap.get(entry.getProbeType());
+                    ScreenEntry screenEntry = new ScreenEntry(entry);
+                    slist.add(screenEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();
