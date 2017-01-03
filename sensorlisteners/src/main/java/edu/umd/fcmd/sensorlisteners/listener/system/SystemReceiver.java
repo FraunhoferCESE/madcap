@@ -3,9 +3,16 @@ package edu.umd.fcmd.sensorlisteners.listener.system;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import java.util.TimeZone;
+import java.util.logging.Logger;
+
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.TimeChangedProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.TimezoneProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.UserPresenceProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.DreamingModeProbe;
@@ -21,9 +28,16 @@ public class SystemReceiver extends BroadcastReceiver {
     private final String TAG = getClass().getSimpleName();
 
     private final SystemListener systemListener;
+    private final Context context;
+    private String oldTimezone;
 
     public SystemReceiver(SystemListener systemListener, Context context){
         this.systemListener = systemListener;
+        this.context = context;
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+        oldTimezone = prefs.getString("PREF_TIMEZONE", null);
     }
 
     /**
@@ -111,6 +125,29 @@ public class SystemReceiver extends BroadcastReceiver {
                 userPresenceProbe.setDate(System.currentTimeMillis());
                 userPresenceProbe.setPresence("PRESENT");
                 systemListener.onUpdate(userPresenceProbe);
+                break;
+            case Intent.ACTION_TIMEZONE_CHANGED:
+                TimezoneProbe timezoneProbe = new TimezoneProbe();
+                timezoneProbe.setDate(System.currentTimeMillis());
+
+                long now = System.currentTimeMillis();
+                String newTimezone = TimeZone.getDefault().getID();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+                if(oldTimezone == null){
+                    oldTimezone = newTimezone;
+                }else if (TimeZone.getTimeZone(oldTimezone).getOffset(now) != TimeZone.getTimeZone(newTimezone).getOffset(now)) {
+                    prefs.edit().putString("PREF_TIMEZONE", newTimezone).commit();
+                    timezoneProbe.setTimeZone(newTimezone);
+                    systemListener.onUpdate(timezoneProbe);
+                    oldTimezone = newTimezone;
+                }
+                break;
+            case Intent.ACTION_TIME_CHANGED:
+                TimeChangedProbe timeChangedProbe = new TimeChangedProbe();
+                timeChangedProbe.setDate(System.currentTimeMillis());
+                timeChangedProbe.setChange(TimeChangedProbe.TIMEADJUST);
+                systemListener.onUpdate(timeChangedProbe);
                 break;
             default:
                 Log.d(TAG, "Unkown system event received");

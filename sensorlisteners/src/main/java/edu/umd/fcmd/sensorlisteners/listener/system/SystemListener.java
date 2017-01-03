@@ -9,12 +9,15 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
 
+import java.util.TimeZone;
+
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemInfoProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.TimezoneProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 import edu.umd.fcmd.sensorlisteners.util.DeviceName;
 
@@ -71,6 +74,8 @@ public class SystemListener implements Listener {
             systemFilter.addAction("android.intent.action.HEADSET_PLUG");
             systemFilter.addAction("android.intent.action.SCREEN_ON");
             systemFilter.addAction("android.intent.action.SCREEN_OFF");
+            systemFilter.addAction("android.intent.action.TIMEZONE_CHANGED");
+            systemFilter.addAction("android.intent.action.TIME_SET");
 
             context.registerReceiver(systemReceiver, systemFilter);
 
@@ -97,8 +102,14 @@ public class SystemListener implements Listener {
         AirplaneModeProbe airplaneModeProbe = new AirplaneModeProbe();
         airplaneModeProbe.setDate(System.currentTimeMillis());
         airplaneModeProbe.setState(getCurrentScreenStatus());
-        Log.d(TAG, "AIRPLANE "+airplaneModeProbe);
+        //Log.d(TAG, "AIRPLANE "+airplaneModeProbe);
         onUpdate(airplaneModeProbe);
+
+        //Time zone
+        TimezoneProbe timezoneProbe = new TimezoneProbe();
+        timezoneProbe.setDate(System.currentTimeMillis());
+        timezoneProbe.setTimeZone(TimeZone.getDefault().getID());
+        onUpdate(timezoneProbe);
 
         sendInitalSystemInfoProbe();
 
