@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import edu.umd.fcmd.sensorlisteners.model.UserPresenceProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.UserPresenceProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.DreamingModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
@@ -96,12 +97,16 @@ public class SystemReceiver extends BroadcastReceiver {
                 systemListener.onUpdate(airplaneModeProbe);
                 break;
             case Intent.ACTION_BOOT_COMPLETED:
-                // TODO
-                //intent.putExtra("StateProbe: ", "boot completed");
+                SystemUptimeProbe systemUptimeProbeBoot = new SystemUptimeProbe();
+                systemUptimeProbeBoot.setDate(System.currentTimeMillis());
+                systemUptimeProbeBoot.setState(SystemUptimeProbe.BOOT);
+                systemListener.onUpdate(systemUptimeProbeBoot);
                 break;
             case Intent.ACTION_SHUTDOWN:
-                // TODO
-                //intent.putExtra("StateProbe: ", "Device is shutting down");
+                SystemUptimeProbe systemUptimeProbeShutdown = new SystemUptimeProbe();
+                systemUptimeProbeShutdown.setDate(System.currentTimeMillis());
+                systemUptimeProbeShutdown.setState(SystemUptimeProbe.SHUTDOWN);
+                systemListener.onUpdate(systemUptimeProbeShutdown);
                 break;
             case Intent.ACTION_USER_PRESENT:
                 UserPresenceProbe userPresenceProbe = new UserPresenceProbe();

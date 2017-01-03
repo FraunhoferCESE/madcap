@@ -23,6 +23,7 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
 import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
+import org.fraunhofer.cese.madcap.backend.models.SystemUptimeEntry;
 import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 
 /**
@@ -51,6 +52,7 @@ public class OfyService {
         ObjectifyService.register(AirplaneModeEntry.class);
         ObjectifyService.register(SystemInfoEntry.class);
         ObjectifyService.register(UserPresenceEntry.class);
+        ObjectifyService.register(SystemUptimeEntry.class);
     }
 
     /**

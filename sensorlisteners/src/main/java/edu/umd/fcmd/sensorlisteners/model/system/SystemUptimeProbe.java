@@ -1,26 +1,32 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.system;
+
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
  * Created by MMueller on 1/3/2017.
+ *
+ * Model class for capturing on boot complete and shutdown events.
  */
+public class SystemUptimeProbe extends Probe {
+    public static final String SHUTDOWN = "SHUTDOWN";
+    public static final String BOOT = "BOOT_COMPLETE";
 
-public class UserPresenceProbe extends Probe {
-    private String presence;
+    private String state;
 
     /**
-     * Gets the presence.
-     * @return the presence.
+     * Gets the state.
+     * @return the state.
      */
-    public String getPresence() {
-        return presence;
+    public String getState() {
+        return state;
     }
 
     /**
-     * Sets the presence.
-     * @param presence the presence to be set.
+     * Sets the state.
+     * @param state the state to be set.
      */
-    public void setPresence(String presence) {
-        this.presence = presence;
+    public void setState(String state) {
+        this.state = state;
     }
 
     /**
@@ -30,7 +36,7 @@ public class UserPresenceProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "UserPresence";
+        return "SystemUptime";
     }
 
     /**
@@ -56,7 +62,7 @@ public class UserPresenceProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"presence\": " + (presence != null? presence : "-") +
+        return "{\"state\": " + (state != null? state : "-") +
                 '}';
     }
 }
