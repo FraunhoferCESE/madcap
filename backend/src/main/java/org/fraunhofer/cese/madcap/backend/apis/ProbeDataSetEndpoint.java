@@ -31,6 +31,7 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
+import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -246,6 +247,14 @@ public class ProbeDataSetEndpoint {
                     Collection<AirplaneModeEntry> apmlist = entryMap.get(entry.getProbeType());
                     AirplaneModeEntry airplaneModeEntry = new AirplaneModeEntry(entry);
                     apmlist.add(airplaneModeEntry);
+                    break;
+                case "SystemInfo":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<SystemInfoEntry>());
+                    }
+                    Collection<SystemInfoEntry> sielist = entryMap.get(entry.getProbeType());
+                    SystemInfoEntry systemInfoEntry = new SystemInfoEntry(entry);
+                    sielist.add(systemInfoEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();

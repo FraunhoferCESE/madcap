@@ -14,7 +14,9 @@ import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.SystemInfoProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
+import edu.umd.fcmd.sensorlisteners.util.DeviceName;
 
 import static android.content.Context.POWER_SERVICE;
 
@@ -32,16 +34,19 @@ public class SystemListener implements Listener {
 
     private final Context context;
     private final ProbeManager<Probe> probeManager;
+    private final String madcapVerison;
     private SystemReceiverFactory systemReceiverFactory;
 
     private SystemReceiver systemReceiver;
 
     public SystemListener(Context context,
                           ProbeManager<Probe> probeManager,
-                          SystemReceiverFactory systemReceiverFactory){
+                          SystemReceiverFactory systemReceiverFactory,
+                          String madcapVerison){
         this.context = context;
         this.probeManager = probeManager;
         this.systemReceiverFactory = systemReceiverFactory;
+        this.madcapVerison = madcapVerison;
 
     }
 
@@ -81,16 +86,40 @@ public class SystemListener implements Listener {
      * Device dreaming has NO initial probe.
      */
     private void sendInitalProbes() {
+        // ScreenProbe
         ScreenProbe screenProbe = new ScreenProbe();
         screenProbe.setDate(System.currentTimeMillis());
         screenProbe.setState(getCurrentScreenStatus());
         onUpdate(screenProbe);
 
+
+        // AirplaneModeProbe
         AirplaneModeProbe airplaneModeProbe = new AirplaneModeProbe();
         airplaneModeProbe.setDate(System.currentTimeMillis());
         airplaneModeProbe.setState(getCurrentScreenStatus());
         Log.d(TAG, "AIRPLANE "+airplaneModeProbe);
         onUpdate(airplaneModeProbe);
+
+        sendInitalSystemInfoProbe();
+
+    }
+
+    private void sendInitalSystemInfoProbe() {
+        final SystemInfoProbe systemInfoProbe = new SystemInfoProbe();
+        systemInfoProbe.setDate(System.currentTimeMillis());
+
+        DeviceName.with(context).request(new DeviceName.Callback() {
+
+            @Override public void onFinished(DeviceName.DeviceInfo info, Exception error) {
+                systemInfoProbe.setManufacturer(info.manufacturer);  // "Samsung"
+                systemInfoProbe.setModel(info.marketName);            // "Galaxy S7 Edge"
+
+                systemInfoProbe.setMadcapVersion(madcapVerison);
+                systemInfoProbe.setApiLevel(Build.VERSION.SDK_INT);
+
+                onUpdate(systemInfoProbe);
+            }
+        });
     }
 
     @Override
