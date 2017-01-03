@@ -37,7 +37,7 @@ public class SystemReceiver extends BroadcastReceiver {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-        oldTimezone = prefs.getString("PREF_TIMEZONE", null);
+        oldTimezone = prefs.getString("PREF_TIMEZONE", TimeZone.getDefault().getID());
     }
 
     /**
@@ -134,9 +134,7 @@ public class SystemReceiver extends BroadcastReceiver {
                 String newTimezone = TimeZone.getDefault().getID();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-                if(oldTimezone == null){
-                    oldTimezone = newTimezone;
-                }else if (TimeZone.getTimeZone(oldTimezone).getOffset(now) != TimeZone.getTimeZone(newTimezone).getOffset(now)) {
+                if (TimeZone.getTimeZone(oldTimezone).getOffset(now) != TimeZone.getTimeZone(newTimezone).getOffset(now)) {
                     prefs.edit().putString("PREF_TIMEZONE", newTimezone).commit();
                     timezoneProbe.setTimeZone(newTimezone);
                     systemListener.onUpdate(timezoneProbe);
