@@ -21,11 +21,9 @@ public class SystemReceiver extends BroadcastReceiver {
     private final String TAG = getClass().getSimpleName();
 
     private final SystemListener systemListener;
-    private final Context context;
 
     public SystemReceiver(SystemListener systemListener, Context context){
         this.systemListener = systemListener;
-        this.context = context;
     }
 
     /**
