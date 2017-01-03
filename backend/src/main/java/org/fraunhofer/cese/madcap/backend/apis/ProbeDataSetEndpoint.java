@@ -32,6 +32,7 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
 import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
+import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -255,6 +256,14 @@ public class ProbeDataSetEndpoint {
                     Collection<SystemInfoEntry> sielist = entryMap.get(entry.getProbeType());
                     SystemInfoEntry systemInfoEntry = new SystemInfoEntry(entry);
                     sielist.add(systemInfoEntry);
+                    break;
+                case "UserPresence":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<UserPresenceEntry>());
+                    }
+                    Collection<UserPresenceEntry> uplist = entryMap.get(entry.getProbeType());
+                    UserPresenceEntry userPresenceEntry = new UserPresenceEntry(entry);
+                    uplist.add(userPresenceEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();

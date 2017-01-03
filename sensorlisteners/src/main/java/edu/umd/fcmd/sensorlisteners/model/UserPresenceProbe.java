@@ -7,7 +7,6 @@ package edu.umd.fcmd.sensorlisteners.model;
 public class UserPresenceProbe extends Probe {
     private String presence;
 
-
     /**
      * Gets the presence.
      * @return the presence.

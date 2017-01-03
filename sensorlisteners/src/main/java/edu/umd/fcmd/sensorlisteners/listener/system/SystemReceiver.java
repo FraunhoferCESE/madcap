@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import edu.umd.fcmd.sensorlisteners.model.UserPresenceProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.DreamingModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
@@ -98,18 +99,15 @@ public class SystemReceiver extends BroadcastReceiver {
                 // TODO
                 //intent.putExtra("StateProbe: ", "boot completed");
                 break;
-            case Intent.ACTION_HEADSET_PLUG:
-                // TODO
-                //intent.putExtra("StateProbe: ", "headset plugged");
-                break;
             case Intent.ACTION_SHUTDOWN:
                 // TODO
                 //intent.putExtra("StateProbe: ", "Device is shutting down");
                 break;
             case Intent.ACTION_USER_PRESENT:
-                // Sent when the user is present after device wakes up (e.g when the keyguard is gone).
-                // TODO
-                // intent.putExtra("StateProbe: ", "user is now present");
+                UserPresenceProbe userPresenceProbe = new UserPresenceProbe();
+                userPresenceProbe.setDate(System.currentTimeMillis());
+                userPresenceProbe.setPresence("PRESENT");
+                systemListener.onUpdate(userPresenceProbe);
                 break;
             default:
                 Log.d(TAG, "Unkown system event received");
