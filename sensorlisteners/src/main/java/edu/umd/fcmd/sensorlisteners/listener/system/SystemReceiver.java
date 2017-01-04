@@ -10,6 +10,7 @@ import android.util.Log;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 
+import edu.umd.fcmd.sensorlisteners.model.system.InputhMethodProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.TimeChangedProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.TimezoneProbe;
@@ -125,6 +126,12 @@ public class SystemReceiver extends BroadcastReceiver {
                 userPresenceProbe.setDate(System.currentTimeMillis());
                 userPresenceProbe.setPresence("PRESENT");
                 systemListener.onUpdate(userPresenceProbe);
+                break;
+            case Intent.ACTION_INPUT_METHOD_CHANGED:
+                InputhMethodProbe inputhMethodProbe = new InputhMethodProbe();
+                inputhMethodProbe.setDate(System.currentTimeMillis());
+                inputhMethodProbe.setMethod(systemListener.getCurrentInputMethod());
+                systemListener.onUpdate(inputhMethodProbe);
                 break;
             case Intent.ACTION_TIMEZONE_CHANGED:
                 TimezoneProbe timezoneProbe = new TimezoneProbe();

@@ -8,13 +8,17 @@ import android.os.PowerManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Display;
+import android.view.inputmethod.InputMethodInfo;
+import android.view.inputmethod.InputMethodManager;
 
+import java.util.List;
 import java.util.TimeZone;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.InputhMethodProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemInfoProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.TimezoneProbe;
@@ -76,6 +80,7 @@ public class SystemListener implements Listener {
             systemFilter.addAction("android.intent.action.SCREEN_OFF");
             systemFilter.addAction("android.intent.action.TIMEZONE_CHANGED");
             systemFilter.addAction("android.intent.action.TIME_SET");
+            systemFilter.addAction("android.intent.action.INPUT_METHOD_CHANGED");
 
             context.registerReceiver(systemReceiver, systemFilter);
 
@@ -113,6 +118,12 @@ public class SystemListener implements Listener {
 
         sendInitalSystemInfoProbe();
 
+        //Input method
+        InputhMethodProbe inputhMethodProbe = new InputhMethodProbe();
+        inputhMethodProbe.setDate(System.currentTimeMillis());
+        inputhMethodProbe.setMethod(getCurrentInputMethod());
+        onUpdate(inputhMethodProbe);
+
     }
 
     private void sendInitalSystemInfoProbe() {
@@ -124,7 +135,6 @@ public class SystemListener implements Listener {
             @Override public void onFinished(DeviceName.DeviceInfo info, Exception error) {
                 systemInfoProbe.setManufacturer(info.manufacturer);  // "Samsung"
                 systemInfoProbe.setModel(info.marketName);            // "Galaxy S7 Edge"
-
                 systemInfoProbe.setMadcapVersion(madcapVerison);
                 systemInfoProbe.setApiLevel(Build.VERSION.SDK_INT);
 
@@ -193,5 +203,24 @@ public class SystemListener implements Listener {
                 return AirplaneModeProbe.OFF;
             }
         }
+    }
+
+    String getCurrentInputMethod(){
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
+
+        final int N = mInputMethodProperties.size();
+
+        for (int i = 0; i < N; i++) {
+
+            InputMethodInfo imi = mInputMethodProperties.get(i);
+
+            if (imi.getId().equals(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD))) {
+
+                return imi.getId();
+            }
+        }
+
+        return "na";
     }
 }

@@ -300,20 +300,20 @@ public class BluetoothProbeTest{
 
         BluetoothProbe bluetoothProbe = new BluetoothProbe(mockBluetoothAdapter, context, jsonObjectFactory, null);
 
-        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_OFF);
+        when(mockBluetoothAdapter.getMethod()).thenReturn(BluetoothAdapter.STATE_OFF);
         Assert.assertEquals("Unmachted return values", bluetoothProbe.OFF, bluetoothProbe.getBluetoothState());
 
-        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_ON);
+        when(mockBluetoothAdapter.getMethod()).thenReturn(BluetoothAdapter.STATE_ON);
         Assert.assertEquals("Unmachted return values", bluetoothProbe.ON, bluetoothProbe.getBluetoothState());
 
-        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_TURNING_ON);
+        when(mockBluetoothAdapter.getMethod()).thenReturn(BluetoothAdapter.STATE_TURNING_ON);
         Assert.assertEquals("Unmachted return values", bluetoothProbe.TURNING_ON, bluetoothProbe.getBluetoothState());
 
-        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_TURNING_OFF);
+        when(mockBluetoothAdapter.getMethod()).thenReturn(BluetoothAdapter.STATE_TURNING_OFF);
         Assert.assertEquals("Unmachted return values", bluetoothProbe.TURNING_OFF, bluetoothProbe.getBluetoothState());
 
-        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.ERROR);
-        Assert.assertEquals("Unmachted return values", Integer.toString(mockBluetoothAdapter.getState()), bluetoothProbe.getBluetoothState());
+        when(mockBluetoothAdapter.getMethod()).thenReturn(BluetoothAdapter.ERROR);
+        Assert.assertEquals("Unmachted return values", Integer.toString(mockBluetoothAdapter.getMethod()), bluetoothProbe.getBluetoothState());
     }
 
 
@@ -343,7 +343,7 @@ public class BluetoothProbeTest{
 
         // Set up how our BluetoothAdapter will respnd to methods called during onEnable()...
         BluetoothAdapter mockBluetoothAdapter = mock(BluetoothAdapter.class);
-        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_OFF);
+        when(mockBluetoothAdapter.getMethod()).thenReturn(BluetoothAdapter.STATE_OFF);
         when(mockBluetoothAdapter.getAddress()).thenReturn("127.0.0.1");
         when(mockBluetoothAdapter.getName()).thenReturn("this is my mock adapter!");
         when(mockBluetoothAdapter.getBondedDevices()).thenReturn(new HashSet<BluetoothDevice>());
@@ -383,7 +383,7 @@ public class BluetoothProbeTest{
 
         // Set up how our BluetoothAdapter will respnd to methods called during onEnable()...
         BluetoothAdapter mockBluetoothAdapter = mock(BluetoothAdapter.class);
-        when(mockBluetoothAdapter.getState()).thenReturn(BluetoothAdapter.STATE_OFF);
+        when(mockBluetoothAdapter.getMethod()).thenReturn(BluetoothAdapter.STATE_OFF);
         when(mockBluetoothAdapter.getAddress()).thenReturn("127.0.0.1");
         when(mockBluetoothAdapter.getName()).thenReturn("this is my mock adapter!");
         when(mockBluetoothAdapter.getBondedDevices()).thenReturn(bluetoothDevices);
