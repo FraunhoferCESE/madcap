@@ -1,6 +1,7 @@
 package edu.umd.fcmd.sensorlisteners.listener.system;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import org.junit.After;
 import org.junit.Before;
@@ -15,11 +16,13 @@ import static org.mockito.Mockito.mock;
 public class SystemReceiverFactoryTest {
     SystemListener mockSystemListener;
     Context mockContext;
+    SharedPreferences mockPref;
 
     @Before
     public void setUp() throws Exception {
         mockSystemListener = mock(SystemListener.class);
         mockContext = mock(Context.class);
+        mockPref = mock(SharedPreferences.class);
     }
 
     @After
@@ -36,7 +39,7 @@ public class SystemReceiverFactoryTest {
     public void create() throws Exception {
         SystemReceiverFactory cut = new SystemReceiverFactory();
 
-        cut.create(mockSystemListener, mockContext);
+        cut.create(mockSystemListener, mockContext, mockPref);
     }
 
 }

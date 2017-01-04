@@ -2,19 +2,27 @@ package edu.umd.fcmd.sensorlisteners.listener.system;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.TimeZone;
+
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.DockStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.DreamingModeProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.InputMethodProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.TimeChangedProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.TimezoneProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.UserPresenceProbe;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -27,21 +35,27 @@ import static org.mockito.Mockito.when;
 public class SystemReceiverTest {
     SystemListener mockSystemListener;
     Context mockContext;
+    SharedPreferences mockPrefs;
 
     @Before
     public void setUp() throws Exception {
         mockSystemListener = mock(SystemListener.class);
         mockContext = mock(Context.class);
+        mockPrefs = mock(SharedPreferences.class);
     }
 
     @Test
     public void constructorTest() throws Exception {
-        SystemReceiver cut = new SystemReceiver(mockSystemListener, mockContext);
+        when(mockPrefs.getString(anyString(), anyString())).thenReturn(TimeZone.getDefault().getID());
+
+        SystemReceiver cut = new SystemReceiver(mockSystemListener, mockContext, mockPrefs);
     }
 
     @Test
     public void onReceive() throws Exception {
-        SystemReceiver cut = new SystemReceiver(mockSystemListener, mockContext);
+        when(mockPrefs.getString(anyString(), anyString())).thenReturn(TimeZone.getDefault().getID());
+
+        SystemReceiver cut = new SystemReceiver(mockSystemListener, mockContext, mockPrefs);
 
         Intent mockIntent = mock(Intent.class);
 
@@ -76,6 +90,29 @@ public class SystemReceiverTest {
         when(mockIntent.getAction()).thenReturn(Intent.ACTION_USER_PRESENT);
         cut.onReceive(mockContext, mockIntent);
         verify(mockSystemListener, times(8)).onUpdate(any(UserPresenceProbe.class));
+
+        when(mockIntent.getAction()).thenReturn(Intent.ACTION_INPUT_METHOD_CHANGED);
+        cut.onReceive(mockContext, mockIntent);
+        verify(mockSystemListener, times(9)).onUpdate(any(InputMethodProbe.class));
+
+        when(mockIntent.getAction()).thenReturn(Intent.ACTION_TIMEZONE_CHANGED);
+
+        SharedPreferences.Editor mockEdit = mock(SharedPreferences.Editor.class);
+        SharedPreferences.Editor mockEdit2 = mock(SharedPreferences.Editor.class);
+        when(mockPrefs.edit()).thenReturn(mockEdit);
+        when(mockEdit.putString(anyString(),anyString())).thenReturn(mockEdit2);
+        when(mockEdit2.commit()).thenReturn(true);
+
+        cut.onReceive(mockContext, mockIntent);
+        verify(mockSystemListener, times(9)).onUpdate(any(TimezoneProbe.class));
+
+        when(mockIntent.getAction()).thenReturn(Intent.ACTION_DOCK_EVENT);
+        cut.onReceive(mockContext, mockIntent);
+        verify(mockSystemListener, times(10)).onUpdate(any(DockStateProbe.class));
+
+        when(mockIntent.getAction()).thenReturn(Intent.ACTION_TIME_CHANGED);
+        cut.onReceive(mockContext, mockIntent);
+        verify(mockSystemListener, times(11)).onUpdate(any(TimeChangedProbe.class));
 
         when(mockIntent.getAction()).thenReturn("Currywurst");
         cut.onReceive(mockContext, mockIntent);

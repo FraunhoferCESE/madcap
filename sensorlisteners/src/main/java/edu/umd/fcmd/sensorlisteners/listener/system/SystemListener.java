@@ -3,9 +3,11 @@ package edu.umd.fcmd.sensorlisteners.listener.system;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.view.Display;
 import android.view.inputmethod.InputMethodInfo;
@@ -37,14 +39,12 @@ import static android.content.Intent.EXTRA_DOCK_STATE;
  * - Screen state
  */
 public class SystemListener implements Listener {
-    private final String TAG = getClass().getSimpleName();
-
     private boolean runningState;
 
     private final Context context;
     private final ProbeManager<Probe> probeManager;
     private final String madcapVerison;
-    private SystemReceiverFactory systemReceiverFactory;
+    private final SystemReceiverFactory systemReceiverFactory;
 
     private SystemReceiver systemReceiver;
 
@@ -67,7 +67,9 @@ public class SystemListener implements Listener {
     @Override
     public void startListening() throws NoSensorFoundException {
         if(!runningState){
-            systemReceiver = systemReceiverFactory.create(this, context);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+
+            systemReceiver = systemReceiverFactory.create(this, context, prefs);
 
             IntentFilter systemFilter = new IntentFilter();
 
@@ -145,7 +147,7 @@ public class SystemListener implements Listener {
                 systemInfoProbe.setManufacturer(info.manufacturer);  // "Samsung"
                 systemInfoProbe.setModel(info.marketName);            // "Galaxy S7 Edge"
                 systemInfoProbe.setMadcapVersion(madcapVerison);
-                systemInfoProbe.setApiLevel(Build.VERSION.SDK_INT);
+                systemInfoProbe.setApiLevel((double) Build.VERSION.SDK_INT);
 
                 onUpdate(systemInfoProbe);
             }
@@ -184,11 +186,8 @@ public class SystemListener implements Listener {
         }else{
             // API 11+
             PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
-            if (powerManager.isScreenOn()){
-                return ScreenProbe.OFF;
-            }else{
-                return ScreenProbe.ON;
-            }
+            //noinspection deprecation
+            return powerManager.isScreenOn() ? ScreenProbe.OFF : ScreenProbe.ON;
         }
     }
 
@@ -198,19 +197,12 @@ public class SystemListener implements Listener {
      */
     String getCurrentAirplaneModeState() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            if(Settings.System.getInt(context.getContentResolver(),
-                    Settings.System.AIRPLANE_MODE_ON, 0) != 0){
-                return AirplaneModeProbe.ON;
-            }else{
-                return AirplaneModeProbe.OFF;
-            }
+            //noinspection deprecation
+            return (Settings.System.getInt(context.getContentResolver(),
+                    Settings.System.AIRPLANE_MODE_ON, 0) == 0) ? AirplaneModeProbe.OFF : AirplaneModeProbe.ON;
         } else {
-            if(Settings.Global.getInt(context.getContentResolver(),
-                    Settings.Global.AIRPLANE_MODE_ON, 0) != 0){
-                return AirplaneModeProbe.ON;
-            }else{
-                return AirplaneModeProbe.OFF;
-            }
+            return (Settings.Global.getInt(context.getContentResolver(),
+                    Settings.Global.AIRPLANE_MODE_ON, 0) == 0) ? AirplaneModeProbe.OFF : AirplaneModeProbe.ON;
         }
     }
 
@@ -218,14 +210,11 @@ public class SystemListener implements Listener {
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
 
-        final int N = mInputMethodProperties.size();
+        int number = mInputMethodProperties.size();
 
-        for (int i = 0; i < N; i++) {
-
+        for (int i = 0; i < number; i++) {
             InputMethodInfo imi = mInputMethodProperties.get(i);
-
             if (imi.getId().equals(Settings.Secure.getString(context.getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD))) {
-
                 return imi.getId();
             }
         }
@@ -237,23 +226,21 @@ public class SystemListener implements Listener {
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_DOCK_EVENT);
         Intent dockStatus = context.registerReceiver(null, ifilter);
 
-        int dockState = (dockStatus == null ?
+        int dockState = (dockStatus == null) ?
                 Intent.EXTRA_DOCK_STATE_UNDOCKED :
-                dockStatus.getIntExtra(Intent.EXTRA_DOCK_STATE, -1));
+                dockStatus.getIntExtra(EXTRA_DOCK_STATE, -1);
         boolean isDocked = dockState != Intent.EXTRA_DOCK_STATE_UNDOCKED;
 
-        if(isDocked) return DockStateProbe.DOCKED;
-        else return DockStateProbe.UNDOCKED;
+        return isDocked ? DockStateProbe.DOCKED : DockStateProbe.UNDOCKED;
     }
 
     String getCurrentDockDevice(){
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_DOCK_EVENT);
         Intent dockStatus = context.registerReceiver(null, ifilter);
 
-        int dockState = (dockStatus == null ?
+        int dockState = (dockStatus == null) ?
                 Intent.EXTRA_DOCK_STATE_UNDOCKED :
-                dockStatus.getIntExtra(Intent.EXTRA_DOCK_STATE, -1));
-        boolean isCar = dockState == Intent.EXTRA_DOCK_STATE_CAR;
+                dockStatus.getIntExtra(EXTRA_DOCK_STATE, -1);
 
         switch(dockState){
             case Intent.EXTRA_DOCK_STATE_CAR:
