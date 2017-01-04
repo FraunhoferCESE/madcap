@@ -8,9 +8,8 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import java.util.TimeZone;
-import java.util.logging.Logger;
 
-import edu.umd.fcmd.sensorlisteners.model.system.InputhMethodProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.InputMethodProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.TimeChangedProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.TimezoneProbe;
@@ -128,10 +127,10 @@ public class SystemReceiver extends BroadcastReceiver {
                 systemListener.onUpdate(userPresenceProbe);
                 break;
             case Intent.ACTION_INPUT_METHOD_CHANGED:
-                InputhMethodProbe inputhMethodProbe = new InputhMethodProbe();
-                inputhMethodProbe.setDate(System.currentTimeMillis());
-                inputhMethodProbe.setMethod(systemListener.getCurrentInputMethod());
-                systemListener.onUpdate(inputhMethodProbe);
+                InputMethodProbe inputMethodProbe = new InputMethodProbe();
+                inputMethodProbe.setDate(System.currentTimeMillis());
+                inputMethodProbe.setMethod(systemListener.getCurrentInputMethod());
+                systemListener.onUpdate(inputMethodProbe);
                 break;
             case Intent.ACTION_TIMEZONE_CHANGED:
                 TimezoneProbe timezoneProbe = new TimezoneProbe();
@@ -140,7 +139,6 @@ public class SystemReceiver extends BroadcastReceiver {
                 long now = System.currentTimeMillis();
                 String newTimezone = TimeZone.getDefault().getID();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
                 if (TimeZone.getTimeZone(oldTimezone).getOffset(now) != TimeZone.getTimeZone(newTimezone).getOffset(now)) {
                     prefs.edit().putString("PREF_TIMEZONE", newTimezone).commit();
                     timezoneProbe.setTimeZone(newTimezone);

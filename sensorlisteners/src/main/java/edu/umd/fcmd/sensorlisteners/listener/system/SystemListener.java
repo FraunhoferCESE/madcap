@@ -6,7 +6,6 @@ import android.hardware.display.DisplayManager;
 import android.os.Build;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Display;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -18,7 +17,7 @@ import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
-import edu.umd.fcmd.sensorlisteners.model.system.InputhMethodProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.InputMethodProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemInfoProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.TimezoneProbe;
@@ -119,10 +118,10 @@ public class SystemListener implements Listener {
         sendInitalSystemInfoProbe();
 
         //Input method
-        InputhMethodProbe inputhMethodProbe = new InputhMethodProbe();
-        inputhMethodProbe.setDate(System.currentTimeMillis());
-        inputhMethodProbe.setMethod(getCurrentInputMethod());
-        onUpdate(inputhMethodProbe);
+        InputMethodProbe inputMethodProbe = new InputMethodProbe();
+        inputMethodProbe.setDate(System.currentTimeMillis());
+        inputMethodProbe.setMethod(getCurrentInputMethod());
+        onUpdate(inputMethodProbe);
 
     }
 

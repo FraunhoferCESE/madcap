@@ -8,7 +8,7 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
  * Model class for input methods (keyboard english, keboard german,
  * voice to text etc.)
  */
-public class InputhMethodProbe extends Probe {
+public class InputMethodProbe extends Probe {
     private String method;
 
     /**
@@ -34,7 +34,7 @@ public class InputhMethodProbe extends Probe {
      */
     @Override
     public String getType() {
-        return "InputhMethod";
+        return "InputMethod";
     }
 
     /**
@@ -60,7 +60,7 @@ public class InputhMethodProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"method\": " + (method != null? method : "-")+
+        return "{\"method\": " + "\""+(method != null? method : "-")+"\""+
                 '}';
     }
 }

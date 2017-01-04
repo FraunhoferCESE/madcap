@@ -24,6 +24,7 @@ import org.fraunhofer.cese.madcap.backend.models.DataCollectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
 import org.fraunhofer.cese.madcap.backend.models.DreamingModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
+import org.fraunhofer.cese.madcap.backend.models.InputMethodEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
@@ -291,6 +292,14 @@ public class ProbeDataSetEndpoint {
                     Collection<TimezoneEntry> tzlist = entryMap.get(entry.getProbeType());
                     TimezoneEntry timezoneEntry = new TimezoneEntry(entry);
                     tzlist.add(timezoneEntry);
+                    break;
+                case "InputMethod":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<InputMethodEntry>());
+                    }
+                    Collection<InputMethodEntry> imlist = entryMap.get(entry.getProbeType());
+                    InputMethodEntry inputMethodEntry = new InputMethodEntry(entry);
+                    imlist.add(inputMethodEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();
