@@ -9,6 +9,7 @@ import android.util.Log;
 
 import java.util.TimeZone;
 
+import edu.umd.fcmd.sensorlisteners.model.system.DockStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.InputMethodProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.TimeChangedProbe;
@@ -17,6 +18,7 @@ import edu.umd.fcmd.sensorlisteners.model.system.UserPresenceProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.DreamingModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
+
 
 /**
  * Created by MMueller on 12/30/2016.
@@ -145,6 +147,13 @@ public class SystemReceiver extends BroadcastReceiver {
                     systemListener.onUpdate(timezoneProbe);
                     oldTimezone = newTimezone;
                 }
+                break;
+            case Intent.ACTION_DOCK_EVENT:
+                DockStateProbe dockStateProbe = new DockStateProbe();
+                dockStateProbe.setDate(System.currentTimeMillis());
+                dockStateProbe.setState(systemListener.getCurrentDockState());
+                dockStateProbe.setKind(systemListener.getCurrentDockDevice());
+                systemListener.onUpdate(dockStateProbe);
                 break;
             case Intent.ACTION_TIME_CHANGED:
                 TimeChangedProbe timeChangedProbe = new TimeChangedProbe();

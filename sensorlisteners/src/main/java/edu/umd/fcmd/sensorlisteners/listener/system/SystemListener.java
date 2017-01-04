@@ -1,6 +1,7 @@
 package edu.umd.fcmd.sensorlisteners.listener.system;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
@@ -17,6 +18,7 @@ import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.DockStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.InputMethodProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemInfoProbe;
@@ -25,6 +27,7 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 import edu.umd.fcmd.sensorlisteners.util.DeviceName;
 
 import static android.content.Context.POWER_SERVICE;
+import static android.content.Intent.EXTRA_DOCK_STATE;
 
 /**
  * Created by MMueller on 12/30/2016.
@@ -109,7 +112,7 @@ public class SystemListener implements Listener {
         //Log.d(TAG, "AIRPLANE "+airplaneModeProbe);
         onUpdate(airplaneModeProbe);
 
-        //Time zone
+        // Time zone
         TimezoneProbe timezoneProbe = new TimezoneProbe();
         timezoneProbe.setDate(System.currentTimeMillis());
         timezoneProbe.setTimeZone(TimeZone.getDefault().getID());
@@ -117,11 +120,18 @@ public class SystemListener implements Listener {
 
         sendInitalSystemInfoProbe();
 
-        //Input method
+        // Input method
         InputMethodProbe inputMethodProbe = new InputMethodProbe();
         inputMethodProbe.setDate(System.currentTimeMillis());
         inputMethodProbe.setMethod(getCurrentInputMethod());
         onUpdate(inputMethodProbe);
+
+        // Dock state
+        DockStateProbe dockStateProbe = new DockStateProbe();
+        dockStateProbe.setDate(System.currentTimeMillis());
+        dockStateProbe.setState(getCurrentDockState());
+        dockStateProbe.setKind(getCurrentDockDevice());
+        onUpdate(dockStateProbe);
 
     }
 
@@ -221,5 +231,42 @@ public class SystemListener implements Listener {
         }
 
         return "na";
+    }
+
+    String getCurrentDockState(){
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_DOCK_EVENT);
+        Intent dockStatus = context.registerReceiver(null, ifilter);
+
+        int dockState = (dockStatus == null ?
+                Intent.EXTRA_DOCK_STATE_UNDOCKED :
+                dockStatus.getIntExtra(Intent.EXTRA_DOCK_STATE, -1));
+        boolean isDocked = dockState != Intent.EXTRA_DOCK_STATE_UNDOCKED;
+
+        if(isDocked) return DockStateProbe.DOCKED;
+        else return DockStateProbe.UNDOCKED;
+    }
+
+    String getCurrentDockDevice(){
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_DOCK_EVENT);
+        Intent dockStatus = context.registerReceiver(null, ifilter);
+
+        int dockState = (dockStatus == null ?
+                Intent.EXTRA_DOCK_STATE_UNDOCKED :
+                dockStatus.getIntExtra(Intent.EXTRA_DOCK_STATE, -1));
+        boolean isCar = dockState == Intent.EXTRA_DOCK_STATE_CAR;
+
+        switch(dockState){
+            case Intent.EXTRA_DOCK_STATE_CAR:
+                return DockStateProbe.CAR;
+            case Intent.EXTRA_DOCK_STATE_DESK:
+                return DockStateProbe.DESK;
+            case Intent.EXTRA_DOCK_STATE_HE_DESK:
+                return DockStateProbe.DESK;
+            case Intent.EXTRA_DOCK_STATE_LE_DESK:
+                return DockStateProbe.DESK;
+            default:
+                return "-";
+        }
+
     }
 }
