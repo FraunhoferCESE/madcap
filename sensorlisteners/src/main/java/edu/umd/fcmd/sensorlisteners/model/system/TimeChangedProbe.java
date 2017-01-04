@@ -62,7 +62,7 @@ public class TimeChangedProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"change\": " + (change != null ? change : "-") +
+        return "{\"change\": " + "\""+(change != null ? change : "-")+"\"" +
                 '}';
     }
 }

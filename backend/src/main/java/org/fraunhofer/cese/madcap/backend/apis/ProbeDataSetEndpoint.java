@@ -33,6 +33,8 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
 import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
 import org.fraunhofer.cese.madcap.backend.models.SystemUptimeEntry;
+import org.fraunhofer.cese.madcap.backend.models.TimeChangeEntry;
+import org.fraunhofer.cese.madcap.backend.models.TimezoneEntry;
 import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 
 import java.util.ArrayList;
@@ -273,6 +275,22 @@ public class ProbeDataSetEndpoint {
                     Collection<SystemUptimeEntry> uptlist = entryMap.get(entry.getProbeType());
                     SystemUptimeEntry systemUptimeEntry = new SystemUptimeEntry(entry);
                     uptlist.add(systemUptimeEntry);
+                    break;
+                case "TimeChange":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<TimeChangeEntry>());
+                    }
+                    Collection<TimeChangeEntry> tclist = entryMap.get(entry.getProbeType());
+                    TimeChangeEntry timeChangeEntry = new TimeChangeEntry(entry);
+                    tclist.add(timeChangeEntry);
+                    break;
+                case "TimeZone":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<TimezoneEntry>());
+                    }
+                    Collection<TimezoneEntry> tzlist = entryMap.get(entry.getProbeType());
+                    TimezoneEntry timezoneEntry = new TimezoneEntry(entry);
+                    tzlist.add(timezoneEntry);
                     break;
                 default:
                     throw new IllegalArgumentException();

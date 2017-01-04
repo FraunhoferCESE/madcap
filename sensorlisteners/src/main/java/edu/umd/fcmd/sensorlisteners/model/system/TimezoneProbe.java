@@ -4,8 +4,9 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
  * Created by MMueller on 1/3/2017.
+ *
+ * Model class for time zones.
  */
-
 public class TimezoneProbe extends Probe {
     private String timeZone;
 
@@ -58,7 +59,7 @@ public class TimezoneProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"timeZone\": " + (timeZone != null? timeZone : "-") +
+        return "{\"timeZone\": " + "\""+(timeZone != null? timeZone : "-")+"\"" +
                 '}';
     }
 }
