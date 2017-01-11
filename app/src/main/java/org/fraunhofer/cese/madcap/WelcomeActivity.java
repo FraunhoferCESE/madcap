@@ -108,9 +108,6 @@ public class WelcomeActivity extends AppCompatActivity {
 
                     MyApplication.madcapLogger.e(TAG, text);
                     errorTextView.setText(text);
-//                    Intent intent = new Intent(context, SignInActivity.class);
-//                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-//                    startActivity(intent);
                     startActivity(new Intent(context, SignInActivity.class));
                     finish();
                 }
