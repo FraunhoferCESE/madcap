@@ -80,7 +80,6 @@
             android:name=".authentication.SignInActivity"
             android:label="@string/name_sign_in_activity"
             android:screenOrientation="portrait"
-            android:noHistory="true"
             android:theme="@style/MadcapTheme" />
 
         <service android:name=".firebasecloudmessaging.MadcapFirebaseMessagingService">

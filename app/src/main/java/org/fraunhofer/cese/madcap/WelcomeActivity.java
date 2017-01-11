@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -107,6 +108,9 @@ public class WelcomeActivity extends AppCompatActivity {
 
                     MyApplication.madcapLogger.e(TAG, text);
                     errorTextView.setText(text);
+//                    Intent intent = new Intent(context, SignInActivity.class);
+//                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+//                    startActivity(intent);
                     startActivity(new Intent(context, SignInActivity.class));
                     finish();
                 }

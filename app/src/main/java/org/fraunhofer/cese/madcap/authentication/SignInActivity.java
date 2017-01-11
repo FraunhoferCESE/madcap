@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -66,6 +67,7 @@ public class SignInActivity extends AppCompatActivity {
                 MyApplication.madcapLogger.d(TAG, "pressed sign in");
                 mStatusTextView.setText(R.string.signing_in);
                 authenticationProvider.interactiveSignIn(activity, RC_SIGN_IN, new LoginResultCallback() {
+
                     @Override
                     public void onServicesUnavailable(int connectionResult) {
                         MyApplication.madcapLogger.w(TAG, "Google SignIn services are unavailable.");
@@ -189,6 +191,7 @@ public class SignInActivity extends AppCompatActivity {
                     }
 
                     startActivity(new Intent(this, MainActivity.class));
+                    finish();
                 }
             } else {
                 MyApplication.madcapLogger.w(TAG, "SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
