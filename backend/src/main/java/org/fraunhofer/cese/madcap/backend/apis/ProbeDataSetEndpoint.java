@@ -12,6 +12,7 @@ import com.googlecode.objectify.cmd.LoadType;
 
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ActivityEntry;
+import org.fraunhofer.cese.madcap.backend.models.AirplaneModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothConnectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothDiscoveryEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
@@ -24,7 +25,10 @@ import org.fraunhofer.cese.madcap.backend.models.CellLocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.ChargingEntry;
 import org.fraunhofer.cese.madcap.backend.models.DataCollectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
+import org.fraunhofer.cese.madcap.backend.models.DockStateEntry;
+import org.fraunhofer.cese.madcap.backend.models.DreamingModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
+import org.fraunhofer.cese.madcap.backend.models.InputMethodEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.MSMSEntry;
@@ -35,6 +39,12 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
+import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
+import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
+import org.fraunhofer.cese.madcap.backend.models.SystemUptimeEntry;
+import org.fraunhofer.cese.madcap.backend.models.TimeChangeEntry;
+import org.fraunhofer.cese.madcap.backend.models.TimezoneEntry;
+import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -226,6 +236,86 @@ public class ProbeDataSetEndpoint {
                     Collection<DataCollectionEntry> dalist = entryMap.get(entry.getProbeType());
                     DataCollectionEntry dataCollectionEntry = new DataCollectionEntry(entry);
                     dalist.add(dataCollectionEntry);
+                    break;
+                case "DreamingMode":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<DreamingModeEntry>());
+                    }
+                    Collection<DreamingModeEntry> drlist = entryMap.get(entry.getProbeType());
+                    DreamingModeEntry dreamingModeEntry = new DreamingModeEntry(entry);
+                    drlist.add(dreamingModeEntry);
+                    break;
+                case "Screen":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<ScreenEntry>());
+                    }
+                    Collection<ScreenEntry> slist = entryMap.get(entry.getProbeType());
+                    ScreenEntry screenEntry = new ScreenEntry(entry);
+                    slist.add(screenEntry);
+                    break;
+                case "AirplaneMode":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<AirplaneModeEntry>());
+                    }
+                    Collection<AirplaneModeEntry> apmlist = entryMap.get(entry.getProbeType());
+                    AirplaneModeEntry airplaneModeEntry = new AirplaneModeEntry(entry);
+                    apmlist.add(airplaneModeEntry);
+                    break;
+                case "SystemInfo":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<SystemInfoEntry>());
+                    }
+                    Collection<SystemInfoEntry> sielist = entryMap.get(entry.getProbeType());
+                    SystemInfoEntry systemInfoEntry = new SystemInfoEntry(entry);
+                    sielist.add(systemInfoEntry);
+                    break;
+                case "UserPresence":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<UserPresenceEntry>());
+                    }
+                    Collection<UserPresenceEntry> uplist = entryMap.get(entry.getProbeType());
+                    UserPresenceEntry userPresenceEntry = new UserPresenceEntry(entry);
+                    uplist.add(userPresenceEntry);
+                    break;
+                case "SystemUptime":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<SystemUptimeEntry>());
+                    }
+                    Collection<SystemUptimeEntry> uptlist = entryMap.get(entry.getProbeType());
+                    SystemUptimeEntry systemUptimeEntry = new SystemUptimeEntry(entry);
+                    uptlist.add(systemUptimeEntry);
+                    break;
+                case "TimeChange":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<TimeChangeEntry>());
+                    }
+                    Collection<TimeChangeEntry> tclist = entryMap.get(entry.getProbeType());
+                    TimeChangeEntry timeChangeEntry = new TimeChangeEntry(entry);
+                    tclist.add(timeChangeEntry);
+                    break;
+                case "TimeZone":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<TimezoneEntry>());
+                    }
+                    Collection<TimezoneEntry> tzlist = entryMap.get(entry.getProbeType());
+                    TimezoneEntry timezoneEntry = new TimezoneEntry(entry);
+                    tzlist.add(timezoneEntry);
+                    break;
+                case "InputMethod":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<InputMethodEntry>());
+                    }
+                    Collection<InputMethodEntry> imlist = entryMap.get(entry.getProbeType());
+                    InputMethodEntry inputMethodEntry = new InputMethodEntry(entry);
+                    imlist.add(inputMethodEntry);
+                    break;
+                case "DockState":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<DockStateEntry>());
+                    }
+                    Collection<DockStateEntry> dslist = entryMap.get(entry.getProbeType());
+                    DockStateEntry dockStateEntry = new DockStateEntry(entry);
+                    dslist.add(dockStateEntry);
                     break;
                 case "CallState":
                     if (!entryMap.containsKey(entry.getProbeType())) {

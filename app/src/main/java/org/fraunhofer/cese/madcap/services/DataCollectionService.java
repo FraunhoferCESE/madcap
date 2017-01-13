@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -63,7 +64,10 @@ import edu.umd.fcmd.sensorlisteners.listener.network.NetworkListener;
 import edu.umd.fcmd.sensorlisteners.listener.network.SMSOutObserverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListenerFactory;
 import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
+import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
+import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.INCOMPLETE;
@@ -176,6 +180,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @Inject
     MMSOutObserverFactory mmsOutObserverFactory;
 
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    SystemReceiverFactory systemReceiverFactory;
+
     /**
      * Return the communication channel to the service.  May return null if
      * clients can not bind to the service.  The returned
@@ -252,6 +260,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     smsOutObserverFactory,
                     mmsOutObserverFactory,
                     madcapPermissionDeniedHandler));
+
+            listeners.add(new SystemListener(this, new CacheFactory(cache, authManager),
+                    systemReceiverFactory,
+                    MyApplication.MADCAPVERSION));
         }
 //        madcapAuthManager.setCallbackClass(this);
 
@@ -317,8 +329,23 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
         cache.addUploadListener(this);
 
+        if (intent != null && intent.hasExtra("boot")) {
+            cacheInitialBootEvent();
+        }
+
         return START_STICKY;
         //return super.onStartCommand(intent, flags, startId);
+    }
+
+    /**
+     * Caches a boot probe when the service has been started via the OnBootService.
+     */
+    private void cacheInitialBootEvent() {
+        SystemUptimeProbe systemUptimeProbe = new SystemUptimeProbe();
+        systemUptimeProbe.setDate(System.currentTimeMillis());
+        systemUptimeProbe.setState(SystemUptimeProbe.BOOT);
+
+        new CacheFactory(cache, authManager).save(systemUptimeProbe);
     }
 
 

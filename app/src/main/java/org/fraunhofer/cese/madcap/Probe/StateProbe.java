@@ -38,7 +38,6 @@ public class StateProbe extends Probe.Base implements Probe.PassiveProbe {
         filter.addAction("android.intent.action.DREAMING_STOPPED");
         filter.addAction("android.intent.action.HEADSET_PLUG");
 
-
         getContext().registerReceiver(receiver, filter);
         MyApplication.madcapLogger.i("StateProbe", "StateProbe enabled");
 

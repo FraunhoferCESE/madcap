@@ -27,6 +27,7 @@ public class MyApplication extends Application {
 
     @SuppressWarnings("StaticVariableOfConcreteClass")
     public static final MadcapLogger madcapLogger = new MadcapLogger();
+    public static final String MADCAPVERSION = "ALPHA-A";
 
 
     @Override

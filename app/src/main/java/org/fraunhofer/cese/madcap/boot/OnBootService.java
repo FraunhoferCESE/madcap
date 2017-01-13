@@ -52,6 +52,7 @@ public class OnBootService extends IntentService {
         if (authManager.getUser() != null) {
             Intent sintent = new Intent(this, DataCollectionService.class);
             sintent.putExtra("callee",TAG);
+            sintent.putExtra("boot", true);
             startService(sintent);
         } else {
             final Context context = this;
@@ -75,7 +76,7 @@ public class OnBootService extends IntentService {
                         MyApplication.madcapLogger.d(TAG, "Google SignIn successfully authenticated user to MADCAP.");
 
                         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
-                            startService(new Intent(context, DataCollectionService.class).putExtra("callee",TAG));
+                            startService(new Intent(context, DataCollectionService.class).putExtra("boot",true));
                         }
                         // TODO: Create reminder notification to enable MADCAP data collection?
                     } else {

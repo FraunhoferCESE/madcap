@@ -43,6 +43,7 @@ import edu.umd.fcmd.sensorlisteners.listener.network.MMSOutObserverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.MSMSReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.SMSOutObserverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListenerFactory;
+import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
 
 /**
  * This class defines the providers to use for dependency injection
@@ -196,6 +197,11 @@ class MyApplicationModule {
     @Provides
     ManualProbeUploader provideManualProbeUploader(){
         return new ManualProbeUploader();
+    }
+
+    @Provides
+    SystemReceiverFactory provideSystemReceiverFactory(){
+        return new SystemReceiverFactory();
     }
 
 
