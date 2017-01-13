@@ -112,7 +112,7 @@ public class NetworkListener implements Listener {
         smsOutObserver = smsOutObserverFactory.create(networkListener, context);
         mmsOutObserver = mmsOutObserverFactory.create(networkListener);
 
-        context.getContentResolver().registerContentObserver(Uri.parse("content://sms"), true, smsOutObserver);
+        context.getContentResolver().registerContentObserver(Telephony.Sms.CONTENT_URI, true, smsOutObserver);
         context.getContentResolver().registerContentObserver(Telephony.Mms.CONTENT_URI, true, mmsOutObserver);
 
     }

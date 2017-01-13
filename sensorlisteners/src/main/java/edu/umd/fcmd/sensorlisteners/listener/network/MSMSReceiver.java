@@ -64,22 +64,27 @@ public class MSMSReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.e(TAG, "RECEIVED");
-        SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
-        long timestamp = 0L;
-
-        if(messages != null){
-            for (SmsMessage message : messages) {
-                if (timestamp < message.getTimestampMillis()) {
-                    timestamp = message.getTimestampMillis();
-                }
-            }
-        }else{
-            timestamp = System.currentTimeMillis();
-        }
+//        SmsMessage[] messages = null;
+//
+//        if(intent != null){
+//            messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
+//        }
+//
+//        long timestamp = 0L;
+//
+//        if(messages != null){
+//            for (SmsMessage message : messages) {
+//                if (timestamp < message.getTimestampMillis()) {
+//                    timestamp = message.getTimestampMillis();
+//                }
+//            }
+//        }else{
+//            timestamp = System.currentTimeMillis();
+//        }
 
 
         MSMSProbe msmsProbe = new MSMSProbe();
-        msmsProbe.setDate(timestamp);
+        msmsProbe.setDate(System.currentTimeMillis());
 
         switch(intent.getAction()){
             case Telephony.Sms.Intents.SMS_RECEIVED_ACTION:
