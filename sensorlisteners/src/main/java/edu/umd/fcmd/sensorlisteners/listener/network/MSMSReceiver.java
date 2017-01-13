@@ -9,6 +9,8 @@ import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.model.network.MSMSProbe;
 
+import static android.os.Build.VERSION_CODES.M;
+
 /**
  * Created by MMueller on 12/28/2016.
  *
@@ -64,11 +66,17 @@ public class MSMSReceiver extends BroadcastReceiver{
         Log.e(TAG, "RECEIVED");
         SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
         long timestamp = 0L;
-        for (SmsMessage message : messages) {
-            if (timestamp < message.getTimestampMillis()) {
-                timestamp = message.getTimestampMillis();
+
+        if(messages != null){
+            for (SmsMessage message : messages) {
+                if (timestamp < message.getTimestampMillis()) {
+                    timestamp = message.getTimestampMillis();
+                }
             }
+        }else{
+            timestamp = System.currentTimeMillis();
         }
+
 
         MSMSProbe msmsProbe = new MSMSProbe();
         msmsProbe.setDate(timestamp);

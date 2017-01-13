@@ -38,6 +38,7 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.VoicemailEntry;
 import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
 import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
 import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
@@ -372,6 +373,14 @@ public class ProbeDataSetEndpoint {
                     Collection<MSMSEntry> mslist = entryMap.get(entry.getProbeType());
                     MSMSEntry msmsEntry = new MSMSEntry(entry);
                     mslist.add(msmsEntry);
+                    break;
+                case "Voicemail":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<VoicemailEntry>());
+                    }
+                    Collection<VoicemailEntry> vmlist = entryMap.get(entry.getProbeType());
+                    VoicemailEntry vmEntry = new VoicemailEntry(entry);
+                    vmlist.add(vmEntry);
                     break;
                 default:
                     throw new IllegalArgumentException("Unmateched Probe Type");

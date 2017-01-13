@@ -176,6 +176,8 @@ public class NetworkListener implements Listener {
         intentFilter.addAction("android.net.wifi.supplicant.STATE_CHANGED");
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         intentFilter.addAction("android.net.conn.CONNECTIVITY_ACTION");
+        intentFilter.addAction("android.intent.action.FETCH_VOICEMAIL");
+        intentFilter.addAction("android.intent.action.NEW_VOICEMAIL");
 
         context.registerReceiver(networkReceiver, intentFilter);
     }
