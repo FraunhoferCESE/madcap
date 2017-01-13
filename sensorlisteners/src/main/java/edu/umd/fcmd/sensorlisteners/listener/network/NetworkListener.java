@@ -251,12 +251,6 @@ public class NetworkListener implements Listener {
             case WifiManager.WIFI_STATE_DISABLED:
                 result = "DISABLED";
                 break;
-            case WifiManager.WIFI_STATE_ENABLING:
-                result = "ENABLING";
-                break;
-            case WifiManager.WIFI_STATE_DISABLING:
-                result = "DISABLING";
-                break;
             case WifiManager.WIFI_STATE_UNKNOWN:
                 result = "UNKNOWN";
                 break;
