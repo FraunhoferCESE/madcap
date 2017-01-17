@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -46,6 +47,7 @@ import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
  * to handle interaction events.
  */
 public class StartFragment extends Fragment implements UploadStatusGuiListener {
+
     private final String TAG = getClass().getSimpleName();
     private static final String STATE_UPLOAD_STATUS = "uploadStatus";
     private static final String STATE_DATA_COUNT = "dataCount";
@@ -71,7 +73,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
     private OnFragmentInteractionListener mListener;
     private TextView nameTextView;
     private TextView collectionDataStatusText;
-    private LinearLayout dataCollectionLayout;
+    private RelativeLayout dataCollectionLayout;
     private Switch collectDataSwitch;
     private ProgressBar uploadProgressBar;
     private TextView dataCountView;
@@ -201,7 +203,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         uploadProgressBar = (ProgressBar) view.findViewById(R.id.uploadProgressBar);
 
         //Set up the colorable data collection background
-        dataCollectionLayout = (LinearLayout) view.findViewById(R.id.dataCollectionLayout);
+        dataCollectionLayout = (RelativeLayout) view.findViewById(R.id.dataCollectionLayout);
 
         if (isCollectingData) {
             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
@@ -288,6 +290,8 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
                 }
         );
 
+        TextView versionNumberText = (TextView) view.findViewById(R.id.versionNumberStartFragment);
+        versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME);
         restoreLastUpload();
         return view;
     }
