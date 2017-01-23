@@ -2,6 +2,7 @@ package edu.umd.fcmd.sensorlisteners.listener.network;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.ScanCallback;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.ScanResult;
@@ -39,6 +40,9 @@ public class NetworkListenerTest {
     ConnectionInfoReceiverFactory mockConnectionInfoReceiverFactory;
     TelephonyListenerFactory mockTelephonyListenerFactory;
     PermissionDeniedHandler mockPermissionDeniedHandler;
+    MSMSReceiverFactory mockMSMSReceiverFactory;
+    SMSOutObserverFactory mockSMSOutObserverFactory;
+    MMSOutObserverFactory mockMMSOutObserverFactory;
 
     @Before
     public void setUp() throws Exception {
@@ -47,6 +51,9 @@ public class NetworkListenerTest {
         mockConnectionInfoReceiverFactory = mock(ConnectionInfoReceiverFactory.class);
         mockTelephonyListenerFactory = mock(TelephonyListenerFactory.class);
         mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
+        mockMSMSReceiverFactory = mock(MSMSReceiverFactory.class);
+        mockSMSOutObserverFactory = mock(SMSOutObserverFactory.class);
+        mockMMSOutObserverFactory = mock(MMSOutObserverFactory.class);
     }
 
     @After
@@ -59,7 +66,10 @@ public class NetworkListenerTest {
         NetworkListener cut = new NetworkListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
+                mockMSMSReceiverFactory,
                 mockTelephonyListenerFactory,
+                mockSMSOutObserverFactory,
+                mockMMSOutObserverFactory,
                 mockPermissionDeniedHandler);
     }
 
@@ -68,7 +78,10 @@ public class NetworkListenerTest {
         NetworkListener cut = new NetworkListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
+                mockMSMSReceiverFactory,
                 mockTelephonyListenerFactory,
+                mockSMSOutObserverFactory,
+                mockMMSOutObserverFactory,
                 mockPermissionDeniedHandler);
 
         Probe mockProbe = mock(Probe.class);
@@ -83,7 +96,10 @@ public class NetworkListenerTest {
         NetworkListener cut = new NetworkListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
+                mockMSMSReceiverFactory,
                 mockTelephonyListenerFactory,
+                mockSMSOutObserverFactory,
+                mockMMSOutObserverFactory,
                 mockPermissionDeniedHandler);
 
         TelephonyListener mockTelephonyListener = mock(TelephonyListener.class);
@@ -97,6 +113,15 @@ public class NetworkListenerTest {
         WifiInfo mockWifiInfo = mock(WifiInfo.class);
         when(mockWifiManager.getConnectionInfo()).thenReturn(mockWifiInfo);
         when(mockWifiInfo.getIpAddress()).thenReturn(128001);
+
+        SMSOutObserver mockSMSOutObserver = mock(SMSOutObserver.class);
+        when(mockSMSOutObserverFactory.create(cut, mockContext)).thenReturn(mockSMSOutObserver);
+
+        MMSOutObserver mockMMSOutObserver = mock(MMSOutObserver.class);
+        when(mockMMSOutObserverFactory.create(cut)).thenReturn(mockMMSOutObserver);
+
+        ContentResolver mockContentResolver = mock(ContentResolver.class);
+        when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
 
         cut.startListening();
 
@@ -109,7 +134,10 @@ public class NetworkListenerTest {
         NetworkListener cut = new NetworkListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
+                mockMSMSReceiverFactory,
                 mockTelephonyListenerFactory,
+                mockSMSOutObserverFactory,
+                mockMMSOutObserverFactory,
                 mockPermissionDeniedHandler);
 
         TelephonyListener mockTelephonyListener = mock(TelephonyListener.class);
@@ -124,8 +152,18 @@ public class NetworkListenerTest {
         when(mockWifiManager.getConnectionInfo()).thenReturn(mockWifiInfo);
         when(mockWifiInfo.getIpAddress()).thenReturn(128001);
 
+        SMSOutObserver mockSMSOutObserver = mock(SMSOutObserver.class);
+        when(mockSMSOutObserverFactory.create(cut, mockContext)).thenReturn(mockSMSOutObserver);
+
+        MMSOutObserver mockMMSOutObserver = mock(MMSOutObserver.class);
+        when(mockMMSOutObserverFactory.create(cut)).thenReturn(mockMMSOutObserver);
+
+        ContentResolver mockContentResolver = mock(ContentResolver.class);
+        when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
+
         cut.startListening();
         cut.stopListening();
+
         Assert.assertFalse(cut.isRunning());
 
     }
@@ -133,9 +171,12 @@ public class NetworkListenerTest {
     @Test
     public void isRunning() throws Exception {
         NetworkListener cut = new NetworkListener(mockContext,
-                mockProbeManager,
+        mockProbeManager,
                 mockConnectionInfoReceiverFactory,
+                mockMSMSReceiverFactory,
                 mockTelephonyListenerFactory,
+                mockSMSOutObserverFactory,
+                mockMMSOutObserverFactory,
                 mockPermissionDeniedHandler);
 
         TelephonyListener mockTelephonyListener = mock(TelephonyListener.class);
@@ -149,6 +190,15 @@ public class NetworkListenerTest {
         WifiInfo mockWifiInfo = mock(WifiInfo.class);
         when(mockWifiManager.getConnectionInfo()).thenReturn(mockWifiInfo);
         when(mockWifiInfo.getIpAddress()).thenReturn(128001);
+
+        SMSOutObserver mockSMSOutObserver = mock(SMSOutObserver.class);
+        when(mockSMSOutObserverFactory.create(cut, mockContext)).thenReturn(mockSMSOutObserver);
+
+        MMSOutObserver mockMMSOutObserver = mock(MMSOutObserver.class);
+        when(mockMMSOutObserverFactory.create(cut)).thenReturn(mockMMSOutObserver);
+
+        ContentResolver mockContentResolver = mock(ContentResolver.class);
+        when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
 
         cut.startListening();
         Assert.assertTrue(cut.isRunning());
@@ -163,7 +213,10 @@ public class NetworkListenerTest {
         NetworkListener cut = new NetworkListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
+                mockMSMSReceiverFactory,
                 mockTelephonyListenerFactory,
+                mockSMSOutObserverFactory,
+                mockMMSOutObserverFactory,
                 mockPermissionDeniedHandler);
 
         Intent mockIntent = mock(Intent.class);
@@ -173,12 +226,6 @@ public class NetworkListenerTest {
 
         when(mockIntent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0)).thenReturn(WifiManager.WIFI_STATE_DISABLED);
         Assert.assertEquals("DISABLED", cut.getWifiState(mockIntent));
-
-        when(mockIntent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0)).thenReturn(WIFI_STATE_ENABLING);
-        Assert.assertEquals("ENABLING", cut.getWifiState(mockIntent));
-
-        when(mockIntent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0)).thenReturn(WifiManager.WIFI_STATE_DISABLING);
-        Assert.assertEquals("DISABLING", cut.getWifiState(mockIntent));
 
         when(mockIntent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0)).thenReturn(WifiManager.WIFI_STATE_UNKNOWN);
         Assert.assertEquals("UNKNOWN", cut.getWifiState(mockIntent));
@@ -207,7 +254,10 @@ public class NetworkListenerTest {
         NetworkListener cut = new NetworkListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
+                mockMSMSReceiverFactory,
                 mockTelephonyListenerFactory,
+                mockSMSOutObserverFactory,
+                mockMMSOutObserverFactory,
                 mockPermissionDeniedHandler);
 
         WifiManager mockWifiManager = mock(WifiManager.class);
