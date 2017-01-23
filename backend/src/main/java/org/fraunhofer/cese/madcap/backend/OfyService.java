@@ -36,6 +36,7 @@ import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
 
+
 /**
  *
  */

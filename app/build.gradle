@@ -8,14 +8,41 @@ android {
     signingConfigs {
         debug
     }
+
+    def versionPropsFile = file('version.properties')
+    def versionBuild
+
+    /*Setting default value for versionBuild which is the last incremented value stored in the file */
+    if (versionPropsFile.canRead()) {
+        def Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionPropsFile))
+        versionBuild = versionProps['VERSION_BUILD'].toInteger()
+    } else {
+        throw new GradleException("Could not read version.properties!")
+    }
+
+    /*Wrapping inside a method avoids auto incrementing on every gradle task run. Now it runs only when we build apk*/
+    ext.autoIncrementBuildNumber = {
+
+        if (versionPropsFile.canRead()) {
+            def Properties versionProps = new Properties()
+            versionProps.load(new FileInputStream(versionPropsFile))
+            versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+            versionProps['VERSION_BUILD'] = versionBuild.toString()
+            versionProps.store(versionPropsFile.newWriter(), null)
+        } else {
+            throw new GradleException("Could not read version.properties!")
+        }
+    }
+
     compileSdkVersion 24
     buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId "org.fraunhofer.cese.madcap"
         minSdkVersion 19
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0.0"
+        versionCode versionBuild
+        versionName "1.0.0." + versionBuild
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled  true
     }
@@ -39,6 +66,24 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    tasks.whenTaskAdded { task ->
+        if (task.name == ':app:assembleRelease') {
+            autoIncrementBuildNumber()
+        }
+//        else if (task.name == ':app:assembleDebug') {
+//            autoIncrementBuildNumber()
+//        }
+    }
+
+//    gradle.taskGraph.whenReady {taskGraph ->
+//        if (taskGraph.hasTask(assembleDebug)) {  /* when run debug task */
+//            autoIncrementBuildNumber()
+//        } else
+//        if (taskGraph.hasTask(assembleRelease)) { /* when run release task */
+//            autoIncrementBuildNumber()
+//        }
+//    }
 }
 
 repositories {
