@@ -8,7 +8,6 @@ import android.os.Handler;
 
 import edu.umd.fcmd.sensorlisteners.model.network.MSMSProbe;
 
-import static android.Manifest.permission_group.SMS;
 import static android.provider.Telephony.TextBasedSmsColumns.MESSAGE_TYPE_SENT;
 
 /**
@@ -16,9 +15,9 @@ import static android.provider.Telephony.TextBasedSmsColumns.MESSAGE_TYPE_SENT;
  *
  * Observer for outgoing sms messages.
  */
-public class SMSOutObserver extends ContentObserver {
-    public static final String OUT = "OUT";
-    public static final String NOT_OUT = "NOT_OUT";
+class SMSOutObserver extends ContentObserver {
+    static final String OUT = "OUT";
+    static final String NOT_OUT = "NOT_OUT";
     private final String TAG = getClass().getSimpleName();
     private static final String CONTENT_SMS = "content://sms";
 
@@ -30,7 +29,7 @@ public class SMSOutObserver extends ContentObserver {
      *
      * @param handler The handler to run {@link #onChange} on, or null if none.
      */
-    public SMSOutObserver(Handler handler, NetworkListener networkListener, Context context) {
+     SMSOutObserver(Handler handler, NetworkListener networkListener, Context context) {
         super(handler);
         this.networkListener = networkListener;
         this.context = context;

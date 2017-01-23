@@ -1,7 +1,5 @@
 package edu.umd.fcmd.sensorlisteners.listener.network;
 
-import android.content.Context;
-
 /**
  * Created by MMueller on 12/28/2016.
  *

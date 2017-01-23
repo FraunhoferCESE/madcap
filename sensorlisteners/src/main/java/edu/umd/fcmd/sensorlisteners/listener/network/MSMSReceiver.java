@@ -4,12 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.provider.Telephony;
-import android.telephony.SmsMessage;
-import android.util.Log;
-
 import edu.umd.fcmd.sensorlisteners.model.network.MSMSProbe;
-
-import static android.os.Build.VERSION_CODES.M;
 
 /**
  * Created by MMueller on 12/28/2016.
@@ -17,7 +12,6 @@ import static android.os.Build.VERSION_CODES.M;
  * Receiver for SMS and MMS events
  */
 public class MSMSReceiver extends BroadcastReceiver{
-    private final String TAG = getClass().getSimpleName();
 
     private final NetworkListener networkListener;
 
@@ -63,26 +57,6 @@ public class MSMSReceiver extends BroadcastReceiver{
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.e(TAG, "RECEIVED");
-//        SmsMessage[] messages = null;
-//
-//        if(intent != null){
-//            messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
-//        }
-//
-//        long timestamp = 0L;
-//
-//        if(messages != null){
-//            for (SmsMessage message : messages) {
-//                if (timestamp < message.getTimestampMillis()) {
-//                    timestamp = message.getTimestampMillis();
-//                }
-//            }
-//        }else{
-//            timestamp = System.currentTimeMillis();
-//        }
-
-
         MSMSProbe msmsProbe = new MSMSProbe();
         msmsProbe.setDate(System.currentTimeMillis());
 
