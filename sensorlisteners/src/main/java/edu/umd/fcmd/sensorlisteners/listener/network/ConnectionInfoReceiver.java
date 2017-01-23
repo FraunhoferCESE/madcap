@@ -76,16 +76,6 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
                 networkListener.onUpdate(wiFiProbe4);
                 //networkListener.onUpdate(createNewCellularProbe());
                 break;
-            case VoicemailContract.ACTION_FETCH_VOICEMAIL:
-                VoicemailProbe voicemailProbeFetch = new VoicemailProbe();
-                voicemailProbeFetch.setKind(VoicemailProbe.FETCH_VOICEMAIL);
-                networkListener.onUpdate(voicemailProbeFetch);
-                break;
-            case VoicemailContract.ACTION_NEW_VOICEMAIL:
-                VoicemailProbe voicemailProbeNew = new VoicemailProbe();
-                voicemailProbeNew.setKind(VoicemailProbe.NEW_VOICEMAIL);
-                networkListener.onUpdate(voicemailProbeNew);
-                break;
             default:
                 Log.e(TAG, "something went wrong.");
                 break;
