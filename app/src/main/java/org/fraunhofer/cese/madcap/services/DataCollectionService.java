@@ -21,6 +21,7 @@ import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.fraunhofer.cese.madcap.BuildConfig;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.WelcomeActivity;
@@ -264,7 +265,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
             listeners.add(new SystemListener(this, new CacheFactory(cache, authManager),
                     systemReceiverFactory,
-                    MyApplication.MADCAPVERSION));
+                    BuildConfig.VERSION_NAME));
         }
 //        madcapAuthManager.setCallbackClass(this);
 
