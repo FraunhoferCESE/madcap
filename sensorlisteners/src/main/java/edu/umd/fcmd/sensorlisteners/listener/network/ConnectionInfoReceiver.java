@@ -6,11 +6,9 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
-import android.provider.VoicemailContract;
 import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.model.network.NetworkProbe;
-import edu.umd.fcmd.sensorlisteners.model.network.VoicemailProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.WiFiProbe;
 
 import static android.content.ContentValues.TAG;
