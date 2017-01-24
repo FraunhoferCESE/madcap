@@ -1,0 +1,16 @@
+package edu.umd.fcmd.sensorlisteners.listener.audio;
+
+import android.provider.MediaStore;
+
+import static android.os.Build.VERSION_CODES.M;
+
+/**
+ * Created by MMueller on 1/24/2017.
+ *
+ * Factory class for AudioReceivers following the factory pattern.
+ */
+public class AudioReceiverFactory {
+    public AudioReceiver create(AudioListener audioListener){
+        return new AudioReceiver(audioListener);
+    }
+}

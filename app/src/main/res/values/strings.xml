@@ -25,7 +25,7 @@
 
     <string name="title_text">MADCAP</string>
 
-    <!-- Sign-in kind messages -->
+    <!-- Sign-in vibrate messages -->
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="signed_in">Signed in</string>
     <string name="signing_in">Signing in…</string>

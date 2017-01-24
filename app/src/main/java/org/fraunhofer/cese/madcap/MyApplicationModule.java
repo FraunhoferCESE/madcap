@@ -35,6 +35,7 @@ import dagger.Provides;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.audio.AudioReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
@@ -202,6 +203,11 @@ class MyApplicationModule {
     @Provides
     SystemReceiverFactory provideSystemReceiverFactory(){
         return new SystemReceiverFactory();
+    }
+
+    @Provides
+    AudioReceiverFactory provideAudioReceiverFactory(){
+        return new AudioReceiverFactory();
     }
 
 
