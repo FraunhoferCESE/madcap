@@ -82,8 +82,8 @@ public class AudioListener implements Listener{
             intentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
 
             context.registerReceiver(audioReceiver, intentFilter);
-
         }
+
         runningState = true;
     }
 
@@ -246,7 +246,6 @@ public class AudioListener implements Listener{
     /**
      * Gets the currently active ringer mode of
      * the phone.
-     *
      *
      * @return NORMAL or
      * SILENT or
