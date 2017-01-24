@@ -23,7 +23,8 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         StartFragment.OnFragmentInteractionListener,
         HelpFragment.OnFragmentInteractionListener,
-        QuitFragment.OnFragmentInteractionListener{
+        QuitFragment.OnFragmentInteractionListener,
+        AboutFragment.OnFragmentInteractionListener{
     private final String TAG = getClass().getSimpleName();
     private String currentTopFragment;
 
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity
     private HelpFragment helpFragment;
     private LogoutFragment logoutFragment;
     private QuitFragment quitFragment;
+    private AboutFragment aboutFragment;
 
 
     @Override
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity
         helpFragment = new HelpFragment();
         logoutFragment = new LogoutFragment();
         quitFragment = new QuitFragment();
+        aboutFragment = new AboutFragment();
 
         //Initial settign up of the main fragement
         FragmentTransaction ft = mainFragmentManager.beginTransaction();
@@ -119,6 +122,14 @@ public class MainActivity extends AppCompatActivity
             if(!currentTopFragment.equals("quit")){
                 ft.addToBackStack("quit");
                 currentTopFragment = "quit";
+            }
+            ft.commit();
+        } else if (id == R.id.nav_about) {
+            FragmentTransaction ft = mainFragmentManager.beginTransaction();
+            ft.replace(R.id.fragmentHolder, aboutFragment);
+            if(!currentTopFragment.equals("about")){
+                ft.addToBackStack("about");
+                currentTopFragment = "about";
             }
             ft.commit();
         }
@@ -183,6 +194,8 @@ public class MainActivity extends AppCompatActivity
         hp.setChecked(false);
         MenuItem qt = (MenuItem) findViewById(R.id.nav_quit);
         qt.setChecked(false);
+        MenuItem at = (MenuItem) findViewById(R.id.nav_about);
+        at.setChecked(false);
     }
 
     @Override

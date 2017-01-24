@@ -25,7 +25,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/usernameTextview"
             android:layout_toRightOf = "@+id/hi"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
