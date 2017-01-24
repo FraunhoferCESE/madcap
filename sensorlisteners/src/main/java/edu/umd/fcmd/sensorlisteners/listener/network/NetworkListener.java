@@ -327,8 +327,6 @@ public class NetworkListener implements Listener {
         return "-";
     }
 
-
-
     /**
      * Method for getting the current used IP-Address.
      *
@@ -361,5 +359,4 @@ public class NetworkListener implements Listener {
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         return wifiInfo.getSSID();
     }
-
 }

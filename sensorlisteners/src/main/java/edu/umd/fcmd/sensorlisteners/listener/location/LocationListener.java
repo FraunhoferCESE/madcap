@@ -235,7 +235,6 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 probe.setOrigin(location.getProvider());
                 probe.setSpeed((double) location.getSpeed());
                 probe.setExtras(location.getExtras());
-
                 onUpdate(probe);
             }
         }else{
