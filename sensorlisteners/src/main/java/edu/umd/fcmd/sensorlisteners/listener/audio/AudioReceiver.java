@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
+import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.model.audio.HeadphoneProbe;
+import edu.umd.fcmd.sensorlisteners.model.audio.RingerProbe;
 
 /**
  * Created by MMueller on 1/24/2017.
@@ -67,7 +69,14 @@ public class AudioReceiver extends BroadcastReceiver {
                 headphoneProbe.setPlugState(audioListener.getCurrentHeadphonePlugState());
                 audioListener.onUpdate(headphoneProbe);
                 break;
+            case AudioManager.RINGER_MODE_CHANGED_ACTION:
+                RingerProbe ringerProbe = new RingerProbe();
+                ringerProbe.setDate(System.currentTimeMillis());
+                ringerProbe.setMode(audioListener.getCurrentRingerMode());
+                audioListener.onUpdate(ringerProbe);
+                break;
             default:
+                Log.e(TAG, "Received undefined");
                 break;
         }
     }

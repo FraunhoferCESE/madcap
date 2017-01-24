@@ -3,12 +3,14 @@ package edu.umd.fcmd.sensorlisteners.listener.audio;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.audio.HeadphoneProbe;
+import edu.umd.fcmd.sensorlisteners.model.audio.RingerProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
@@ -53,6 +55,7 @@ public class AudioListener implements Listener {
 
             IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(AudioManager.ACTION_HEADSET_PLUG);
+            intentFilter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
 
             context.registerReceiver(audioReceiver, intentFilter);
 
@@ -85,6 +88,11 @@ public class AudioListener implements Listener {
         headphoneProbe.setPlugState(getCurrentHeadphonePlugState());
         onUpdate(headphoneProbe);
 
+        RingerProbe ringerProbe = new RingerProbe();
+        ringerProbe.setDate(System.currentTimeMillis());
+        ringerProbe.setMode(getCurrentRingerMode());
+        onUpdate(ringerProbe);
+
     }
 
     /**
@@ -97,5 +105,31 @@ public class AudioListener implements Listener {
         }else{
             return HeadphoneProbe.UNPLUGGED;
         }
+    }
+
+    /**
+     * Gets the currently active ringer mode of
+     * the phone.
+     *
+     *
+     * @return NORMAL or
+     * SILENT or
+     * VIBRATE
+     */
+    String getCurrentRingerMode(){
+        int mode = audioManager.getRingerMode();
+
+        switch(mode){
+            case AudioManager.RINGER_MODE_NORMAL:
+                return RingerProbe.NORMAL;
+            case AudioManager.RINGER_MODE_SILENT:
+                return RingerProbe.SILENT;
+            case AudioManager.RINGER_MODE_VIBRATE:
+                return RingerProbe.VIBRATE;
+            default:
+                Log.e(TAG, "unspecified current ringer mode detected");
+                return"";
+        }
+
     }
 }

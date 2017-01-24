@@ -5,45 +5,30 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 /**
  * Created by MMueller on 1/24/2017.
  *
- * Model class for the ringer
+ * Model class for the mode
  */
 public class RingerProbe extends Probe {
+    public static final String NORMAL = "NORMAL";
+    public static final String SILENT = "SILENT";
+    public static final String VIBRATE = "VIBRATE";
+
     private static final String RINGER_TYPE = "Ringer";
-    private String ringer;
-    private String vibrate;
+    private String mode;
 
     /**
-     * Gets the ringer property.
+     * Gets the mode property.
      *
-     * @return ringer.
+     * @return mode.
      */
-    String getRinger() {
-        return ringer;
+    String getMode() {
+        return mode;
     }
 
     /**
-     * Sets the ringer property.
+     * Sets the mode property.
      */
-    public void setRinger(String ringer) {
-        this.ringer = ringer;
-    }
-
-    /**
-     * Gets the vibrate property.
-     *
-     * @return the vibrate property.
-     */
-    public String getVibrate() {
-        return vibrate;
-    }
-
-    /**
-     * Sets the vibrate property.
-     *
-     * @param vibrate the vibrate to be set to.
-     */
-    public void setVibrate(String vibrate) {
-        this.vibrate = vibrate;
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
     /**
@@ -79,8 +64,7 @@ public class RingerProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"ringer\": " + ringer +
-                ", \"vibrate\": " + vibrate +
+        return "{\"mode\": " + mode +
                 '}';
     }
 }
