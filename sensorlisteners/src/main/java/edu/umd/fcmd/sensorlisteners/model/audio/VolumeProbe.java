@@ -8,6 +8,14 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
  * Model class for the volume
  */
 public class VolumeProbe extends Probe {
+    public static final String ALARM = "ALARM";
+    public static final String DTMF = "DTMF";
+    public static final String MUSIC = "MUSIC";
+    public static final String NOTIFICATION = "NOTIFICATION";
+    public static final String RING = "RING";
+    public static final String VOICE_CALL = "VOICECALL";
+    public static final String SYSTEM = "SYSTEM";
+
     private static final String VOLUME_TYPE = "Volume";
     private int volume;
     private String kind;

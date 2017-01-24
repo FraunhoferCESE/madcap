@@ -274,6 +274,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
             listeners.add(new AudioListener(this, new CacheFactory(cache, authManager),
                     audioReceiverFactory,
+                    0,
                     madcapPermissionDeniedHandler));
         }
 //        madcapAuthManager.setCallbackClass(this);

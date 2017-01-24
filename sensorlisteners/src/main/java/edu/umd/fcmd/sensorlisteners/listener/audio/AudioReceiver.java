@@ -75,6 +75,8 @@ public class AudioReceiver extends BroadcastReceiver {
                 ringerProbe.setMode(audioListener.getCurrentRingerMode());
                 audioListener.onUpdate(ringerProbe);
                 break;
+            case "android.media.VOLUME_CHANGED_ACTION":
+                audioListener.evaluateVolumeChanges();
             default:
                 Log.e(TAG, "Received undefined");
                 break;
