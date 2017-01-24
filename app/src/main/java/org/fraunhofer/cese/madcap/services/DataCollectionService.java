@@ -53,6 +53,8 @@ import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityListener;
 import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.audio.AudioListener;
+import edu.umd.fcmd.sensorlisteners.listener.audio.AudioReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
@@ -183,8 +185,11 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
-
     SystemReceiverFactory systemReceiverFactory;
+
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    AudioReceiverFactory audioReceiverFactory;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -266,6 +271,11 @@ public class DataCollectionService extends Service implements UploadStatusListen
             listeners.add(new SystemListener(this, new CacheFactory(cache, authManager),
                     systemReceiverFactory,
                     BuildConfig.VERSION_NAME));
+
+            listeners.add(new AudioListener(this, new CacheFactory(cache, authManager),
+                    audioReceiverFactory,
+                    0,
+                    madcapPermissionDeniedHandler));
         }
 //        madcapAuthManager.setCallbackClass(this);
 

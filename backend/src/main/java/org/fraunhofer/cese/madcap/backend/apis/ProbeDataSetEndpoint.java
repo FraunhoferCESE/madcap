@@ -28,6 +28,7 @@ import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
 import org.fraunhofer.cese.madcap.backend.models.DockStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.DreamingModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
+import org.fraunhofer.cese.madcap.backend.models.HeadphoneEntry;
 import org.fraunhofer.cese.madcap.backend.models.InputMethodEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
@@ -37,8 +38,10 @@ import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
+import org.fraunhofer.cese.madcap.backend.models.RingerEntry;
 import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.VoicemailEntry;
+import org.fraunhofer.cese.madcap.backend.models.VolumeEntry;
 import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
 import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
 import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
@@ -381,6 +384,30 @@ public class ProbeDataSetEndpoint {
                     Collection<VoicemailEntry> vmlist = entryMap.get(entry.getProbeType());
                     VoicemailEntry vmEntry = new VoicemailEntry(entry);
                     vmlist.add(vmEntry);
+                    break;
+                case "Volume":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<VolumeEntry>());
+                    }
+                    Collection<VolumeEntry> volist = entryMap.get(entry.getProbeType());
+                    VolumeEntry volEntry = new VolumeEntry(entry);
+                    volist.add(volEntry);
+                    break;
+                case "Ringer":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<RingerEntry>());
+                    }
+                    Collection<RingerEntry> relist = entryMap.get(entry.getProbeType());
+                    RingerEntry reEntry = new RingerEntry(entry);
+                    relist.add(reEntry);
+                    break;
+                case "Headphone":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<HeadphoneEntry>());
+                    }
+                    Collection<HeadphoneEntry> helist = entryMap.get(entry.getProbeType());
+                    HeadphoneEntry heEntry = new HeadphoneEntry(entry);
+                    helist.add(heEntry);
                     break;
                 default:
                     throw new IllegalArgumentException("Unmateched Probe Type");
