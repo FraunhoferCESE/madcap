@@ -1,9 +1,5 @@
 package edu.umd.fcmd.sensorlisteners.listener.audio;
 
-import android.provider.MediaStore;
-
-import static android.os.Build.VERSION_CODES.M;
-
 /**
  * Created by MMueller on 1/24/2017.
  *

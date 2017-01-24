@@ -106,19 +106,7 @@ public class AudioListener implements Listener{
      * Sends initial audio related probes.
      */
     private void sendInitialProbes(){
-        // Headphone plug state probe.
-        HeadphoneProbe headphoneProbe = new HeadphoneProbe();
-        headphoneProbe.setDate(System.currentTimeMillis());
-        headphoneProbe.setPlugState(getCurrentHeadphonePlugState());
-        onUpdate(headphoneProbe);
-
-        // Ringer probe
-        RingerProbe ringerProbe = new RingerProbe();
-        ringerProbe.setDate(System.currentTimeMillis());
-        ringerProbe.setMode(getCurrentRingerMode());
-        onUpdate(ringerProbe);
-
-        //Volume probes
+       //Initially evaluating changes.
         evaluateVolumeChanges(1000, 1000, 1000, 1000, 1000, 1000, 1000);
     }
 

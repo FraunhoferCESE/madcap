@@ -30,7 +30,6 @@ public class AudioReceiverFactoryTest {
         AudioReceiverFactory cut = new AudioReceiverFactory();
 
         cut.create(mockAudioListener);
-
     }
 
 }
