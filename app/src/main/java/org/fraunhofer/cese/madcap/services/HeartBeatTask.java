@@ -47,11 +47,15 @@ public class HeartBeatTask extends TimerTask {
         long lastHearthbeat = prefs.getLong(application.getString(R.string.last_hearthbeat), currentTime);
 
         if(intervallTooLong(lastHearthbeat, currentTime, delta, interval)){
-            ReverseHeartBeatProbe reverseHeartBeatProbe = new ReverseHeartBeatProbe();
-            reverseHeartBeatProbe.setDate(System.currentTimeMillis());
-            reverseHeartBeatProbe.setDeathStart(lastHearthbeat);
-            reverseHeartBeatProbe.setDeathEnd(currentTime);
-            manualProbeUploader.uploadManual(reverseHeartBeatProbe, application, cache);
+            ReverseHeartBeatProbe deathStart = new ReverseHeartBeatProbe();
+            deathStart.setDate(lastHearthbeat);
+            deathStart.setKind(ReverseHeartBeatProbe.DEATH_START);
+            manualProbeUploader.uploadManual(deathStart, application, cache);
+
+            ReverseHeartBeatProbe deathEnd = new ReverseHeartBeatProbe();
+            deathEnd.setDate(currentTime);
+            deathEnd.setKind(ReverseHeartBeatProbe.DEATH_END);
+            manualProbeUploader.uploadManual(deathEnd, application, cache);
         }
 
         SharedPreferences.Editor editor = prefs.edit();

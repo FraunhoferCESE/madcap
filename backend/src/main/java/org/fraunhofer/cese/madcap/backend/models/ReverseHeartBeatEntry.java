@@ -19,8 +19,7 @@ public class ReverseHeartBeatEntry implements Comparable<ReverseHeartBeatEntry>,
     private String id;
     @Index
     private Long timestamp;
-    private long deathStart;
-    private long deathEnd;
+    private String kind;
     @Index
     private String userID;
 
@@ -33,41 +32,25 @@ public class ReverseHeartBeatEntry implements Comparable<ReverseHeartBeatEntry>,
         userID = probeEntry.getUserID();
 
         JSONObject dataJsonObject = new JSONObject(probeEntry.getSensorData());
-        deathStart = dataJsonObject.getLong("deathStart");
-        deathEnd = dataJsonObject.getLong("deathEnd");
+        kind = dataJsonObject.getString("kind");
     }
 
     /**
-     * Gets the deathStart.
-     * @return the deathStart.
+     * Gets the kind.
+     * @return the kind.
      */
-    public long getDeathStart() {
-        return deathStart;
+    public String getKind() {
+        return kind;
     }
 
     /**
-     * Sets the deathStart.
-     * @param deathStart to be set.
+     * Sets the kind.
+     * @param kind to be set.
      */
-    public void setDeathStart(long deathStart) {
-        this.deathStart = deathStart;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
-    /**
-     * Gets the deathEnd.
-     * @return the deathEnd.
-     */
-    public long getdDeathEnd() {
-        return deathEnd;
-    }
-
-    /**
-     * Sets the deathEnd.
-     * @param deathEnd to be set.
-     */
-    public void setDeathEnd(long deathEnd) {
-        this.deathEnd = deathEnd;
-    }
 
     /**
      * Compares this object with the specified object for order.  Returns a
@@ -234,15 +217,14 @@ public class ReverseHeartBeatEntry implements Comparable<ReverseHeartBeatEntry>,
         if (o == null || getClass() != o.getClass()) return false;
 
         ReverseHeartBeatEntry that = (ReverseHeartBeatEntry) o;
-        return deathStart == (that.getDeathStart()) && deathEnd == that.getdDeathEnd();
+        return kind.equals(that.getKind());
     }
 
     @Override
     public String toString() {
         return "ReverseHeartBeatEntry{"+
                 "id=" + id +
-                "\"deathStart\": " + deathStart +
-                "\"deathEnd\": " + deathEnd +
+                "\"kind\": " + kind +
                 '}';
     }
 }

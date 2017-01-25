@@ -12,45 +12,31 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
  * This probe rocks.
  */
 public class ReverseHeartBeatProbe extends Probe {
-    private long deathStart;
-    private long deathEnd;
+    public static final String DEATH_START = "DEATHSTART";
+    public static final String DEATH_END = "DEATHEND";
+
+    private String kind;
 
     /**
-     * Gets the deathStart.
-     * @return the deathStart.
+     * Gets the kind.
+     * @return the kind.
      */
-    public long getDeathStart() {
-        return deathStart;
+    public String getKind() {
+        return kind;
     }
 
     /**
-     * Sets the deathStart.
-     * @param deathStart the deathStart.
+     * Sets the kind.
+     * @param kind the kind.
      */
-    public void setDeathStart(long deathStart) {
-        this.deathStart = deathStart;
+    public void setKind(String kind) {
+        this.kind = kind;
     }
 
     /**
-     * Gets the deathEnd.
-     * @return the deathEnd.
-     */
-    public long getDeathEnd() {
-        return deathEnd;
-    }
-
-    /**
-     * Sets the deathEnd.
-     * @param deathEnd to be set.
-     */
-    public void setDeathEnd(long deathEnd) {
-        this.deathEnd = deathEnd;
-    }
-
-    /**
-     * Gets the type of an deathStart e.g. Accelerometer
+     * Gets the type of an kind e.g. Accelerometer
      *
-     * @return the type of deathStart.
+     * @return the type of kind.
      */
     @Override
     public String getType() {
@@ -80,8 +66,7 @@ public class ReverseHeartBeatProbe extends Probe {
      */
     @Override
     public String toString() {
-        return "{\"deathStart\": " + deathStart+
-                ", \"deathEnd\": " + deathEnd +
+        return "{\"kind\": " + "\"" +kind +"\""+
                 '}';
     }
 }
