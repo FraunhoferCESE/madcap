@@ -99,7 +99,7 @@ public class ManualProbeUploadTask extends AsyncTask<Probe, Void, Void> {
             try {
                 remoteResult = appEngineApi.insertProbeDataset(dataSet).execute();
 
-                Log.d(TAG, "DataCollectionProbe upload succeeded");
+                Log.d(TAG, "Manual upload succeeded");
 
                 if (remoteResult.getSaved() != null) {
                     saveResult.getSaved().addAll(ImmutableList.copyOf(remoteResult.getSaved()));

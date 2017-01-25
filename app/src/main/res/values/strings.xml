@@ -120,5 +120,6 @@
     <string name="last_upload_date">lastUploadDate</string>
     <string name="data_count">dataCount</string>
     <string name="about_text">Here goes your about text.</string>
+    <string name="last_hearthbeat">Hearthbeat</string>
 
 </resources>

@@ -1,6 +1,5 @@
 package org.fraunhofer.cese.madcap.services;
 
-import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,10 +11,10 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
@@ -40,6 +39,7 @@ import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
@@ -91,6 +91,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private final IBinder mBinder = new DataCollectionServiceBinder();
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
     private UploadStatusGuiListener uploadStatusGuiListener;
+    private Timer hearthBeatTimer;
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
@@ -190,6 +191,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @SuppressWarnings("PackageVisibleField")
     @Inject
     AudioReceiverFactory audioReceiverFactory;
+
+
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -291,6 +294,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
         probe.setDate(System.currentTimeMillis());
         manualProbeUploader.uploadManual(probe, getApplication(), cache);
 
+        stopHearthBeat();
+
         synchronized (listeners) {
             for (Listener listener : listeners) {
                 listener.stopListening();
@@ -345,8 +350,35 @@ public class DataCollectionService extends Service implements UploadStatusListen
             cacheInitialBootEvent();
         }
 
+        startHearthBeat();
+
         return START_STICKY;
         //return super.onStartCommand(intent, flags, startId);
+    }
+
+    /**
+     * Starts the reverse Hearthbeat.
+     */
+    private void startHearthBeat() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong(getString(R.string.last_hearthbeat), System.currentTimeMillis());
+
+        if(editor.commit()){
+            hearthBeatTimer = new Timer();
+            hearthBeatTimer.scheduleAtFixedRate(new HeartBeatTask(getApplication(), cache, manualProbeUploader, 60000L), 0, 60000);
+        }else{
+            Log.e(TAG, "Could not save hearthbeat");
+        }
+    }
+
+    /**
+     * Stops the reverse Hearthbeat.
+     */
+    private void stopHearthBeat() {
+        if(hearthBeatTimer != null){
+            hearthBeatTimer.cancel();
+        }
     }
 
     /**

@@ -6,7 +6,6 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.appengine.api.oauth.OAuthRequestException;
-import com.google.appengine.repackaged.com.google.protobuf.MapEntry;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.cmd.LoadType;
 
@@ -38,6 +37,7 @@ import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
+import org.fraunhofer.cese.madcap.backend.models.ReverseHeartBeatEntry;
 import org.fraunhofer.cese.madcap.backend.models.RingerEntry;
 import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.VoicemailEntry;
@@ -53,9 +53,6 @@ import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -408,6 +405,14 @@ public class ProbeDataSetEndpoint {
                     Collection<HeadphoneEntry> helist = entryMap.get(entry.getProbeType());
                     HeadphoneEntry heEntry = new HeadphoneEntry(entry);
                     helist.add(heEntry);
+                    break;
+                case "ReverseHeartBeat":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<ReverseHeartBeatEntry>());
+                    }
+                    Collection<ReverseHeartBeatEntry> rhlist = entryMap.get(entry.getProbeType());
+                    ReverseHeartBeatEntry rhEntry = new ReverseHeartBeatEntry(entry);
+                    rhlist.add(rhEntry);
                     break;
                 default:
                     throw new IllegalArgumentException("Unmateched Probe Type");
