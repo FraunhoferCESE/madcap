@@ -44,7 +44,7 @@ public class HeartBeatTask extends TimerTask {
         long currentTime = System.currentTimeMillis();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(application.getApplicationContext());
-        long lastHearthbeat = prefs.getLong(application.getString(R.string.last_hearthbeat), 0L);
+        long lastHearthbeat = prefs.getLong(application.getString(R.string.last_hearthbeat), currentTime);
 
         if(intervallTooLong(lastHearthbeat, currentTime, delta, interval)){
             ReverseHeartBeatProbe reverseHeartBeatProbe = new ReverseHeartBeatProbe();

@@ -360,16 +360,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
      * Starts the reverse Hearthbeat.
      */
     private void startHearthBeat() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong(getString(R.string.last_hearthbeat), System.currentTimeMillis());
-
-        if(editor.commit()){
-            hearthBeatTimer = new Timer();
-            hearthBeatTimer.scheduleAtFixedRate(new HeartBeatTask(getApplication(), cache, manualProbeUploader, 60000L), 0, 60000);
-        }else{
-            Log.e(TAG, "Could not save hearthbeat");
-        }
+        hearthBeatTimer = new Timer();
+        hearthBeatTimer.scheduleAtFixedRate(new HeartBeatTask(getApplication(), cache, manualProbeUploader, 60000L), 0, 60000);
     }
 
     /**
