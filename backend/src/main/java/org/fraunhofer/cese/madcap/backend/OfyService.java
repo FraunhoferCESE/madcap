@@ -36,6 +36,7 @@ import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
 import org.fraunhofer.cese.madcap.backend.models.SystemUptimeEntry;
 import org.fraunhofer.cese.madcap.backend.models.TimeChangeEntry;
 import org.fraunhofer.cese.madcap.backend.models.TimezoneEntry;
+import org.fraunhofer.cese.madcap.backend.models.UploadLogEntry;
 import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.VolumeEntry;
@@ -84,6 +85,7 @@ public class OfyService {
         ObjectifyService.register(VolumeEntry.class);
         ObjectifyService.register(ReverseHeartBeatEntry.class);
         ObjectifyService.register(MSMSEntry.class);
+        ObjectifyService.register(UploadLogEntry.class);
     }
 
     /**

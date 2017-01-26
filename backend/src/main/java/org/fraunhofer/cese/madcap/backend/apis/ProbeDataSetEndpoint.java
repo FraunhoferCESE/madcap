@@ -40,6 +40,7 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 import org.fraunhofer.cese.madcap.backend.models.ReverseHeartBeatEntry;
 import org.fraunhofer.cese.madcap.backend.models.RingerEntry;
 import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.UploadLogEntry;
 import org.fraunhofer.cese.madcap.backend.models.VoicemailEntry;
 import org.fraunhofer.cese.madcap.backend.models.VolumeEntry;
 import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
@@ -53,6 +54,7 @@ import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -96,6 +98,19 @@ public class ProbeDataSetEndpoint {
         // Check if data gets passed at all
         if (probeDataSet == null) {
             throw new BadRequestException("sensorDataSet cannot be null");
+        }
+
+        long earliestProbeTimestamp = 4102462799000L;
+        long latestProbeTimestamp = 0;
+
+        String userId = "abcd";
+        String id = "id";
+
+        Iterator<ProbeEntry> userIterator = probeDataSet.getEntryList().iterator();
+
+        if(userIterator.hasNext()){
+            userId = userIterator.next().getUserID();
+            id = userIterator.next().getId();
         }
 
         Collection<ProbeEntry> entryList = probeDataSet.getEntryList();
@@ -438,6 +453,12 @@ public class ProbeDataSetEndpoint {
                 if (alreadyUploadedIds.get(entry.getId()) == null) {
                     saved.add(entry.getId());
                     currentToSave.add(entry);
+                    if(entry.getTimestamp() < earliestProbeTimestamp){
+                        earliestProbeTimestamp = entry.getTimestamp();
+                    }
+                    if(entry.getTimestamp() > latestProbeTimestamp){
+                        latestProbeTimestamp = entry.getTimestamp();
+                    }
                 } else {
                     alreadyExists.add(entry.getId());
                 }
@@ -495,6 +516,7 @@ public class ProbeDataSetEndpoint {
 //        ofy().clear();
 
         logger.info("Num Saved: " + saved.size() + ", Num already existing: " + alreadyExists.size() + ", Time taken: " + ((System.currentTimeMillis() - startTime) / 1000) + "s");
+        logUpload(id, userId, startTime, saved.size(), alreadyExists.size(), earliestProbeTimestamp, latestProbeTimestamp, (long)(0L + req.getContentLength()));
         return ProbeSaveResult.create(saved, alreadyExists);
     }
 
@@ -515,5 +537,26 @@ public class ProbeDataSetEndpoint {
         int exp = (int) (Math.log(bytes) / Math.log(unit));
         String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
         return String.format(Locale.ENGLISH, "%.1f %sB", bytes / Math.pow(unit, exp), pre);
+    }
+
+    /**
+     * Logs upload requests to the datastore.
+     *
+     * @param userId the User Id.
+     * @param requestTime the requested upload time.
+     * @param savedProbes the amount of saved probes.
+     * @param duplicates the amount of duplicates.
+     * @param earliestProbeTimeStamp the earliest timestamp.
+     * @param latestProbeTimestamp the latest timestamp.
+     * @param payloadSize the payload size in bytes.
+     */
+    private void logUpload(String id, String userId, long requestTime, int savedProbes, int duplicates, long earliestProbeTimeStamp, long latestProbeTimestamp, long payloadSize){
+        Collection<DatastoreEntry> logs = new ArrayList<>();
+
+        UploadLogEntry uploadLogEntry = new UploadLogEntry(id, userId, requestTime, savedProbes, duplicates, earliestProbeTimeStamp, latestProbeTimestamp, payloadSize);
+        logs.add(uploadLogEntry);
+
+        ofy().save().entities(logs).now();
+        ofy().clear();
     }
 }
