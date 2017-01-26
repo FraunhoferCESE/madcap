@@ -24,6 +24,7 @@ import org.fraunhofer.cese.madcap.backend.models.HeadphoneEntry;
 import org.fraunhofer.cese.madcap.backend.models.InputMethodEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.MSMSEntry;
 import org.fraunhofer.cese.madcap.backend.models.NetworkEntry;
 import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
@@ -82,6 +83,7 @@ public class OfyService {
         ObjectifyService.register(RingerEntry.class);
         ObjectifyService.register(VolumeEntry.class);
         ObjectifyService.register(ReverseHeartBeatEntry.class);
+        ObjectifyService.register(MSMSEntry.class);
     }
 
     /**
