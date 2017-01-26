@@ -104,13 +104,11 @@ public class ProbeDataSetEndpoint {
         long latestProbeTimestamp = 0;
 
         String userId = "abcd";
-        String id = "id";
 
         Iterator<ProbeEntry> userIterator = probeDataSet.getEntryList().iterator();
 
         if(userIterator.hasNext()){
             userId = userIterator.next().getUserID();
-            id = userIterator.next().getId();
         }
 
         Collection<ProbeEntry> entryList = probeDataSet.getEntryList();
@@ -516,7 +514,7 @@ public class ProbeDataSetEndpoint {
 //        ofy().clear();
 
         logger.info("Num Saved: " + saved.size() + ", Num already existing: " + alreadyExists.size() + ", Time taken: " + ((System.currentTimeMillis() - startTime) / 1000) + "s");
-        logUpload(id, userId, startTime, saved.size(), alreadyExists.size(), earliestProbeTimestamp, latestProbeTimestamp, (long)(0L + req.getContentLength()));
+        logUpload(userId, startTime, saved.size(), alreadyExists.size(), earliestProbeTimestamp, latestProbeTimestamp, (long)(0L + req.getContentLength()));
         return ProbeSaveResult.create(saved, alreadyExists);
     }
 
@@ -550,10 +548,10 @@ public class ProbeDataSetEndpoint {
      * @param latestProbeTimestamp the latest timestamp.
      * @param payloadSize the payload size in bytes.
      */
-    private void logUpload(String id, String userId, long requestTime, int savedProbes, int duplicates, long earliestProbeTimeStamp, long latestProbeTimestamp, long payloadSize){
-        Collection<DatastoreEntry> logs = new ArrayList<>();
+    private void logUpload(String userId, long requestTime, int savedProbes, int duplicates, long earliestProbeTimeStamp, long latestProbeTimestamp, long payloadSize){
+        Collection<UploadLogEntry> logs = new ArrayList<>();
 
-        UploadLogEntry uploadLogEntry = new UploadLogEntry(id, userId, requestTime, savedProbes, duplicates, earliestProbeTimeStamp, latestProbeTimestamp, payloadSize);
+        UploadLogEntry uploadLogEntry = new UploadLogEntry(userId, requestTime, savedProbes, duplicates, earliestProbeTimeStamp, latestProbeTimestamp, payloadSize);
         logs.add(uploadLogEntry);
 
         ofy().save().entities(logs).now();

@@ -12,10 +12,10 @@ import java.util.HashMap;
  * Created by MMueller on 12/30/2016.
  */
 @Entity
-public class UploadLogEntry implements Comparable<UploadLogEntry>, DatastoreEntry {
+public class UploadLogEntry implements Comparable<UploadLogEntry> {
 
     @Id
-    private String id;
+    private Long id;
     @Index
     private Long requestTime;
     private int savedProbes;
@@ -29,8 +29,7 @@ public class UploadLogEntry implements Comparable<UploadLogEntry>, DatastoreEntr
     public UploadLogEntry(){
     }
 
-    public UploadLogEntry(String id, String userId, long requestTime, int savedProbes, int duplicates, long earliestProbeTimeStamp, long latestProbeTimestamp, long payloadSize){
-        this.id = id+"";
+    public UploadLogEntry( String userId, long requestTime, int savedProbes, int duplicates, long earliestProbeTimeStamp, long latestProbeTimestamp, long payloadSize){
         this.requestTime = requestTime;
         userID = userId;
         this.savedProbes = savedProbes;
@@ -45,22 +44,18 @@ public class UploadLogEntry implements Comparable<UploadLogEntry>, DatastoreEntr
         return 0;
     }
 
-    @Override
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    @Override
-    public void setId(String s) {
+    public void setId(Long s) {
         id = s;
     }
 
-    @Override
     public Long getTimestamp() {
         return requestTime;
     }
 
-    @Override
     public void setTimestamp(Long l) {
         requestTime = l;
     }
@@ -113,12 +108,10 @@ public class UploadLogEntry implements Comparable<UploadLogEntry>, DatastoreEntr
         this.payloadSize = payloadSize;
     }
 
-    @Override
     public String getUserID() {
         return userID;
     }
 
-    @Override
     public void setUserID(String s) {
         userID = s;
     }
