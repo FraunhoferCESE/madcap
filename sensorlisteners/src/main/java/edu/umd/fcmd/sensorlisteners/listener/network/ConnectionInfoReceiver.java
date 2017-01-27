@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.nfc.NfcAdapter;
 import android.util.Log;
 
+import edu.umd.fcmd.sensorlisteners.model.network.NFCProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.NetworkProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.WiFiProbe;
 
@@ -73,6 +75,12 @@ public class ConnectionInfoReceiver extends BroadcastReceiver {
                 }
                 networkListener.onUpdate(wiFiProbe4);
                 //networkListener.onUpdate(createNewCellularProbe());
+                break;
+            case NfcAdapter.ACTION_ADAPTER_STATE_CHANGED:
+                NFCProbe nfcProbe = new NFCProbe();
+                nfcProbe.setState(networkListener.getCurrentNFCState());
+                nfcProbe.setDate(System.currentTimeMillis());
+                networkListener.onUpdate(nfcProbe);
                 break;
             default:
                 Log.e(TAG, "something went wrong.");

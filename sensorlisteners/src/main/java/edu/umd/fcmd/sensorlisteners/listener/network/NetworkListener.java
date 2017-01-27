@@ -9,6 +9,9 @@ import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcManager;
+import android.nfc.tech.NfcA;
 import android.provider.Telephony;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
@@ -29,6 +32,7 @@ import edu.umd.fcmd.sensorlisteners.model.network.CallStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.CellLocationProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.CellProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import edu.umd.fcmd.sensorlisteners.model.network.NFCProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.WiFiProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
@@ -176,6 +180,7 @@ public class NetworkListener implements Listener {
         intentFilter.addAction("android.net.wifi.supplicant.STATE_CHANGED");
         intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
         intentFilter.addAction("android.net.conn.CONNECTIVITY_ACTION");
+        intentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
 
         context.registerReceiver(networkReceiver, intentFilter);
     }
@@ -230,6 +235,12 @@ public class NetworkListener implements Listener {
         CellLocation cellLoc = telephonyManager.getCellLocation();
         CellLocationProbe cellLocationProbe = telephonyListener.createCellLocationProbe(cellLoc);
         onUpdate(cellLocationProbe);
+
+        // NFC
+        NFCProbe nfcProbe = new NFCProbe();
+        nfcProbe.setDate(System.currentTimeMillis());
+        nfcProbe.setState(getCurrentNFCState());
+        onUpdate(nfcProbe);
     }
 
 
@@ -358,5 +369,19 @@ public class NetworkListener implements Listener {
         WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
         return wifiInfo.getSSID();
+    }
+
+    /**
+     * Gets the NFC state of the device.
+     * @return nfc state.
+     */
+    String getCurrentNFCState(){
+        NfcManager manager = (NfcManager) context.getSystemService(Context.NFC_SERVICE);
+        NfcAdapter adapter = manager.getDefaultAdapter();
+        if(adapter != null && adapter.isEnabled()){
+            return NFCProbe.ON;
+        }else{
+            return NFCProbe.OFF;
+        }
     }
 }
