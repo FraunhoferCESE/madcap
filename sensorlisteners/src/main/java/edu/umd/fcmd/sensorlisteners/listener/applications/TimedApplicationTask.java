@@ -13,7 +13,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
@@ -153,7 +152,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
     private long getUsageEventsStatsManager(Context context, long lastTime) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             long currentTime = System.currentTimeMillis();
-            if (lastTime != 0) {
+            if (lastTime != 0L) {
                 //Retrieve form last time to current time
                 UsageStatsManager usageStatsManager = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
                 UsageEvents usageEvents = usageStatsManager.queryEvents(lastTime, currentTime);
