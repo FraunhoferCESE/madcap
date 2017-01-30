@@ -1,51 +1,45 @@
 <resources>
 
-    <!-- other app config -->
     <string name="app_name">MADCAP</string>
-    <string name="probe_location">
-        {"@type": "edu.mit.media.funf.probe.builtin.SimpleLocationProbe",
-            "@schedule": {"interval": 60},
-            "goodEnoughAccuracy": 100,
-            "maxWaitTime": 15
-        }
-    </string>
-    <string name="introText">You can control MADCAP\'s functions from this Control App.</string>
-    <string name="collectDataSwitchText">Collect Data</string>
-    <string name="dataCountText">Collected data since the last upload: </string>
-    <string name="instanceIdText">Instance ID: </string>
-    <string name="uploadResultText">Last upload result: </string>
-    <string name="sendButtonText">Upload data now</string>
-    <string name="signOutButtonText">Log out</string>
     <string name="versionIntro">MADCAP Version</string>
-    <string name="quitProjectButtonText">Quit pocket security</string>
-    <string name="footnoteText">Developed by Fraunhofer USA, Inc.\nContact: llayman@cese.fraunhofer.org.\nFunf Open Sensing Framework licensed under the GNU Lesser GPL.</string>
-    <string name="title_activity_login">Sign in</string>
-
-    <string name="crash_toast_text">MADCAP crash has been reported.</string>
-
     <string name="title_text">MADCAP</string>
 
-    <!-- Sign-in vibrate messages -->
+    <!-- StartFragment -->
+    <string name="introText">You can control some of MADCAP\'s functions from this screen.</string>
+    <string name="collectDataSwitchText">Collect Data?</string>
+    <string name="dataCountText">Data points collected since the last upload: </string>
+    <string name="uploadResultText">Last upload result: </string>
+    <string name="sendButtonText">Upload data now</string>
+
+    <string name="data_collection_pref">datacollectionturnedonoff</string>
+    <string name="last_upload_completeness">lastUploadCompleteness</string>
+    <string name="last_upload_result">lastUploadResult</string>
+    <string name="last_upload_progress">lastUploadProgress</string>
+    <string name="gui_update_available">guiUpdateAvailableFlag</string>
+    <string name="status_complete">Status: Complete</string>
+    <string name="status_incomplete">Status: Incomplete</string>
+
+    <string name="datacollectionstatus">Data collection is </string>
+    <string name="datacollectionstatuson">Data collection is ON</string>
+    <string name="datacollectionstatusoff">Data collection is OFF</string>
+    <string name="last_upload_text">Last upload:</string>
+    <string name="last_upload_date">lastUploadDate</string>
+    <string name="data_count">dataCount</string>
+
+    <!-- Sign-in fragment -->
     <string name="signed_in_fmt">Signed in as: %s</string>
-    <string name="signed_in">Signed in</string>
     <string name="signing_in">Signing in…</string>
     <string name="signed_out">Signed out</string>
     <string name="post_sign_out">You are now signed out of MADCAP.</string>
     <string name="signing_out">Signing out...</string>
-    <string name="signed_in_err">"Error: please check logs."</string>
-    <string name="error_null_person">
-        Error: Plus.PeopleApi.getCurrentPerson returned null. Ensure that the Google+ API is
-        enabled for your project, you have a properly configured google-services.json file
-        and that your device has an internet connection.
-    </string>
-    <string name="loading">Loading…</string>
-    <string name="auth_code_fmt">Auth Code: %s</string>
-    <string name="id_token_fmt">ID Token: %s</string>
     <string name="signin_service_unavailable">Google SignIn services are unavailable. Please try again.</string>
     <string name="signin_service_connection_failed">Could not connect to Google SignIn service. Please try again.</string>
     <string name="logout_failed">Logout from MADCAP failed. Error code: %i. Please try again.</string>
     <string name="silent_signin_failed">MADCAP failed to login automatically. Please open the MADCAP application to sign in.</string>
     <string name="silent_signin_failed_notification_title">MADCAP Automatic SignIn Failed</string>
+
+    <string name="sign_out">Sign Out</string>
+    <string name="proceedToMain">MADCAP home</string>
 
     <!-- Google Play Services errors -->
     <string name="play_services_error_fmt">Google Play Services Error: %i</string>
@@ -56,74 +50,38 @@
     <string name="play_services_invalid">Play services are invalid. Please reinstall them and try again.</string>
     <string name="play_services_connection_failed">Play services connection failed. Error code: %i</string>
 
-    <!-- Button labels -->
-    <string name="sign_out">Sign Out</string>
-    <string name="disconnect">Disconnect</string>
-    <string name="proceedToMain">Control App</string>
-    <string name="refresh_token">Get Fresh Token</string>
-
     <!-- Content Description for images -->
     <string name="desc_google_icon">MADCAP Logo</string>
 
-    <!-- Rationale for asking for Contacts -->
-    <string name="contacts_permission_rationale">Contacts access is needed in order to retrieve your email address.</string>
-
     <!-- Activity Names and Descriptions -->
-    <string name="name_sign_in_activity">MADCAP</string>
-    <string name="desc_sign_in_activity">Signing in, signing out, and revoking access.</string>
-    <string name="desc_sign_in_activity_scopes">Signing in, signing out, and revoking access with Google Drive permissions.</string>
-    <string name="name_id_token_activity">IdTokenActivity</string>
-    <string name="desc_id_token_activity">Retrieving an ID Token for the user.</string>
-    <string name="desc_auth_code_activity">Demonstrate retrieving an auth code for authorizing your server.</string>
-    <string name="name_auth_code_activity">ServerAuthCodeActivity</string>
+    <string name="name_sign_in_activity">MADCAP Sign in/out</string>
 
-    <string name="server_client_id">611425056989-bu1aq0g9l4qkblo0rpdcud8usehskrq4.apps.googleusercontent.com</string>
-
-    <string name="data_collection_pref">datacollectionturnedonoff</string>
-    <string name="last_upload_status">lastUploadStatus</string>
-    <string name="last_upload_completeness">lastUploadCompleteness</string>
-    <string name="last_upload_result">lastUploadResult</string>
-    <string name="last_upload_progress">lastUploadProgress</string>
-    <string name="gui_update_available">guiUpdateAvailableFlag</string>
-    <string name="status_complete">Status: Complete</string>
-    <string name="status_incomplete">Status: Incomplete</string>
-
-    <!-- Quit dialog Fragment -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="quitProjectDialog">Are you sure you want to quit the Pocket Security Project? You will lose your benefits from the project. This can\'t be undone.</string>
-    <string name="quitProjectDialogQuitButton">Quit</string>
-    <string name="quitProjectDialogCancelButton">Cancel</string>
+    <!-- Welcome activity -->
     <string name="help">Help</string>
     <string name="welcome">Welcome</string>
-    <string name="title_activity_main2">Main2Activity</string>
 
+    <!-- Main activity -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="help_text">If you have questions, do not hestitate to contact us. You can also get some additional information online.</string>
-    <string name="go_to_online_help">View Pocketsecurity Online Help</string>
-    <string name="contact">Contact</string>
 
-    <string name="contactEmail1">mmueller@fc-md.umd.edu</string>
-    <string name="contactEmail2">llayman@fc-md.umd.edu</string>
+    <!-- Help fragment -->
+    <string name="help_text">If you have questions, do not hestitate to contact us. You may contact us directly through email or view online help using one of the buttons below.</string>
+    <string name="go_to_online_help">View Online Help</string>
+    <string name="contact">Send an email</string>
+    <string name="contactEmail">madcap@pocket-security.org</string>
 
-    <string name="logout_text">You can log out from MADCAP at any change. During this change MADCAP will not collect any data. You can log in again to Madcap at any other change again. If you want to leave the Pocket Security project for ever, please select the Option in the side menu.</string>
+    <!-- Logout fragment -->
+    <string name="logout_text">You can sign out from MADCAP at any time. MADCAP does not collect data while you are signed out.</string>
     <string name="logoutButtonText">Log out</string>
     <string name="quitText">If you want to leave MADCAP you have to contact the organizers to get your personal data removed. \n
     Notice: You are free to turn off the data collection at any change you want and start it again later. Therefore it is not neccessary to quit the program.
     \n You will not receive the financial benefits anymore.</string>
     <string name="quitButtonText">Quit pocket security.</string>
-    <string name="datacollectionstatus">Data collection is </string>
-    <string name="datacollectionstatuson">Data collection is ON</string>
-    <string name="datacollectionstatusoff">Data collection is OFF</string>
-    <string name="last_upload_text">Last upload:</string>
-    <string name="last_upload_date">lastUploadDate</string>
-    <string name="data_count">dataCount</string>
 
     <string name="last_hearthbeat">Hearthbeat</string>
 
-    <!-- About -->
+    <!-- About fragment -->
     <string name="aboutHeader">About</string>
     <string name="aboutText1">MADCAP is part of the Pocket Security research project from the University of Maryland and Fraunhofer USA, Inc.</string>
     <string name="aboutText2">This app is intended for pre-selected users only. This app collects data about the apps you collect on your smartphone, your location, and activities such as making phone calls. Please refer to the privacy policy for complete details. This app may also post security notifications and other alerts.</string>

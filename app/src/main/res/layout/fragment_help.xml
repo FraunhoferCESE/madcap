@@ -29,12 +29,5 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/onlineHelpButton" />
-
-        <TextView
-            android:text="@string/footnoteText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/footnoteTextViewHelp"
-            android:layout_marginTop="5dp" />
     </LinearLayout>
 </FrameLayout>

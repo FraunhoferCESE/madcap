@@ -60,7 +60,7 @@ public class QuitFragment extends Fragment {
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("message/rfc822");
-                i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.contactEmail1), getString(R.string.contactEmail2)});
+                i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.contactEmail)});
                 i.putExtra(Intent.EXTRA_SUBJECT, "QUIT Pocket Security ");
                 i.putExtra(Intent.EXTRA_TEXT, "Hello Pocket Security Team, \n \n I want to quit Pocket Security. \n(You may write your reasons here.) \n" +
                         " \n \n " + authenticationProvider.getLastSignedInUsersName() + " \n" +
