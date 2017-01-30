@@ -14,6 +14,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/license_header"
+            android:textSize="15dp"
+            android:layout_marginBottom="15dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/apache2_license"
             android:textSize="15dp"
             android:textStyle="bold"
@@ -24,18 +32,12 @@
             android:text="@string/madcap_license"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp" />
-
-        <TextView
-            android:text="@string/madcap_license"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp" />
+            android:autoLink="web" />
 
         <TextView
             android:text="@string/androiddevicenames_license"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp" />
+            android:autoLink="web" />
     </LinearLayout>
 </FrameLayout>

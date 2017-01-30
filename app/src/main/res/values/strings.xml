@@ -120,9 +120,15 @@
     <string name="last_upload_text">Last upload:</string>
     <string name="last_upload_date">lastUploadDate</string>
     <string name="data_count">dataCount</string>
-    <string name="apache2_license"><a href="https://www.apache.org/licenses/LICENSE-2.0">Apache 2.0 License</a></string>
-    <string name="madcap_license">This software is released under the Apache 2.0 License. The complete License and Notice are available at </string>
-    <string name="androiddevicenames_license">This software is released under the Apache 2.0 License. The complete License and Notice are available at </string>
+
     <string name="last_hearthbeat">Hearthbeat</string>
+
+    <!-- About/Licenses -->
+    <string name="license_header">MADCAP includes software distributed under the following licenses.</string>
+
+    <string name="apache2_license">Apache 2.0</string>
+    <string name="madcap_license">MADCAP: https://github.com/FraunhoferCESE/madcap</string>
+    <string name="androiddevicenames_license">AndroidDeviceNames: https://github.com/jaredrummler/AndroidDeviceNames</string>
+
 
 </resources>
