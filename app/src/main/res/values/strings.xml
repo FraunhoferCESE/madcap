@@ -84,6 +84,7 @@
     <string name="last_upload_completeness">lastUploadCompleteness</string>
     <string name="last_upload_result">lastUploadResult</string>
     <string name="last_upload_progress">lastUploadProgress</string>
+    <string name="gui_update_available">guiUpdateAvailableFlag</string>
     <string name="status_complete">Status: Complete</string>
     <string name="status_incomplete">Status: Incomplete</string>
 

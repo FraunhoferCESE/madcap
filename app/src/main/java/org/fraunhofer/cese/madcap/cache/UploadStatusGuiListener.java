@@ -40,4 +40,6 @@ public interface UploadStatusGuiListener {
         COMPLETE,
         INCOMPLETE
     }
+
+    void restoreLastUpload();
 }

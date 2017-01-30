@@ -400,7 +400,8 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         return (UploadStatusGuiListener) this;
     }
 
-    private void restoreLastUpload(){
+    @Override
+    public void restoreLastUpload(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
 
         // Restore completeness

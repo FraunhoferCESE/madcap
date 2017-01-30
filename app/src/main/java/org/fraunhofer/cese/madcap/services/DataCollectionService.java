@@ -435,6 +435,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
             uploadStatusGuiListener.onUploadStatusDateUpdate(date);
         } else {
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+            cachePendingGuiUpdate();
         }
 
 
@@ -447,9 +448,12 @@ public class DataCollectionService extends Service implements UploadStatusListen
             uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
         } else {
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+            cachePendingGuiUpdate();
         }
         return status;
     }
+
+
 
     /**
      * Returns the number of entities currently held in the cache.
@@ -522,11 +526,23 @@ public class DataCollectionService extends Service implements UploadStatusListen
             uploadStatusGuiListener.onUploadStatusResultUpdate(text);
             uploadStatusGuiListener.onUploadStatusProgressUpdate(100);
         } else {
-            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered, caching now to the disk.");
+            cachePendingGuiUpdate();
         }
         MyApplication.madcapLogger.d(TAG, "Upload result received");
 
     }
+
+    /**
+     * Caches a flag symbolozing that an GUI updated is pending.
+     */
+    private void cachePendingGuiUpdate() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(getString(R.string.gui_update_available), true);
+        editor.apply();
+    }
+
 
     /**
      * Called when the the cache is being closed. The listener is automatically unregistered from the cache immediately after this call.
@@ -555,12 +571,16 @@ public class DataCollectionService extends Service implements UploadStatusListen
             }
         } else {
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+            cachePendingGuiUpdate();
         }
 
     }
 
     public void setUploadStatusGuiListener(UploadStatusGuiListener uploadStatusGuiListener) {
         this.uploadStatusGuiListener = uploadStatusGuiListener;
+        if(uploadStatusGuiListener != null){
+            uploadStatusGuiListener.restoreLastUpload();
+        }
     }
 
     /**
