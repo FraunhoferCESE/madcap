@@ -1,0 +1,9 @@
+MADCAP Android Application
+Copyright 2017 Fraunhofer USA, Inc.
+
+This product includes software developed at
+the Fraunhofer Center for Experimental Software Engineering
+(https://www.fc-md.umd.edu/).
+
+This software uses the AndroidDeviceNames (https://github.com/jaredrummler/AndroidDeviceNames) 
+library developed by Jared Rummler <me@jaredrummler.com>
