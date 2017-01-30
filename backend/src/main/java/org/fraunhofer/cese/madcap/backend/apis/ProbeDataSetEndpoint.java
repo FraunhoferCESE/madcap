@@ -40,6 +40,7 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 import org.fraunhofer.cese.madcap.backend.models.ReverseHeartBeatEntry;
 import org.fraunhofer.cese.madcap.backend.models.RingerEntry;
+import org.fraunhofer.cese.madcap.backend.models.ScreenOffTimeoutEntry;
 import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.UploadLogEntry;
 import org.fraunhofer.cese.madcap.backend.models.VoicemailEntry;
@@ -435,6 +436,14 @@ public class ProbeDataSetEndpoint {
                     Collection<NFCEntry> nfclist = entryMap.get(entry.getProbeType());
                     NFCEntry nfcEntry = new NFCEntry(entry);
                     nfclist.add(nfcEntry);
+                    break;
+                case "ScreenOffTimeout":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<ScreenOffTimeoutEntry>());
+                    }
+                    Collection<ScreenOffTimeoutEntry> scolist = entryMap.get(entry.getProbeType());
+                    ScreenOffTimeoutEntry scoEntry = new ScreenOffTimeoutEntry(entry);
+                    scolist.add(scoEntry);
                     break;
                 default:
                     throw new IllegalArgumentException("Unmateched Probe Type");
