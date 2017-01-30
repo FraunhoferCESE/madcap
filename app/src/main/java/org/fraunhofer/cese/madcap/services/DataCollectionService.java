@@ -14,7 +14,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
@@ -30,7 +29,7 @@ import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.cache.UploadStrategy;
-import org.fraunhofer.cese.madcap.factories.CacheFactory;
+import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
@@ -120,9 +119,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @SuppressWarnings("PackageVisibleField")
     @Inject
     FenceApi fenceApi;
-
-    @Inject
-    TimedLocationTaskFactory timedLocationTaskFactory;
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
@@ -240,7 +236,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
             listeners.add(new LocationListener(this, new CacheFactory(cache, authManager),
                     locationClient,
                     snapshotApi,
-                    timedLocationTaskFactory,
                     locationServiceStatusReceiverFactory,
                     googleApiClientConnectionIssueManagerLocation,
                     googleApiClientConnectionIssueManagerLocation,
@@ -435,6 +430,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
             uploadStatusGuiListener.onUploadStatusDateUpdate(date);
         } else {
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+            cachePendingGuiUpdate();
         }
 
 
@@ -447,9 +443,12 @@ public class DataCollectionService extends Service implements UploadStatusListen
             uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
         } else {
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+            cachePendingGuiUpdate();
         }
         return status;
     }
+
+
 
     /**
      * Returns the number of entities currently held in the cache.
@@ -522,11 +521,23 @@ public class DataCollectionService extends Service implements UploadStatusListen
             uploadStatusGuiListener.onUploadStatusResultUpdate(text);
             uploadStatusGuiListener.onUploadStatusProgressUpdate(100);
         } else {
-            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered, caching now to the disk.");
+            cachePendingGuiUpdate();
         }
         MyApplication.madcapLogger.d(TAG, "Upload result received");
 
     }
+
+    /**
+     * Caches a flag symbolozing that an GUI updated is pending.
+     */
+    private void cachePendingGuiUpdate() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(getString(R.string.gui_update_available), true);
+        editor.apply();
+    }
+
 
     /**
      * Called when the the cache is being closed. The listener is automatically unregistered from the cache immediately after this call.
@@ -555,12 +566,16 @@ public class DataCollectionService extends Service implements UploadStatusListen
             }
         } else {
             MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
+            cachePendingGuiUpdate();
         }
 
     }
 
     public void setUploadStatusGuiListener(UploadStatusGuiListener uploadStatusGuiListener) {
         this.uploadStatusGuiListener = uploadStatusGuiListener;
+        if(uploadStatusGuiListener != null){
+            uploadStatusGuiListener.restoreLastUpload();
+        }
     }
 
     /**

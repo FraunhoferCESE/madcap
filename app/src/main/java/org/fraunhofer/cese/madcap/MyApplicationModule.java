@@ -19,7 +19,6 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
-import org.fraunhofer.cese.madcap.factories.JsonObjectFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;

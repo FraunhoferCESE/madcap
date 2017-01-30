@@ -13,6 +13,8 @@ import android.view.Display;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 
+import com.jaredrummler.android.device.DeviceName;
+
 import java.util.List;
 import java.util.TimeZone;
 
@@ -26,7 +28,6 @@ import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemInfoProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.TimezoneProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
-import edu.umd.fcmd.sensorlisteners.util.DeviceName;
 
 import static android.content.Context.POWER_SERVICE;
 import static android.content.Intent.EXTRA_DOCK_STATE;

@@ -18,27 +18,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.google.firebase.crash.FirebaseCrash;
-
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
-import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
-import org.fraunhofer.cese.madcap.factories.CacheFactory;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
-import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.text.DateFormat;
 import java.util.Date;
 
 import javax.inject.Inject;
-
-import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -400,7 +392,8 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         return (UploadStatusGuiListener) this;
     }
 
-    private void restoreLastUpload(){
+    @Override
+    public void restoreLastUpload(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
 
         // Restore completeness

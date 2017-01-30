@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcManager;
 
 import org.junit.After;
 import org.junit.Before;
@@ -72,6 +74,14 @@ public class ConnectionInfoReceiverTest {
         NetworkInfo mockNetworkInfo2 = mock(NetworkInfo.class);
         when(mockIntent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)).thenReturn(mockNetworkInfo2);
         when(mockNetworkInfo.toString()).thenReturn("Bratwurst");
+        cut.onReceive(mockContext, mockIntent);
+        verify(mockNetworkListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
+
+        when(mockIntent.getAction()).thenReturn(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+        NfcManager mockNfcManager = mock(NfcManager.class);
+        when(mockContext.getSystemService(Context.NFC_SERVICE)).thenReturn(mockNfcManager);
+        NfcAdapter mockNfcAdapter = mock(NfcAdapter.class);
+        when(mockNfcManager.getDefaultAdapter()).thenReturn(mockNfcAdapter);
         cut.onReceive(mockContext, mockIntent);
         verify(mockNetworkListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
 

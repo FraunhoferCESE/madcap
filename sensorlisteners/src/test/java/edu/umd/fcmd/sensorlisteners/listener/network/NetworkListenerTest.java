@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcManager;
 import android.provider.Telephony;
 import android.telephony.TelephonyManager;
 
@@ -22,6 +24,7 @@ import java.util.List;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import edu.umd.fcmd.sensorlisteners.model.network.NFCProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 import static android.content.Context.TELEPHONY_SERVICE;
@@ -123,6 +126,11 @@ public class NetworkListenerTest {
         ContentResolver mockContentResolver = mock(ContentResolver.class);
         when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
 
+        NfcManager mockNfcManager = mock(NfcManager.class);
+        when(mockContext.getSystemService(Context.NFC_SERVICE)).thenReturn(mockNfcManager);
+        NfcAdapter mockNfcAdapter = mock(NfcAdapter.class);
+        when(mockNfcManager.getDefaultAdapter()).thenReturn(mockNfcAdapter);
+
         cut.startListening();
 
         Assert.assertTrue(cut.isRunning());
@@ -160,6 +168,11 @@ public class NetworkListenerTest {
 
         ContentResolver mockContentResolver = mock(ContentResolver.class);
         when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
+
+        NfcManager mockNfcManager = mock(NfcManager.class);
+        when(mockContext.getSystemService(Context.NFC_SERVICE)).thenReturn(mockNfcManager);
+        NfcAdapter mockNfcAdapter = mock(NfcAdapter.class);
+        when(mockNfcManager.getDefaultAdapter()).thenReturn(mockNfcAdapter);
 
         cut.startListening();
         cut.stopListening();
@@ -199,6 +212,11 @@ public class NetworkListenerTest {
 
         ContentResolver mockContentResolver = mock(ContentResolver.class);
         when(mockContext.getContentResolver()).thenReturn(mockContentResolver);
+
+        NfcManager mockNfcManager = mock(NfcManager.class);
+        when(mockContext.getSystemService(Context.NFC_SERVICE)).thenReturn(mockNfcManager);
+        NfcAdapter mockNfcAdapter = mock(NfcAdapter.class);
+        when(mockNfcManager.getDefaultAdapter()).thenReturn(mockNfcAdapter);
 
         cut.startListening();
         Assert.assertTrue(cut.isRunning());
@@ -308,6 +326,29 @@ public class NetworkListenerTest {
         when(mockWifiManager.getScanResults()).thenReturn(null);
         Assert.assertEquals("-", cut.getCurrentSecurityLevel());
 
+    }
+
+    @Test
+    public void getCurrentNFCState(){
+        NetworkListener cut = new NetworkListener(mockContext,
+                mockProbeManager,
+                mockConnectionInfoReceiverFactory,
+                mockMSMSReceiverFactory,
+                mockTelephonyListenerFactory,
+                mockSMSOutObserverFactory,
+                mockMMSOutObserverFactory,
+                mockPermissionDeniedHandler);
+
+        NfcManager mockNfcManager = mock(NfcManager.class);
+        when(mockContext.getSystemService(Context.NFC_SERVICE)).thenReturn(mockNfcManager);
+        NfcAdapter mockNfcAdapter = mock(NfcAdapter.class);
+        when(mockNfcManager.getDefaultAdapter()).thenReturn(mockNfcAdapter);
+
+        when(mockNfcAdapter.isEnabled()).thenReturn(true);
+        Assert.assertEquals(NFCProbe.ON, cut.getCurrentNFCState());
+
+        when(mockNfcAdapter.isEnabled()).thenReturn(false);
+        Assert.assertEquals(NFCProbe.OFF, cut.getCurrentNFCState());
     }
 
 }

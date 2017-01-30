@@ -32,7 +32,6 @@ public class LocationListenerTest {
     ProbeManager<Probe> mockProbeManager;
     GoogleApiClient mockGoogleApiClient;
     SnapshotApi mockSnapshotApi;
-    TimedLocationTaskFactory mockTimedLocationTaskFactory;
     LocationServiceStatusReceiverFactory mockLocationServiceStatusReceiverFactory;
     GoogleApiClient.ConnectionCallbacks mockConnectionCallbacks;
     GoogleApiClient.OnConnectionFailedListener mockOnConnectionFailedListener;
@@ -46,7 +45,6 @@ public class LocationListenerTest {
         mockProbeManager = (ProbeManager<Probe>) mock(ProbeManager.class);
         mockGoogleApiClient = mock(GoogleApiClient.class);
         mockSnapshotApi = mock(Awareness.SnapshotApi.getClass());
-        mockTimedLocationTaskFactory = mock(TimedLocationTaskFactory.class);
         mockLocationServiceStatusReceiverFactory = mock(LocationServiceStatusReceiverFactory.class);
         mockConnectionCallbacks = mock(GoogleApiClient.ConnectionCallbacks.class);
         mockOnConnectionFailedListener = mock(GoogleApiClient.OnConnectionFailedListener.class);
@@ -70,7 +68,6 @@ public class LocationListenerTest {
                 mockProbeManager,
                 mockGoogleApiClient,
                 mockSnapshotApi,
-                mockTimedLocationTaskFactory,
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
@@ -84,7 +81,6 @@ public class LocationListenerTest {
                 mockProbeManager,
                 mockGoogleApiClient,
                 mockSnapshotApi,
-                mockTimedLocationTaskFactory,
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
@@ -104,7 +100,6 @@ public class LocationListenerTest {
                 mockProbeManager2,
                 mockGoogleApiClient,
                 mockSnapshotApi,
-                mockTimedLocationTaskFactory,
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
@@ -123,14 +118,12 @@ public class LocationListenerTest {
                 mockProbeManager,
                 mockGoogleApiClient,
                 mockSnapshotApi,
-                mockTimedLocationTaskFactory,
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
                 mockPermissionDeniedHandler,
                 mockSensorNoAnswerReceivedHandler);
         TimedLocationTask mockTimedLocationTask = mock(TimedLocationTask.class);
-        when(mockTimedLocationTaskFactory.create(cut, mockSnapshotApi, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler)).thenReturn(mockTimedLocationTask);
 
         cut.startListening();
 
@@ -143,14 +136,12 @@ public class LocationListenerTest {
                 mockProbeManager,
                 mockGoogleApiClient,
                 mockSnapshotApi,
-                mockTimedLocationTaskFactory,
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
                 mockPermissionDeniedHandler,
                 mockSensorNoAnswerReceivedHandler);
         TimedLocationTask mockTimedLocationTask = mock(TimedLocationTask.class);
-        when(mockTimedLocationTaskFactory.create(cut, mockSnapshotApi, mockPermissionDeniedHandler, mockSensorNoAnswerReceivedHandler)).thenReturn(mockTimedLocationTask);
 
         // Make sure nothing happens when the task has not been instanciated before
         cut.stopListening();
@@ -169,7 +160,6 @@ public class LocationListenerTest {
                 mockProbeManager,
                 mockGoogleApiClient,
                 mockSnapshotApi,
-                mockTimedLocationTaskFactory,
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
@@ -185,7 +175,6 @@ public class LocationListenerTest {
                 mockProbeManager,
                 mockGoogleApiClient,
                 mockSnapshotApi,
-                mockTimedLocationTaskFactory,
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,

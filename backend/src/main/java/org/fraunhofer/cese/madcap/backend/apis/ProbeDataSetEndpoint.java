@@ -32,6 +32,7 @@ import org.fraunhofer.cese.madcap.backend.models.InputMethodEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.MSMSEntry;
+import org.fraunhofer.cese.madcap.backend.models.NFCEntry;
 import org.fraunhofer.cese.madcap.backend.models.NetworkEntry;
 import org.fraunhofer.cese.madcap.backend.models.PowerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeDataSet;
@@ -426,6 +427,14 @@ public class ProbeDataSetEndpoint {
                     Collection<ReverseHeartBeatEntry> rhlist = entryMap.get(entry.getProbeType());
                     ReverseHeartBeatEntry rhEntry = new ReverseHeartBeatEntry(entry);
                     rhlist.add(rhEntry);
+                    break;
+                case "NFC":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<NFCEntry>());
+                    }
+                    Collection<NFCEntry> nfclist = entryMap.get(entry.getProbeType());
+                    NFCEntry nfcEntry = new NFCEntry(entry);
+                    nfclist.add(nfcEntry);
                     break;
                 default:
                     throw new IllegalArgumentException("Unmateched Probe Type");

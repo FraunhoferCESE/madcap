@@ -35,8 +35,6 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     private final ProbeManager<Probe> mProbeManager;
     private final SnapshotApi snapshotApi;
 
-    private final TimedLocationTaskFactory timedLocationTaskFactory;
-    private TimedLocationTask timedLocationTask;
     private final GoogleApiClient mGoogleApiClient;
     private final LocationServiceStatusReceiver locationServiceStatusReceiver;
     private final PermissionDeniedHandler permissionDeniedHandler;
@@ -61,7 +59,6 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                             ProbeManager<Probe> mProbeManager,
                             GoogleApiClient mGoogleApiClient,
                             SnapshotApi snapshotApi,
-                            TimedLocationTaskFactory timedTaskFactory,
                             LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory,
                             GoogleApiClient.ConnectionCallbacks connectionCallbackClass,
                             GoogleApiClient.OnConnectionFailedListener connectionFailedCallbackClass,
@@ -75,7 +72,6 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         this.sensorNoAnswerReceivedHandler = sensorNoAnswerReceivedHandler;
         locationServiceStatusReceiver = locationServiceStatusReceiverFactory.create(this);
         locationServiceStatusReceiver.sendInitialProbe(context);
-        timedLocationTaskFactory = timedTaskFactory;
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         mGoogleApiClient.registerConnectionCallbacks(connectionCallbackClass);
         mGoogleApiClient.registerConnectionFailedListener(connectionFailedCallbackClass);
@@ -170,13 +166,6 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     @Override
     public void stopListening() {
         if (runningStatus) {
-            if(timedLocationTask != null){
-                // Method Google Awareness API
-            Log.d(TAG, "Timed location task is not null");
-//            timedLocationTask.cancel(true);
-//            mGoogleApiClient.disconnect();
-            }
-
             if(locationServiceStatusReceiver != null){
                 context.unregisterReceiver(locationServiceStatusReceiver);
             }
