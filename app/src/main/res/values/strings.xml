@@ -123,12 +123,17 @@
 
     <string name="last_hearthbeat">Hearthbeat</string>
 
-    <!-- About/Licenses -->
-    <string name="license_header">MADCAP includes software distributed under the following licenses.</string>
+    <!-- About -->
+    <string name="ppHeader">Privacy Policy</string>
+    <string name="ppText">MADCAP and the Pocket Security team are committed to privacy and security of your data. Please review our Privacy Policy at the following link:</string>
+    <string name="ppLink">https://www.pocket-security.org/privacy-policy/</string>
 
-    <string name="apache2_license">Apache 2.0</string>
-    <string name="madcap_license">MADCAP: https://github.com/FraunhoferCESE/madcap</string>
-    <string name="androiddevicenames_license">AndroidDeviceNames: https://github.com/jaredrummler/AndroidDeviceNames</string>
+    <!-- Licenses -->
+    <string name="licenseHeader">Licenses</string>
+    <string name="licenseText">MADCAP includes software distributed under the following licenses.</string>
+    <string name="apache2License">Apache 2.0</string>
+    <string name="madcapLicense">MADCAP: https://github.com/FraunhoferCESE/madcap</string>
+    <string name="androiddevicenamesLicense">AndroidDeviceNames: https://github.com/jaredrummler/AndroidDeviceNames</string>
 
 
 </resources>

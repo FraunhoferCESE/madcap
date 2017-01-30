@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context="org.fraunhofer.cese.madcap.HelpFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -12,32 +12,83 @@
         android:weightSum="1">
 
         <TextView
+            android:id="@+id/ppHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/license_header"
-            android:textSize="15dp"
+            android:text="@string/ppHeader"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:textSize="20dp"
             android:layout_marginBottom="15dp"
             />
 
         <TextView
+            android:id="@+id/ppText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/apache2_license"
-            android:textSize="15dp"
+            android:text="@string/ppText"
+            android:layout_below="@id/ppHeader"
+            />
+
+        <TextView
+            android:id="@+id/ppLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ppLink"
+            android:layout_centerHorizontal="true"
+            android:autoLink="web"
+            android:layout_below="@id/ppText"
+            />
+
+        <TextView
+            android:id="@+id/licenseHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/licenseHeader"
+            android:textStyle="bold"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="30dp"
+            android:textSize="20dp"
+            android:layout_below="@id/ppLink"
+            />
+
+
+        <TextView
+            android:id="@+id/licenseText"
+            android:layout_below="@id/licenseHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/licenseText"
+            android:layout_marginBottom="15dp"
+            />
+
+        <TextView
+            android:id="@+id/apache2License"
+            android:layout_below="@id/licenseText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/apache2License"
             android:textStyle="bold"
             android:autoLink="web"
             />
 
         <TextView
-            android:text="@string/madcap_license"
+            android:id="@+id/madcapLicense"
+            android:layout_below="@id/apache2License"
+            android:text="@string/madcapLicense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="10dp"
             android:autoLink="web" />
 
         <TextView
-            android:text="@string/androiddevicenames_license"
+            android:id="@+id/androiddevicenamesLicense"
+            android:layout_below="@id/madcapLicense"
+            android:text="@string/androiddevicenamesLicense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="10dp"
             android:autoLink="web" />
-    </LinearLayout>
+    </RelativeLayout>
 </FrameLayout>
