@@ -1,10 +1,8 @@
-package org.fraunhofer.cese.madcap.factories;
+package org.fraunhofer.cese.madcap.cache;
 
 import android.util.Log;
 
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
-import org.fraunhofer.cese.madcap.cache.Cache;
-import org.fraunhofer.cese.madcap.cache.CacheEntry;
 
 import java.util.UUID;
 

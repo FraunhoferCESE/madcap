@@ -14,7 +14,7 @@ import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeSaveResult;
 import org.fraunhofer.cese.madcap.cache.Cache;
-import org.fraunhofer.cese.madcap.factories.CacheFactory;
+import org.fraunhofer.cese.madcap.cache.CacheFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
