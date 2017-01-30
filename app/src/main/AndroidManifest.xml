@@ -3,9 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.fraunhofer.cese.madcap">
 
-    <uses-sdk android:minSdkVersion="19"
-        android:targetSdkVersion="23" />
-
     <compatible-screens>
         <!-- all small size screens -->
         <screen android:screenSize="small" android:screenDensity="ldpi" />
@@ -19,6 +16,7 @@
         <screen android:screenSize="normal" android:screenDensity="xhdpi" />
     </compatible-screens>
 
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.BATTERY_STATS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_TASKS" /> <!-- We will get rid of this after Anumeet finished his Library -->
@@ -117,7 +115,4 @@
         </activity>
 
     </application>
-
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-
 </manifest>
