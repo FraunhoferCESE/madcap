@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.database.ContentObserver;
 import android.hardware.display.DisplayManager;
 import android.os.Build;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -24,6 +26,7 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.DockStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.InputMethodProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.ScreenOffTimeoutProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemInfoProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.TimezoneProbe;
@@ -46,6 +49,7 @@ public class SystemListener implements Listener {
     private final ProbeManager<Probe> probeManager;
     private final String madcapVerison;
     private final SystemReceiverFactory systemReceiverFactory;
+    private ContentObserver settingsContentObserver;
 
     private SystemReceiver systemReceiver;
 
@@ -88,6 +92,18 @@ public class SystemListener implements Listener {
             systemFilter.addAction("android.intent.action.INPUT_METHOD_CHANGED");
 
             context.registerReceiver(systemReceiver, systemFilter);
+
+            settingsContentObserver = new ContentObserver(new Handler()) {
+                @Override
+                public void onChange(boolean selfChange) {
+                    ScreenOffTimeoutProbe screenOffTimeoutProbe= new ScreenOffTimeoutProbe();
+                    screenOffTimeoutProbe.setDate(System.currentTimeMillis());
+                    screenOffTimeoutProbe.setTimeout(getCurrentScreenOffTimeout());
+                    onUpdate(screenOffTimeoutProbe);
+                }
+            };
+
+            context.getContentResolver().registerContentObserver(Settings.System.CONTENT_URI, true, settingsContentObserver);
 
             sendInitalProbes();
         }
@@ -136,6 +152,12 @@ public class SystemListener implements Listener {
         dockStateProbe.setKind(getCurrentDockDevice());
         onUpdate(dockStateProbe);
 
+        //Screen off timeout
+        ScreenOffTimeoutProbe screenOffTimeoutProbe= new ScreenOffTimeoutProbe();
+        screenOffTimeoutProbe.setDate(System.currentTimeMillis());
+        screenOffTimeoutProbe.setTimeout(getCurrentScreenOffTimeout());
+        onUpdate(screenOffTimeoutProbe);
+
     }
 
     private void sendInitalSystemInfoProbe() {
@@ -160,6 +182,7 @@ public class SystemListener implements Listener {
         if(runningState){
             if(systemReceiver != null){
                 context.unregisterReceiver(systemReceiver);
+                context.getContentResolver().unregisterContentObserver(settingsContentObserver);
             }
         }
         runningState = false;
@@ -207,6 +230,11 @@ public class SystemListener implements Listener {
         }
     }
 
+    /**
+     * Retrieves the current input mode like US-Keyboard, German Keyboard
+     * or external devices.
+     * @return the input method.
+     */
     String getCurrentInputMethod(){
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
@@ -223,6 +251,10 @@ public class SystemListener implements Listener {
         return "na";
     }
 
+    /**
+     * Retrieves the current dock state.
+     * @return docked or not docked.
+     */
     String getCurrentDockState(){
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_DOCK_EVENT);
         Intent dockStatus = context.registerReceiver(null, ifilter);
@@ -235,6 +267,10 @@ public class SystemListener implements Listener {
         return isDocked ? DockStateProbe.DOCKED : DockStateProbe.UNDOCKED;
     }
 
+    /**
+     * Gets the currently docked device.
+     * @return the device name.
+     */
     String getCurrentDockDevice(){
         IntentFilter ifilter = new IntentFilter(Intent.ACTION_DOCK_EVENT);
         Intent dockStatus = context.registerReceiver(null, ifilter);
@@ -256,5 +292,19 @@ public class SystemListener implements Listener {
                 return "-";
         }
 
+    }
+
+    /**
+     * Gets the timeout time for a screen to turn
+     * off automatically after the last interaction.
+     * @return the timeout time.
+     */
+    int getCurrentScreenOffTimeout(){
+        try {
+            return Settings.System.getInt(context.getContentResolver(), Settings.System.SCREEN_OFF_TIMEOUT);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 }
