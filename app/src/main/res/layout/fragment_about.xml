@@ -16,79 +16,104 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/ppHeader"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true"
             android:textSize="20dp"
-            android:layout_marginBottom="15dp"
-            />
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/ppText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ppText"
             android:layout_below="@id/ppHeader"
-            />
+            android:text="@string/ppText" />
 
         <TextView
             android:id="@+id/ppLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ppLink"
+            android:layout_below="@id/ppText"
             android:layout_centerHorizontal="true"
             android:autoLink="web"
-            android:layout_below="@id/ppText"
-            />
+            android:text="@string/ppLink" />
 
         <TextView
             android:id="@+id/licenseHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/licenseHeader"
-            android:textStyle="bold"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="15dp"
-            android:layout_marginTop="30dp"
-            android:textSize="20dp"
             android:layout_below="@id/ppLink"
-            />
+            android:layout_marginTop="30dp"
+            android:text="@string/licenseHeader"
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
 
         <TextView
             android:id="@+id/licenseText"
-            android:layout_below="@id/licenseHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/licenseText"
+            android:layout_below="@id/licenseHeader"
             android:layout_marginBottom="15dp"
-            />
+            android:text="@string/licenseText" />
 
         <TextView
             android:id="@+id/apache2License"
-            android:layout_below="@id/licenseText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/apache2License"
-            android:textStyle="bold"
+            android:layout_below="@id/licenseText"
             android:autoLink="web"
-            />
+            android:text="@string/apache2License"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/madcapLicense"
-            android:layout_below="@id/apache2License"
-            android:text="@string/madcapLicense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:autoLink="web" />
+            android:layout_below="@id/apache2License"
+            android:autoLink="web"
+            android:text="@string/madcapLicense"
+            android:textSize="10dp" />
 
         <TextView
             android:id="@+id/androiddevicenamesLicense"
-            android:layout_below="@id/madcapLicense"
-            android:text="@string/androiddevicenamesLicense"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="10dp"
-            android:autoLink="web" />
+            android:layout_below="@id/madcapLicense"
+            android:autoLink="web"
+            android:text="@string/androiddevicenamesLicense"
+            android:textSize="10dp" />
+
+
+        <TextView
+            android:id="@+id/moreInfoHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/androiddevicenamesLicense"
+            android:layout_marginTop="30dp"
+            android:text="@string/moreInfoHeader"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/moreInfoSponsor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/moreInfoHeader"
+            android:text="@string/moreInfoSponsor" />
+
+        <TextView
+            android:id="@+id/moreInfoContact"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/moreInfoSponsor"
+            android:text="@string/moreInfoContact" />
+
+        <TextView
+            android:id="@+id/versionNumberAboutFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/versionIntro"
+            android:textIsSelectable="true" />
     </RelativeLayout>
 </FrameLayout>
