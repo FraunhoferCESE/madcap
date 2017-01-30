@@ -124,6 +124,11 @@
     <string name="last_hearthbeat">Hearthbeat</string>
 
     <!-- About -->
+    <string name="aboutHeader">About</string>
+    <string name="aboutText1">MADCAP is part of the Pocket Security research project from the University of Maryland and Fraunhofer USA, Inc.</string>
+    <string name="aboutText2">This app is intended for pre-selected users only. This app collects data about the apps you collect on your smartphone, your location, and activities such as making phone calls. Please refer to the privacy policy for complete details. This app may also post security notifications and other alerts.</string>
+    <string name="aboutSponsor">MADCAP development is funded by National Science Foundation grant #1619084.</string>
+
     <!-- PRivacy Policy -->
     <string name="ppHeader">Privacy Policy</string>
     <string name="ppText">MADCAP and the Pocket Security team are committed to privacy and security of your data. Please review our Privacy Policy at the following link:</string>
@@ -136,9 +141,8 @@
     <string name="madcapLicense">MADCAP: https://github.com/FraunhoferCESE/madcap</string>
     <string name="androiddevicenamesLicense">AndroidDeviceNames: https://github.com/jaredrummler/AndroidDeviceNames</string>
 
-    <!-- Other -->
-    <string name="moreInfoHeader">More Information</string>
-    <string name="moreInfoSponsor">MADCAP is part of the Pocket Security project funded by National Science Foundation grant #1619084.</string>
-    <string name="moreInfoContact">For more information, please visit https://www.pocket-security.org.</string>
+    <!-- Contact -->
+    <string name="contactHeader">Contact</string>
+    <string name="contactLink">For more information, please visit https://www.pocket-security.org.</string>
 
 </resources>
