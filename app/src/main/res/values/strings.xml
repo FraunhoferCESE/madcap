@@ -54,7 +54,7 @@
     <string name="desc_google_icon">MADCAP Logo</string>
 
     <!-- Activity Names and Descriptions -->
-    <string name="name_sign_in_activity">MADCAP Sign in/out</string>
+    <string name="name_sign_in_activity">MADCAP</string>
 
     <!-- Welcome activity -->
     <string name="help">Help</string>

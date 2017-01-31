@@ -92,11 +92,10 @@ public class LogoutFragment extends Fragment {
                             MyApplication.madcapLogger.d(TAG, "Logout succeeded. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
                             Toast.makeText(getActivity(), R.string.post_sign_out, Toast.LENGTH_SHORT).show();
 
-                            // TODO: What to do with the user's data?
                             getActivity().stopService(new Intent(getActivity(), DataCollectionService.class));
                             MyApplication.madcapLogger.d(TAG, "Now going back to SignInActivity");
                             Intent intent = new Intent(getActivity(), SignInActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             intent.putExtra("distractfromsilentlogin", true);
                             startActivity(intent);
                         } else {
