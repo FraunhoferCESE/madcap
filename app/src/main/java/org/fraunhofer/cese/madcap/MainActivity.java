@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity
         //startFragment = new StartFragment(); // see save instance
         helpFragment = new HelpFragment();
         logoutFragment = new LogoutFragment();
-        quitFragment = new QuitFragment();
+        //quitFragment = new QuitFragment();
         aboutFragment = new AboutFragment();
 
         //Initial settign up of the main fragement
@@ -116,14 +116,6 @@ public class MainActivity extends AppCompatActivity
                 currentTopFragment ="logout";
             }
             ft.commit();
-        } else if (id == R.id.nav_quit) {
-            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.replace(R.id.fragmentHolder, quitFragment);
-            if(!currentTopFragment.equals("quit")){
-                ft.addToBackStack("quit");
-                currentTopFragment = "quit";
-            }
-            ft.commit();
         } else if (id == R.id.nav_about) {
             FragmentTransaction ft = mainFragmentManager.beginTransaction();
             ft.replace(R.id.fragmentHolder, aboutFragment);
@@ -132,7 +124,15 @@ public class MainActivity extends AppCompatActivity
                 currentTopFragment = "about";
             }
             ft.commit();
-        }
+        } //else if (id == R.id.nav_quit) {
+//            FragmentTransaction ft = mainFragmentManager.beginTransaction();
+//            ft.replace(R.id.fragmentHolder, quitFragment);
+//            if(!currentTopFragment.equals("quit")){
+//                ft.addToBackStack("quit");
+//                currentTopFragment = "quit";
+//            }
+//            ft.commit();
+//        }
 
         int checkedID = item.getItemId();
 
@@ -192,8 +192,8 @@ public class MainActivity extends AppCompatActivity
         sign.setChecked(false);
         MenuItem hp = (MenuItem) findViewById(R.id.nav_help);
         hp.setChecked(false);
-        MenuItem qt = (MenuItem) findViewById(R.id.nav_quit);
-        qt.setChecked(false);
+//        MenuItem qt = (MenuItem) findViewById(R.id.nav_quit);
+//        qt.setChecked(false);
         MenuItem at = (MenuItem) findViewById(R.id.nav_about);
         at.setChecked(false);
     }

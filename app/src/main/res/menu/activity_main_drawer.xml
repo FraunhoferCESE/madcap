@@ -23,9 +23,9 @@
                 android:title="Sign Out"
                 android:checkable="true" />
 
-            <item
-                android:id="@+id/nav_quit"
-                android:icon="@drawable/ic_cancel_black_24dp"
-                android:title="Quit MADCAP"
-                android:checkable="true" />
+            <!--<item-->
+                <!--android:id="@+id/nav_quit"-->
+                <!--android:icon="@drawable/ic_cancel_black_24dp"-->
+                <!--android:title="Quit MADCAP"-->
+                <!--android:checkable="true" />-->
 </menu>
