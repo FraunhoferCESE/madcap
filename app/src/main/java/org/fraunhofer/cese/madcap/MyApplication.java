@@ -5,6 +5,8 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
+import com.google.firebase.crash.FirebaseCrash;
+
 import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 /**
@@ -43,6 +45,7 @@ public class MyApplication extends Application {
                 .myApplicationModule(new MyApplicationModule(this))
                 .build();
 
+        FirebaseCrash.report(new Exception("My first Android non-fatal error"));
     }
 
     /**
