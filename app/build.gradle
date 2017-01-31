@@ -129,7 +129,6 @@ dependencies {
     androidTestApt 'com.google.dagger:dagger-compiler:2.5'
     apt 'com.google.dagger:dagger-compiler:2.5'
     testApt 'com.google.dagger:dagger-compiler:2.5'
-    compile project(path: ':backend-production', configuration: 'android-endpoints')
 }
 
 def props = new Properties()
