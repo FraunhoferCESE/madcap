@@ -13,19 +13,20 @@
         android:weightSum="1">
 
         <TextView
-            android:text="@string/quitText"
+            android:text="This section is not available in alpha."
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/quitTextView" />
+        <!--android:text="@string/quitText"-->
 
-        <Button
-            android:text="@string/quitButtonText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/quitButton"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@color/red" />
+        <!--<Button-->
+            <!--android:text="@string/quitButtonText"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/quitButton"-->
+            <!--android:layout_marginTop="10dp"-->
+            <!--android:layout_marginBottom="10dp"-->
+            <!--android:background="@color/red" />-->
     </LinearLayout>
 
 </FrameLayout>

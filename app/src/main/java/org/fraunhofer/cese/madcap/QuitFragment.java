@@ -49,29 +49,29 @@ public class QuitFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_quit, container, false);
 
-        quitButton = (Button) view.findViewById(R.id.quitButton);
-        quitButton.setOnClickListener(new View.OnClickListener() {
-            /**
-             * Called when a view has been clicked.
-             *
-             * @param v The view that was clicked.
-             */
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(Intent.ACTION_SEND);
-                i.setType("message/rfc822");
-                i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.contactEmail)});
-                i.putExtra(Intent.EXTRA_SUBJECT, "QUIT Pocket Security ");
-                i.putExtra(Intent.EXTRA_TEXT, "Hello Pocket Security Team, \n \n I want to quit Pocket Security. \n(You may write your reasons here.) \n" +
-                        " \n \n " + authenticationProvider.getLastSignedInUsersName() + " \n" +
-                        " \n Reference User ID: " + authenticationProvider.getUserId() + " (please do not remove this)");
-                try {
-                    startActivity(Intent.createChooser(i, "Send mail..."));
-                } catch (android.content.ActivityNotFoundException ex) {
-                    MyApplication.madcapLogger.e(TAG, "No email client installed");
-                }
-            }
-        });
+//        quitButton = (Button) view.findViewById(R.id.quitButton);
+//        quitButton.setOnClickListener(new View.OnClickListener() {
+//            /**
+//             * Called when a view has been clicked.
+//             *
+//             * @param v The view that was clicked.
+//             */
+//            @Override
+//            public void onClick(View v) {
+//                Intent i = new Intent(Intent.ACTION_SEND);
+//                i.setType("message/rfc822");
+//                i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.contactEmail)});
+//                i.putExtra(Intent.EXTRA_SUBJECT, "QUIT Pocket Security ");
+//                i.putExtra(Intent.EXTRA_TEXT, "Hello Pocket Security Team, \n \n I want to quit Pocket Security. \n(You may write your reasons here.) \n" +
+//                        " \n \n " + authenticationProvider.getLastSignedInUsersName() + " \n" +
+//                        " \n Reference User ID: " + authenticationProvider.getUserId() + " (please do not remove this)");
+//                try {
+//                    startActivity(Intent.createChooser(i, "Send mail..."));
+//                } catch (android.content.ActivityNotFoundException ex) {
+//                    MyApplication.madcapLogger.e(TAG, "No email client installed");
+//                }
+//            }
+//        });
 
         return view;
     }
