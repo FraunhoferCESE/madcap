@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--suppress DeprecatedClassUsageInspection -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.fraunhofer.cese.madcap">
-
-    <uses-sdk android:minSdkVersion="19"
-        android:targetSdkVersion="23" />
 
     <compatible-screens>
         <!-- all small size screens -->
@@ -86,12 +84,14 @@
             android:screenOrientation="portrait"
             android:theme="@style/MadcapTheme" />
 
-        <service android:name=".firebasecloudmessaging.MadcapFirebaseMessagingService">
+        <service android:name=".firebasecloudmessaging.MadcapFirebaseMessagingService"
+            tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".firebasecloudmessaging.MadcapFirebaseInstanceIDService">
+        <service android:name=".firebasecloudmessaging.MadcapFirebaseInstanceIDService"
+            tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
@@ -118,6 +118,7 @@
 
     </application>
 
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS"
+        tools:ignore="ManifestOrder" />
 
 </manifest>
