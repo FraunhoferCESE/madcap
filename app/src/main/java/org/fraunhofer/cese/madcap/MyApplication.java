@@ -44,8 +44,6 @@ public class MyApplication extends Application {
         component = DaggerMyComponent.builder()
                 .myApplicationModule(new MyApplicationModule(this))
                 .build();
-
-        FirebaseCrash.report(new Exception("My first Android non-fatal error"));
     }
 
     /**

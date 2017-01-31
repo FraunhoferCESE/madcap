@@ -4,16 +4,33 @@
     package="org.fraunhofer.cese.madcap">
 
     <compatible-screens>
+
         <!-- all small size screens -->
-        <screen android:screenSize="small" android:screenDensity="ldpi" />
-        <screen android:screenSize="small" android:screenDensity="mdpi" />
-        <screen android:screenSize="small" android:screenDensity="hdpi" />
-        <screen android:screenSize="small" android:screenDensity="xhdpi" />
+        <screen
+            android:screenDensity="ldpi"
+            android:screenSize="small" />
+        <screen
+            android:screenDensity="mdpi"
+            android:screenSize="small" />
+        <screen
+            android:screenDensity="hdpi"
+            android:screenSize="small" />
+        <screen
+            android:screenDensity="xhdpi"
+            android:screenSize="small" />
         <!-- all normal size screens -->
-        <screen android:screenSize="normal" android:screenDensity="ldpi" />
-        <screen android:screenSize="normal" android:screenDensity="mdpi" />
-        <screen android:screenSize="normal" android:screenDensity="hdpi" />
-        <screen android:screenSize="normal" android:screenDensity="xhdpi" />
+        <screen
+            android:screenDensity="ldpi"
+            android:screenSize="normal" />
+        <screen
+            android:screenDensity="mdpi"
+            android:screenSize="normal" />
+        <screen
+            android:screenDensity="hdpi"
+            android:screenSize="normal" />
+        <screen
+            android:screenDensity="xhdpi"
+            android:screenSize="normal" />
     </compatible-screens>
 
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
@@ -44,7 +61,6 @@
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
-
     <!-- The used actions are defined here. -->
     <application
         android:name=".MyApplication"
@@ -54,10 +70,9 @@
         android:label="@string/app_name"
         android:theme="@style/MadcapTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
-            android:value="@string/googleAwarenessApiKey"/>
+            android:value="@string/googleAwarenessApiKey" />
 
         <receiver android:name=".boot.OnBootCompleteBroadcastReceiver">
             <intent-filter>
@@ -68,11 +83,9 @@
         <service
             android:name=".boot.OnBootService"
             android:enabled="true" />
-
         <service
             android:name=".services.DataCollectionService"
-            android:enabled="true"
-            />
+            android:enabled="true" />
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -97,8 +110,8 @@
 
         <activity
             android:name=".WelcomeActivity"
-            android:screenOrientation="portrait"
             android:noHistory="true"
+            android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -106,13 +119,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".MainActivity"
             android:label="@string/title_text"
             android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme.NoActionBar">
-        </activity>
-
+            android:theme="@style/MadcapTheme.NoActionBar"></activity>
     </application>
+
 </manifest>

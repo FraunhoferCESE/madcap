@@ -1,1 +1,1 @@
-include ':app', ':backend', ':sensorlisteners'
+include ':app', ':backend', ':sensorlisteners', ':backend-production'

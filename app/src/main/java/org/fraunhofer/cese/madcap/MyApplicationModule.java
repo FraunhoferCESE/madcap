@@ -51,6 +51,8 @@ import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
 @SuppressWarnings({"SameReturnValue", "InstanceMethodNamingConvention", "MethodMayBeStatic"})
 @Module
 class MyApplicationModule {
+//    private static String endpointUrl = "https://madcap-dev1.appspot.com/_ah/api/";
+    private static String endpointUrl = "https://madcap-142815.appspot.com/_ah/api/";
 
     /**
      * Local instane of the Application. Needed to provide the {@link Context} to injected classes.
@@ -272,7 +274,7 @@ class MyApplicationModule {
         ProbeEndpoint.Builder builder = new ProbeEndpoint.Builder(AndroidHttp.newCompatibleTransport(),
                 new AndroidJsonFactory(), null)
                 .setApplicationName("Fraunhofer MADCAP")
-                .setRootUrl("https://madcap-dev1.appspot.com/_ah/api/");
+                .setRootUrl(endpointUrl);
 //                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
 //                    @Override
 //                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
@@ -281,6 +283,7 @@ class MyApplicationModule {
 //                });
         return builder.build();
     }
+
 
     @Nullable
     @Provides
