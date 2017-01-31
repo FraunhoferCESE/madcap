@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--suppress DeprecatedClassUsageInspection -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="org.fraunhofer.cese.madcap">
@@ -17,6 +16,7 @@
         <screen android:screenSize="normal" android:screenDensity="xhdpi" />
     </compatible-screens>
 
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.BATTERY_STATS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_TASKS" /> <!-- We will get rid of this after Anumeet finished his Library -->
@@ -84,14 +84,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/MadcapTheme" />
 
-        <service android:name=".firebasecloudmessaging.MadcapFirebaseMessagingService"
-            tools:ignore="ExportedService">
+        <service android:name=".firebasecloudmessaging.MadcapFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".firebasecloudmessaging.MadcapFirebaseInstanceIDService"
-            tools:ignore="ExportedService">
+        <service android:name=".firebasecloudmessaging.MadcapFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
@@ -117,8 +115,4 @@
         </activity>
 
     </application>
-
-    <uses-permission android:name="android.permission.RECEIVE_SMS"
-        tools:ignore="ManifestOrder" />
-
 </manifest>

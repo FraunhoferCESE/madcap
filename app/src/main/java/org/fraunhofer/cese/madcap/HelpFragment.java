@@ -77,7 +77,7 @@ public class HelpFragment extends Fragment {
             public void onClick(View v) {
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("message/rfc822");
-                i.putExtra(Intent.EXTRA_EMAIL  , new String[]{getString(R.string.contactEmail1), getString(R.string.contactEmail2)});
+                i.putExtra(Intent.EXTRA_EMAIL  , new String[]{getString(R.string.contactEmail)});
                 i.putExtra(Intent.EXTRA_SUBJECT, "Pocket Security Contact");
                 i.putExtra(Intent.EXTRA_TEXT   , "Hello Pocket Security Team, \n \n (write your question here.) \n" +
                         " \n \n " + authenticationProvider.getLastSignedInUsersName()+" \n" +
