@@ -25,7 +25,7 @@ public class HeartBeatTask extends TimerTask {
     private Application application;
     private Cache cache;
     private ManualProbeUploader manualProbeUploader;
-    private static int delta = 2000;
+    private static int delta = 20000;
     private long interval;
 
     public HeartBeatTask(Application application, Cache cache, ManualProbeUploader manualProbeUploader, long interval){

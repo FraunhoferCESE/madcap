@@ -27,6 +27,9 @@ import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
+import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
+import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
+
 
 /**
  * Created by MMueller on 12/13/2016.
@@ -71,7 +74,6 @@ public class ManualProbeUploadTask extends AsyncTask<Probe, Void, Void> {
      */
     @Override
     protected Void doInBackground(Probe... params) {
-
         Probe probe = params[0];
 
         ProbeSaveResult saveResult = new ProbeSaveResult();
