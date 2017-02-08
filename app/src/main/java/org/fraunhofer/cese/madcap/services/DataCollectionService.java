@@ -40,6 +40,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -58,7 +61,6 @@ import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationRecei
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.MMSOutObserverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.MSMSReceiverFactory;
@@ -90,7 +92,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private final IBinder mBinder = new DataCollectionServiceBinder();
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
     private UploadStatusGuiListener uploadStatusGuiListener;
-    private Timer hearthBeatTimer;
+    private ScheduledExecutorService hearthBeatScheduler;
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
@@ -355,16 +357,16 @@ public class DataCollectionService extends Service implements UploadStatusListen
      * Starts the reverse Hearthbeat.
      */
     private void startHearthBeat() {
-        hearthBeatTimer = new Timer();
-        hearthBeatTimer.scheduleAtFixedRate(new HeartBeatTask(getApplication(), cache, manualProbeUploader, 60000L), 0, 60000);
+        hearthBeatScheduler = Executors.newSingleThreadScheduledExecutor();
+        hearthBeatScheduler.scheduleAtFixedRate(new HeartBeatRunner(getApplication(), cache, manualProbeUploader, 60000L), 0, 60000, TimeUnit.MILLISECONDS);
     }
 
     /**
      * Stops the reverse Hearthbeat.
      */
     private void stopHearthBeat() {
-        if(hearthBeatTimer != null){
-            hearthBeatTimer.cancel();
+        if(hearthBeatScheduler != null){
+            hearthBeatScheduler.shutdown();
         }
     }
 
