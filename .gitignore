@@ -45,6 +45,7 @@ debug.keystore
 
 # Prevent this from being added to VCS
 backend/src/main/java/org/fraunhofer/cese/madcap/backend/Constants.java
+app/src/main/java/org/fraunhofer/cese/madcap/Constants.java
 
 
 app/src/main/res/values/privatevalues.xml

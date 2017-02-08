@@ -7,6 +7,7 @@ import com.googlecode.objectify.ObjectifyService;
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ActivityEntry;
 import org.fraunhofer.cese.madcap.backend.models.AirplaneModeEntry;
+import org.fraunhofer.cese.madcap.backend.models.AppUser;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothConnectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothScanModeEntry;
@@ -51,6 +52,7 @@ import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
 @SuppressWarnings({"UtilityClass", "UtilityClassCanBeEnum", "NonFinalUtilityClass", "UtilityClassWithoutPrivateConstructor"})
 public class OfyService {
     static {
+        ObjectifyService.register(AppUser.class);
         ObjectifyService.register(ProbeDataSet.class);
         ObjectifyService.register(ProbeEntry.class);
         ObjectifyService.register(LocationEntry.class);

@@ -27,33 +27,28 @@ import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 
-import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
-import static android.os.Process.THREAD_PRIORITY_MORE_FAVORABLE;
-
 
 /**
  * Created by MMueller on 12/13/2016.
- *
+ * <p>
  * A manual probe uploader for probes which are independent from
  * the other probes like DataCollectionProbe.
  */
 public class ManualProbeUploadTask extends AsyncTask<Probe, Void, Void> {
     private final String TAG = getClass().getSimpleName();
 
-    private Application application;
-    private Cache cache;
-    private CacheFactory cacheFactory;
-
-    @Inject
-    ProbeEndpoint appEngineApi;
+    private final Application application;
+    private final CacheFactory cacheFactory;
 
     @Inject
     AuthenticationProvider authenticationProvider;
 
-    public ManualProbeUploadTask(Application application, Cache cache){
+    @Inject
+    EndpointApiBuilder endpointApiBuilder;
 
+    public ManualProbeUploadTask(Application application, Cache cache) {
+        this.application = application;
         ((MyApplication) application).getComponent().inject(this);
-        this.cache = cache;
 
         cacheFactory = new CacheFactory(cache, authenticationProvider);
     }
@@ -97,8 +92,9 @@ public class ManualProbeUploadTask extends AsyncTask<Probe, Void, Void> {
 
         ProbeSaveResult remoteResult;
 
-        if(probeEntry.getUserID() != null){
+        if (probeEntry.getUserID() != null) {
             try {
+                ProbeEndpoint appEngineApi = endpointApiBuilder.build(application);
                 remoteResult = appEngineApi.insertProbeDataset(dataSet).execute();
 
                 Log.d(TAG, "Manual upload succeeded");
@@ -114,10 +110,9 @@ public class ManualProbeUploadTask extends AsyncTask<Probe, Void, Void> {
                 Log.d(TAG, "Manual DataCollectionProbe upload failed. Save now to cache.");
                 cacheFactory.save(probe);
             }
-        }else{
+        } else {
             FirebaseCrash.report(new Exception("Attempt to save an DataCollectionEnty with a null user"));
         }
-
 
 
         return null;

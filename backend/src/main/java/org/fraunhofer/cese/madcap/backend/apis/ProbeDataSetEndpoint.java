@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.backend.apis;
 
+import com.google.api.server.spi.auth.common.User;
 import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.config.ApiNamespace;
@@ -9,6 +10,7 @@ import com.google.appengine.api.oauth.OAuthRequestException;
 import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.cmd.LoadType;
 
+import org.fraunhofer.cese.madcap.backend.Constants;
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ActivityEntry;
 import org.fraunhofer.cese.madcap.backend.models.AirplaneModeEntry;
@@ -40,23 +42,24 @@ import org.fraunhofer.cese.madcap.backend.models.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ProbeSaveResult;
 import org.fraunhofer.cese.madcap.backend.models.ReverseHeartBeatEntry;
 import org.fraunhofer.cese.madcap.backend.models.RingerEntry;
+import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
 import org.fraunhofer.cese.madcap.backend.models.ScreenOffTimeoutEntry;
+import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
+import org.fraunhofer.cese.madcap.backend.models.SystemUptimeEntry;
 import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.TimeChangeEntry;
+import org.fraunhofer.cese.madcap.backend.models.TimezoneEntry;
 import org.fraunhofer.cese.madcap.backend.models.UploadLogEntry;
+import org.fraunhofer.cese.madcap.backend.models.AppUser;
+import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 import org.fraunhofer.cese.madcap.backend.models.VoicemailEntry;
 import org.fraunhofer.cese.madcap.backend.models.VolumeEntry;
 import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
-import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
-import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
-import org.fraunhofer.cese.madcap.backend.models.SystemUptimeEntry;
-import org.fraunhofer.cese.madcap.backend.models.TimeChangeEntry;
-import org.fraunhofer.cese.madcap.backend.models.TimezoneEntry;
-import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -77,7 +80,9 @@ import static org.fraunhofer.cese.madcap.backend.OfyService.ofy;
                 ownerDomain = "madcap.cese.fraunhofer.org",
                 ownerName = "madcap.cese.fraunhofer.org",
                 packagePath = "backend"
-        )
+        ),
+        clientIds = {Constants.WEB_CLIENT_ID, Constants.ANDROID_CLIENT_ID},
+        audiences = {Constants.ANDROID_AUDIENCE}
 )
 public class ProbeDataSetEndpoint {
 
@@ -92,10 +97,22 @@ public class ProbeDataSetEndpoint {
     @ApiMethod(
             name = "insertProbeDataset"
     )
-    public ProbeSaveResult insertSensorDataSet(HttpServletRequest req, ProbeDataSet probeDataSet) throws OAuthRequestException, ConflictException, BadRequestException {
-
+    public ProbeSaveResult insertSensorDataSet(HttpServletRequest req, ProbeDataSet probeDataSet, User user) throws OAuthRequestException, ConflictException, BadRequestException {
         long startTime = System.currentTimeMillis();
         logger.info("Upload request received from " + req.getRemoteAddr());
+        if (user == null) {
+            throw new OAuthRequestException("ERROR: User is null.");
+        }
+
+        Objectify of = ofy();
+        AppUser result = of.load().type(AppUser.class).id(user.getId()).now();
+        if (result == null) {
+            throw new OAuthRequestException("ERROR: User is not registered! Id: " + user.getId() + ", email: " + user.getEmail());
+        } else if (result.isAlpha() == false) {
+            throw new OAuthRequestException("ERROR: User is not authorized for alpha testing. Id: " + user.getId() + ", email: " + user.getEmail());
+        }
+
+        logger.info("Upload received from User id: " + user.getId() + ", email: " + user.getEmail());
 
         // Check if data gets passed at all
         if (probeDataSet == null) {
@@ -105,16 +122,7 @@ public class ProbeDataSetEndpoint {
         long earliestProbeTimestamp = 4102462799000L;
         long latestProbeTimestamp = 0;
 
-        String userId = "abcd";
-
-        Iterator<ProbeEntry> userIterator = probeDataSet.getEntryList().iterator();
-
-        if(userIterator.hasNext()){
-            userId = userIterator.next().getUserID();
-        }
-
         Collection<ProbeEntry> entryList = probeDataSet.getEntryList();
-
         // Check if passed list has no entries
         if (entryList == null || entryList.isEmpty()) {
             throw new BadRequestException("entryList is null or empty");
@@ -460,7 +468,7 @@ public class ProbeDataSetEndpoint {
             for (DatastoreEntry entry : currentEntrySet) {
                 uploadedIds.add(entry.getId());
             }
-            Objectify of = ofy();
+
             LoadType loadType = of.load().type(type);
 
             Map alreadyUploadedIds = loadType.ids(uploadedIds);
@@ -469,10 +477,10 @@ public class ProbeDataSetEndpoint {
                 if (alreadyUploadedIds.get(entry.getId()) == null) {
                     saved.add(entry.getId());
                     currentToSave.add(entry);
-                    if(entry.getTimestamp() < earliestProbeTimestamp){
+                    if (entry.getTimestamp() < earliestProbeTimestamp) {
                         earliestProbeTimestamp = entry.getTimestamp();
                     }
-                    if(entry.getTimestamp() > latestProbeTimestamp){
+                    if (entry.getTimestamp() > latestProbeTimestamp) {
                         latestProbeTimestamp = entry.getTimestamp();
                     }
                 } else {
@@ -531,8 +539,9 @@ public class ProbeDataSetEndpoint {
 //        ofy().save().entities(toSave).now();
 //        ofy().clear();
 
+
         logger.info("Num Saved: " + saved.size() + ", Num already existing: " + alreadyExists.size() + ", Time taken: " + ((System.currentTimeMillis() - startTime) / 1000) + "s");
-        logUpload(userId, startTime, saved.size(), alreadyExists.size(), earliestProbeTimestamp, latestProbeTimestamp, (long)(0L + req.getContentLength()));
+        logUpload(user.getId(), startTime, saved.size(), alreadyExists.size(), earliestProbeTimestamp, latestProbeTimestamp, (long) (0L + req.getContentLength()));
         return ProbeSaveResult.create(saved, alreadyExists);
     }
 
@@ -558,15 +567,15 @@ public class ProbeDataSetEndpoint {
     /**
      * Logs upload requests to the datastore.
      *
-     * @param userId the User Id.
-     * @param requestTime the requested upload time.
-     * @param savedProbes the amount of saved probes.
-     * @param duplicates the amount of duplicates.
+     * @param userId                 the User Id.
+     * @param requestTime            the requested upload time.
+     * @param savedProbes            the amount of saved probes.
+     * @param duplicates             the amount of duplicates.
      * @param earliestProbeTimeStamp the earliest timestamp.
-     * @param latestProbeTimestamp the latest timestamp.
-     * @param payloadSize the payload size in bytes.
+     * @param latestProbeTimestamp   the latest timestamp.
+     * @param payloadSize            the payload size in bytes.
      */
-    private void logUpload(String userId, long requestTime, int savedProbes, int duplicates, long earliestProbeTimeStamp, long latestProbeTimestamp, long payloadSize){
+    private void logUpload(String userId, long requestTime, int savedProbes, int duplicates, long earliestProbeTimeStamp, long latestProbeTimestamp, long payloadSize) {
         Collection<UploadLogEntry> logs = new ArrayList<>();
 
         UploadLogEntry uploadLogEntry = new UploadLogEntry(userId, requestTime, savedProbes, duplicates, earliestProbeTimeStamp, latestProbeTimestamp, payloadSize);

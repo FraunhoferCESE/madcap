@@ -25,7 +25,7 @@ public class CacheFactory implements ProbeManager {
 
     @Override
     public void save(Probe probe) {
-        //Log.i(TAG, "UID "+authenticationProvider.getUserId());
+        Log.d(TAG, "UID "+authenticationProvider.getUserId());
         if (authenticationProvider.getUserId() != null) {
             CacheEntry probeEntry = new CacheEntry();
             probeEntry.setId(UUID.randomUUID().toString());

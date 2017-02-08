@@ -16,12 +16,14 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
+import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.util.Calendar;
@@ -51,11 +53,10 @@ import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
 @SuppressWarnings({"SameReturnValue", "InstanceMethodNamingConvention", "MethodMayBeStatic"})
 @Module
 class MyApplicationModule {
-    private static String endpointUrl = "https://madcap-dev1.appspot.com/_ah/api/";
-//    private static String endpointUrl = "https://madcap-142815.appspot.com/_ah/api/";
+
 
     /**
-     * Local instane of the Application. Needed to provide the {@link Context} to injected classes.
+     * Local instance of the Application. Needed to provide the {@link Context} to injected classes.
      */
     private final Application application;
 
@@ -78,25 +79,16 @@ class MyApplicationModule {
         return application;
     }
 
-//    @Provides
-//    GoogleApiClient.Builder provideBuilder(){
-//        return new GoogleApiClient.Builder(application);
-//    }
-//
-//    @Provides
-//    GoogleApiClientBuilderFactory provideGoogleApiClientBuilderFactory(){
-//        return new GoogleApiClientBuilderFactory();
-//    }
-
-    @Provides @Named("AwarenessApi")
-    GoogleApiClient provideGoogleApiClient(){
+    @Provides
+    @Named("AwarenessApi")
+    GoogleApiClient provideGoogleApiClient() {
         return new GoogleApiClient.Builder(application)
                 .addApi(Awareness.API)
                 .build();
     }
 
     @Provides
-    Calendar provideCalendar(){
+    Calendar provideCalendar() {
         return Calendar.getInstance();
     }
 
@@ -107,7 +99,7 @@ class MyApplicationModule {
      * @return a static FenceApi
      */
     @Provides
-    FenceApi provideFenceApi(){
+    FenceApi provideFenceApi() {
         return Awareness.FenceApi;
     }
 
@@ -117,7 +109,7 @@ class MyApplicationModule {
      * @return a statuc SnapshotApi
      */
     @Provides
-    SnapshotApi provideSnapshotApi(){
+    SnapshotApi provideSnapshotApi() {
         return Awareness.SnapshotApi;
     }
 
@@ -127,7 +119,9 @@ class MyApplicationModule {
      * @return a factory.
      */
     @Provides
-    TimedLocationTaskFactory provideTimedLocationTaskFactory(){ return new TimedLocationTaskFactory();}
+    TimedLocationTaskFactory provideTimedLocationTaskFactory() {
+        return new TimedLocationTaskFactory();
+    }
 
     /**
      * Needed by the DataCollectionService.
@@ -135,7 +129,9 @@ class MyApplicationModule {
      * @return a factory.
      */
     @Provides
-    TimedApplicationTaskFactory provideTimedApplicationTask(){ return new TimedApplicationTaskFactory();}
+    TimedApplicationTaskFactory provideTimedApplicationTask() {
+        return new TimedApplicationTaskFactory();
+    }
 
     /**
      * Needed by the DataCollectionService.
@@ -143,7 +139,9 @@ class MyApplicationModule {
      * @return a factory.
      */
     @Provides
-    LocationServiceStatusReceiverFactory provideLocationServiceStatusReceiverFactory(){ return new LocationServiceStatusReceiverFactory(); }
+    LocationServiceStatusReceiverFactory provideLocationServiceStatusReceiverFactory() {
+        return new LocationServiceStatusReceiverFactory();
+    }
 
 
     /**
@@ -152,7 +150,9 @@ class MyApplicationModule {
      * @return an issuemanager.
      */
     @Provides
-    GoogleApiClientConnectionIssueManagerLocation provideGoogleConnectionIssueManager(){return new GoogleApiClientConnectionIssueManagerLocation();}
+    GoogleApiClientConnectionIssueManagerLocation provideGoogleConnectionIssueManager() {
+        return new GoogleApiClientConnectionIssueManagerLocation();
+    }
 
     /**
      * Needed by the DataCollectionService.
@@ -160,31 +160,37 @@ class MyApplicationModule {
      * @return an MadcapPermissionDeniedHandler.
      */
     @Provides
-    MadcapPermissionDeniedHandler provideMadcapPermissionDeniedHandler(){ return new MadcapPermissionDeniedHandler(application);}
+    MadcapPermissionDeniedHandler provideMadcapPermissionDeniedHandler() {
+        return new MadcapPermissionDeniedHandler(application);
+    }
 
     @Provides
-    MadcapSensorNoAnswerReceivedHandler provideSensorNoAnswerReceivedHandler(){ return  new MadcapSensorNoAnswerReceivedHandler();}
+    MadcapSensorNoAnswerReceivedHandler provideSensorNoAnswerReceivedHandler() {
+        return new MadcapSensorNoAnswerReceivedHandler();
+    }
 
     @Provides
-    TelephonyListenerFactory provideTelephonyListenerFactory(){ return new TelephonyListenerFactory();}
+    TelephonyListenerFactory provideTelephonyListenerFactory() {
+        return new TelephonyListenerFactory();
+    }
 
     @Provides
-    ConnectionInfoReceiverFactory provideConnectionInfoReceiverFactory(){
+    ConnectionInfoReceiverFactory provideConnectionInfoReceiverFactory() {
         return new ConnectionInfoReceiverFactory();
     }
 
     @Provides
-    MSMSReceiverFactory provideMSMSReceiverFactory(){
+    MSMSReceiverFactory provideMSMSReceiverFactory() {
         return new MSMSReceiverFactory();
     }
 
     @Provides
-    SMSOutObserverFactory provideSMSOutObserverFactory(){
+    SMSOutObserverFactory provideSMSOutObserverFactory() {
         return new SMSOutObserverFactory();
     }
 
     @Provides
-    MMSOutObserverFactory provideMMSOutObserverFactory(){
+    MMSOutObserverFactory provideMMSOutObserverFactory() {
         return new MMSOutObserverFactory();
     }
 
@@ -194,20 +200,22 @@ class MyApplicationModule {
     }
 
     @Provides
-    TimedActivityTaskFactory provideTimedActivityTaskFactory(){ return  new TimedActivityTaskFactory();}
+    TimedActivityTaskFactory provideTimedActivityTaskFactory() {
+        return new TimedActivityTaskFactory();
+    }
 
     @Provides
-    ManualProbeUploader provideManualProbeUploader(){
+    ManualProbeUploader provideManualProbeUploader() {
         return new ManualProbeUploader();
     }
 
     @Provides
-    SystemReceiverFactory provideSystemReceiverFactory(){
+    SystemReceiverFactory provideSystemReceiverFactory() {
         return new SystemReceiverFactory();
     }
 
     @Provides
-    AudioReceiverFactory provideAudioReceiverFactory(){
+    AudioReceiverFactory provideAudioReceiverFactory() {
         return new AudioReceiverFactory();
     }
 
@@ -222,7 +230,6 @@ class MyApplicationModule {
     final ConnectivityManager provideConnectivityManager() {
         return (ConnectivityManager) application.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
-
 
 
     /**
@@ -242,52 +249,31 @@ class MyApplicationModule {
         config.setDbWriteInterval(2000);
         config.setUploadInterval(900000);
 
-//        Resources res = application.getResources();
-
         config.setUploadWifiOnly(false);
 
         return config;
     }
 
+//    /**
+//     * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache} and the {@link RemoteUploadAsyncTaskFactory}
+//     *
+//     * @return the ProbeEndpoint to use
+//     */
 //    @Provides
-//    ProbeDataSetApi provideProbeDataSetApi() {
-//        ProbeDataSetApi.Builder builder = new ProbeDataSetApi.Builder(AndroidHttp.newCompatibleTransport(),
+//    static ProbeEndpoint provideProbeDataSetApi() {
+//        String endpointUrl = "https://madcap-dev1.appspot.com/_ah/api/";
+////      String endpointUrl = "https://madcap-142815.appspot.com/_ah/api/";
+//        ProbeEndpoint.Builder builder = new ProbeEndpoint.Builder(AndroidHttp.newCompatibleTransport(),
 //                new AndroidJsonFactory(), null)
-//                .setApplicationName("funfSensor")
-//                .setRootUrl("http://192.168.0.100:8080/_ah/api/")
-//                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-//                    @Override
-//                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-//                        abstractGoogleClientRequest.setDisableGZipContent(true);
-//                    }
-//                });
+//                .setApplicationName("Fraunhofer MADCAP")
+//                .setRootUrl(endpointUrl);
+//
 //        return builder.build();
 //    }
 
-    /**
-     * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache} and the {@link RemoteUploadAsyncTaskFactory}
-     *
-     * @return the ProbeEndpoint to use
-     */
-    @Provides
-    static ProbeEndpoint provideProbeDataSetApi() {
-        ProbeEndpoint.Builder builder = new ProbeEndpoint.Builder(AndroidHttp.newCompatibleTransport(),
-                new AndroidJsonFactory(), null)
-                .setApplicationName("Fraunhofer MADCAP")
-                .setRootUrl(endpointUrl);
-//                .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
-//                    @Override
-//                    public void initialize(AbstractGoogleClientRequest<?> abstractGoogleClientRequest) throws IOException {
-//                        abstractGoogleClientRequest.setDisableGZipContent(true);
-//                    }
-//                });
-        return builder.build();
-    }
-
-
     @Nullable
     @Provides
-    BluetoothAdapter provideBluetoothAdapter(){
+    BluetoothAdapter provideBluetoothAdapter() {
         return BluetoothAdapter.getDefaultAdapter();
     }
 
@@ -296,7 +282,8 @@ class MyApplicationModule {
         return new BluetoothInformationReceiverFactory();
     }
 
-    @Provides @Named("SigninApi")
+    @Provides
+    @Named("SigninApi")
     GoogleApiClient providesGoogleSigninApiClient() {
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
@@ -310,7 +297,7 @@ class MyApplicationModule {
     }
 
     @Provides
-    GoogleApiAvailability providesGoogleApiAvailability () {
+    GoogleApiAvailability providesGoogleApiAvailability() {
         return GoogleApiAvailability.getInstance();
     }
 }

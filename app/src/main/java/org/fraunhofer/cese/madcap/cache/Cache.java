@@ -13,6 +13,7 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
+import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -105,7 +106,7 @@ public class Cache {
     /**
      * The app engine api for remote upload.
      */
-    private final ProbeEndpoint appEngineApi;
+    private final EndpointApiBuilder endpointApiBuilder;
 
     @Inject
     public Cache(Context context,
@@ -113,13 +114,13 @@ public class Cache {
                  CacheConfig config,
                  DatabaseAsyncTaskFactory dbWriteTaskFactory,
                  RemoteUploadAsyncTaskFactory uploadTaskFactory,
-                 ProbeEndpoint appEngineApi) {
+                 EndpointApiBuilder endpointApiBuilder) {
         this.context = context;
         this.connManager = connManager;
         this.config = config;
         dbTaskFactory = dbWriteTaskFactory;
         this.uploadTaskFactory = uploadTaskFactory;
-        this.appEngineApi = appEngineApi;
+        this.endpointApiBuilder = endpointApiBuilder;
 
         lastDbWriteAttempt = System.currentTimeMillis();
         lastUploadAttempt = 0L;
@@ -299,7 +300,7 @@ public class Cache {
     @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
     public final int checkUploadConditions(UploadStrategy strategy) {
         // 1. Check preconditions
-        if (appEngineApi == null) {
+        if (endpointApiBuilder == null) {
             MyApplication.madcapLogger.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
             return INTERNAL_ERROR;
         }
@@ -368,7 +369,7 @@ public class Cache {
         Log.d(TAG, "Upload now called");
         lastUploadAttempt = System.currentTimeMillis();
 
-        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, appEngineApi, uploadStatusListeners).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, endpointApiBuilder, uploadStatusListeners).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**

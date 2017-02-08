@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -15,6 +16,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 
@@ -39,8 +41,11 @@ public class AuthenticationProvider {
     @Nullable
     private volatile GoogleSignInAccount user;
 
+    @Nullable
+    private volatile GoogleSignInAccount lastLoggedInUser;
+
     @Inject
-    AuthenticationProvider(@Named("SigninApi") GoogleApiClient googleApiClient, GoogleApiAvailability googleApiAvailability) {
+    public AuthenticationProvider(@Named("SigninApi") GoogleApiClient googleApiClient, GoogleApiAvailability googleApiAvailability) {
         mGoogleApiClient = googleApiClient;
         this.googleApiAvailability = googleApiAvailability;
     }
@@ -128,7 +133,7 @@ public class AuthenticationProvider {
             // In Case there is a result available intermediately. This should happen if they signed in before.
             GoogleSignInResult result = opr.get();
             MyApplication.madcapLogger.d(TAG, "Immediate result available: " + result);
-            user = result.getSignInAccount();
+            setUser(result.getSignInAccount());
             callback.onLoginResult(result);
         } else {
             MyApplication.madcapLogger.d(TAG, "Immediate results are not available.");
@@ -136,7 +141,7 @@ public class AuthenticationProvider {
                 @Override
                 public void onResult(@NonNull GoogleSignInResult r) {
                     MyApplication.madcapLogger.d(TAG, "Received asynchronous login result. Code: " + r.getStatus().getStatusCode() + ", message: " + r.getStatus().getStatusMessage());
-                    user = r.getSignInAccount();
+                    setUser(r.getSignInAccount());
                     callback.onLoginResult(r);
                 }
             });
@@ -184,7 +189,7 @@ public class AuthenticationProvider {
      * @param callback specifies how to handle various signout events
      */
     private void doSignout(@NonNull final LogoutResultCallback callback) {
-        user = null;
+        setUser(null);
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(@NonNull Status r) {
@@ -227,11 +232,23 @@ public class AuthenticationProvider {
     }
 
     /**
+     * Returns the last logged in user, if any.
+     * @return The last logged in user.
+     */
+    @Nullable
+    public GoogleSignInAccount getLastLoggedInUser() { return lastLoggedInUser; }
+
+
+    /**
      * Sets the currently logged in user. Only exposed here to support interactive sign in with the google sign in activitiy.
      *
      * @param user the user to set as currently logged in
      */
-    void setUser(@Nullable GoogleSignInAccount user) {
+    synchronized void setUser(@Nullable GoogleSignInAccount user) {
+        if(this.user != null) {
+            this.lastLoggedInUser = this.user;
+            MyApplication.madcapLogger.d(TAG,"lastLoggedInUser is now: "+lastLoggedInUser);
+        }
         this.user = user;
     }
 

@@ -130,7 +130,7 @@ class DatabaseAsyncTaskFactory {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                MyApplication.madcapLogger.d(TAG, "onPreEecute");
+                MyApplication.madcapLogger.d(TAG, "onPreExecute");
             }
 
 

@@ -16,6 +16,7 @@ import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeSaveResult;
+import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -30,7 +31,7 @@ import javax.inject.Inject;
 /**
  * Factory for creating asynchronous remote data storage tasks.
  *
- * @author Lucas
+ * @author llayman
  * @see Cache
  */
 public class RemoteUploadAsyncTaskFactory {
@@ -48,12 +49,10 @@ public class RemoteUploadAsyncTaskFactory {
      * Creates an asynchronous task for uploading entries from the local database to the remote store. The results of the task
      * are stored in a RemoteUploadResult object.
      *
-     * @param cache        the cache object handling the request. Needed for callbacks on write completion.
-     * @param appEngineApi the appengine api to which the entries should be posted
      * @return a new instance of an asynchronous remote upload task
      * @see RemoteUploadResult
      */
-    AsyncTask<Void, Integer, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final ProbeEndpoint appEngineApi, final Collection<UploadStatusListener> listeners) {
+      AsyncTask<Void, Integer, RemoteUploadResult> createRemoteUploadTask(final Context context, final Cache cache, final EndpointApiBuilder endpointApiBuilder, final Collection<UploadStatusListener> listeners) {
         return new AsyncTask<Void, Integer, RemoteUploadResult>() {
             private static final String TAG = "Fraunhofer.UploadTask";
             private static final int BUFFER_SIZE = 250;
@@ -81,7 +80,7 @@ public class RemoteUploadAsyncTaskFactory {
                     return result;
                 }
 
-
+                ProbeEndpoint appEngineApi = endpointApiBuilder.build(context);
                 MyApplication.madcapLogger.i(TAG, "Attempting to upload " + numCachedEntries + " to " + appEngineApi.getRootUrl());
 
                 ProbeSaveResult saveResult = new ProbeSaveResult();
