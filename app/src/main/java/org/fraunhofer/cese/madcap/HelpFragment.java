@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 
 import javax.inject.Inject;
@@ -67,7 +69,7 @@ public class HelpFragment extends Fragment {
 
 
         contactMadcapButton = (Button) view.findViewById(R.id.contactMadcapButton);
-        contactMadcapButton.setOnClickListener(new View.OnClickListener(){
+        contactMadcapButton.setOnClickListener(new View.OnClickListener() {
             /**
              * Called when a view has been clicked.
              *
@@ -75,13 +77,17 @@ public class HelpFragment extends Fragment {
              */
             @Override
             public void onClick(View v) {
+                GoogleSignInAccount user = authenticationProvider.getUser();
+                String userId = user != null ? user.getId() : "null";
+                String usersName = user != null ? user.getGivenName() + ' ' + user.getFamilyName() : "null";
+
                 Intent i = new Intent(Intent.ACTION_SEND);
                 i.setType("message/rfc822");
-                i.putExtra(Intent.EXTRA_EMAIL  , new String[]{getString(R.string.contactEmail)});
+                i.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.contactEmail)});
                 i.putExtra(Intent.EXTRA_SUBJECT, "Pocket Security Contact");
-                i.putExtra(Intent.EXTRA_TEXT   , "Hello Pocket Security Team, \n \n (write your question here.) \n" +
-                        " \n \n " + authenticationProvider.getLastSignedInUsersName()+" \n" +
-                        " \n Reference User ID: "+ authenticationProvider.getUserId()+" (please do not remove this)");
+                i.putExtra(Intent.EXTRA_TEXT, "Hello Pocket Security Team, \n \n (write your question here.) \n" +
+                        " \n \n " + usersName + " \n" +
+                        " \n Reference User ID: " + userId + " (please do not remove this)");
                 try {
                     startActivity(Intent.createChooser(i, "Send mail..."));
                 } catch (android.content.ActivityNotFoundException ex) {
@@ -91,7 +97,7 @@ public class HelpFragment extends Fragment {
         });
 
         onlineHelpButton = (Button) view.findViewById(R.id.onlineHelpButton);
-        onlineHelpButton.setOnClickListener(new View.OnClickListener(){
+        onlineHelpButton.setOnClickListener(new View.OnClickListener() {
 
             /**
              * Called when a view has been clicked.

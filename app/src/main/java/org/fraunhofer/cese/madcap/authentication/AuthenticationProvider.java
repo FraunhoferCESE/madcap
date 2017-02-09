@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -16,7 +15,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 
@@ -200,28 +198,6 @@ public class AuthenticationProvider {
     }
 
     /**
-     * Retrieves the currently logged in User Id.
-     *
-     * @return User ID.
-     */
-    @SuppressWarnings("ConstantConditions")
-    @Nullable
-    public String getUserId() {
-        return (user == null) ? null : user.getId();
-    }
-
-    /**
-     * Makes the Signed in User accessable.
-     *
-     * @return the last users name.
-     */
-    @SuppressWarnings({"TypeMayBeWeakened", "ConstantConditions"})
-    @Nullable
-    public String getLastSignedInUsersName() {
-        return (user == null) ? null : (user.getGivenName() + ' ' + user.getFamilyName());
-    }
-
-    /**
      * Gets the currently signed in user.
      *
      * @return the signed in user.
@@ -246,7 +222,7 @@ public class AuthenticationProvider {
      */
     synchronized void setUser(@Nullable GoogleSignInAccount user) {
         if(this.user != null) {
-            this.lastLoggedInUser = this.user;
+            lastLoggedInUser = this.user;
             MyApplication.madcapLogger.d(TAG,"lastLoggedInUser is now: "+lastLoggedInUser);
         }
         this.user = user;

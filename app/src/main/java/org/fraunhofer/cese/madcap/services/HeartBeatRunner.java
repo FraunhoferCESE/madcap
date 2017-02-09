@@ -50,14 +50,13 @@ public class HeartBeatRunner implements Runnable {
         long lastHearthbeat = prefs.getLong(application.getString(R.string.last_hearthbeat), currentTime);
 
         if(intervallTooLong(lastHearthbeat, currentTime, delta, interval)){
-            ReverseHeartBeatProbe deathStart = new ReverseHeartBeatProbe();
+
+            ReverseHeartBeatProbe deathStart = new ReverseHeartBeatProbe(ReverseHeartBeatProbe.DEATH_START);
             deathStart.setDate(lastHearthbeat);
-            deathStart.setKind(ReverseHeartBeatProbe.DEATH_START);
             manualProbeUploader.uploadManual(deathStart, application, cache);
 
-            ReverseHeartBeatProbe deathEnd = new ReverseHeartBeatProbe();
+            ReverseHeartBeatProbe deathEnd = new ReverseHeartBeatProbe(ReverseHeartBeatProbe.DEATH_END);
             deathEnd.setDate(currentTime);
-            deathEnd.setKind(ReverseHeartBeatProbe.DEATH_END);
             manualProbeUploader.uploadManual(deathEnd, application, cache);
         }
 
