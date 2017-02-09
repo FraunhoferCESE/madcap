@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -33,6 +34,8 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 public class LocationListener implements Listener<LocationProbe>, android.location.LocationListener {
     private static final String TAG = LocationListener.class.getSimpleName();
 
+    private final double locationNetworkAccuracyThreshold = 3;
+
     private final Context context;
     private final ProbeManager<Probe> mProbeManager;
     private final SnapshotApi snapshotApi;
@@ -48,7 +51,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     private boolean runningStatus;
 
     private boolean useGps = true;
-    private boolean useNetwork = false;
+    private boolean useNetwork = true;
     private boolean useCache = true;
 
     /**
@@ -116,22 +119,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 //            timedLocationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             //Method for LocationManager
-            if (useGps) {
-                while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                }
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 5, this);
-
-            }
-
-//            if (useNetwork) {
+//            if (useGps) {
 //                while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 //                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
 //                    // TODO: Consider calling
@@ -141,10 +129,25 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 //                    //                                          int[] grantResults)
 //                    // to handle the case where the user grants the permission. See the documentation
 //                    // for ActivityCompat#requestPermissions for more details.
-//
 //                }
-//                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 15000, 5, this);
+//                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 60000, 5, this);
+//
 //            }
+
+            if (useNetwork) {
+                while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+
+                }
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 15000, 5, this);
+            }
 
             sendInitialProbes();
         }
@@ -223,25 +226,113 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         Log.d(TAG, "location changed");
         if(location != null){
             String provider = location.getProvider();
-            if (provider == null
-                    || (useGps && LocationManager.GPS_PROVIDER.equals(provider))
-                    || (useNetwork && LocationManager.NETWORK_PROVIDER.equals(provider))) {
-                LocationProbe probe = new LocationProbe();
-                probe.setDate(System.currentTimeMillis());
-                probe.setAccuracy((double) location.getAccuracy());
-                probe.setAltitude(location.getAltitude());
-                probe.setBearing((double) location.getBearing());
-                probe.setLatitude(location.getLatitude());
-                probe.setLongitude(location.getLongitude());
-                probe.setOrigin(location.getProvider());
-                probe.setSpeed((double) location.getSpeed());
-                probe.setExtras(location.getExtras());
-
-                onUpdate(probe);
+            switch(provider){
+                case LocationManager.GPS_PROVIDER:
+                    createLocationProbe(location);
+                    break;
+                case LocationManager.NETWORK_PROVIDER:
+                    if((location.getAccuracy() > locationNetworkAccuracyThreshold) && !(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)){
+                        Log.d(TAG, "Network accuracy more than threshold. Request now from GPS.");
+                        requestGPSUpdate();
+                        onUpdate(createLocationProbe(location));
+                    }else{
+                        onUpdate(createLocationProbe(location));
+                    }
+                    break;
+                default:
+                    onUpdate(createLocationProbe(location));
+                    break;
             }
+
+//            if (provider == null
+//                    || (useGps && LocationManager.GPS_PROVIDER.equals(provider))
+//                    || (useNetwork && LocationManager.NETWORK_PROVIDER.equals(provider))) {
+//                LocationProbe probe = new LocationProbe();
+//                probe.setDate(System.currentTimeMillis());
+//
+//                if(LocationManager.NETWORK_PROVIDER.equals(provider) && location.getAccuracy() >= 1){
+//                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//                        permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+//                        return;
+//                    }
+//                    Location location_2 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//                    if(location_2 != null){
+//                        probe.setAccuracy(location_2.getAccuracy());
+//                    }
+//                }else{
+//                    probe.setAccuracy((double) location.getAccuracy());
+//                }
+//
+//                probe.setAltitude(location.getAltitude());
+//                probe.setBearing((double) location.getBearing());
+//                probe.setLatitude(location.getLatitude());
+//                probe.setLongitude(location.getLongitude());
+//                probe.setOrigin(location.getProvider());
+//                probe.setSpeed((double) location.getSpeed());
+//                probe.setExtras(location.getExtras());
+//
+//                onUpdate(probe);
+//            }
         }else{
             Log.d(TAG, "location is null");
         }
+    }
+
+    private void requestGPSUpdate() {
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+            return;
+        }
+        new SingleShotLocationProvider(permissionDeniedHandler).requestSingleUpdate(context,
+                new SingleShotLocationProvider.LocationCallback() {
+                    @Override public void onNewSingleGPSLocationAvailable(Location location) {
+                        LocationProbe probe = createLocationProbe(location);
+                        onUpdate(probe);
+                    }
+                });
+    }
+
+    /**
+     * Start an new timer which unregisters the location manager updates
+     * after a timeout to decrease battery consumptio.
+     * @param timeout the time intervall in ms.
+     */
+    private void startGPSTimeouListerner(int timeout, final LocationListener locationListener) {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                    return;
+                }
+                locationManager.removeUpdates(locationListener);
+                Log.d(TAG, "Unregistered GPS after timeout.");
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 15000, 5, locationListener);
+            }
+        }, timeout);
+    }
+
+    /**
+     * Creates a Location Probe object from a
+     * @param location
+     * @return
+     */
+    private LocationProbe createLocationProbe(Location location){
+        LocationProbe probe = new LocationProbe();
+        probe.setDate(System.currentTimeMillis());
+        probe.setAccuracy((double) location.getAccuracy());
+        probe.setAltitude(location.getAltitude());
+        probe.setBearing((double) location.getBearing());
+        probe.setLatitude(location.getLatitude());
+        probe.setLongitude(location.getLongitude());
+        probe.setOrigin(location.getProvider());
+        probe.setSpeed((double) location.getSpeed());
+        probe.setExtras(location.getExtras());
+
+        return probe;
     }
 
     @Override
