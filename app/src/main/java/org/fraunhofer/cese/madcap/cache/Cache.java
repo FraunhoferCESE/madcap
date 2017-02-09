@@ -407,8 +407,8 @@ public class Cache {
      * <p/>
      * Should be called when the app is destroyed, or other events when the cache is no longer needed.
      */
-    public void close() {
-        flush(UploadStrategy.NORMAL);
+    public void close(UploadStrategy strategy) {
+        flush(strategy);
         if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;

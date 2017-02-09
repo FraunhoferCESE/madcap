@@ -307,8 +307,12 @@ public class DataCollectionService extends Service implements UploadStatusListen
         cache.removeUploadListener(this);
 
         // Any closeout or disconnect operations
-
-        cache.close();
+        // This is a very bad kludge to handle the case where the user is signed out and all data should be uploaded immediately.
+        // This decision should not belong here...
+        if (authManager.getUser() == null)
+            cache.close(UploadStrategy.IMMEDIATE);
+        else
+            cache.close(UploadStrategy.NORMAL);
 
         //hideRunNotification();
 
