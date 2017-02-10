@@ -405,7 +405,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
                 onUploadStatusCompletenessUpdate(Completeness.INCOMPLETE);
                 break;
             default:
-                MyApplication.madcapLogger.e(TAG, "Wrong completeness status saved");
+                MyApplication.madcapLogger.d(TAG, "Wrong completeness status saved");
                 break;
         }
 
