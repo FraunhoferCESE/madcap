@@ -10,6 +10,8 @@ import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
+import java.util.concurrent.ScheduledExecutorService;
+
 import edu.umd.fcmd.sensorlisteners.model.util.ReverseHeartBeatProbe;
 
 /**
@@ -22,12 +24,16 @@ public class HeartBeatRunner implements Runnable {
     private final Application application;
     private final Cache cache;
     private final ManualProbeUploader manualProbeUploader;
+    private final DataCollectionService dataCollectionService;
     private final long interval;
+    private final ScheduledExecutorService scheduledExecutorService;
 
-    public HeartBeatRunner(Application application, Cache cache, ManualProbeUploader manualProbeUploader, long interval){
+    public HeartBeatRunner(Application application, DataCollectionService dataCollectionService, ScheduledExecutorService scheduledExecutorService, Cache cache, ManualProbeUploader manualProbeUploader, long interval){
         this.application = application;
+        this.dataCollectionService = dataCollectionService;
         this.cache = cache;
         this.manualProbeUploader = manualProbeUploader;
+        this.scheduledExecutorService = scheduledExecutorService;
         this.interval = interval;
     }
 
@@ -44,25 +50,29 @@ public class HeartBeatRunner implements Runnable {
      */
     @Override
     public void run() {
-        long currentTime = System.currentTimeMillis();
+            long currentTime = System.currentTimeMillis();
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(application.getApplicationContext());
-        long lastHearthbeat = prefs.getLong(application.getString(R.string.last_hearthbeat), currentTime);
+            if (dataCollectionService.getLifeSign()) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(application.getApplicationContext());
+                long lastHearthbeat = prefs.getLong(application.getString(R.string.last_hearthbeat), currentTime);
 
-        if(intervallTooLong(lastHearthbeat, currentTime, delta, interval)){
+                if (intervallTooLong(lastHearthbeat, currentTime, delta, interval)) {
 
-            ReverseHeartBeatProbe deathStart = new ReverseHeartBeatProbe(ReverseHeartBeatProbe.DEATH_START);
-            deathStart.setDate(lastHearthbeat);
-            manualProbeUploader.uploadManual(deathStart, application, cache);
+                    ReverseHeartBeatProbe deathStart = new ReverseHeartBeatProbe(ReverseHeartBeatProbe.DEATH_START);
+                    deathStart.setDate(lastHearthbeat);
+                    manualProbeUploader.uploadManual(deathStart, application, cache);
 
-            ReverseHeartBeatProbe deathEnd = new ReverseHeartBeatProbe(ReverseHeartBeatProbe.DEATH_END);
-            deathEnd.setDate(currentTime);
-            manualProbeUploader.uploadManual(deathEnd, application, cache);
-        }
+                    ReverseHeartBeatProbe deathEnd = new ReverseHeartBeatProbe(ReverseHeartBeatProbe.DEATH_END);
+                    deathEnd.setDate(currentTime);
+                    manualProbeUploader.uploadManual(deathEnd, application, cache);
+                }
 
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong(application.getString(R.string.last_hearthbeat), System.currentTimeMillis());
-        editor.commit();
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putLong(application.getString(R.string.last_hearthbeat), System.currentTimeMillis());
+                editor.commit();
+            } else {
+                scheduledExecutorService.shutdown();
+            }
     }
 
 

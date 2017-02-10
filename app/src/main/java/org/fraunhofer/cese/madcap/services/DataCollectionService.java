@@ -230,7 +230,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
     public void onCreate() {
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
-        MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service");
+        MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service "+this);
 
         listeners.clear();
 
@@ -362,7 +362,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
      */
     private void startHearthBeat() {
         hearthBeatScheduler = Executors.newSingleThreadScheduledExecutor();
-        hearthBeatScheduler.scheduleAtFixedRate(new HeartBeatRunner(getApplication(), cache, manualProbeUploader, 60000L), 0, 60000, TimeUnit.MILLISECONDS);
+        hearthBeatScheduler.scheduleAtFixedRate(new HeartBeatRunner(getApplication(), this, hearthBeatScheduler, cache, manualProbeUploader, 60000L), 0, 60000, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -664,6 +664,14 @@ public class DataCollectionService extends Service implements UploadStatusListen
      */
     private void hideRunNotification() {
         mNotificationManager.cancel(RUN_CODE);
+    }
+
+    /**
+     * Returns true to get checked by the heartbeat.
+     * @return true.
+     */
+    public boolean getLifeSign(){
+        return true;
     }
 
 }
