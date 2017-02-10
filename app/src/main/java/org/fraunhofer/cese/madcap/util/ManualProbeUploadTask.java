@@ -2,9 +2,9 @@ package org.fraunhofer.cese.madcap.util;
 
 import android.app.Application;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.support.annotation.Nullable;
 
-import com.google.common.collect.ImmutableList;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.crash.FirebaseCrash;
 
 import org.fraunhofer.cese.madcap.MyApplication;
@@ -18,9 +18,9 @@ import org.fraunhofer.cese.madcap.cache.CacheFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Collections;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -48,6 +48,7 @@ public class ManualProbeUploadTask extends AsyncTask<Probe, Void, Void> {
 
     public ManualProbeUploadTask(Application application, Cache cache) {
         this.application = application;
+        //noinspection CastToConcreteClass
         ((MyApplication) application).getComponent().inject(this);
 
         cacheFactory = new CacheFactory(cache, authenticationProvider);
@@ -67,53 +68,50 @@ public class ManualProbeUploadTask extends AsyncTask<Probe, Void, Void> {
      * @see #onPostExecute
      * @see #publishProgress
      */
+    @Nullable
     @Override
     protected Void doInBackground(Probe... params) {
         Probe probe = params[0];
 
-        ProbeSaveResult saveResult = new ProbeSaveResult();
-        saveResult.setSaved(new ArrayList<String>(1));
-        saveResult.setAlreadyExists(new ArrayList<String>(1));
+        GoogleSignInAccount user = authenticationProvider.getUser();
+        if (user == null) {
+            user = authenticationProvider.getLastLoggedInUser();
+        }
 
-        List<ProbeEntry> toUpload = new LinkedList<>();
+        if (user == null) {
+            MyApplication.madcapLogger.e(TAG, "No user available for sending manual probe.");
+            FirebaseCrash.report(new Exception("Attempt to send a manual probe with a null user. Probe: " + probe));
+            return null;
+        }
 
         ProbeEntry probeEntry = new ProbeEntry();
         probeEntry.setId(UUID.randomUUID().toString());
         probeEntry.setTimestamp(probe.getDate());
-        probeEntry.setUserID(authenticationProvider.getUserId());
+        probeEntry.setUserID(user.getId());
         probeEntry.setProbeType(probe.getType());
         probeEntry.setSensorData(probe.toString());
 
-        toUpload.add(probeEntry);
-
         ProbeDataSet dataSet = new ProbeDataSet();
         dataSet.setTimestamp(Calendar.getInstance().getTimeInMillis());
-        dataSet.setEntryList(toUpload);
+        dataSet.setEntryList(new ArrayList<>(Collections.singletonList(probeEntry)));
 
-        ProbeSaveResult remoteResult;
 
-        if (probeEntry.getUserID() != null) {
-            try {
-                ProbeEndpoint appEngineApi = endpointApiBuilder.build(application);
-                remoteResult = appEngineApi.insertProbeDataset(dataSet).execute();
+        try {
+            ProbeEndpoint appEngineApi = endpointApiBuilder.build(application);
+            ProbeSaveResult remoteResult = appEngineApi.insertProbeDataset(dataSet).execute();
 
-                Log.d(TAG, "Manual upload succeeded");
-
-                if (remoteResult.getSaved() != null) {
-                    saveResult.getSaved().addAll(ImmutableList.copyOf(remoteResult.getSaved()));
-                }
-
-                if (remoteResult.getAlreadyExists() != null) {
-                    saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
-                }
-            } catch (IOException e) {
-                Log.d(TAG, "Manual DataCollectionProbe upload failed. Save now to cache.");
-                cacheFactory.save(probe);
+            if ((remoteResult.getSaved() != null) && (remoteResult.getSaved().size() == 1)) {
+                MyApplication.madcapLogger.d(TAG, "Manual upload succeeded: " + probeEntry);
             }
-        } else {
-            FirebaseCrash.report(new Exception("Attempt to save an DataCollectionEnty with a null user"));
-        }
 
+            if (remoteResult.getAlreadyExists() != null) {
+                MyApplication.madcapLogger.i(TAG, "Manual upload failed. Probe already exits: " + probeEntry);
+            }
+        } catch (IOException e) {
+            MyApplication.madcapLogger.w(TAG, e.toString());
+            MyApplication.madcapLogger.w(TAG, "Manual upload failed. Saving to cache: " + probeEntry);
+            cacheFactory.save(probe);
+        }
 
         return null;
     }

@@ -2,6 +2,8 @@ package org.fraunhofer.cese.madcap.cache;
 
 import android.util.Log;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 
 import java.util.UUID;
@@ -25,12 +27,12 @@ public class CacheFactory implements ProbeManager {
 
     @Override
     public void save(Probe probe) {
-        Log.d(TAG, "UID "+authenticationProvider.getUserId());
-        if (authenticationProvider.getUserId() != null) {
+        GoogleSignInAccount user = authenticationProvider.getUser();
+        if (user != null) {
             CacheEntry probeEntry = new CacheEntry();
             probeEntry.setId(UUID.randomUUID().toString());
             probeEntry.setTimestamp(probe.getDate());
-            probeEntry.setUserID(authenticationProvider.getUserId());
+            probeEntry.setUserID(user.getId());
             probeEntry.setProbeType(probe.getType());
             probeEntry.setSensorData(probe.toString());
 

@@ -18,12 +18,11 @@ import edu.umd.fcmd.sensorlisteners.model.util.ReverseHeartBeatProbe;
 
 public class HeartBeatRunner implements Runnable {
     private final String TAG = getClass().getSimpleName();
-
-    private Application application;
-    private Cache cache;
-    private ManualProbeUploader manualProbeUploader;
-    private static int delta = 20000;
-    private long interval;
+    private static final int delta = 20000;
+    private final Application application;
+    private final Cache cache;
+    private final ManualProbeUploader manualProbeUploader;
+    private final long interval;
 
     public HeartBeatRunner(Application application, Cache cache, ManualProbeUploader manualProbeUploader, long interval){
         this.application = application;
@@ -45,31 +44,27 @@ public class HeartBeatRunner implements Runnable {
      */
     @Override
     public void run() {
-        MyApplication.madcapLogger.d(TAG, "HeartBeat");
         long currentTime = System.currentTimeMillis();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(application.getApplicationContext());
         long lastHearthbeat = prefs.getLong(application.getString(R.string.last_hearthbeat), currentTime);
 
         if(intervallTooLong(lastHearthbeat, currentTime, delta, interval)){
-            ReverseHeartBeatProbe deathStart = new ReverseHeartBeatProbe();
+
+            ReverseHeartBeatProbe deathStart = new ReverseHeartBeatProbe(ReverseHeartBeatProbe.DEATH_START);
             deathStart.setDate(lastHearthbeat);
-            deathStart.setKind(ReverseHeartBeatProbe.DEATH_START);
             manualProbeUploader.uploadManual(deathStart, application, cache);
 
-            ReverseHeartBeatProbe deathEnd = new ReverseHeartBeatProbe();
+            ReverseHeartBeatProbe deathEnd = new ReverseHeartBeatProbe(ReverseHeartBeatProbe.DEATH_END);
             deathEnd.setDate(currentTime);
-            deathEnd.setKind(ReverseHeartBeatProbe.DEATH_END);
             manualProbeUploader.uploadManual(deathEnd, application, cache);
         }
 
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(application.getString(R.string.last_hearthbeat), System.currentTimeMillis());
-
-        if(editor.commit()){
-            MyApplication.madcapLogger.d(TAG, "New Hearthbeat saved to disk");
-        }
+        editor.commit();
     }
+
 
 
     /**
@@ -81,6 +76,7 @@ public class HeartBeatRunner implements Runnable {
      * @return true if too long, false else.
      */
     private boolean intervallTooLong(long last, long now, long delta, long interval ){
+        Log.d(TAG, "last: "+last+", now: "+now+", diff: "+(now-last)+", delta: "+delta+", interval: "+interval);
         if(last < now - interval - delta){
             Log.d(TAG, "HeartBeat skipped at least one beat");
             return true;

@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -191,7 +192,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
     AudioReceiverFactory audioReceiverFactory;
 
 
-
     /**
      * Return the communication channel to the service.  May return null if
      * clients can not bind to the service.  The returned
@@ -281,15 +281,18 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     }
 
+    private void sendDataCollectionProbe(String dataCollectionState) {
+        DataCollectionProbe probe = new DataCollectionProbe(dataCollectionState);
+        probe.setDate(System.currentTimeMillis());
+        manualProbeUploader.uploadManual(probe, getApplication(), cache);
+    }
+
     @Override
     public void onDestroy() {
         MyApplication.madcapLogger.d(TAG, "onDestroy");
         super.onDestroy();
 
-        DataCollectionProbe probe = new DataCollectionProbe();
-        probe.setState(DataCollectionProbe.OFF);
-        probe.setDate(System.currentTimeMillis());
-        manualProbeUploader.uploadManual(probe, getApplication(), cache);
+        sendDataCollectionProbe(DataCollectionProbe.OFF);
 
         stopHearthBeat();
 
@@ -304,8 +307,12 @@ public class DataCollectionService extends Service implements UploadStatusListen
         cache.removeUploadListener(this);
 
         // Any closeout or disconnect operations
-
-        cache.close();
+        // This is a very bad kludge to handle the case where the user is signed out and all data should be uploaded immediately.
+        // This decision should not belong here...
+        if (authManager.getUser() == null)
+            cache.close(UploadStrategy.IMMEDIATE);
+        else
+            cache.close(UploadStrategy.NORMAL);
 
         //hideRunNotification();
 
@@ -322,10 +329,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
     public int onStartCommand(Intent intent, int flags, int startId) {
         MyApplication.madcapLogger.d(TAG, "OnStartCommand. Intent callee: " + (intent == null ? "null" : intent.getStringExtra("callee")));
 
-        DataCollectionProbe probe = new DataCollectionProbe();
-        probe.setState(DataCollectionProbe.ON);
-        probe.setDate(System.currentTimeMillis());
-        manualProbeUploader.uploadManual(probe, getApplication(), cache);
+        sendDataCollectionProbe(DataCollectionProbe.ON);
 
         startForeground(NOTIFICATION_ID, getRunNotification());
 
@@ -365,7 +369,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
      * Stops the reverse Hearthbeat.
      */
     private void stopHearthBeat() {
-        if(hearthBeatScheduler != null){
+        if (hearthBeatScheduler != null) {
             hearthBeatScheduler.shutdown();
         }
     }
@@ -449,7 +453,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
         }
         return status;
     }
-
 
 
     /**
@@ -575,7 +578,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     public void setUploadStatusGuiListener(UploadStatusGuiListener uploadStatusGuiListener) {
         this.uploadStatusGuiListener = uploadStatusGuiListener;
-        if(uploadStatusGuiListener != null){
+        if (uploadStatusGuiListener != null) {
             uploadStatusGuiListener.restoreLastUpload();
         }
     }

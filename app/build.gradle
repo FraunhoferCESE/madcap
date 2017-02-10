@@ -35,8 +35,8 @@ android {
         }
     }
 
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "org.fraunhofer.cese.madcap"
         minSdkVersion 19
@@ -105,7 +105,6 @@ dependencies {
     compile project(path: ':backend', configuration: 'android-endpoints')
     //Dagger
     compile 'com.j256.ormlite:ormlite-android:5.0'
-    compile 'com.opencsv:opencsv:3.8'
     compile 'com.google.appengine:appengine-endpoints-deps:1.9.27'
     compile 'com.google.android.gms:play-services-auth:10.0.1'
     compile 'com.google.android.gms:play-services-location:10.0.1'

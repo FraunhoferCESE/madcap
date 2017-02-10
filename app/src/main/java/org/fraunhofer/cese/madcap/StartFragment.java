@@ -23,6 +23,8 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
@@ -183,8 +185,9 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
 
         //Parse the greeting information
         nameTextView = (TextView) view.findViewById(R.id.usernameTextview);
-        if (authenticationProvider.getLastSignedInUsersName() != null) {
-            nameTextView.setText(authenticationProvider.getLastSignedInUsersName());
+        GoogleSignInAccount user = authenticationProvider.getUser();
+        if (user != null) {
+            nameTextView.setText(user.getGivenName() + ' ' + user.getFamilyName());
         }
 
         collectionDataStatusText = (TextView) view.findViewById(R.id.collectionDataStatusText);
