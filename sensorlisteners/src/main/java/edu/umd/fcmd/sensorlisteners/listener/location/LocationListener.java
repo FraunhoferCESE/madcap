@@ -146,7 +146,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     // for ActivityCompat#requestPermissions for more details.
 
                 }
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 15000, 5, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 5, this);
             }
 
             sendInitialProbes();
@@ -229,12 +229,19 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
             switch(provider){
                 case LocationManager.GPS_PROVIDER:
                     createLocationProbe(location);
+                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                        return;
+                    }
+                    locationManager.removeUpdates(this);
                     break;
                 case LocationManager.NETWORK_PROVIDER:
                     if((location.getAccuracy() > locationNetworkAccuracyThreshold) && !(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                             ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)){
                         Log.d(TAG, "Network accuracy more than threshold. Request now from GPS.");
                         requestGPSUpdate();
+                        startGPSTimeouListerner(20000, this);
                         onUpdate(createLocationProbe(location));
                     }else{
                         onUpdate(createLocationProbe(location));
@@ -284,13 +291,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
             permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
             return;
         }
-        new SingleShotLocationProvider(permissionDeniedHandler).requestSingleUpdate(context,
-                new SingleShotLocationProvider.LocationCallback() {
-                    @Override public void onNewSingleGPSLocationAvailable(Location location) {
-                        LocationProbe probe = createLocationProbe(location);
-                        onUpdate(probe);
-                    }
-                });
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
 
     /**
