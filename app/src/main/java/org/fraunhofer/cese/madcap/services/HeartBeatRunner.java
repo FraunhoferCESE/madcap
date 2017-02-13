@@ -2,6 +2,7 @@ package org.fraunhofer.cese.madcap.services;
 
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -20,20 +21,21 @@ import edu.umd.fcmd.sensorlisteners.model.util.ReverseHeartBeatProbe;
 
 public class HeartBeatRunner implements Runnable {
     private final String TAG = getClass().getSimpleName();
-    private static final int delta = 20000;
+    private static final int delta = 240000;
     private final Application application;
     private final Cache cache;
     private final ManualProbeUploader manualProbeUploader;
     private final DataCollectionService dataCollectionService;
     private final long interval;
-    private final ScheduledExecutorService scheduledExecutorService;
+    private final Handler handler;
+    private boolean cancelled;
 
-    public HeartBeatRunner(Application application, DataCollectionService dataCollectionService, ScheduledExecutorService scheduledExecutorService, Cache cache, ManualProbeUploader manualProbeUploader, long interval){
+    public HeartBeatRunner(Application application, DataCollectionService dataCollectionService, Handler handler, Cache cache, ManualProbeUploader manualProbeUploader, long interval){
         this.application = application;
         this.dataCollectionService = dataCollectionService;
         this.cache = cache;
         this.manualProbeUploader = manualProbeUploader;
-        this.scheduledExecutorService = scheduledExecutorService;
+        this.handler = handler;
         this.interval = interval;
     }
 
@@ -50,6 +52,7 @@ public class HeartBeatRunner implements Runnable {
      */
     @Override
     public void run() {
+        if(!cancelled){
             long currentTime = System.currentTimeMillis();
 
             if (dataCollectionService.getLifeSign()) {
@@ -70,9 +73,15 @@ public class HeartBeatRunner implements Runnable {
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putLong(application.getString(R.string.last_hearthbeat), System.currentTimeMillis());
                 editor.commit();
-            } else {
-                scheduledExecutorService.shutdown();
+
+                handler.postDelayed(this, interval);
             }
+        }
+
+    }
+
+    public void stop(){
+        cancelled = true;
     }
 
 

@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -94,7 +95,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private final IBinder mBinder = new DataCollectionServiceBinder();
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
     private UploadStatusGuiListener uploadStatusGuiListener;
-    private ScheduledExecutorService hearthBeatScheduler;
+    private Handler hearthBeatScheduler;
+    private HeartBeatRunner heartBeatRunner;
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
@@ -368,16 +370,18 @@ public class DataCollectionService extends Service implements UploadStatusListen
      * Starts the reverse Hearthbeat.
      */
     private void startHearthBeat() {
-        hearthBeatScheduler = Executors.newSingleThreadScheduledExecutor();
-        hearthBeatScheduler.scheduleAtFixedRate(new HeartBeatRunner(getApplication(), this, hearthBeatScheduler, cache, manualProbeUploader, 60000L), 0, 60000, TimeUnit.MILLISECONDS);
+        hearthBeatScheduler = new Handler();
+        heartBeatRunner = new HeartBeatRunner(getApplication(), this, hearthBeatScheduler, cache, manualProbeUploader, 60000L);
+        hearthBeatScheduler.postDelayed(heartBeatRunner, 100);
+//        hearthBeatScheduler.scheduleAtFixedRate(new HeartBeatRunner(getApplication(), this, hearthBeatScheduler, cache, manualProbeUploader, 60000L), 0, 60000, TimeUnit.MILLISECONDS);
     }
 
     /**
      * Stops the reverse Hearthbeat.
      */
     private void stopHearthBeat() {
-        if (hearthBeatScheduler != null) {
-            hearthBeatScheduler.shutdown();
+        if (heartBeatRunner != null) {
+            heartBeatRunner.stop();
         }
     }
 
