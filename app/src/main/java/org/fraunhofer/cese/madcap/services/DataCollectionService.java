@@ -72,6 +72,7 @@ import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
+import edu.umd.fcmd.sensorlisteners.model.LogOutProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
@@ -283,6 +284,12 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     private void sendDataCollectionProbe(String dataCollectionState) {
         DataCollectionProbe probe = new DataCollectionProbe(dataCollectionState);
+        probe.setDate(System.currentTimeMillis());
+        manualProbeUploader.uploadManual(probe, getApplication(), cache);
+    }
+
+    public void sendLogOutProbe(){
+        LogOutProbe probe = new LogOutProbe();
         probe.setDate(System.currentTimeMillis());
         manualProbeUploader.uploadManual(probe, getApplication(), cache);
     }

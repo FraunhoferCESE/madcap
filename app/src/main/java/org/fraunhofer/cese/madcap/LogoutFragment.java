@@ -1,9 +1,15 @@
 package org.fraunhofer.cese.madcap;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +38,59 @@ public class LogoutFragment extends Fragment {
     @Inject
     AuthenticationProvider authenticationProvider;
 
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection;
+    private DataCollectionService mDataCollectionService;
+    boolean mBound = false;
+
+
+    private void bindConnection(Intent intent){
+        MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is "+mBound);
+        if(!mBound){
+            getActivity().getApplicationContext().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    private void unbindConnection(){
+        MyApplication.madcapLogger.d(TAG, "Attempt to unbind self. Current bound status is "+mBound);
+        //mDataCollectionService.removeUploadListener(uploadStatusListener);
+        getActivity().getApplicationContext().unbindService(mConnection);
+        mBound = false;
+
+    }
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //noinspection CastToConcreteClass
         ((MyApplication) getActivity().getApplication()).getComponent().inject(this);
+
+        mConnection = new ServiceConnection() {
+            private final String TAG = getClass().getSimpleName();
+
+            @Override
+            public void onServiceConnected(ComponentName className,
+                                           IBinder service) {
+                // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
+                Log.d(TAG, "New service connection service "+service.toString());
+                DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
+                mDataCollectionService = binder.getService();
+                //mDataCollectionService.addUploadListener(getUploadStatusListener());
+                mBound = true;
+            }
+
+            @Override
+            public void onServiceDisconnected(ComponentName arg0) {
+                // Only invoked when hosting service crashed or is killed.
+                mBound = false;
+            }
+        };
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
+        bindConnection(intent);
     }
 
     @Override
@@ -92,6 +146,7 @@ public class LogoutFragment extends Fragment {
                             MyApplication.madcapLogger.d(TAG, "Logout succeeded. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
                             Toast.makeText(getActivity(), R.string.post_sign_out, Toast.LENGTH_SHORT).show();
 
+                            mDataCollectionService.sendLogOutProbe();
                             getActivity().stopService(new Intent(getActivity(), DataCollectionService.class));
                             MyApplication.madcapLogger.d(TAG, "Now going back to SignInActivity");
                             Intent intent = new Intent(getActivity(), SignInActivity.class);
@@ -124,5 +179,16 @@ public class LogoutFragment extends Fragment {
         });
 
         return view;
+    }
+
+    /**
+     * Called when the fragment is no longer in use.  This is called
+     * after {@link #onStop()} and before {@link #onDetach()}.
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        unbindConnection();
     }
 }

@@ -33,6 +33,7 @@ import org.fraunhofer.cese.madcap.backend.models.HeadphoneEntry;
 import org.fraunhofer.cese.madcap.backend.models.InputMethodEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.LogOutEntry;
 import org.fraunhofer.cese.madcap.backend.models.MSMSEntry;
 import org.fraunhofer.cese.madcap.backend.models.NFCEntry;
 import org.fraunhofer.cese.madcap.backend.models.NetworkEntry;
@@ -452,6 +453,14 @@ public class ProbeDataSetEndpoint {
                     Collection<ScreenOffTimeoutEntry> scolist = entryMap.get(entry.getProbeType());
                     ScreenOffTimeoutEntry scoEntry = new ScreenOffTimeoutEntry(entry);
                     scolist.add(scoEntry);
+                    break;
+                case "LogOut":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<LogOutEntry>());
+                    }
+                    Collection<LogOutEntry> logList = entryMap.get(entry.getProbeType());
+                    LogOutEntry logOutEntry = new LogOutEntry(entry);
+                    logList.add(logOutEntry);
                     break;
                 default:
                     throw new IllegalArgumentException("Unmateched Probe Type");

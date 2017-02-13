@@ -25,6 +25,7 @@ import org.fraunhofer.cese.madcap.backend.models.HeadphoneEntry;
 import org.fraunhofer.cese.madcap.backend.models.InputMethodEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationServiceEntry;
+import org.fraunhofer.cese.madcap.backend.models.LogOutEntry;
 import org.fraunhofer.cese.madcap.backend.models.MSMSEntry;
 import org.fraunhofer.cese.madcap.backend.models.NFCEntry;
 import org.fraunhofer.cese.madcap.backend.models.NetworkEntry;
@@ -92,6 +93,7 @@ public class OfyService {
         ObjectifyService.register(UploadLogEntry.class);
         ObjectifyService.register(NFCEntry.class);
         ObjectifyService.register(ScreenOffTimeoutEntry.class);
+        ObjectifyService.register(LogOutEntry.class);
     }
 
     /**
