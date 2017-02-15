@@ -6,7 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
 
 /**
  * Created by MMueller on 11/22/2016.

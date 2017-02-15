@@ -1,22 +1,14 @@
 package edu.umd.fcmd.sensorlisteners.listener.applications;
 
-import android.app.ActivityManager;
-import android.app.usage.UsageEvents;
-import android.app.usage.UsageStatsManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.model.ForegroundBackgroundEventsProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 /**
  * Created by MMueller on 11/17/2016.

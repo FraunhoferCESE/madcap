@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.util.Log;
 
 import junit.framework.Assert;
 
@@ -22,10 +21,9 @@ import java.lang.reflect.Modifier;
 import java.util.List;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
-import edu.umd.fcmd.sensorlisteners.model.ForegroundBackgroundEventsProbe;
+import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
 
 import static android.content.Context.ACTIVITY_SERVICE;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;

@@ -1,4 +1,6 @@
-package edu.umd.fcmd.sensorlisteners.model;
+package edu.umd.fcmd.sensorlisteners.model.applications;
+
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 /**
  * Created by MMueller on 11/18/2016.
@@ -8,7 +10,7 @@ package edu.umd.fcmd.sensorlisteners.model;
  * background.
  */
 
-public class ForegroundBackgroundEventsProbe extends Probe{
+public class ForegroundBackgroundEventsProbe extends Probe {
     private static final String TYPE = "ForegroundBackgroundEvent";
     private int eventType;
     private String packageName;

@@ -16,7 +16,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
-import edu.umd.fcmd.sensorlisteners.model.ForegroundBackgroundEventsProbe;
+import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 

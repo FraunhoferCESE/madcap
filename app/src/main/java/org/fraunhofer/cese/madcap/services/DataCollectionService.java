@@ -16,7 +16,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -40,11 +39,7 @@ import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -72,8 +67,8 @@ import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListenerFactory;
 import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
-import edu.umd.fcmd.sensorlisteners.model.DataCollectionProbe;
-import edu.umd.fcmd.sensorlisteners.model.LogOutProbe;
+import edu.umd.fcmd.sensorlisteners.model.util.DataCollectionProbe;
+import edu.umd.fcmd.sensorlisteners.model.util.LogOutProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
