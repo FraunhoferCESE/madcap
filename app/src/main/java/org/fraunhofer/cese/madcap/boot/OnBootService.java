@@ -61,7 +61,6 @@ public class OnBootService extends IntentService {
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                     MyApplication.madcapLogger.w(TAG, "Google Play Services connection failed. Error code: " + connectionResult);
                     loginFailed();
-                    // TODO: Unregister this listener from mGoogleClientApi in AuthenticationProvider?
                 }
 
                 @Override
@@ -78,7 +77,6 @@ public class OnBootService extends IntentService {
                         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
                             startService(new Intent(context, DataCollectionService.class).putExtra("boot",true));
                         }
-                        // TODO: Create reminder notification to enable MADCAP data collection?
                     } else {
                         MyApplication.madcapLogger.w(TAG, "Google SignIn failed to authenticate user to MADCAP.");
                         loginFailed();

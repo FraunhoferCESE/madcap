@@ -55,7 +55,6 @@ public class LogoutFragment extends Fragment {
 
     private void unbindConnection(){
         MyApplication.madcapLogger.d(TAG, "Attempt to unbind self. Current bound status is "+mBound);
-        //mDataCollectionService.removeUploadListener(uploadStatusListener);
         getActivity().getApplicationContext().unbindService(mConnection);
         mBound = false;
 
@@ -78,7 +77,6 @@ public class LogoutFragment extends Fragment {
                 Log.d(TAG, "New service connection service "+service.toString());
                 DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
                 mDataCollectionService = binder.getService();
-                //mDataCollectionService.addUploadListener(getUploadStatusListener());
                 mBound = true;
             }
 

@@ -275,7 +275,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     0,
                     madcapPermissionDeniedHandler));
         }
-//        madcapAuthManager.setCallbackClass(this);
 
     }
 
@@ -663,13 +662,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
         note.flags |= Notification.FLAG_NO_CLEAR;
 
         return note;
-    }
-
-    /**
-     * Hides the madcap logo in the notification bar.
-     */
-    private void hideRunNotification() {
-        mNotificationManager.cancel(RUN_CODE);
     }
 
     /**

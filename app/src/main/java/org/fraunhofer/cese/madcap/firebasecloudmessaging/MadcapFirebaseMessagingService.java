@@ -50,7 +50,6 @@ public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
         // messages. For more see: https://firebase.google.com/docs/cloud-messaging/concept-options
         // For Madcap we want to make sure only data messages are being received.
 
-        // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         MyApplication.madcapLogger.d(TAG, "From: " + remoteMessage.getFrom());
 
@@ -63,39 +62,11 @@ public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
             }
         }
 
-        // Check if message contains a notification payload.
-        // Deprecated
-//        if (remoteMessage.getNotification() != null) {
-//            MyApplication.madcapLogger.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-//        }
-
-        // Also if you intend on generating your own notifications as a result of a received FCM
-        // message, here is where that should be initiated. See sendNotification method below.
     }
 
     /**
      * Create and show a simple notification containing the received FCM message.
      */
-//    private void sendNotification(String messageBody) {
-//        Intent intent = new Intent(this, MainActivityOld.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-//                PendingIntent.FLAG_ONE_SHOT);
-//
-//        Uri defaultSoundUri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-//                .setSmallIcon(R.drawable.madcaplogo2)
-//                .setContentTitle("FCM Message")
-//                .setContentText(messageBody)
-//                .setAutoCancel(true)
-//                .setSound(defaultSoundUri)
-//                .setContentIntent(pendingIntent);
-//
-//        NotificationManager notificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
-//    }
     private void processIncomingMessage(Map<String, String> map) {
         String type = map.get("type");
         switch (type) {
@@ -141,22 +112,6 @@ public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
         mBuilder.setContentIntent(resultPendingIntent);
-
-//        //For demo purposes
-//        Intent reactIntnet = new Intent();
-//
-//        String reactLabel = "React";
-//        RemoteInput remoteInput = new RemoteInput.Builder("key_text_reply")
-//                .setLabel(reactLabel)
-//                .build();
-//
-//        Notification.Action reactAction =
-//                new Notification.Action.Builder(android.R.drawable.ic_dialog_alert,
-//                        "React now", null)
-//                        .addRemoteInput(remoteInput)
-//                        .build();
-//
-//        mBuilder.addAction(reactAction);
 
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

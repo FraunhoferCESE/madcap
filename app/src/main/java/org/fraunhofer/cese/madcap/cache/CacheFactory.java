@@ -39,10 +39,6 @@ public class CacheFactory implements ProbeManager {
             Log.i(TAG, "CACHED " + probeEntry);
             cache.add(probeEntry);
         }
-        // TODO: Figure out what to do when getUserId() == null.
-        //start login service again
-//            context.startService(new Intent(context, LoginService.class));
-
     }
 
     @Inject

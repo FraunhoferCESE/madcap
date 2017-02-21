@@ -138,7 +138,6 @@ public class SignInActivity extends AppCompatActivity {
                                     mStatusTextView.setText(R.string.post_sign_out);
                                     Toast.makeText(context, R.string.post_sign_out, Toast.LENGTH_SHORT).show();
 
-                                    // TODO: What to do with the user's data?
                                     stopService(new Intent(context, DataCollectionService.class));
                                 } else {
 

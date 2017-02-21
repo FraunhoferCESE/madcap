@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -95,8 +94,8 @@ public class AuthenticationProvider {
      * To check if the user is signed up for MADCAP
      * @param signInActivity
      */
-    protected void checkMadcapRegistrationStatus(SignInActivity signInActivity, Context context, EndpointApiBuilder endpointApiBuilder){
-        //TODO
+    void checkMadcapRegistrationStatus(SignInActivity signInActivity, Context context, EndpointApiBuilder endpointApiBuilder){
+
         ProbeEndpoint appEngineApi = endpointApiBuilder.build(signInActivity.getApplication());
         try {
             UserCheckResult userCheckResult = appEngineApi.checkSignedUpUser().execute();

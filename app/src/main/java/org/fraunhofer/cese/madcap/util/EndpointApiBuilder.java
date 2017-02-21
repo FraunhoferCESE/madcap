@@ -44,6 +44,7 @@ public class EndpointApiBuilder {
         }
 
         String endpointUrl = "https://madcap-dev1.appspot.com/_ah/api/";
+        //  TODO: change this for production
 //      String endpointUrl = "https://madcap-142815.appspot.com/_ah/api/";
 
         ProbeEndpoint.Builder builder = new ProbeEndpoint.Builder(AndroidHttp.newCompatibleTransport(),
