@@ -102,5 +102,8 @@
     <!-- Contact -->
     <string name="contactHeader">Contact</string>
     <string name="contactLink">For more information, please visit https://www.pocket-security.org.</string>
+    <string name="title_activity_sign_up_check">SignUpCheckActivity</string>
+    <string name="auth_check_text">Please wait. MADCAP evaluates if you are authorized to participate.</string>
+    <string name="not_authorized_text">Apparently you are not authorized to use MADCAP. To register to use MADCAP please visit the Pocket Security website for further instructions.</string>
 
 </resources>

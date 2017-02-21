@@ -52,6 +52,7 @@ import org.fraunhofer.cese.madcap.backend.models.TimeChangeEntry;
 import org.fraunhofer.cese.madcap.backend.models.TimezoneEntry;
 import org.fraunhofer.cese.madcap.backend.models.UploadLogEntry;
 import org.fraunhofer.cese.madcap.backend.models.AppUser;
+import org.fraunhofer.cese.madcap.backend.models.UserCheckResult;
 import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 import org.fraunhofer.cese.madcap.backend.models.VoicemailEntry;
 import org.fraunhofer.cese.madcap.backend.models.VolumeEntry;
@@ -552,6 +553,27 @@ public class ProbeDataSetEndpoint {
         logger.info("Num Saved: " + saved.size() + ", Num already existing: " + alreadyExists.size() + ", Time taken: " + ((System.currentTimeMillis() - startTime) / 1000) + "s");
         logUpload(user.getId(), startTime, saved.size(), alreadyExists.size(), earliestProbeTimestamp, latestProbeTimestamp, (long) (0L + req.getContentLength()));
         return ProbeSaveResult.create(saved, alreadyExists);
+    }
+
+    /**
+     * Check if a user signed up for MADCAP
+     * @return The object to be added.
+     */
+    @ApiMethod(
+            name = "checkSignedUpUser"
+    )
+    public UserCheckResult checkSignedUpUser(HttpServletRequest req, User user) throws OAuthRequestException, ConflictException, BadRequestException{
+        Objectify of = ofy();
+        AppUser result = of.load().type(AppUser.class).id(user.getId()).now();
+        if (result == null) {
+            return new UserCheckResult(false);
+        }
+
+        if (result.isAlpha() == true) {
+            return new UserCheckResult(true);
+        } else{
+            return new UserCheckResult(false);
+        }
     }
 
 

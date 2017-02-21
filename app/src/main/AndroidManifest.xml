@@ -61,6 +61,7 @@
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
+
     <!-- The used actions are defined here. -->
     <application
         android:name=".MyApplication"
@@ -123,7 +124,8 @@
             android:name=".MainActivity"
             android:label="@string/title_text"
             android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme.NoActionBar"></activity>
+            android:theme="@style/MadcapTheme.NoActionBar" />
+        <activity android:name=".authentication.NotAuthorizedActivity"></activity>
     </application>
 
 </manifest>

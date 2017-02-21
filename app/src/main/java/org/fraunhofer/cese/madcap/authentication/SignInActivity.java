@@ -1,7 +1,9 @@
 package org.fraunhofer.cese.madcap.authentication;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -25,6 +27,8 @@ import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
+import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 import javax.inject.Inject;
 
@@ -42,6 +46,10 @@ public class SignInActivity extends AppCompatActivity {
     AuthenticationProvider authenticationProvider;
 
     private TextView mStatusTextView;
+    private ProgressDialog progress;
+
+    @Inject
+    EndpointApiBuilder endpointApiBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,12 +194,28 @@ public class SignInActivity extends AppCompatActivity {
                     findViewById(R.id.to_control_button).setEnabled(true);
                     mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 
-                    if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.data_collection_pref), true)) {
-                        startService(new Intent(this, DataCollectionService.class).putExtra("callee", TAG));
-                    }
+                    progress=new ProgressDialog(this);
+                    progress.setMessage("MADCAP checks your authorization to use the app.");
+                    progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progress.setIndeterminate(true);
+                    progress.setProgress(0);
+                    progress.setCancelable(false);
+                    progress.show();
 
-                    startActivity(new Intent(this, MainActivity.class));
-                    finish();
+                    new AsyncTask<Void, Void, Void>() {
+                        protected void onPreExecute() {
+                            // Pre Code
+                        }
+                        protected Void doInBackground(Void... unused) {
+                            authenticationProvider.checkMadcapRegistrationStatus(SignInActivity.this, getApplicationContext(), endpointApiBuilder);
+                            return null;
+                        }
+                        protected void onPostExecute(Void unused) {
+                            // Post Code
+                        }
+                    }.execute();
+
+
                 }
             } else {
                 MyApplication.madcapLogger.w(TAG, "SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
@@ -201,6 +225,49 @@ public class SignInActivity extends AppCompatActivity {
                 mStatusTextView.setText("Login failed. Error code: " + result.getStatus().getStatusCode() + ". Please try again.");
                 Toast.makeText(this, "Login failed, pleas try again", Toast.LENGTH_SHORT).show();
             }
+        }
+    }
+
+    /**
+     * To be invoked after the authentication provider checked if the user is registered for MADCAP/
+     * @param valid true, if registered, false otherwise.
+     */
+    protected void onUserValidityChecked(boolean valid){
+        if(valid){
+            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.data_collection_pref), true)) {
+                startService(new Intent(this, DataCollectionService.class).putExtra("callee", TAG));
+            }
+            MyApplication.madcapLogger.d(TAG, "On user validity checked true");
+            progress.dismiss();
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        }else{
+            MyApplication.madcapLogger.d(TAG, "On user validity checked false");
+            progress.dismiss();
+            authenticationProvider.signout(getApplicationContext(), new LogoutResultCallback() {
+                @Override
+                public void onServicesUnavailable(int connectionResult) {
+
+                }
+
+                @Override
+                public void onSignOut(Status result) {
+
+                }
+
+                @Override
+                public void onRevokeAccess(Status result) {
+
+                }
+
+                @Override
+                public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+                }
+            });
+            finish();
+            startActivity(getIntent());
+            startActivity(new Intent(this, NotAuthorizedActivity.class));
         }
     }
 

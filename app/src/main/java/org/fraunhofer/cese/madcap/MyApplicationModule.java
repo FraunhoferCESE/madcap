@@ -93,6 +93,7 @@ class MyApplicationModule {
     }
 
 
+
     /**
      * Needed by the DataCollectionService.
      *
@@ -240,8 +241,8 @@ class MyApplicationModule {
     @Provides
     CacheConfig provideCacheConfig() {
         CacheConfig config = new CacheConfig();
-        config.setMaxMemEntries(100);
-        config.setMaxDbEntries(1000);
+        config.setMaxMemEntries(40);
+        config.setMaxDbEntries(60);
 
         config.setMemForcedCleanupLimit(5000);
         config.setDbForcedCleanupLimit(30000); // value must ensure that we do not exceed Google API limits for a single request
@@ -253,23 +254,6 @@ class MyApplicationModule {
 
         return config;
     }
-
-//    /**
-//     * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache} and the {@link RemoteUploadAsyncTaskFactory}
-//     *
-//     * @return the ProbeEndpoint to use
-//     */
-//    @Provides
-//    static ProbeEndpoint provideProbeDataSetApi() {
-//        String endpointUrl = "https://madcap-dev1.appspot.com/_ah/api/";
-////      String endpointUrl = "https://madcap-142815.appspot.com/_ah/api/";
-//        ProbeEndpoint.Builder builder = new ProbeEndpoint.Builder(AndroidHttp.newCompatibleTransport(),
-//                new AndroidJsonFactory(), null)
-//                .setApplicationName("Fraunhofer MADCAP")
-//                .setRootUrl(endpointUrl);
-//
-//        return builder.build();
-//    }
 
     @Nullable
     @Provides
