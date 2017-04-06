@@ -108,7 +108,8 @@
     <string name="title_activity_sign_up_check">SignUpCheckActivity</string>
     <string name="auth_check_text">Please wait. MADCAP is checking if you are authorized to participate.</string>
     <string name="not_authorized_text">Apparently you are not authorized to use MADCAP. To register to use MADCAP please visit the Pocket Security website for further instructions.</string>
-
+    <string name="not_authorized_user_email">User email: %s</string>
+    <string name="not_authorized_user_id">User id: %s</string>
     <!-- EULA -->
     <string name="eula">
         This End User License Agreement (\"EULA\") applies to the MADCAP Smartphone Software Application (the \"App\") developed by Fraunhofer USA, Inc. (\"Licensor\") that you have downloaded from the Google Play Store.

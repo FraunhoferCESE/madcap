@@ -42,6 +42,7 @@ captures/
 # keystore config files
 debug.properties
 debug.keystore
+release.properties
 
 # Prevent this from being added to VCS
 backend/src/main/java/org/fraunhofer/cese/madcap/backend/Constants.java

@@ -52,12 +52,13 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
+            signingConfig signingConfigs.debug
         }
         debug {
             debuggable true
             //noinspection GroovyAssignabilityCheck
             signingConfig signingConfigs.debug
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+         //   proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     testOptions {
@@ -130,12 +131,19 @@ dependencies {
     testApt 'com.google.dagger:dagger-compiler:2.5'
 }
 
-def props = new Properties()
-props.load(new FileInputStream(rootProject.file("debug.properties")))
-android.signingConfigs.debug.storeFile rootProject.file(props.keyStore)
-android.signingConfigs.debug.storePassword props.keyStorePassword
-android.signingConfigs.debug.keyAlias props.keyAlias
-android.signingConfigs.debug.keyPassword props.keyAliasPassword
+def debugProps = new Properties()
+debugProps.load(new FileInputStream(rootProject.file("debug.properties")))
+android.signingConfigs.debug.storeFile rootProject.file(debugProps.keyStore)
+android.signingConfigs.debug.storePassword debugProps.keyStorePassword
+android.signingConfigs.debug.keyAlias debugProps.keyAlias
+android.signingConfigs.debug.keyPassword debugProps.keyAliasPassword
+
+def releaseProps = new Properties()
+releaseProps.load(new FileInputStream(rootProject.file("release.properties")))
+android.signingConfigs.debug.storeFile rootProject.file(releaseProps.keyStore)
+android.signingConfigs.debug.storePassword releaseProps.keyStorePassword
+android.signingConfigs.debug.keyAlias releaseProps.keyAlias
+android.signingConfigs.debug.keyPassword releaseProps.keyAliasPassword
 
 apply plugin: 'com.google.gms.google-services'
 
