@@ -37,6 +37,9 @@
     <string name="logout_failed">Logout from MADCAP failed. Error code: %i. Please try again.</string>
     <string name="silent_signin_failed">MADCAP failed to login automatically. Please open the MADCAP application to sign in.</string>
     <string name="silent_signin_failed_notification_title">MADCAP Automatic SignIn Failed</string>
+    <string name="checking_EULA">Checking EULA.</string>
+    <string name="must_accept_EULA">You must agree to the EULA to use MADCAP.</string>
+    <string name="EULA_key">EULA_KEY</string>
 
     <string name="sign_out">Sign Out</string>
     <string name="proceedToMain">MADCAP home</string>
@@ -103,7 +106,36 @@
     <string name="contactHeader">Contact</string>
     <string name="contactLink">For more information, please visit https://www.pocket-security.org.</string>
     <string name="title_activity_sign_up_check">SignUpCheckActivity</string>
-    <string name="auth_check_text">Please wait. MADCAP evaluates if you are authorized to participate.</string>
+    <string name="auth_check_text">Please wait. MADCAP is checking if you are authorized to participate.</string>
     <string name="not_authorized_text">Apparently you are not authorized to use MADCAP. To register to use MADCAP please visit the Pocket Security website for further instructions.</string>
 
+    <!-- EULA -->
+    <string name="eula">
+        This End User License Agreement (\"EULA\") applies to the MADCAP Smartphone Software Application (the \"App\") developed by Fraunhofer USA, Inc. (\"Licensor\") that you have downloaded from the Google Play Store.
+
+        \n\nYOU MAY USE THE APP ONLY IF YOU ARE 18 YEARS OF AGE OR OLDER.  BY DOWNLOADING AND USING THE APP, YOU REPRESENT THAT YOU ARE AT LEAST 18 YEARS OF AGE AND THAT YOU HAVE READ, UNDERSTAND AND AGREE TO BE BOUND BY THE TERMS OF THIS EULA.
+
+        \n\n1. License.  Licensor hereby grants to the person who has downloaded the App (\"User\") a non-exclusive license to use the App solely for the purpose intended and only in accordance with the instructions provided by Licensor for use of the App. User may not modify or enhance the App in any manner or reverse engineer or decompile any of the code for the App.  User may not transfer the App to any other device or to any other person.  User will not permit the Smartphone on which the App has been downloaded to be used by any person under age 18 so long as the App is functional on that Smartphone.
+
+        \n\n2. User Acknowledgment.  User acknowledges that the App is a passive application that tracks certain aspects of Smartphone usage, as more particularly described at the following link:  www.pocket-security.org/participants-information/.  User acknowledges having read all of the information provided in that link and agreeing to participate in the Pocket Security research program described in that link.  User agrees to comply with all of the requirements established by Licensor for participation in that research program.
+
+        \n\n3. No Warranty.  Licensor makes no warranty with regard to the App.  Licensor provides the App to User on an as-is basis.  Licensor disclaims all warranties regarding the App, INCLUDING WITHOUT LIMITATION, ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+        \n\n4. Limitation of Liability.  Because the App is part of a scientific research and development project undertaken by the University of Maryland and Fraunhofer USA, Inc., both of which are non-profit, educational and scientific organizations, and because Licensor provides the App to the User free of charge, Licensor\'s maximum liability to User or to any other person for damages that result from the use of the App or any failure of the App to function as intended, whether arising under theories of contract, tort or any other theory of liability, is limited to $50.  In all events, Licensor will not be liable to the User or to any other person for incidental, consequential, indirect, punitive or exemplary damages, including without limitation, damages resulting from injury to person or property.
+
+        \n\n5. Title.  Licensor retains title to the App for all purposes.  This EULA conveys to User only the rights specifically provided herein.  The App is Copyright Fraunhofer USA, Inc., 2017.  Licensor retains all copyright rights in the App.
+
+        \n\n6. Privacy.  User acknowledges that the App collects and disseminates to Licensor information regarding User\'s use of the Smartphone on which the App has been downloaded.  That information includes without limitation, the location of the Smartphone, when the Smartphone is used to make or receive calls and send or receive text messages, when the Smartphone is connected to the internet, and the names of Smartphone applications used by the User.  The App does not collect information or record the contents of any phone call, text message or internet session.  Licensor may use and share anonymized information that it collects from the App in the course of the Pocket Security research program in which Licensor is participating with the University of Maryland.  Licensor will use information collected by the App only as provided at www.pocket-security.org/privacy-policy/
+
+        \n\n7. Termination. Licensor may terminate this License at any time, for any reason.  Any such termination will be effective immediately upon User\'s receipt of notice of termination from Licensor.  User may terminate this License at any time by ceasing the use of the App and deleting it from the device onto which it was downloaded.  Licensor retains the right to store and utilize in the Pocket Security research program information gathered from the App prior to any termination of this License.
+
+        \n\n8. No Export.  The App and the Pocket Security research program have been designed to comply with US laws regarding privacy and other matters.  Because the laws of other countries vary widely, the App may not be downloaded onto a Smartphone that is owned by a user who resides outside of the United States of America.
+
+        \n\n9. General.  This EULA will be governed by Michigan law.  It will be binding upon the parties and upon their respective successors, legal representatives and assigns.  This EULA may not be modified or supplemented except by a written agreement that is signed or electronically accepted by both parties.  This EULA represents the entire agreement between the parties regarding the acquisition and the use of the App by User and the parties\' respective obligations to each other in connection with the App. MADCAP uses, in part, open source code from the following providers: AndroidDeviceNames library by Jared Rummler (me@jaredrummler.com).  That open source code is subject to the terms of use stated on the web sites) of those providers.
+
+        \n\n10. Binding Effect.  This EULA will become effective automatically upon the use of the App by the User or by any other person.  Each subsequent use of the App constitutes the reaffirmation by User of the terms of this EULA.
+
+
+    </string>
+    <string name="accept">Accept</string>
 </resources>

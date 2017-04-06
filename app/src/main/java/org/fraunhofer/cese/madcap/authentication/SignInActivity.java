@@ -3,12 +3,12 @@ package org.fraunhofer.cese.madcap.authentication;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.TextView;
@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.auth.api.signin.GoogleSignInStatusCodes;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -28,7 +29,6 @@ import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
-import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 import javax.inject.Inject;
 
@@ -69,29 +69,40 @@ public class SignInActivity extends AppCompatActivity {
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
         final SignInActivity activity = this;
+        final Context context = this;
+
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 MyApplication.madcapLogger.d(TAG, "pressed sign in");
-                mStatusTextView.setText(R.string.signing_in);
-                authenticationProvider.interactiveSignIn(activity, RC_SIGN_IN, new LoginResultCallback() {
+                mStatusTextView.setText(R.string.checking_EULA);
 
-                    @Override
-                    public void onServicesUnavailable(int connectionResult) {
-                        MyApplication.madcapLogger.w(TAG, "Google SignIn services are unavailable.");
-                        mStatusTextView.setText(R.string.signin_service_unavailable);
-                    }
+                boolean bAlreadyAccepted = PreferenceManager
+                        .getDefaultSharedPreferences(context).getBoolean(context.getString(R.string.EULA_key), false);
 
-                    @Override
-                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                        MyApplication.madcapLogger.w(TAG, "Could not connect to GoogleSignInApi.");
-                        mStatusTextView.setText(R.string.signin_service_connection_failed);
-                    }
-                });
+                if (bAlreadyAccepted) {
+                    // User has already accepted the EULA. Proceed with sign in.
+                    startInteractiveSignin();
+                } else {
+                    // Show and retrieve approval for the EULA.
+                    new AppEULA(activity).show(new EULAListener() {
+                        @Override
+                        public void onAccept() {
+                            // User has accepted the EULA. Proceed with sign in.
+                            startInteractiveSignin();
+                        }
+
+                        @Override
+                        public void onCancel() {
+                            // User has declined the EULA. Display SignInActivity until they do.
+                            mStatusTextView.setText(R.string.must_accept_EULA);
+                        }
+                    });
+                }
             }
         });
 
-        final Context context = this;
+
         findViewById(R.id.sign_out_button).setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -138,6 +149,12 @@ public class SignInActivity extends AppCompatActivity {
                                     mStatusTextView.setText(R.string.post_sign_out);
                                     Toast.makeText(context, R.string.post_sign_out, Toast.LENGTH_SHORT).show();
 
+                                    //Invalidate EULA acceptance when user logs out
+                                    SharedPreferences.Editor editor = PreferenceManager
+                                            .getDefaultSharedPreferences(context).edit();
+                                    editor.putBoolean(context.getString(R.string.EULA_key), false);
+                                    editor.commit();
+
                                     stopService(new Intent(context, DataCollectionService.class));
                                 } else {
 
@@ -175,6 +192,24 @@ public class SignInActivity extends AppCompatActivity {
 
     }
 
+    private void startInteractiveSignin() {
+        mStatusTextView.setText(R.string.signing_in);
+        authenticationProvider.interactiveSignIn(this, RC_SIGN_IN, new LoginResultCallback() {
+
+            @Override
+            public void onServicesUnavailable(int connectionResult) {
+                MyApplication.madcapLogger.w(TAG, "Google SignIn services are unavailable.");
+                mStatusTextView.setText(R.string.signin_service_unavailable);
+            }
+
+            @Override
+            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                MyApplication.madcapLogger.w(TAG, "Could not connect to GoogleSignInApi.");
+                mStatusTextView.setText(R.string.signin_service_connection_failed);
+            }
+        });
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -193,8 +228,8 @@ public class SignInActivity extends AppCompatActivity {
                     findViewById(R.id.to_control_button).setEnabled(true);
                     mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 
-                    progress=new ProgressDialog(this);
-                    progress.setMessage("MADCAP checks your authorization to use the app.");
+                    progress = new ProgressDialog(this);
+                    progress.setMessage("MADCAP is checking your authorization to use the app.");
                     progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     progress.setIndeterminate(true);
                     progress.setProgress(0);
@@ -205,34 +240,41 @@ public class SignInActivity extends AppCompatActivity {
                         protected void onPreExecute() {
                             // Pre Code
                         }
+
                         protected Void doInBackground(Void... unused) {
                             authenticationProvider.checkMadcapRegistrationStatus(SignInActivity.this, getApplicationContext(), endpointApiBuilder);
                             return null;
                         }
+
                         protected void onPostExecute(Void unused) {
                             // Post Code
                         }
                     }.execute();
-
-
                 }
             } else {
-                MyApplication.madcapLogger.w(TAG, "SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
                 findViewById(R.id.sign_in_button).setEnabled(true);
                 findViewById(R.id.sign_out_button).setEnabled(false);
                 findViewById(R.id.to_control_button).setEnabled(false);
-                mStatusTextView.setText("Login failed. Error code: " + result.getStatus().getStatusCode() + ". Please try again.");
-                Toast.makeText(this, "Login failed, pleas try again", Toast.LENGTH_SHORT).show();
+                if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
+                    MyApplication.madcapLogger.w(TAG, "SignIn cancelled. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
+                    mStatusTextView.setText("Login cancelled.");
+                    Toast.makeText(this, "Login cancelled.", Toast.LENGTH_SHORT).show();
+                } else {
+                    MyApplication.madcapLogger.w(TAG, "SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
+                    mStatusTextView.setText("Login failed. Error code: " + result.getStatus().getStatusCode() + ". Please try again.");
+                    Toast.makeText(this, "Login failed, pleas try again", Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }
 
     /**
      * To be invoked after the authentication provider checked if the user is registered for MADCAP/
+     *
      * @param valid true, if registered, false otherwise.
      */
-    protected void onUserValidityChecked(boolean valid){
-        if(valid){
+    protected void onUserValidityChecked(boolean valid) {
+        if (valid) {
             if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.data_collection_pref), true)) {
                 startService(new Intent(this, DataCollectionService.class).putExtra("callee", TAG));
             }
@@ -240,7 +282,7 @@ public class SignInActivity extends AppCompatActivity {
             progress.dismiss();
             startActivity(new Intent(this, MainActivity.class));
             finish();
-        }else{
+        } else {
             MyApplication.madcapLogger.d(TAG, "On user validity checked false");
             progress.dismiss();
             authenticationProvider.signout(getApplicationContext(), new LogoutResultCallback() {

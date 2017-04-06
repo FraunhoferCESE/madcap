@@ -4,9 +4,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -143,6 +145,12 @@ public class LogoutFragment extends Fragment {
                         if (result.getStatusCode() == CommonStatusCodes.SUCCESS) {
                             MyApplication.madcapLogger.d(TAG, "Logout succeeded. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
                             Toast.makeText(getActivity(), R.string.post_sign_out, Toast.LENGTH_SHORT).show();
+
+                            //Invalidate EULA acceptance when user logs out
+                            SharedPreferences.Editor editor = PreferenceManager
+                                    .getDefaultSharedPreferences(getActivity()).edit();
+                            editor.putBoolean(getActivity().getString(R.string.EULA_key), false);
+                            editor.commit();
 
                             mDataCollectionService.sendLogOutProbe();
                             getActivity().stopService(new Intent(getActivity(), DataCollectionService.class));
