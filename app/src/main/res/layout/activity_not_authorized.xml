@@ -35,18 +35,15 @@
         android:layout_marginTop="16dp"
         android:autoLink="web"
         android:text=""
-        android:layout_below="@+id/not_authorized_view"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/madcap_link_web" />
 
 
     <TextView
         android:id="@+id/not_authorized_userid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:autoLink="web"
         android:text=""
-        android:layout_below="@+id/not_authorized_email"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/not_authorized_email" />
 
 </RelativeLayout>

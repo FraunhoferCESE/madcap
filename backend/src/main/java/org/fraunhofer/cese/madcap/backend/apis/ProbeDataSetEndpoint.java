@@ -557,12 +557,16 @@ public class ProbeDataSetEndpoint {
 
     /**
      * Check if a user signed up for MADCAP
+     *
      * @return The object to be added.
      */
     @ApiMethod(
             name = "checkSignedUpUser"
     )
-    public UserCheckResult checkSignedUpUser(HttpServletRequest req, User user) throws OAuthRequestException, ConflictException, BadRequestException{
+    public UserCheckResult checkSignedUpUser(HttpServletRequest req, User user) throws OAuthRequestException, ConflictException, BadRequestException {
+        if (user == null)
+            return new UserCheckResult(false);
+
         Objectify of = ofy();
         AppUser result = of.load().type(AppUser.class).id(user.getId()).now();
         if (result == null) {
@@ -571,7 +575,7 @@ public class ProbeDataSetEndpoint {
 
         if (result.isAlpha() == true) {
             return new UserCheckResult(true);
-        } else{
+        } else {
             return new UserCheckResult(false);
         }
     }

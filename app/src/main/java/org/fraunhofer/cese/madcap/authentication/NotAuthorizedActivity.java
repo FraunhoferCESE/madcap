@@ -28,15 +28,13 @@ public class NotAuthorizedActivity extends AppCompatActivity {
         TextView emailText = (TextView) findViewById(R.id.not_authorized_email);
         TextView userText = (TextView) findViewById(R.id.not_authorized_userid);
 
-        if(acct != null) {
-            emailText.setText(getString(R.string.not_authorized_user_email, acct.getEmail()));
-            userText.setText(getString(R.string.not_authorized_user_id, acct.getId()));
-        }
-        else {
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            emailText.setText(getString(R.string.not_authorized_user_email, b.getString("email")));
+            userText.setText(getString(R.string.not_authorized_user_id, b.getString("userid")));
+        } else {
             emailText.setText("Unknown");
             userText.setText("Unknown");
-
         }
-
     }
 }

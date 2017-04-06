@@ -285,6 +285,13 @@ public class SignInActivity extends AppCompatActivity {
         } else {
             MyApplication.madcapLogger.d(TAG, "On user validity checked false");
             progress.dismiss();
+            Intent notAuthorizedIntent = new Intent(this, NotAuthorizedActivity.class);
+            GoogleSignInAccount user = authenticationProvider.getUser();
+            if(user != null) {
+                notAuthorizedIntent.putExtra("email", authenticationProvider.getUser().getEmail());
+                notAuthorizedIntent.putExtra("userid", authenticationProvider.getUser().getId());
+            }
+
             authenticationProvider.signout(getApplicationContext(), new LogoutResultCallback() {
                 @Override
                 public void onServicesUnavailable(int connectionResult) {
@@ -308,7 +315,7 @@ public class SignInActivity extends AppCompatActivity {
             });
             finish();
             startActivity(getIntent());
-            startActivity(new Intent(this, NotAuthorizedActivity.class));
+            startActivity(notAuthorizedIntent);
         }
     }
 
