@@ -1,13 +1,19 @@
 package org.fraunhofer.cese.madcap;
 
+import android.*;
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -25,6 +31,9 @@ import javax.inject.Inject;
 
 public class WelcomeActivity extends AppCompatActivity {
     private static final String TAG = "WelcomeActivity";
+    private final int GPS_PERMITTED = 0;
+    private final int GPS_PERMIT = 1;
+    private int PERMITS = 0;
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
@@ -61,16 +70,52 @@ public class WelcomeActivity extends AppCompatActivity {
         });
     }
 
+    private void checkForPermission() {
+        Log.d(TAG,"checking GPS permissions");
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            Log.d(TAG, "Requesting permissions");
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    GPS_PERMITTED);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+
+        switch (requestCode) {
+            case GPS_PERMITTED: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "GPS permission was granted, yay!");
+                    silentSignIn();
+                } else {
+                    Log.d(TAG,"GPS permission denied, boo!");
+                }
+                PERMITS = PERMITS + grantResults[0];
+                break;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         MyApplication.madcapLogger.d(TAG, "onStart");
+        checkForPermission();
+    }
 
+    private void silentSignIn(){
         GoogleSignInAccount user = authenticationProvider.getUser();
         if (user != null) {
             MyApplication.madcapLogger.d(TAG, "User already signed in. Starting MainActivity.");
             errorTextView.setText("Welcome " + user.getGivenName() + ' ' + user.getFamilyName());
             startActivity(new Intent(this, MainActivity.class));
+
         } else {
             final Context context = this;
             authenticationProvider.silentLogin(this, new SilentLoginResultCallback() {

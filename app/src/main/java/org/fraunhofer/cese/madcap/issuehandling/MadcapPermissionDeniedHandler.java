@@ -1,10 +1,12 @@
 package org.fraunhofer.cese.madcap.issuehandling;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 
@@ -41,6 +43,7 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
             case Manifest.permission.ACCESS_FINE_LOCATION:
                 MyApplication.madcapLogger.e(TAG, "Location permission denied");
                 //Do some more things like kicking off a timer.
+                //Request permission to access location data
                 break;
             case Settings.ACTION_USAGE_ACCESS_SETTINGS:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
