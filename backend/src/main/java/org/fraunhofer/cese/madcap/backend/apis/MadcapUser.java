@@ -12,10 +12,6 @@ import com.googlecode.objectify.annotation.Index;
 
 @Entity
 public class MadcapUser {
-    public MadcapUser() {
-
-    }
-
     @Id
     private String email;
 
@@ -45,12 +41,4 @@ public class MadcapUser {
     public boolean isBeta() {
         return isBeta;
     }
-
-    public MadcapUser(String email, String userId, boolean isAlpha, boolean isBeta) {
-        this.email = email;
-        this.userId = userId;
-        this.isAlpha = isAlpha;
-        this.isBeta = isBeta;
-    }
-
 }
