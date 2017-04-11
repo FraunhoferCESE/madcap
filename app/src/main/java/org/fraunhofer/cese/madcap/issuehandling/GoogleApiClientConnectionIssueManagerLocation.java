@@ -8,6 +8,7 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import javax.inject.Inject;
 
 
 /**
@@ -17,6 +18,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
  */
 public class GoogleApiClientConnectionIssueManagerLocation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private final String TAG = getClass().getSimpleName();
+
+    /**
+     * No argument constructor used for dependency injection
+     */
+    @Inject
+    public GoogleApiClientConnectionIssueManagerLocation() { }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {

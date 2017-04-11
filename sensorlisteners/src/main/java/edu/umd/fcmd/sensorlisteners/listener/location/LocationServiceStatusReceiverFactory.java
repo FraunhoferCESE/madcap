@@ -1,6 +1,8 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
 
+import javax.inject.Inject;
+
 /**
  * Created by MMueller on 11/14/2016.
  *
@@ -9,6 +11,12 @@ package edu.umd.fcmd.sensorlisteners.listener.location;
 
 @SuppressWarnings("MethodMayBeStatic")
 public class LocationServiceStatusReceiverFactory {
+
+    /**
+     * No argument constructor required for dependency injection
+     */
+    @Inject
+    public LocationServiceStatusReceiverFactory() {}
 
     /**
      * Create method following the factory pattern.

@@ -189,6 +189,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @Inject
     AudioReceiverFactory audioReceiverFactory;
 
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    LocationListener locationListener;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -233,14 +236,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
         listeners.clear();
 
         synchronized (listeners) {
-            listeners.add(new LocationListener(this, new CacheFactory(cache, authManager),
-                    locationClient,
-                    snapshotApi,
-                    locationServiceStatusReceiverFactory,
-                    googleApiClientConnectionIssueManagerLocation,
-                    googleApiClientConnectionIssueManagerLocation,
-                    madcapPermissionDeniedHandler,
-                    madcapSensorNoAnswerReceivedHandler));
+            listeners.add(locationListener);
 
             listeners.add(new ApplicationsListener(this, new CacheFactory(cache, authManager),
                     timedApplicationTaskFactory, madcapPermissionDeniedHandler));

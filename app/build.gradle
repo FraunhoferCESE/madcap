@@ -49,12 +49,12 @@ android {
         versionCode versionBuild
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
+        multiDexEnabled = true
     }
     buildTypes {
         release {
-//            shrinkResources true
-//            minifyEnabled true
+//            shrinkResources false
+//            minifyEnabled
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
             signingConfig signingConfigs.debug
@@ -76,6 +76,12 @@ android {
         if (task.name == ':app:assembleRelease') {
             autoIncrementBuildNumber()
         }
+    }
+}
+
+repositories {
+    flatDir {
+        dirs 'libs'
     }
 }
 

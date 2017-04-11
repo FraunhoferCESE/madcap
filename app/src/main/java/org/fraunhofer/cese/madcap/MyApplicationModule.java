@@ -13,17 +13,12 @@ import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 
-import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
-import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
-import org.fraunhofer.cese.madcap.cache.RemoteUploadAsyncTaskFactory;
+import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
-import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.util.Calendar;
@@ -33,12 +28,12 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.audio.AudioReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.MMSOutObserverFactory;
@@ -46,6 +41,8 @@ import edu.umd.fcmd.sensorlisteners.listener.network.MSMSReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.SMSOutObserverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListenerFactory;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.model.Probe;
+import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
  * This class defines the providers to use for dependency injection
@@ -93,7 +90,6 @@ class MyApplicationModule {
     }
 
 
-
     /**
      * Needed by the DataCollectionService.
      *
@@ -132,37 +128,6 @@ class MyApplicationModule {
     @Provides
     TimedApplicationTaskFactory provideTimedApplicationTask() {
         return new TimedApplicationTaskFactory();
-    }
-
-    /**
-     * Needed by the DataCollectionService.
-     *
-     * @return a factory.
-     */
-    @Provides
-    LocationServiceStatusReceiverFactory provideLocationServiceStatusReceiverFactory() {
-        return new LocationServiceStatusReceiverFactory();
-    }
-
-
-    /**
-     * Needed by the DataCollectionService.
-     *
-     * @return an issuemanager.
-     */
-    @Provides
-    GoogleApiClientConnectionIssueManagerLocation provideGoogleConnectionIssueManager() {
-        return new GoogleApiClientConnectionIssueManagerLocation();
-    }
-
-    /**
-     * Needed by the DataCollectionService.
-     *
-     * @return an MadcapPermissionDeniedHandler.
-     */
-    @Provides
-    MadcapPermissionDeniedHandler provideMadcapPermissionDeniedHandler() {
-        return new MadcapPermissionDeniedHandler(application);
     }
 
     @Provides
@@ -206,6 +171,26 @@ class MyApplicationModule {
     }
 
     @Provides
+    ProbeManager<Probe> provideProbeManager(CacheFactory cacheFactory) {
+        return cacheFactory;
+    }
+
+    @Provides
+    PermissionDeniedHandler providePermissionDeniedHandler(MadcapPermissionDeniedHandler madcapPermissionDeniedHandler) {
+        return madcapPermissionDeniedHandler;
+    }
+
+    @Provides
+    GoogleApiClient.ConnectionCallbacks providesGoogleApiClientConnectionCallbacks() {
+        return new GoogleApiClientConnectionIssueManagerLocation();
+    }
+
+    @Provides
+    GoogleApiClient.OnConnectionFailedListener providesGoogleApiClientConnectionFailedListener() {
+        return new GoogleApiClientConnectionIssueManagerLocation();
+    }
+
+    @Provides
     ManualProbeUploader provideManualProbeUploader() {
         return new ManualProbeUploader();
     }
@@ -219,7 +204,6 @@ class MyApplicationModule {
     AudioReceiverFactory provideAudioReceiverFactory() {
         return new AudioReceiverFactory();
     }
-
 
     /**
      * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}

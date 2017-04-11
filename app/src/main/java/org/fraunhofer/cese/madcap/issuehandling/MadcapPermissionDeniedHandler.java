@@ -10,6 +10,8 @@ import org.fraunhofer.cese.madcap.MyApplication;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 
 /**
@@ -25,6 +27,7 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
     private boolean activityUsagePrompted;
     private boolean bluetoothPermissionPrompted;
 
+    @Inject
     public MadcapPermissionDeniedHandler(Context context){
         this.context = context;
     }

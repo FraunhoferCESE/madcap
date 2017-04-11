@@ -7,16 +7,16 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
-import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.location.LocationProbe;
@@ -24,31 +24,24 @@ import edu.umd.fcmd.sensorlisteners.model.location.LocationServiceStatusProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
- * Created by MMueller on 11/4/2016.
- * <p>
  * A listener for Locations. Retrieving updates in a certain defined period.
  */
-@SuppressWarnings({"ClassNamePrefixedWithPackageName", "rawtypes", "ThisEscapedInObjectConstruction"})
 public class LocationListener implements Listener<LocationProbe>, android.location.LocationListener {
     private static final String TAG = LocationListener.class.getSimpleName();
 
-    private final double locationNetworkAccuracyThreshold = 3;
+    private static final double NETWORK_LOCATION_ACCURACY_THRESHOLD = 30.0;
+    private static final long MIN_TIME = 30000;
+    private static final float MIN_DISTANCE = 20.0f;
 
     private final Context context;
     private final ProbeManager<Probe> mProbeManager;
-    private final SnapshotApi snapshotApi;
 
     private final GoogleApiClient mGoogleApiClient;
     private final LocationServiceStatusReceiver locationServiceStatusReceiver;
     private final PermissionDeniedHandler permissionDeniedHandler;
-    private final SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler;
 
-    private LocationManager locationManager;
-    private boolean runningStatus;
-
-    private boolean useGps = true;
-    private boolean useNetwork = true;
-    private boolean useCache = true;
+    private final LocationManager locationManager;
+    private volatile boolean runningStatus;
 
     /**
      * Default constructor which should be used.
@@ -56,23 +49,19 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
      * @param context          the app context.
      * @param mProbeManager    the ProbeManager to connect to.
      * @param mGoogleApiClient a GoogleApi client.
-     * @param snapshotApi      usally the Awarness.SnapshotsApi
      */
+    @Inject
     public LocationListener(Context context,
                             ProbeManager<Probe> mProbeManager,
-                            GoogleApiClient mGoogleApiClient,
-                            SnapshotApi snapshotApi,
+                            @Named("AwarenessApi") GoogleApiClient mGoogleApiClient,
                             LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory,
                             GoogleApiClient.ConnectionCallbacks connectionCallbackClass,
                             GoogleApiClient.OnConnectionFailedListener connectionFailedCallbackClass,
-                            PermissionDeniedHandler permissionDeniedHandler,
-                            SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler) {
+                            PermissionDeniedHandler permissionDeniedHandler) {
         this.context = context;
         this.mProbeManager = mProbeManager;
         this.mGoogleApiClient = mGoogleApiClient;
-        this.snapshotApi = snapshotApi;
         this.permissionDeniedHandler = permissionDeniedHandler;
-        this.sensorNoAnswerReceivedHandler = sensorNoAnswerReceivedHandler;
         locationServiceStatusReceiver = locationServiceStatusReceiverFactory.create(this);
         locationServiceStatusReceiver.sendInitialProbe(context);
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -108,50 +97,38 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
      * @throws NoSensorFoundException when the connection to the GoogleApi client fails.
      */
     @Override
-    public void startListening() throws NoSensorFoundException {
+    public synchronized void startListening() throws NoSensorFoundException {
         if (!runningStatus) {
-            //Method for LocationManager
-            if (useNetwork) {
-                while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-
-                }
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 20, this);
+            if (hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                Log.d(TAG, "Sending initial location probes");
+                onLocationChanged(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
+            } else {
+                permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
             }
-
-            sendInitialProbes();
         }
 
         runningStatus = true;
     }
 
-    private void sendInitialProbes() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-            return;
-        }
-
-        Log.d(TAG, "Sending initial Location Probes");
-        onLocationChanged(locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
-        onLocationChanged(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
-    }
-
     @Override
-    public void stopListening() {
+    public synchronized void stopListening() {
         if (runningStatus) {
             if (locationServiceStatusReceiver != null) {
                 context.unregisterReceiver(locationServiceStatusReceiver);
             }
 
-            //Method Location Manager
-            while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            if (hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                locationManager.removeUpdates(this);
+            } else {
                 permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
             }
-            locationManager.removeUpdates(this);
-
-
         }
         runningStatus = false;
+    }
+
+    private static boolean hasPermission(Context context, String permission) {
+        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -159,10 +136,12 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         return runningStatus;
     }
 
+    // TODO: Need to refactor this
     protected Context getContext() {
         return context;
     }
 
+    // TODO: Need to refactor this
     GoogleApiClient getmGoogleApiClient() {
         return mGoogleApiClient;
     }
@@ -178,67 +157,20 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     public void onLocationChanged(Location location) {
         Log.d(TAG, "location changed");
         if (location != null) {
-            String provider = location.getProvider();
-            switch (provider) {
-                case LocationManager.GPS_PROVIDER:
-                    createLocationProbe(location);
-                    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-                        return;
-                    }
-                    locationManager.removeUpdates(this);
-                    break;
-                case LocationManager.NETWORK_PROVIDER:
-                    if ((location.getAccuracy() > locationNetworkAccuracyThreshold) && !(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-                        Log.d(TAG, "Network accuracy more than threshold. Request now from GPS.");
-                        requestGPSUpdate();
-                        startGPSTimeouListerner(20000, this);
-                        onUpdate(createLocationProbe(location));
-                    } else {
-                        onUpdate(createLocationProbe(location));
-                    }
-                    break;
-                default:
-                    onUpdate(createLocationProbe(location));
-                    break;
+            if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER) && (location.getAccuracy() > NETWORK_LOCATION_ACCURACY_THRESHOLD)) {
+                Log.d(TAG, "Network accuracy (" + location.getAccuracy() + ") is more than threshold (" + NETWORK_LOCATION_ACCURACY_THRESHOLD + "). Requesting location from GPS.");
+                if (hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
+                } else {
+                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                }
             }
+            onUpdate(createLocationProbe(location));
         } else {
             Log.d(TAG, "location is null");
         }
     }
 
-    private void requestGPSUpdate() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-    }
-
-    /**
-     * Start an new timer which unregisters the location manager updates
-     * after a timeout to decrease battery consumptio.
-     *
-     * @param timeout the time intervall in ms.
-     */
-    private void startGPSTimeouListerner(int timeout, final LocationListener locationListener) {
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-                    return;
-                }
-                locationManager.removeUpdates(locationListener);
-                Log.d(TAG, "Unregistered GPS after timeout.");
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 15000, 5, locationListener);
-            }
-        }, timeout);
-    }
 
     /**
      * Creates a Location Probe object from a
@@ -246,7 +178,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
      * @param location
      * @return
      */
-    private LocationProbe createLocationProbe(Location location) {
+    private static LocationProbe createLocationProbe(Location location) {
         LocationProbe probe = new LocationProbe();
         probe.setDate(System.currentTimeMillis());
         probe.setAccuracy((double) location.getAccuracy());
