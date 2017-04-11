@@ -6,10 +6,8 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -20,14 +18,14 @@ import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.model.location.LocationServiceStatusProbe;
-import edu.umd.fcmd.sensorlisteners.model.location.LocationProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import edu.umd.fcmd.sensorlisteners.model.location.LocationProbe;
+import edu.umd.fcmd.sensorlisteners.model.location.LocationServiceStatusProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
  * Created by MMueller on 11/4/2016.
- *
+ * <p>
  * A listener for Locations. Retrieving updates in a certain defined period.
  */
 @SuppressWarnings({"ClassNamePrefixedWithPackageName", "rawtypes", "ThisEscapedInObjectConstruction"})
@@ -57,7 +55,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
      *
      * @param context          the app context.
      * @param mProbeManager    the ProbeManager to connect to.
-     * @param mGoogleApiClient  a GoogleApi client.
+     * @param mGoogleApiClient a GoogleApi client.
      * @param snapshotApi      usally the Awarness.SnapshotsApi
      */
     public LocationListener(Context context,
@@ -87,6 +85,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
     /**
      * Being called when a new location update is available.
+     *
      * @param state location update state.
      */
     @Override
@@ -96,6 +95,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
     /**
      * Being called when a new location service status is available.
+     *
      * @param state location service update state.
      */
     void onUpdate(LocationServiceStatusProbe state) {
@@ -104,6 +104,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
     /**
      * Starts listening to frequent location updates.
+     *
      * @throws NoSensorFoundException when the connection to the GoogleApi client fails.
      */
     @Override
@@ -115,7 +116,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
 
                 }
-                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 5, this);
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 20, this);
             }
 
             sendInitialProbes();
@@ -138,14 +139,15 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     @Override
     public void stopListening() {
         if (runningStatus) {
-            if(locationServiceStatusReceiver != null){
+            if (locationServiceStatusReceiver != null) {
                 context.unregisterReceiver(locationServiceStatusReceiver);
             }
 
             //Method Location Manager
             while (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-            }locationManager.removeUpdates(this);
+            }
+            locationManager.removeUpdates(this);
 
 
         }
@@ -175,9 +177,9 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "location changed");
-        if(location != null){
+        if (location != null) {
             String provider = location.getProvider();
-            switch(provider){
+            switch (provider) {
                 case LocationManager.GPS_PROVIDER:
                     createLocationProbe(location);
                     if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -188,13 +190,13 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     locationManager.removeUpdates(this);
                     break;
                 case LocationManager.NETWORK_PROVIDER:
-                    if((location.getAccuracy() > locationNetworkAccuracyThreshold) && !(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)){
+                    if ((location.getAccuracy() > locationNetworkAccuracyThreshold) && !(ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
                         Log.d(TAG, "Network accuracy more than threshold. Request now from GPS.");
                         requestGPSUpdate();
                         startGPSTimeouListerner(20000, this);
                         onUpdate(createLocationProbe(location));
-                    }else{
+                    } else {
                         onUpdate(createLocationProbe(location));
                     }
                     break;
@@ -202,7 +204,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     onUpdate(createLocationProbe(location));
                     break;
             }
-        }else{
+        } else {
             Log.d(TAG, "location is null");
         }
     }
@@ -218,6 +220,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     /**
      * Start an new timer which unregisters the location manager updates
      * after a timeout to decrease battery consumptio.
+     *
      * @param timeout the time intervall in ms.
      */
     private void startGPSTimeouListerner(int timeout, final LocationListener locationListener) {
@@ -239,10 +242,11 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
     /**
      * Creates a Location Probe object from a
+     *
      * @param location
      * @return
      */
-    private LocationProbe createLocationProbe(Location location){
+    private LocationProbe createLocationProbe(Location location) {
         LocationProbe probe = new LocationProbe();
         probe.setDate(System.currentTimeMillis());
         probe.setAccuracy((double) location.getAccuracy());
