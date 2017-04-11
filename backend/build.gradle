@@ -6,7 +6,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.42'
+        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.51'
     }
 }
 
@@ -20,15 +20,14 @@ apply plugin: 'appengine'
 
 
 dependencies {
-    appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.42'
-    compile 'com.google.appengine:appengine-tools-sdk:1.9.42'
-    compile 'com.google.appengine:appengine-endpoints:1.9.42'
-    compile 'com.google.appengine.tools:appengine-gcs-client:0.6'
+    appengineSdk 'com.google.appengine:appengine-java-sdk:1.9.51'
+    //compile 'com.google.appengine:appengine-tools-sdk:1.9.42'
+    compile 'com.google.appengine:appengine-endpoints:1.9.51'
+    compile 'com.google.appengine:appengine-endpoints-deps:1.9.51'
+    compile 'javax.servlet:servlet-api:2.5'
     compile 'com.googlecode.objectify:objectify:5.1.13'
 
-    testCompile 'com.google.appengine:appengine-tools-sdk:1.9.42'
-
-    compile 'org.json:json:20160212'
+    compile 'org.json:json:20160810'
 
 }
 

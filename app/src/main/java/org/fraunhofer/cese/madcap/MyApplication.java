@@ -5,8 +5,6 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
-
 import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 /**

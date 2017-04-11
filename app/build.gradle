@@ -73,19 +73,7 @@ android {
         if (task.name == ':app:assembleRelease') {
             autoIncrementBuildNumber()
         }
-//        else if (task.name == ':app:assembleDebug') {
-//            autoIncrementBuildNumber()
-//        }
     }
-
-//    gradle.taskGraph.whenReady {taskGraph ->
-//        if (taskGraph.hasTask(assembleDebug)) {  /* when run debug task */
-//            autoIncrementBuildNumber()
-//        } else
-//        if (taskGraph.hasTask(assembleRelease)) { /* when run release task */
-//            autoIncrementBuildNumber()
-//        }
-//    }
 }
 
 repositories {
@@ -94,41 +82,33 @@ repositories {
     }
 }
 
-configurations {
-    all*.exclude group: 'commons-logging', module: 'commons-logging'
-    all*.exclude group: 'com.google.code.findbugs'
-    all*.exclude group: 'javax.inject', module: 'javax.inject'
-}
-
 dependencies {
+    compile project(path: ':backend', configuration: 'android-endpoints')
     compile project(':sensorlisteners')
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile project(path: ':backend', configuration: 'android-endpoints')
-    //Dagger
+
     compile 'com.j256.ormlite:ormlite-android:5.0'
-    compile 'com.google.appengine:appengine-endpoints-deps:1.9.27'
-    compile 'com.google.android.gms:play-services-auth:10.0.1'
-    compile 'com.google.android.gms:play-services-location:10.0.1'
-    compile 'com.google.android.gms:play-services-iid:10.0.1'
-    compile 'com.google.android.gms:play-services-awareness:10.0.1'
+    compile 'com.google.android.gms:play-services-auth:10.2.1'
+    compile 'com.google.android.gms:play-services-location:10.2.1'
+    compile 'com.google.android.gms:play-services-iid:10.2.1'
+    compile 'com.google.android.gms:play-services-awareness:10.2.1'
+    compile 'com.google.http-client:google-http-client-android:1.22.0'
+    compile 'com.google.api-client:google-api-client-android:1.22.0'
+
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.firebase:firebase-core:10.0.1'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
     compile 'com.google.firebase:firebase-crash:10.0.1'
-    compile 'com.android.support:appcompat-v7:25.1.1'
-    compile 'com.google.dagger:dagger:2.5'
-    compile 'com.android.support:support-v4:25.1.1'
-    compile 'com.android.support:design:25.1.1'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'javax.annotation:javax.annotation-api:1.2'
+    compile 'javax.inject:javax.inject:1'
     compile 'com.google.code.findbugs:jsr305:2.0.1'
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
-    testCompile 'org.jmockit:jmockit:1.19'
-    androidTestCompile 'com.android.support:support-annotations:25.1.1'
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestApt 'com.google.dagger:dagger-compiler:2.5'
+
+    //Dagger
+    compile 'com.google.dagger:dagger:2.5'
     apt 'com.google.dagger:dagger-compiler:2.5'
-    testApt 'com.google.dagger:dagger-compiler:2.5'
 }
 
 def debugProps = new Properties()
