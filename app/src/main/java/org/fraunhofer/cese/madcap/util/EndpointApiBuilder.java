@@ -8,6 +8,7 @@ import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
+import org.fraunhofer.cese.madcap.backend.Constants;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 
 import javax.inject.Inject;
@@ -39,7 +40,7 @@ public class EndpointApiBuilder {
         GoogleSignInAccount user = (authenticationProvider.getUser() != null) ? authenticationProvider.getUser() : authenticationProvider.getLastLoggedInUser();
 
         if (user != null) {
-            credential = GoogleAccountCredential.usingAudience(context, "server:client_id:611425056989-o214apfcne5gcj723m6ao8uddv0fjvjs.apps.googleusercontent.com");
+            credential = GoogleAccountCredential.usingAudience(context, Constants.WEB_CLIENT_ID);
             credential.setSelectedAccountName(user.getEmail());
         }
 
