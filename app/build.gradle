@@ -7,6 +7,11 @@ apply plugin: 'com.neenbedankt.android-apt'
 android {
     signingConfigs {
         debug
+        release
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g" // 2g should be also OK
     }
 
     def versionPropsFile = file('version.properties')
@@ -48,17 +53,15 @@ android {
     }
     buildTypes {
         release {
-            shrinkResources true
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            shrinkResources true
+//            minifyEnabled true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
             signingConfig signingConfigs.debug
         }
         debug {
             debuggable true
-            //noinspection GroovyAssignabilityCheck
             signingConfig signingConfigs.debug
-         //   proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
     testOptions {
@@ -76,10 +79,8 @@ android {
     }
 }
 
-repositories {
-    flatDir {
-        dirs 'libs'
-    }
+configurations {
+    compile.exclude group: "org.apache.httpcomponents", module: "httpclient"
 }
 
 dependencies {
@@ -88,20 +89,25 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     compile 'com.j256.ormlite:ormlite-android:5.0'
+
     compile 'com.google.android.gms:play-services-auth:10.2.1'
     compile 'com.google.android.gms:play-services-location:10.2.1'
     compile 'com.google.android.gms:play-services-iid:10.2.1'
     compile 'com.google.android.gms:play-services-awareness:10.2.1'
+
+    compile 'com.google.firebase:firebase-core:10.2.1'
+    compile 'com.google.firebase:firebase-messaging:10.2.1'
+    compile 'com.google.firebase:firebase-crash:10.2.1'
+
     compile 'com.google.http-client:google-http-client-android:1.22.0'
     compile 'com.google.api-client:google-api-client-android:1.22.0'
 
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.google.firebase:firebase-core:10.0.1'
-    compile 'com.google.firebase:firebase-messaging:10.0.1'
-    compile 'com.google.firebase:firebase-crash:10.0.1'
+
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:design:25.3.1'
+
     compile 'javax.annotation:javax.annotation-api:1.2'
     compile 'javax.inject:javax.inject:1'
     compile 'com.google.code.findbugs:jsr305:2.0.1'
@@ -120,10 +126,10 @@ android.signingConfigs.debug.keyPassword debugProps.keyAliasPassword
 
 def releaseProps = new Properties()
 releaseProps.load(new FileInputStream(rootProject.file("release.properties")))
-android.signingConfigs.debug.storeFile rootProject.file(releaseProps.keyStore)
-android.signingConfigs.debug.storePassword releaseProps.keyStorePassword
-android.signingConfigs.debug.keyAlias releaseProps.keyAlias
-android.signingConfigs.debug.keyPassword releaseProps.keyAliasPassword
+android.signingConfigs.release.storeFile rootProject.file(releaseProps.keyStore)
+android.signingConfigs.release.storePassword releaseProps.keyStorePassword
+android.signingConfigs.release.keyAlias releaseProps.keyAlias
+android.signingConfigs.release.keyPassword releaseProps.keyAliasPassword
 
 apply plugin: 'com.google.gms.google-services'
 

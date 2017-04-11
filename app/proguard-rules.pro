@@ -23,15 +23,28 @@
     public static *** i(...);
 }
 
--keepattributes InnerClasses
--keepattributes EnclosingMethod
--dontoptimize
+#-keepattributes InnerClasses
+#-keepattributes EnclosingMethod
+#-dontoptimize
+
+-keep public class com.google.android.gms.* { public *; }
+-dontwarn com.google.android.gms.**
+
+-keep public class com.google.common.** { public *; }
+-dontwarn com.google.common.**
+
+-keep public class com.google.firebase.** { public *; }
+-dontwarn com.google.firebase.**
 
 -dontwarn org.slf4j.**
--dontwarn org.apache.log4j.**
--dontwarn org.apache.commons.logging.**
--dontwarn org.apache.commons.codec.binary.**
+#-dontwarn org.apache.log4j.**
+#-dontwarn org.apache.commons.logging.**
+#-dontwarn org.apache.commons.codec.binary.**
 -dontwarn javax.persistence.**
 -dontwarn javax.lang.**
 -dontwarn javax.annotation.**
 -dontwarn javax.tools.**
+
+-renamesourcefileattribute SourceFile
+-keepattributes SourceFile,LineNumberTable
+-keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault

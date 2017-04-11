@@ -5,6 +5,8 @@ import android.content.Context;
 import android.support.multidex.MultiDex;
 import android.util.Log;
 
+import com.google.firebase.FirebaseApp;
+
 import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 /**
@@ -34,10 +36,8 @@ public class MyApplication extends Application {
 
         madcapLogger.d(TAG, "on create of My application has been called");
 
-        //Initialize Acra
-        //ACRA.init(this);
+//        FirebaseApp.initializeApp(this);
 
-        //Initializations for the Google Authentification
         // Initialize the Component used to inject dependencies.
         component = DaggerMyComponent.builder()
                 .myApplicationModule(new MyApplicationModule(this))
