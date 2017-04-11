@@ -4,10 +4,10 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyFactory;
 import com.googlecode.objectify.ObjectifyService;
 
+import org.fraunhofer.cese.madcap.backend.apis.MadcapUser;
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ActivityEntry;
 import org.fraunhofer.cese.madcap.backend.models.AirplaneModeEntry;
-import org.fraunhofer.cese.madcap.backend.models.AppUser;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothConnectionEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothRequestEntry;
 import org.fraunhofer.cese.madcap.backend.models.BluetoothScanModeEntry;
@@ -38,11 +38,11 @@ import org.fraunhofer.cese.madcap.backend.models.ScreenEntry;
 import org.fraunhofer.cese.madcap.backend.models.ScreenOffTimeoutEntry;
 import org.fraunhofer.cese.madcap.backend.models.SystemInfoEntry;
 import org.fraunhofer.cese.madcap.backend.models.SystemUptimeEntry;
+import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.TimeChangeEntry;
 import org.fraunhofer.cese.madcap.backend.models.TimezoneEntry;
 import org.fraunhofer.cese.madcap.backend.models.UploadLogEntry;
 import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
-import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.VolumeEntry;
 import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
 
@@ -53,7 +53,9 @@ import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
 @SuppressWarnings({"UtilityClass", "UtilityClassCanBeEnum", "NonFinalUtilityClass", "UtilityClassWithoutPrivateConstructor"})
 public class OfyService {
     static {
-        ObjectifyService.register(AppUser.class);
+        ObjectifyService.register(MadcapUser.class);
+
+        // Probe models
         ObjectifyService.register(ProbeDataSet.class);
         ObjectifyService.register(ProbeEntry.class);
         ObjectifyService.register(LocationEntry.class);

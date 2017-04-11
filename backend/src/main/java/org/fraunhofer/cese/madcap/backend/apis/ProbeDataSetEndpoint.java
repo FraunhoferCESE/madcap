@@ -7,7 +7,6 @@ import com.google.api.server.spi.config.ApiNamespace;
 import com.google.api.server.spi.response.BadRequestException;
 import com.google.api.server.spi.response.ConflictException;
 import com.google.appengine.api.oauth.OAuthRequestException;
-import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.cmd.LoadType;
 
 import org.fraunhofer.cese.madcap.backend.Constants;
@@ -51,7 +50,6 @@ import org.fraunhofer.cese.madcap.backend.models.TelecomServiceEntry;
 import org.fraunhofer.cese.madcap.backend.models.TimeChangeEntry;
 import org.fraunhofer.cese.madcap.backend.models.TimezoneEntry;
 import org.fraunhofer.cese.madcap.backend.models.UploadLogEntry;
-import org.fraunhofer.cese.madcap.backend.models.AppUser;
 import org.fraunhofer.cese.madcap.backend.models.UserCheckResult;
 import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 import org.fraunhofer.cese.madcap.backend.models.VoicemailEntry;
@@ -61,7 +59,6 @@ import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -102,15 +99,22 @@ public class ProbeDataSetEndpoint {
     public ProbeSaveResult insertSensorDataSet(HttpServletRequest req, ProbeDataSet probeDataSet, User user) throws OAuthRequestException, ConflictException, BadRequestException {
         long startTime = System.currentTimeMillis();
         logger.info("Upload request received from " + req.getRemoteAddr());
+
         if (user == null) {
             throw new OAuthRequestException("ERROR: User is null.");
         }
 
-        Objectify of = ofy();
-        AppUser result = of.load().type(AppUser.class).id(user.getId()).now();
+        MadcapUser result = ofy().load().type(MadcapUser.class).id(user.getEmail()).now();
         if (result == null) {
             throw new OAuthRequestException("ERROR: User is not registered! Id: " + user.getId() + ", email: " + user.getEmail());
-        } else if (result.isAlpha() == false) {
+        }
+
+        if(result.getUserId() == null) {
+            result.setUserId(user.getId());
+            ofy().save().entity(result).now();
+        }
+
+        if (result.isAlpha() == false) {
             throw new OAuthRequestException("ERROR: User is not authorized for alpha testing. Id: " + user.getId() + ", email: " + user.getEmail());
         }
 
@@ -479,7 +483,7 @@ public class ProbeDataSetEndpoint {
                 uploadedIds.add(entry.getId());
             }
 
-            LoadType loadType = of.load().type(type);
+            LoadType loadType = ofy().load().type(type);
 
             Map alreadyUploadedIds = loadType.ids(uploadedIds);
 
@@ -503,53 +507,6 @@ public class ProbeDataSetEndpoint {
         }
 
 
-//        Map<String, LocationEntry> locationIds = ofy().load().type(LocationEntry.class).ids(uploadedIds);
-//        ids.add(locationIds);
-//        Map<String, AccelerometerEntry> accelerometerIds = ofy().load().type(AccelerometerEntry.class).ids(uploadedIds);
-//        ids.add(accelerometerIds);
-//
-//        Collection<LocationEntry> toSaveLocation = new ArrayList<>();
-//        Collection<AccelerometerEntry> toSaveAccelerometer = new ArrayList<>();
-//
-//        for (ProbeEntry entry : entryList) {
-//            String type = entry.getProbeType();
-//            if (ids.get(entry.getId()) == null) {
-//                saved.add(entry.getId());
-//                switch (type) {
-//                    case "Location":
-//                        toSaveLocation.add(new LocationEntry(entry));
-//                        break;
-//                    case "Accelerometer":
-//                        toSaveAccelerometer.add(new);
-//                }
-//
-//            } else {
-//                alreadyExists.add(entry.getId());
-//            }
-//
-//        }
-
-//        ofy().save().entities(toSaveLocation).now();
-//        ofy().clear();
-//        ofy().save().entities(toSaveAccelerometer).now();
-//        ofy().clear();
-
-        // ===============
-
-
-//        Map<String, ProbeEntry> ids = ofy().load().type(ProbeEntry.class).ids(uploadedIds);
-//        for (ProbeEntry entry : entryList) {
-//            if (ids.get(entry.getId()) == null) {
-//                saved.add(entry.getId());
-//                toSave.add(entry);
-//            } else {
-//                alreadyExists.add(entry.getId());
-//            }
-//        }
-//        ofy().save().entities(toSave).now();
-//        ofy().clear();
-
-
         logger.info("Num Saved: " + saved.size() + ", Num already existing: " + alreadyExists.size() + ", Time taken: " + ((System.currentTimeMillis() - startTime) / 1000) + "s");
         logUpload(user.getId(), startTime, saved.size(), alreadyExists.size(), earliestProbeTimestamp, latestProbeTimestamp, (long) (0L + req.getContentLength()));
         return ProbeSaveResult.create(saved, alreadyExists);
@@ -567,10 +524,14 @@ public class ProbeDataSetEndpoint {
         if (user == null)
             return new UserCheckResult(false);
 
-        Objectify of = ofy();
-        AppUser result = of.load().type(AppUser.class).id(user.getId()).now();
+        MadcapUser result = ofy().load().type(MadcapUser.class).id(user.getEmail()).now();
         if (result == null) {
             return new UserCheckResult(false);
+        }
+
+        if(result.getUserId() == null) {
+            result.setUserId(user.getId());
+            ofy().save().entity(result).now();
         }
 
         if (result.isAlpha() == true) {
