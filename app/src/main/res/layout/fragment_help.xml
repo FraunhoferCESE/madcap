@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     tools:context="org.fraunhofer.cese.madcap.HelpFragment">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
@@ -22,12 +22,28 @@
             android:text="@string/contact"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/contactMadcapButton" />
+            android:id="@+id/contactMadcapButton"
+            android:layout_below="@id/helpTextView"/>/>
 
         <Button
             android:text="@string/go_to_online_help"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/onlineHelpButton" />
-    </LinearLayout>
+            android:id="@+id/onlineHelpButton"
+            android:layout_below="@id/contactMadcapButton"/>
+
+        <TextView
+            android:id="@+id/versionNumberHelpFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/onlineHelpButton"
+            android:layout_centerHorizontal="true"
+            android:text="@string/versionIntro"
+            android:layout_marginTop="15dp"
+            android:paddingBottom="15dp"
+            android:textIsSelectable="true" />
+    </RelativeLayout>
+
+
+
 </FrameLayout>
