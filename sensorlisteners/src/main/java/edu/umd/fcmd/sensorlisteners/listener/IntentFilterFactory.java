@@ -2,6 +2,8 @@ package edu.umd.fcmd.sensorlisteners.listener;
 
 import android.content.IntentFilter;
 
+import javax.inject.Inject;
+
 /**
  * Created by MMueller on 9/26/2016.
  *
@@ -10,6 +12,9 @@ import android.content.IntentFilter;
  */
 
 public class IntentFilterFactory {
+
+    @Inject
+    public IntentFilterFactory() {}
 
     /**
      * Creating a new instance.

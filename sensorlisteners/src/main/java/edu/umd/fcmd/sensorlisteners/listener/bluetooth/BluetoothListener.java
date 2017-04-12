@@ -10,6 +10,8 @@ import android.support.v4.content.ContextCompat;
 
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
@@ -45,6 +47,7 @@ public class BluetoothListener implements Listener {
 
     private boolean runningState;
 
+    @Inject
     public BluetoothListener(Context context,
                              ProbeManager<Probe> probeManager,
                              BluetoothAdapter bluetoothAdapter,

@@ -25,6 +25,8 @@ import java.net.UnknownHostException;
 import java.nio.ByteOrder;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
@@ -69,6 +71,7 @@ public class NetworkListener implements Listener {
 
     private static final boolean isLittleEndian = ByteOrder.nativeOrder().equals(ByteOrder.LITTLE_ENDIAN);
 
+    @Inject
     public NetworkListener(Context context,
                            ProbeManager<Probe> probeProbeManager,
                            ConnectionInfoReceiverFactory connectionInfoReceiverFactory,

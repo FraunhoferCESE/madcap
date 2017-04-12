@@ -5,6 +5,8 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
@@ -28,7 +30,7 @@ public class AudioListener implements Listener{
     private final ProbeManager<Probe> probeProbeManager;
     private final PermissionDeniedHandler permissionDeniedHandler;
     private final AudioReceiverFactory audioReceiverFactory;
-    private final int sigificanceDelta;
+    private static final int SIGIFICANCE_DELTA = 0;
 
     private AudioReceiver audioReceiver;
     private AudioManager audioManager;
@@ -48,18 +50,16 @@ public class AudioListener implements Listener{
      * @param context the context.
      * @param probeProbeManager the update probe manager.
      * @param audioReceiverFactory the audio receiver factory.
-     * @param sigificanceDelta a delta to set the sigificance for volume updates.
      * @param permissionDeniedHandler the permission handler.
      */
+    @Inject
     public AudioListener(Context context,
                          ProbeManager<Probe> probeProbeManager,
                          AudioReceiverFactory audioReceiverFactory,
-                         int sigificanceDelta,
                          PermissionDeniedHandler permissionDeniedHandler){
         this.context = context;
         this.probeProbeManager = probeProbeManager;
         this.audioReceiverFactory = audioReceiverFactory;
-        this.sigificanceDelta = sigificanceDelta;
         this.permissionDeniedHandler = permissionDeniedHandler;
 
         audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
@@ -130,8 +130,8 @@ public class AudioListener implements Listener{
                                int oldSystemVolume,
                                int oldVoiceCallVolume){
 
-        if((getCurrentAlarmVolume() >= oldAlarmVolume + sigificanceDelta) ||
-                (getCurrentAlarmVolume() <= oldAlarmVolume - sigificanceDelta)){
+        if((getCurrentAlarmVolume() >= oldAlarmVolume + SIGIFICANCE_DELTA) ||
+                (getCurrentAlarmVolume() <= oldAlarmVolume - SIGIFICANCE_DELTA)){
             VolumeProbe alarmVolumeProbe = new VolumeProbe();
             alarmVolumeProbe.setDate(System.currentTimeMillis());
             alarmVolumeProbe.setKind(VolumeProbe.ALARM);
@@ -140,8 +140,8 @@ public class AudioListener implements Listener{
             alarmVolume = getCurrentAlarmVolume();
         }
 
-        if((getCurrentDTMFVolume() >= oldDtmfVolume + sigificanceDelta) ||
-                (getCurrentDTMFVolume() <= oldDtmfVolume - sigificanceDelta)){
+        if((getCurrentDTMFVolume() >= oldDtmfVolume + SIGIFICANCE_DELTA) ||
+                (getCurrentDTMFVolume() <= oldDtmfVolume - SIGIFICANCE_DELTA)){
             VolumeProbe dtmfVolumeProbe = new VolumeProbe();
             dtmfVolumeProbe.setDate(System.currentTimeMillis());
             dtmfVolumeProbe.setKind(VolumeProbe.DTMF);
@@ -150,8 +150,8 @@ public class AudioListener implements Listener{
             dtmfVolume = getCurrentDTMFVolume();
         }
 
-        if((getCurrentMusicVolume() >= oldMusicVolume + sigificanceDelta) ||
-                (getCurrentMusicVolume() <= oldMusicVolume - sigificanceDelta)){
+        if((getCurrentMusicVolume() >= oldMusicVolume + SIGIFICANCE_DELTA) ||
+                (getCurrentMusicVolume() <= oldMusicVolume - SIGIFICANCE_DELTA)){
             VolumeProbe musicVolumeProbe = new VolumeProbe();
             musicVolumeProbe.setDate(System.currentTimeMillis());
             musicVolumeProbe.setKind(VolumeProbe.MUSIC);
@@ -161,8 +161,8 @@ public class AudioListener implements Listener{
         }
 
 
-        if((getCurrentNotificationVolume() >= oldNotificationVolume + sigificanceDelta) ||
-                (getCurrentNotificationVolume() <= oldNotificationVolume - sigificanceDelta)){
+        if((getCurrentNotificationVolume() >= oldNotificationVolume + SIGIFICANCE_DELTA) ||
+                (getCurrentNotificationVolume() <= oldNotificationVolume - SIGIFICANCE_DELTA)){
             VolumeProbe notificationVolumeProbe = new VolumeProbe();
             notificationVolumeProbe.setDate(System.currentTimeMillis());
             notificationVolumeProbe.setKind(VolumeProbe.NOTIFICATION);
@@ -172,8 +172,8 @@ public class AudioListener implements Listener{
         }
 
 
-        if((getCurrentRingVolume() >= oldRingVolume + sigificanceDelta) ||
-                (getCurrentRingVolume() <= oldRingVolume - sigificanceDelta) ){
+        if((getCurrentRingVolume() >= oldRingVolume + SIGIFICANCE_DELTA) ||
+                (getCurrentRingVolume() <= oldRingVolume - SIGIFICANCE_DELTA) ){
             VolumeProbe ringVolumeProbe = new VolumeProbe();
             ringVolumeProbe.setDate(System.currentTimeMillis());
             ringVolumeProbe.setKind(VolumeProbe.RING);
@@ -183,8 +183,8 @@ public class AudioListener implements Listener{
         }
 
 
-        if((getCurrentSystemVolume() >= oldSystemVolume + sigificanceDelta) ||
-                (getCurrentSystemVolume() <= oldSystemVolume - sigificanceDelta)){
+        if((getCurrentSystemVolume() >= oldSystemVolume + SIGIFICANCE_DELTA) ||
+                (getCurrentSystemVolume() <= oldSystemVolume - SIGIFICANCE_DELTA)){
             VolumeProbe systemSoundProbe = new VolumeProbe();
             systemSoundProbe.setDate(System.currentTimeMillis());
             systemSoundProbe.setKind(VolumeProbe.SYSTEM);
@@ -194,8 +194,8 @@ public class AudioListener implements Listener{
         }
 
 
-        if((getCurrentVoiceCallVolume() >= oldVoiceCallVolume + sigificanceDelta) ||
-                (getCurrentVoiceCallVolume() <= oldVoiceCallVolume - sigificanceDelta)){
+        if((getCurrentVoiceCallVolume() >= oldVoiceCallVolume + SIGIFICANCE_DELTA) ||
+                (getCurrentVoiceCallVolume() <= oldVoiceCallVolume - SIGIFICANCE_DELTA)){
             VolumeProbe callVolumeProbe = new VolumeProbe();
             callVolumeProbe.setDate(System.currentTimeMillis());
             callVolumeProbe.setKind(VolumeProbe.VOICE_CALL);

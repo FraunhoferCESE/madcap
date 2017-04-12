@@ -1,5 +1,7 @@
 package edu.umd.fcmd.sensorlisteners.listener.bluetooth;
 
+import javax.inject.Inject;
+
 /**
  * Created by MMueller on 12/5/2016.
  *
@@ -8,6 +10,9 @@ package edu.umd.fcmd.sensorlisteners.listener.bluetooth;
  */
 
 public class BluetoothInformationReceiverFactory {
+
+    @Inject
+    public BluetoothInformationReceiverFactory() {}
 
     /**
      * Create method.

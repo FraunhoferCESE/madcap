@@ -20,10 +20,13 @@ import com.jaredrummler.android.device.DeviceName;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.inject.Inject;
+
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.AirplaneModeProbe;
+import edu.umd.fcmd.sensorlisteners.model.system.BuildVersionProvider;
 import edu.umd.fcmd.sensorlisteners.model.system.DockStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.InputMethodProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.ScreenOffTimeoutProbe;
@@ -53,14 +56,15 @@ public class SystemListener implements Listener {
 
     private SystemReceiver systemReceiver;
 
+    @Inject
     public SystemListener(Context context,
                           ProbeManager<Probe> probeManager,
                           SystemReceiverFactory systemReceiverFactory,
-                          String madcapVerison){
+                          BuildVersionProvider buildVersionProvider){
         this.context = context;
         this.probeManager = probeManager;
         this.systemReceiverFactory = systemReceiverFactory;
-        this.madcapVerison = madcapVerison;
+        this.madcapVerison = buildVersionProvider.getBuildVersion();
 
     }
 

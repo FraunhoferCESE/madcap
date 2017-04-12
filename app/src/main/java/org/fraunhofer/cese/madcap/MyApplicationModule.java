@@ -19,6 +19,7 @@ import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
+import org.fraunhofer.cese.madcap.util.MadcapBuildVersionProvider;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.util.Calendar;
@@ -29,19 +30,10 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
-import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
-import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
-import edu.umd.fcmd.sensorlisteners.listener.audio.AudioReceiverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.MMSOutObserverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.MSMSReceiverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.SMSOutObserverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListenerFactory;
-import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import edu.umd.fcmd.sensorlisteners.model.system.BuildVersionProvider;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
@@ -136,41 +128,6 @@ class MyApplicationModule {
     }
 
     @Provides
-    TelephonyListenerFactory provideTelephonyListenerFactory() {
-        return new TelephonyListenerFactory();
-    }
-
-    @Provides
-    ConnectionInfoReceiverFactory provideConnectionInfoReceiverFactory() {
-        return new ConnectionInfoReceiverFactory();
-    }
-
-    @Provides
-    MSMSReceiverFactory provideMSMSReceiverFactory() {
-        return new MSMSReceiverFactory();
-    }
-
-    @Provides
-    SMSOutObserverFactory provideSMSOutObserverFactory() {
-        return new SMSOutObserverFactory();
-    }
-
-    @Provides
-    MMSOutObserverFactory provideMMSOutObserverFactory() {
-        return new MMSOutObserverFactory();
-    }
-
-    @Provides
-    IntentFilterFactory provideIntentFilterFactory() {
-        return new IntentFilterFactory();
-    }
-
-    @Provides
-    TimedActivityTaskFactory provideTimedActivityTaskFactory() {
-        return new TimedActivityTaskFactory();
-    }
-
-    @Provides
     ProbeManager<Probe> provideProbeManager(CacheFactory cacheFactory) {
         return cacheFactory;
     }
@@ -178,6 +135,11 @@ class MyApplicationModule {
     @Provides
     PermissionDeniedHandler providePermissionDeniedHandler(MadcapPermissionDeniedHandler madcapPermissionDeniedHandler) {
         return madcapPermissionDeniedHandler;
+    }
+
+    @Provides
+    BuildVersionProvider provideBuildVersionProvider(MadcapBuildVersionProvider madcapBuildVersionProvider) {
+        return madcapBuildVersionProvider;
     }
 
     @Provides
@@ -193,16 +155,6 @@ class MyApplicationModule {
     @Provides
     ManualProbeUploader provideManualProbeUploader() {
         return new ManualProbeUploader();
-    }
-
-    @Provides
-    SystemReceiverFactory provideSystemReceiverFactory() {
-        return new SystemReceiverFactory();
-    }
-
-    @Provides
-    AudioReceiverFactory provideAudioReceiverFactory() {
-        return new AudioReceiverFactory();
     }
 
     /**
@@ -226,7 +178,7 @@ class MyApplicationModule {
     CacheConfig provideCacheConfig() {
         CacheConfig config = new CacheConfig();
         config.setMaxMemEntries(40);
-        config.setMaxDbEntries(60);
+        config.setMaxDbEntries(1000);
 
         config.setMemForcedCleanupLimit(5000);
         config.setDbForcedCleanupLimit(30000); // value must ensure that we do not exceed Google API limits for a single request
@@ -239,15 +191,9 @@ class MyApplicationModule {
         return config;
     }
 
-    @Nullable
     @Provides
     BluetoothAdapter provideBluetoothAdapter() {
         return BluetoothAdapter.getDefaultAdapter();
-    }
-
-    @Provides
-    BluetoothInformationReceiverFactory provideBluetoothInformationReceiverFactory() {
-        return new BluetoothInformationReceiverFactory();
     }
 
     @Provides

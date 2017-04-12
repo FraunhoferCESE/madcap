@@ -6,6 +6,8 @@ import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.power.ChargingProbe;
@@ -28,6 +30,7 @@ public class PowerListener implements Listener {
 
     private boolean runningState;
 
+    @Inject
     public PowerListener(Context context,
                          ProbeManager<Probe> probeManager){
         this.context = context;

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import javax.inject.Inject;
+
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
@@ -27,6 +29,7 @@ public class ApplicationsListener implements Listener {
     private final PermissionDeniedHandler permissionDeniedHandler;
     private boolean runningStatus;
 
+    @Inject
     public ApplicationsListener(Context context,
                                 ProbeManager<Probe> probeProbeManager,
                                 TimedApplicationTaskFactory timedApplicationTaskFactory,

@@ -10,6 +10,9 @@ import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
@@ -31,8 +34,9 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
     private final TimedActivityTaskFactory timedActivityTaskFactory;
     private TimedActivityTask timedActivityTask;
 
+    @Inject
     public ActivityListener(ProbeManager<Probe> probeManager,
-                            GoogleApiClient googleApiClient,
+                            @Named("AwarenessApi") GoogleApiClient googleApiClient,
                             SnapshotApi snapshotApi,
                             TimedActivityTaskFactory timedActivityTaskFactory){
         this.probeManager = probeManager;

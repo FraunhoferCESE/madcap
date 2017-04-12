@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,68 +15,46 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
-import com.google.android.gms.awareness.FenceApi;
-import com.google.android.gms.awareness.SnapshotApi;
-import com.google.android.gms.common.api.GoogleApiClient;
-
-import org.fraunhofer.cese.madcap.BuildConfig;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.WelcomeActivity;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.cache.UploadStrategy;
-import org.fraunhofer.cese.madcap.cache.CacheFactory;
-import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
-import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
-import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityListener;
-import edu.umd.fcmd.sensorlisteners.listener.activity.TimedActivityTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
-import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.audio.AudioListener;
-import edu.umd.fcmd.sensorlisteners.listener.audio.AudioReceiverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothInformationReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
-import edu.umd.fcmd.sensorlisteners.listener.location.LocationServiceStatusReceiverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.ConnectionInfoReceiverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.MMSOutObserverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.MSMSReceiverFactory;
 import edu.umd.fcmd.sensorlisteners.listener.network.NetworkListener;
-import edu.umd.fcmd.sensorlisteners.listener.network.SMSOutObserverFactory;
-import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListenerFactory;
 import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
-import edu.umd.fcmd.sensorlisteners.listener.system.SystemReceiverFactory;
+import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.util.DataCollectionProbe;
 import edu.umd.fcmd.sensorlisteners.model.util.LogOutProbe;
-import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
 import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.INCOMPLETE;
 
-/**
- * Created by MMueller on 10/7/2016.
- */
 
+/**
+ * The main service that manages all listeners that collect data. This service is responsible for handling lifecycle events.
+ */
 @Singleton
 public class DataCollectionService extends Service implements UploadStatusListener {
     private static final String TAG = "Madcap DataColl Service";
@@ -90,108 +67,52 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private final IBinder mBinder = new DataCollectionServiceBinder();
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
     private UploadStatusGuiListener uploadStatusGuiListener;
-    private Handler hearthBeatScheduler;
     private HeartBeatRunner heartBeatRunner;
 
-    @SuppressWarnings("PackageVisibleField")
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
     Cache cache;
 
-    @SuppressWarnings("PackageVisibleField")
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
     AuthenticationProvider authManager;
 
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
     ManualProbeUploader manualProbeUploader;
 
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    @Named("AwarenessApi")
-    GoogleApiClient locationClient;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    @Named("AwarenessApi")
-    GoogleApiClient activityClient;
-
-    @Inject
-    SnapshotApi snapshotApi;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    FenceApi fenceApi;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    TimedActivityTaskFactory timedActivityTaskFactory;
-
-    @Inject
-    GoogleApiClientConnectionIssueManagerLocation googleApiClientConnectionIssueManagerLocation;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    MadcapPermissionDeniedHandler madcapPermissionDeniedHandler;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    MadcapSensorNoAnswerReceivedHandler madcapSensorNoAnswerReceivedHandler;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    TimedApplicationTaskFactory timedApplicationTaskFactory;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    Calendar calendar;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    @Nullable
-    BluetoothAdapter bluetoothAdapter;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    IntentFilterFactory intentFilterFactory;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    ConnectionInfoReceiverFactory connectionInfoReceiverFactory;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    TelephonyListenerFactory telephonyListenerFactory;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    MSMSReceiverFactory msmsReceiverFactory;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    SMSOutObserverFactory smsOutObserverFactory;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    MMSOutObserverFactory mmsOutObserverFactory;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    SystemReceiverFactory systemReceiverFactory;
-
-    @SuppressWarnings("PackageVisibleField")
-    @Inject
-    AudioReceiverFactory audioReceiverFactory;
-
-    @SuppressWarnings("PackageVisibleField")
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
     LocationListener locationListener;
+
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
+    @Inject
+    ApplicationsListener applicationsListener;
+
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
+    @Inject
+    BluetoothListener bluetoothListener;
+
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
+    @Inject
+    ActivityListener activityListener;
+
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
+    @Inject
+    PowerListener powerListener;
+
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
+    @Inject
+    NetworkListener networkListener;
+
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
+    @Inject
+    SystemListener systemListener;
+
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
+    @Inject
+    AudioListener auidioListener;
+
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -219,6 +140,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
         return mBinder;
     }
 
+    @SuppressWarnings("PublicInnerClass")
     public class DataCollectionServiceBinder extends Binder {
         public DataCollectionService getService() {
             // Return this instance of LocalService so clients can call public methods
@@ -231,45 +153,19 @@ public class DataCollectionService extends Service implements UploadStatusListen
     public void onCreate() {
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
-        MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service "+this);
+        MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service " + this);
 
         listeners.clear();
 
         synchronized (listeners) {
             listeners.add(locationListener);
-
-            listeners.add(new ApplicationsListener(this, new CacheFactory(cache, authManager),
-                    timedApplicationTaskFactory, madcapPermissionDeniedHandler));
-
-            listeners.add(new BluetoothListener(this, new CacheFactory(cache, authManager),
-                    bluetoothAdapter,
-                    madcapPermissionDeniedHandler,
-                    bluetoothInformationReceiverFactory,
-                    intentFilterFactory));
-
-            listeners.add(new ActivityListener(new CacheFactory(cache, authManager),
-                    activityClient,
-                    snapshotApi,
-                    timedActivityTaskFactory));
-
-            listeners.add(new PowerListener(this, new CacheFactory(cache, authManager)));
-
-            listeners.add(new NetworkListener(this, new CacheFactory(cache, authManager),
-                    connectionInfoReceiverFactory,
-                    msmsReceiverFactory,
-                    telephonyListenerFactory,
-                    smsOutObserverFactory,
-                    mmsOutObserverFactory,
-                    madcapPermissionDeniedHandler));
-
-            listeners.add(new SystemListener(this, new CacheFactory(cache, authManager),
-                    systemReceiverFactory,
-                    BuildConfig.VERSION_NAME));
-
-            listeners.add(new AudioListener(this, new CacheFactory(cache, authManager),
-                    audioReceiverFactory,
-                    0,
-                    madcapPermissionDeniedHandler));
+            listeners.add(applicationsListener);
+            listeners.add(bluetoothListener);
+            listeners.add(activityListener);
+            listeners.add(powerListener);
+            listeners.add(networkListener);
+            listeners.add(systemListener);
+            listeners.add(auidioListener);
         }
 
     }
@@ -280,7 +176,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
         manualProbeUploader.uploadManual(probe, getApplication(), cache);
     }
 
-    public void sendLogOutProbe(){
+    public void sendLogOutProbe() {
         LogOutProbe probe = new LogOutProbe();
         probe.setDate(System.currentTimeMillis());
         manualProbeUploader.uploadManual(probe, getApplication(), cache);
@@ -308,10 +204,11 @@ public class DataCollectionService extends Service implements UploadStatusListen
         // Any closeout or disconnect operations
         // This is a very bad kludge to handle the case where the user is signed out and all data should be uploaded immediately.
         // This decision should not belong here...
-        if (authManager.getUser() == null)
+        if (authManager.getUser() == null) {
             cache.close(UploadStrategy.IMMEDIATE);
-        else
+        } else {
             cache.close(UploadStrategy.NORMAL);
+        }
 
         //hideRunNotification();
 
@@ -346,7 +243,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
         cache.addUploadListener(this);
 
-        if (intent != null && intent.hasExtra("boot")) {
+        if ((intent != null) && intent.hasExtra("boot")) {
             cacheInitialBootEvent();
         }
 
@@ -360,9 +257,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
      * Starts the reverse Hearthbeat.
      */
     private void startHearthBeat() {
-        hearthBeatScheduler = new Handler();
-        heartBeatRunner = new HeartBeatRunner(getApplication(), this, hearthBeatScheduler, cache, manualProbeUploader, 60000L);
-        hearthBeatScheduler.postDelayed(heartBeatRunner, 100);
+        Handler hearthBeatScheduler = new Handler();
+        heartBeatRunner = new HeartBeatRunner(getApplication(), this, hearthBeatScheduler, cache, manualProbeUploader);
+        new Handler().postDelayed(heartBeatRunner, 100L);
 //        hearthBeatScheduler.scheduleAtFixedRate(new HeartBeatRunner(getApplication(), this, hearthBeatScheduler, cache, manualProbeUploader, 60000L), 0, 60000, TimeUnit.MILLISECONDS);
     }
 
@@ -511,7 +408,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
             text += "\t" + (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
             if (result.getSaveResult().getAlreadyExists() != null) {
                 //noinspection AccessOfSystemProperties
-                text += System.getProperty("line.separator") + "\t" + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
+                text += System.getProperty("line.separator") + '\t' + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
             }
         }
 
@@ -588,6 +485,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
      * Shows the madcap logo in the notification bar,
      * to signal the user that madcap is collecting data.
      */
+    @SuppressWarnings("unused")
     private void showRunNotification() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
@@ -659,13 +557,4 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
         return note;
     }
-
-    /**
-     * Returns true to get checked by the heartbeat.
-     * @return true.
-     */
-    public boolean getLifeSign(){
-        return true;
-    }
-
 }
