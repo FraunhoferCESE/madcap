@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "353945552589",
+    "firebase_url": "https://madcap-142815.firebaseio.com",
+    "project_id": "madcap-142815",
+    "storage_bucket": "madcap-142815.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:353945552589:android:fa92d1c910721c3f",
+        "android_client_info": {
+          "package_name": "org.fraunhofer.cese.madcap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "353945552589-ft4e7alq7gglkui1180paf0gktp48es6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.fraunhofer.cese.madcap",
+            "certificate_hash": "cefe060f212a82da15b2c121c626d9b0623af90a"
+          }
+        },
+        {
+          "client_id": "353945552589-0nsvnfceek9iclrb8amjhpn8aome60ej.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "353945552589-kq4t3bhktrgp0ghofune4m6ipk3bfsar.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCdftG2TMJwC0xmJDq7pNrjLWixsVj_GYA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "353945552589-0nsvnfceek9iclrb8amjhpn8aome60ej.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
