@@ -33,10 +33,10 @@
             android:screenSize="normal" />
     </compatible-screens>
 
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <!--<uses-permission android:name="android.permission.RECEIVE_SMS" />-->
     <uses-permission android:name="android.permission.BATTERY_STATS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.GET_TASKS" /> <!-- We will get rid of this after Anumeet finished his Library -->
+    <!--<uses-permission android:name="android.permission.GET_TASKS" /> &lt;!&ndash; We will get rid of this after Anumeet finished his Library &ndash;&gt;-->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
@@ -54,9 +54,9 @@
     <uses-permission android:name="android.permission.ACCESS_GPS" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION" />
     <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.SEND_SMS" />
-    <uses-permission android:name="android.intent.action.NEW_VOICEMAIL" />
-    <uses-permission android:name="android.intent.action.FETCH_VOICEMAIL" />
+    <!--<uses-permission android:name="android.permission.SEND_SMS" />-->
+    <!--<uses-permission android:name="android.intent.action.NEW_VOICEMAIL" />-->
+    <!--<uses-permission android:name="android.intent.action.FETCH_VOICEMAIL" />-->
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
