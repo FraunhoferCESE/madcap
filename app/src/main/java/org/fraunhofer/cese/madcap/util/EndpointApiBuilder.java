@@ -7,6 +7,7 @@ import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
+import org.fraunhofer.cese.madcap.BuildConfig;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
@@ -14,7 +15,7 @@ import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import javax.inject.Inject;
 
 /**
- * Wrapper for the Endpoint API builder class to communicate with the app enginer. Wrapper is needed to accomodate user login/logout during app lifecycle.
+ * Wrapper for the Endpoint API builder class to communicate with the app engine. Wrapper is needed to accomodate user login/logout during app lifecycle.
  * <p>
  * Created by llayman on 2/8/2017.
  */
@@ -44,9 +45,11 @@ public class EndpointApiBuilder {
             credential.setSelectedAccountName(user.getEmail());
         }
 
-        String endpointUrl = "https://madcap-dev1.appspot.com/_ah/api/";
-        //  TODO: change this for production
-//      String endpointUrl = "https://madcap-142815.appspot.com/_ah/api/";
+
+        String endpointUrl = context.getResources().getString(R.string.endpointApiDebug);
+        if("release".equals(BuildConfig.BUILD_TYPE)) {
+            endpointUrl = context.getResources().getString(R.string.endpointApiProduction);
+        }
 
         ProbeEndpoint.Builder builder = new ProbeEndpoint.Builder(AndroidHttp.newCompatibleTransport(),
                 new AndroidJsonFactory(), credential)
