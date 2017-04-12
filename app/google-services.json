@@ -15,19 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "611425056989-bu1aq0g9l4qkblo0rpdcud8usehskrq4.apps.googleusercontent.com",
+          "client_id": "611425056989-20v5gcqgcumubka0c4hg9agsdpo2071b.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "org.fraunhofer.cese.madcap",
-            "certificate_hash": "B956BAA7D405B1F1ED23B33FB5841FD6BB963DCB"
-          }
-        },
-        {
-          "client_id": "611425056989-0p8i89b6hmo5vmc278b9lu3no0hv7psu.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "org.fraunhofer.cese.madcap",
-            "certificate_hash": "66C664310589F6232EB67903C10D24B2E0C79D67"
+            "certificate_hash": "5960fa27d39a69374e470299fd125c84abf778b4"
           }
         },
         {
