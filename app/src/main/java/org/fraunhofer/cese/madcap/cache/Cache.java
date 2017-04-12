@@ -158,11 +158,7 @@ public class Cache {
         MyApplication.madcapLogger.d(TAG, "Cache now flushing.");
         lastDbWriteAttempt = System.currentTimeMillis();
 
-        MyApplication.madcapLogger.d(TAG, "Upload strategy " + uploadStrategy);
-        MyApplication.madcapLogger.d(TAG, "Context is " + context);
         AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> task = dbTaskFactory.createWriteTask(context, this, uploadStrategy);
-        MyApplication.madcapLogger.d(TAG, "Task " + task);
-        MyApplication.madcapLogger.d(TAG, "Memcache " + memcache);
 
         //noinspection unchecked
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ImmutableMap.copyOf(memcache));

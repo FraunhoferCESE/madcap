@@ -76,8 +76,9 @@ public class AudioReceiver extends BroadcastReceiver {
                 break;
             case "android.media.VOLUME_CHANGED_ACTION":
                 audioListener.evaluateVolumeChanges();
+                break;
             default:
-                Log.e(TAG, "Received undefined");
+                Log.i(TAG, "Audio Receiver received undefined action: "+intent.getAction());
                 break;
         }
     }

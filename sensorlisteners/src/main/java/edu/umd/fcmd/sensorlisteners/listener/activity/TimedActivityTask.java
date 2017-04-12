@@ -69,7 +69,6 @@ class TimedActivityTask extends AsyncTask<Void, ActivityRecognitionResult, Void>
                             publishProgress(ar);
                         }
                     });
-            Log.d(TAG, "Attempt to get activity");
             try {
                 //Log.d(TAG, "Sleep now");
                 //noinspection BusyWait
