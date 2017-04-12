@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
@@ -112,6 +113,10 @@ public class HelpFragment extends Fragment {
                 startActivity(i);
             }
         });
+
+        TextView versionNumberText = (TextView) view.findViewById(R.id.versionNumberHelpFragment);
+        versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME + ", Build " + BuildConfig.VERSION_CODE);
+
         return view;
     }
 

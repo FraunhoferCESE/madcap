@@ -5,7 +5,7 @@
     <string name="title_text">MADCAP</string>
 
     <!-- StartFragment -->
-    <string name="introText">You can control some of MADCAP\'s functions from this screen.</string>
+    <string name="introText">Welcome to MADCAP. Thank you for participating in the Pocket Security study!</string>
     <string name="collectDataSwitchText">Collect Data?</string>
     <string name="dataCountText">Data points collected since the last upload: </string>
     <string name="uploadResultText">Last upload result: </string>
@@ -87,7 +87,7 @@
     <!-- About fragment -->
     <string name="aboutHeader">About</string>
     <string name="aboutText1">MADCAP is part of the Pocket Security research project from the University of Maryland and Fraunhofer USA, Inc.</string>
-    <string name="aboutText2">This app is intended for pre-selected users only. This app collects data about the apps you collect on your smartphone, your location, and activities such as making phone calls. Please refer to the privacy policy for complete details. This app may also post security notifications and other alerts.</string>
+    <string name="aboutText2">This app is intended for pre-selected users only. MADCAP collects data about the apps you use on your smartphone, your location, and activities such as making phone calls. Please refer to the privacy policy for complete details. This app may also post security notifications and other alerts.</string>
     <string name="aboutSponsor">MADCAP development is funded by National Science Foundation grant #1619084.</string>
 
     <!-- PRivacy Policy -->
@@ -106,8 +106,10 @@
     <string name="contactHeader">Contact</string>
     <string name="contactLink">For more information, please visit https://www.pocket-security.org.</string>
     <string name="title_activity_sign_up_check">SignUpCheckActivity</string>
+
+
     <string name="auth_check_text">Please wait. MADCAP is checking if you are authorized to participate.</string>
-    <string name="not_authorized_text">Apparently you are not authorized to use MADCAP. To register to use MADCAP please visit the Pocket Security website for further instructions.</string>
+    <string name="not_authorized_text">Only participants in the NSF Pocket Security study are authorized to use MADCAP. Please visit the Pocket Security website for more information on this research: https://www.pocket-security.org</string>
     <string name="not_authorized_user_email">User email: %s</string>
     <string name="not_authorized_user_id">User id: %s</string>
     <!-- EULA -->
