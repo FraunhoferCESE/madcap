@@ -76,4 +76,10 @@ public class AccelerometerListener extends SensorListener<AccelerometerProbe> {
     public boolean isRunning() {
         return false;
     }
+
+    @Override
+    public boolean isPermittedByUser() {
+        //non dangerous permission
+        return true;
+    }
 }

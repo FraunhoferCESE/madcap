@@ -197,6 +197,12 @@ public class SystemListener implements Listener {
         return runningState;
     }
 
+    @Override
+    public boolean isPermittedByUser() {
+        //non dangerous permission
+        return true;
+    }
+
     /**
      * Gets the current screen status.
      * @return either ON of OFF.

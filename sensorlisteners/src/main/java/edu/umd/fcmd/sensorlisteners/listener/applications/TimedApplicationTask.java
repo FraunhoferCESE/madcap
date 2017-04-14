@@ -248,7 +248,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                     }
                 this.lastTime = currentTime;
                 //getUsageEvents();
-            } else {
+            } else {// version earlier than lollipop
                 ActivityManager mActivityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
                 ComponentName componentName = mActivityManager.getRunningTasks(1).get(0).topActivity;
 

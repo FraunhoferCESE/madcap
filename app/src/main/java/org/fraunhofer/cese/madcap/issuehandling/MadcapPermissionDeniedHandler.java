@@ -49,7 +49,7 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     //This only works on api level 21+
                     if(!actionUsagePrompted){
-                        MyApplication.madcapLogger.e(TAG, "Action usage access denied");
+                        MyApplication.madcapLogger.e(TAG, "Action usage access unavailable");
                         Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
@@ -62,7 +62,7 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
                 break;
             case Manifest.permission.BLUETOOTH:
                 if(!bluetoothPermissionPrompted){
-                    MyApplication.madcapLogger.e(TAG, "Bluetooth permission deniedd");
+                    MyApplication.madcapLogger.e(TAG, "Bluetooth permission denied");
                     bluetoothPermissionPrompted = true;
                 }
                 break;

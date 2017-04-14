@@ -102,6 +102,12 @@ public class AudioListener implements Listener{
         return runningState;
     }
 
+    @Override
+    public boolean isPermittedByUser() {
+        //non dangerous permission
+        return true;
+    }
+
     /**
      * Sends initial audio related probes.
      */

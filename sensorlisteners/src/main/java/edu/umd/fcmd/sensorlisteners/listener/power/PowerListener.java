@@ -72,6 +72,12 @@ public class PowerListener implements Listener {
         return runningState;
     }
 
+    @Override
+    public boolean isPermittedByUser() {
+        //non dangerous permission
+        return true;
+    }
+
     /**
      * Gets the initial power level.
      * @param batteryIntent the passed battery intentn.

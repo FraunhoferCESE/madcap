@@ -14,6 +14,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
@@ -158,13 +159,15 @@ public class DataCollectionService extends Service implements UploadStatusListen
         listeners.clear();
 
         synchronized (listeners) {
+            //dangerous listeners
             listeners.add(locationListener);
             listeners.add(applicationsListener);
-            listeners.add(bluetoothListener);
             listeners.add(activityListener);
+            //non dangerous listeners
+            listeners.add(systemListener);
+            listeners.add(bluetoothListener);
             listeners.add(powerListener);
             listeners.add(networkListener);
-            listeners.add(systemListener);
             listeners.add(auidioListener);
         }
 
@@ -230,13 +233,17 @@ public class DataCollectionService extends Service implements UploadStatusListen
         startForeground(NOTIFICATION_ID, getRunNotification());
 
         synchronized (listeners) {
+            MyApplication.madcapLogger.d(TAG, "numListeners: " + listeners.size());
             for (Listener listener : listeners) {
-                try {
-                    MyApplication.madcapLogger.d(TAG, "numListeners: " + listeners.size());
-                    listener.startListening();
-                    MyApplication.madcapLogger.d(TAG, listener.getClass().getSimpleName() + " started listening");
-                } catch (NoSensorFoundException nsf) {
-                    MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
+                if (listener.isPermittedByUser()) {//check for user permission
+                    try {
+                        listener.startListening();
+                        MyApplication.madcapLogger.d(TAG, listener.getClass().getSimpleName() + " started listening");
+                    } catch (NoSensorFoundException nsf) {
+                        MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
+                    }
+                }else{
+                    Log.i(TAG,listener.getClass().getSimpleName()+" access denied by user");
                 }
             }
         }
@@ -252,6 +259,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
         return START_STICKY;
         //return super.onStartCommand(intent, flags, startId);
     }
+
+
 
     /**
      * Starts the reverse Hearthbeat.

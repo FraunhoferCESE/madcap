@@ -1,7 +1,11 @@
 package edu.umd.fcmd.sensorlisteners.listener.applications;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.provider.Settings;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import javax.inject.Inject;
@@ -68,5 +72,18 @@ public class ApplicationsListener implements Listener {
     @Override
     public boolean isRunning() {
         return runningStatus;
+    }
+
+    @Override
+    public boolean isPermittedByUser() {
+        if (ContextCompat.checkSelfPermission(context,
+                Settings.ACTION_USAGE_ACCESS_SETTINGS)
+                == PackageManager.PERMISSION_DENIED) {
+            Log.e(TAG,"Usage access setting access NOT permitted");
+            return false;
+        }else {
+            Log.v(TAG,"Usage access setting access permitted");
+            return true;
+        }
     }
 }
