@@ -103,6 +103,12 @@ public class BluetoothListener implements Listener {
         return runningState;
     }
 
+    @Override
+    public boolean isPermittedByUser() {
+        //non dangerous permission
+        return true;
+    }
+
     /**
      * Creates the initial probes.
      */

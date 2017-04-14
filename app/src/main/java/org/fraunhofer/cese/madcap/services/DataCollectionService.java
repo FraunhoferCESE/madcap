@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
@@ -159,13 +160,15 @@ public class DataCollectionService extends Service implements UploadStatusListen
         listeners.clear();
 
         synchronized (listeners) {
+            //dangerous listeners
             listeners.add(locationListener);
             listeners.add(applicationsListener);
-            listeners.add(bluetoothListener);
             listeners.add(activityListener);
+            //non dangerous listeners
+            listeners.add(systemListener);
+            listeners.add(bluetoothListener);
             listeners.add(powerListener);
             listeners.add(networkListener);
-            listeners.add(systemListener);
             listeners.add(auidioListener);
         }
 
@@ -223,6 +226,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
         Timber.d("onStartCommand. isRunning: " + isRunning);
 
         if (!isRunning) {
@@ -246,6 +250,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
             if ((intent != null) && intent.hasExtra("boot")) {
                 cacheInitialBootEvent();
             }
+
 
             // Start the heartbeat
             new Handler().postDelayed(heartBeatRunner, HEARTBEAT_DELAY);

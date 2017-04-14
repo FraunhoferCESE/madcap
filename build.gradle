@@ -30,4 +30,3 @@ allprojects {
         targetCompatibility = 1.7
     }
 }
-

@@ -77,6 +77,11 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
         return runningState;
     }
 
+    @Override
+    public boolean isPermittedByUser() {
+        return false;
+    }
+
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {

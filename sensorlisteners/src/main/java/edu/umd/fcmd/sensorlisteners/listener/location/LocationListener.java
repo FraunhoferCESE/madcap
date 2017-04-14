@@ -202,6 +202,12 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         Log.i(TAG, "Fused location received: " + location);
         onUpdate(createLocationProbe(location));
     }
+    @Override
+    public boolean isPermittedByUser() {
+        //dangerous permission; check for permit
+        return false;
+    }
+
 
     /**
      * Called when the location has changed.

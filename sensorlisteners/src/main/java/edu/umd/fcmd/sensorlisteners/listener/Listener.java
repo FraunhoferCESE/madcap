@@ -14,5 +14,6 @@ public interface Listener<T extends Probe> {
     void startListening() throws NoSensorFoundException;
     void stopListening();
     boolean isRunning();
+    boolean isPermittedByUser();
 }
 

@@ -144,6 +144,12 @@ public class NetworkListener implements Listener {
         return runningStatus;
     }
 
+    @Override
+    public boolean isPermittedByUser() {
+        //non dangerous permission
+        return true;
+    }
+
     /**
      * Setup method for TelephonyListener
      */

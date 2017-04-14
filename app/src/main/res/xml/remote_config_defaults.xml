@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<defaultsMap>
+    <entry>
+        <key>max_mem_entries</key>
+        <value>40</value>
+    </entry>
+    <entry>
+        <key>max_db_entries</key>
+        <value>1000</value>
+    </entry>
+    <entry>
+        <key>mem_forced_cleanup_limit</key>
+        <value>5000</value>
+    </entry>
+    <entry>
+        <key>db_forced_cleanup_limit</key>
+        <value>30000</value>
+    </entry>
+    <entry>
+        <key>db_write_interval</key>
+        <value>2000</value>
+    </entry>
+    <entry>
+        <key>upload_interval</key>
+        <value>900000</value>
+    </entry>
+    <entry>
+        <key>upload_on_wifi_only</key>
+        <value>true</value>
+    </entry>
+</defaultsMap>
