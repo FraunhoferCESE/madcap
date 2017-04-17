@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 
+import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 
 import java.util.List;

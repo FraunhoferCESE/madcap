@@ -1,8 +1,12 @@
 package org.fraunhofer.cese.madcap;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -14,6 +18,7 @@ import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
 
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 

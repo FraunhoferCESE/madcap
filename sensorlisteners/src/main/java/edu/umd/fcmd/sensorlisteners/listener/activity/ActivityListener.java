@@ -79,7 +79,8 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
 
     @Override
     public boolean isPermittedByUser() {
-        return false;
+        //non dangerous permission
+        return true;
     }
 
 

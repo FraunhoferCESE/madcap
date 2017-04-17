@@ -1,10 +1,12 @@
 package edu.umd.fcmd.sensorlisteners.listener.network;
 
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
@@ -12,7 +14,9 @@ import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.nfc.tech.NfcA;
+import android.provider.Settings;
 import android.provider.Telephony;
+import android.support.v4.content.ContextCompat;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
@@ -146,8 +150,14 @@ public class NetworkListener implements Listener {
 
     @Override
     public boolean isPermittedByUser() {
-        //non dangerous permission
-        return true;
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED
+                || ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED) {
+            Log.e(TAG,"Network access NOT permitted");
+            return false;
+        }else {
+            Log.v(TAG,"Network access permitted");
+            return true;
+        }
     }
 
     /**

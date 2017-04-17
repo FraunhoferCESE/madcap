@@ -65,6 +65,8 @@ public class SignInActivity extends AppCompatActivity {
         setContentView(R.layout.signinactivity);
         mStatusTextView = (TextView) findViewById(R.id.status);
 
+        progress = new ProgressDialog(this);
+
         // Button listeners
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
@@ -228,8 +230,7 @@ public class SignInActivity extends AppCompatActivity {
                     findViewById(R.id.to_control_button).setEnabled(true);
                     mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 
-                    progress = new ProgressDialog(this);
-                    progress.setMessage("MADCAP is checking your authorization to use the app.");
+                    progress.setMessage("Authorizing...");
                     progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                     progress.setIndeterminate(true);
                     progress.setProgress(0);
@@ -329,5 +330,15 @@ public class SignInActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    protected void onPause() {
+        if(progress.isShowing()) progress.cancel();
+        super.onPause();
+    }
 
+    @Override
+    protected void onDestroy() {
+        if(progress.isShowing()) progress.cancel();
+        super.onDestroy();
+    }
 }

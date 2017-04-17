@@ -3,6 +3,7 @@ package org.fraunhofer.cese.madcap.util;
 import android.app.Application;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.crash.FirebaseCrash;
@@ -111,6 +112,10 @@ public class ManualProbeUploadTask extends AsyncTask<Probe, Void, Void> {
             MyApplication.madcapLogger.w(TAG, e.toString());
             MyApplication.madcapLogger.w(TAG, "Manual upload failed. Saving to cache: " + probeEntry);
             cacheFactory.save(probe);
+        } catch (IllegalArgumentException iae){
+            Log.e(TAG,"Illegal Argument Exception");
+            Log.d(TAG,iae.getMessage());
+            iae.printStackTrace();
         }
 
         return null;
