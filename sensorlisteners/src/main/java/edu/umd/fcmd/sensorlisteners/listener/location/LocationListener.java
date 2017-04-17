@@ -1,6 +1,7 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -39,12 +41,14 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     private static final double NETWORK_LOCATION_ACCURACY_THRESHOLD = 30.0;
     private static final long MIN_TIME = 30000;
     private static final float MIN_DISTANCE = 20.0f;
+
     private static final long MAX_TIME = 600000;
 
     private static final int STRATEGY_FUSED = 1;
     private static final int STRAGEY_LEGACY = 2;
 
     private final int locationStrategy;
+    private static final int GPS_PERMIT = 1;
 
     private final Context context;
     private final ProbeManager<Probe> mProbeManager;
@@ -131,14 +135,16 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 EventBus.getDefault().register(this);
             }
 
-            if (hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (isPermittedByUser()) {
                 if (locationStrategy == STRATEGY_FUSED) {
                     apiClient.connect();
                 } else {
                     onLocationChanged(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                 }
+
             } else {
+                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, GPS_PERMIT);
                 permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
             }
         }
@@ -165,14 +171,13 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 context.unregisterReceiver(locationServiceStatusReceiver);
             }
 
+
             if (locationStrategy == STRATEGY_FUSED) {
                 EventBus.getDefault().unregister(this);
             }
 
-            if (hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (isPermittedByUser()) {
                 if (locationStrategy == STRATEGY_FUSED) {
-
-
                     if (apiClient.isConnected()) {
                         onLocationChanged(fusedLocationProviderApi.getLastLocation(apiClient));
                     }
@@ -188,9 +193,9 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         runningStatus = false;
     }
 
-    private static boolean hasPermission(Context context, String permission) {
-        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
-    }
+//    private static boolean hasPermission(Context context, String permission) {
+//        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
+//    }
 
     @Override
     public boolean isRunning() {
@@ -202,10 +207,18 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         Log.i(TAG, "Fused location received: " + location);
         onUpdate(createLocationProbe(location));
     }
+
     @Override
     public boolean isPermittedByUser() {
-        //dangerous permission; check for permit
-        return false;
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_DENIED) {
+            Log.e(TAG, "Location access NOT permitted");
+            return false;
+        } else {
+            Log.v(TAG, "Location access permitted");
+            return true;
+        }
     }
 
 
@@ -222,7 +235,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         if (location != null) {
             if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER) && (location.getAccuracy() > NETWORK_LOCATION_ACCURACY_THRESHOLD)) {
                 Log.d(TAG, "Network accuracy (" + location.getAccuracy() + ") is more than threshold (" + NETWORK_LOCATION_ACCURACY_THRESHOLD + "). Requesting location from GPS.");
-                if (hasPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                if (isPermittedByUser()) {
                     locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
                 } else {
                     permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
@@ -241,6 +254,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
      * @param location
      * @return
      */
+
     private static LocationProbe createLocationProbe(Location location) {
         LocationProbe probe = new LocationProbe();
         probe.setDate(System.currentTimeMillis());

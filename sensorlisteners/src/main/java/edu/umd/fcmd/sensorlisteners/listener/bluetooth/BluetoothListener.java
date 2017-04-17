@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import java.util.Set;
 
@@ -106,7 +107,15 @@ public class BluetoothListener implements Listener {
     @Override
     public boolean isPermittedByUser() {
         //non dangerous permission
-        return true;
+        if (ContextCompat.checkSelfPermission(context,
+                Manifest.permission.BLUETOOTH)
+                == PackageManager.PERMISSION_DENIED) {
+            Log.e(TAG,"Bluetooth access NOT permitted");
+            return false;
+        }else {
+            Log.v(TAG,"Bluetooth access permitted");
+            return true;
+        }
     }
 
     /**

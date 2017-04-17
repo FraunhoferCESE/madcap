@@ -7,15 +7,16 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
@@ -164,11 +165,11 @@ public class DataCollectionService extends Service implements UploadStatusListen
             listeners.add(locationListener);
             listeners.add(applicationsListener);
             listeners.add(activityListener);
+            listeners.add(networkListener);
             //non dangerous listeners
             listeners.add(systemListener);
             listeners.add(bluetoothListener);
             listeners.add(powerListener);
-            listeners.add(networkListener);
             listeners.add(auidioListener);
         }
 
@@ -399,6 +400,69 @@ public class DataCollectionService extends Service implements UploadStatusListen
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(getString(R.string.pref_uploadProgress), value);
         editor.apply();
+    }
+
+    /**
+     * Shows the madcap logo in the notification bar,
+     * to signal the user that madcap is collecting data.
+     * @param title : title of the notification
+     * @param message : big text description of the notification
+     * @param simpleName
+     */
+    private void showRunNotification(String title, String message, String simpleName) {
+        // Creates an explicit intent for an Activity in your app
+        Intent intent1 = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        Intent intent2 = new Intent();
+        intent2.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent2.setData(uri);
+
+        // The stack builder object will contain an artificial back stack for the
+        // started Activity.
+        // This ensures that navigating backward from the Activity leads out of
+        // your application to the Home screen.
+//        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+//
+//        // Adds the back stack for the Intent (but not the Intent itself)
+//        stackBuilder.addParentStack(MainActivity.class);
+//        // Adds the Intent that starts the Activity to the top of the stack
+//        stackBuilder.addNextIntent(resultIntent);
+        //        PendingIntent resultPendingIntent =
+//                stackBuilder.getPendingIntent(
+//                        0,
+//                        PendingIntent.FLAG_UPDATE_CURRENT
+//                );
+//        mBuilder.setContentIntent(resultPendingIntent);
+
+        PendingIntent applicationAccessIntent = PendingIntent.getActivity(this, 999, intent1, 0);
+        PendingIntent permissionsIntent = PendingIntent.getActivity(this, 998, intent2, 0);
+
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+        mBuilder.setContentTitle(title);
+        mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        mBuilder.setPriority(Notification.PRIORITY_HIGH);
+
+        NotificationManager mNotificationManager;
+        if (simpleName.equalsIgnoreCase("ApplicationsListener")) {
+            mBuilder.addAction(R.drawable.ic_stat_madcaplogo, "Settings", applicationAccessIntent);
+            mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // mId allows you to update the notification later on.
+            Notification note = mBuilder.build();
+            note.flags |= Notification.FLAG_AUTO_CANCEL;
+            mNotificationManager.notify(RUN_CODE, note);
+        } else {
+            mBuilder.addAction(R.drawable.ic_stat_madcaplogo,"Settings",permissionsIntent);
+            mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            // mId allows you to update the notification later on.
+            Notification note = mBuilder.build();
+            note.flags |= Notification.FLAG_AUTO_CANCEL;
+            mNotificationManager.notify(RUN_CODE+1, note);
+        }
     }
 
    private Notification getRunNotification() {

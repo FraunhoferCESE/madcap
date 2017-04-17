@@ -1,10 +1,13 @@
 package edu.umd.fcmd.sensorlisteners.listener.applications;
 
 import android.Manifest;
+import android.app.Notification;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -85,5 +88,9 @@ public class ApplicationsListener implements Listener {
             Log.v(TAG,"Usage access setting access permitted");
             return true;
         }
+    }
+
+    public String getTaskName(){
+        return "access application data";
     }
 }

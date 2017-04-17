@@ -45,7 +45,7 @@ android {
     defaultConfig {
         applicationId "org.fraunhofer.cese.madcap"
         minSdkVersion 19
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode versionBuild
         versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
