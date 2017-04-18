@@ -3,9 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.fraunhofer.cese.madcap">
 
+    <supports-screens android:resizeable="true"
+    android:smallScreens="true"
+    android:normalScreens="true"
+    android:largeScreens="true"
+    android:xlargeScreens="true"
+    android:anyDensity="true"/>
+
+    <!--
     <compatible-screens>
 
-        <!-- all small size screens -->
         <screen
             android:screenDensity="ldpi"
             android:screenSize="small" />
@@ -18,7 +25,7 @@
         <screen
             android:screenDensity="xhdpi"
             android:screenSize="small" />
-        <!-- all normal size screens -->
+
         <screen
             android:screenDensity="ldpi"
             android:screenSize="normal" />
@@ -32,7 +39,7 @@
             android:screenDensity="xhdpi"
             android:screenSize="normal" />
     </compatible-screens>
-
+-->
 
     <!--<uses-permission android:name="android.permission.GET_TASKS" /> &lt;!&ndash; We will get rid of this after Anumeet finished his Library &ndash;&gt;-->
 
@@ -53,6 +60,8 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
 
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
@@ -66,6 +75,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
 
+    <uses-permission android:name="android.permission.GET_TASKS"
+        android:maxSdkVersion="20"/>
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
