@@ -109,16 +109,16 @@ public class ProbeDataSetEndpoint {
             throw new OAuthRequestException("ERROR: User is not registered! Id: " + user.getId() + ", email: " + user.getEmail());
         }
 
-        if(result.getUserId() == null) {
+        if (result.getUserId() == null || result.getUserId().isEmpty()) {
             result.setUserId(user.getId());
             ofy().save().entity(result).now();
         }
 
+        logger.info("Upload request from " + result);
+
         if (result.isAlpha() == false) {
             throw new OAuthRequestException("ERROR: User is not authorized for alpha testing. Id: " + user.getId() + ", email: " + user.getEmail());
         }
-
-        logger.info("Upload received from User id: " + user.getId() + ", email: " + user.getEmail());
 
         // Check if data gets passed at all
         if (probeDataSet == null) {
@@ -529,7 +529,7 @@ public class ProbeDataSetEndpoint {
             return new UserCheckResult(false);
         }
 
-        if(result.getUserId() == null) {
+        if (result.getUserId() == null) {
             result.setUserId(user.getId());
             ofy().save().entity(result).now();
         }
