@@ -220,8 +220,8 @@ public class SignInActivity extends AppCompatActivity {
                 findViewById(R.id.sign_out_button).setEnabled(false);
                 findViewById(R.id.to_control_button).setEnabled(false);
                 MyApplication.madcapLogger.w(TAG, "SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
-                mStatusTextView.setText(getString(R.string.login_cancelled));
-                Toast.makeText(this, getString(R.string.login_cancelled), Toast.LENGTH_SHORT).show();
+                mStatusTextView.setText(getString(R.string.login_failed));
+                Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
             }
         }
     }
