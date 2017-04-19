@@ -126,6 +126,10 @@
             android:screenOrientation="portrait"
             android:theme="@style/MadcapTheme.NoActionBar" />
         <activity android:name=".authentication.NotAuthorizedActivity"></activity>
+
+        <activity android:name=".PermissionsManager"
+            android:screenOrientation="portrait"
+            android:theme="@style/MadcapTheme"/>
     </application>
 
 </manifest>

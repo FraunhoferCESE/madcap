@@ -107,8 +107,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 onLocationChanged(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
             } else {
-                ActivityCompat.requestPermissions((Activity) context, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, GPS_PERMIT);
-                permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your location information.", "location");
             }
         }
 

@@ -239,18 +239,18 @@ public class DataCollectionService extends Service implements UploadStatusListen
         synchronized (listeners) {
             MyApplication.madcapLogger.d(TAG, "numListeners: " + listeners.size());
             for (Listener listener : listeners) {
-                if (listener.isPermittedByUser()) {//check for user permission
+                //if (listener.isPermittedByUser()) {//check for user permission
                     try {
                         listener.startListening();
                         MyApplication.madcapLogger.d(TAG, listener.getClass().getSimpleName() + " started listening");
                     } catch (NoSensorFoundException nsf) {
                         MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
                     }
-                }else{
-                    Log.i(TAG,listener.getClass().getSimpleName()+" access denied by user");
-                    showRunNotification("MADCAP: Permission required","MADCAP requests permission to access data on your mobile to function properly.", listener.getClass().getSimpleName());
-
-                }
+//                }else{
+//                    Log.i(TAG,listener.getClass().getSimpleName()+" access denied by user");
+//                    showRunNotification("MADCAP: Permission required","MADCAP requests permission to access data on your mobile to function properly.", listener.getClass().getSimpleName());
+//
+//                }
             }
         }
 
