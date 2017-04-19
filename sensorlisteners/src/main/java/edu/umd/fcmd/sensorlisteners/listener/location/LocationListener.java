@@ -144,8 +144,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 }
 
             } else {
-                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, GPS_PERMIT);
-                permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your location information.", "location");
             }
         }
 

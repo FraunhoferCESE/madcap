@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/madcaplogo2"
+        android:layout_margin="5dp"
+        android:padding="2dp"
+        android:id="@+id/permissionsLogo"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="MADCAP uses the following permissions"
+        android:layout_margin="5dp"
+        android:layout_marginLeft="0dp"
+        android:padding="2dp"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:layout_toRightOf="@id/permissionsLogo"
+        android:maxLines="2"/>
+    </RelativeLayout>
+
+    <CheckBox
+        android:id="@+id/contactsCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Contacts"
+        android:layout_margin="5dp"
+        android:padding="2dp"/>
+
+    <CheckBox
+        android:id="@+id/smsCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SMS"
+        android:layout_margin="5dp"
+        android:padding="2dp"/>
+
+    <CheckBox
+        android:id="@+id/locationCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Location"
+        android:layout_margin="5dp"
+        android:padding="2dp"/>
+
+    <CheckBox
+        android:id="@+id/storageCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Storage"
+        android:layout_margin="5dp"
+        android:padding="2dp"/>
+
+    <CheckBox
+        android:id="@+id/telephoneCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Telephone"
+        android:layout_margin="5dp"
+        android:padding="2dp"/>
+
+    <CheckBox
+        android:id="@+id/networkCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Network"
+        android:layout_margin="5dp"
+        android:padding="2dp"/>
+</LinearLayout>

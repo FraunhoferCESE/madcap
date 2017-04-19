@@ -15,4 +15,5 @@ public interface PermissionDeniedHandler {
      * to the manifest.
      */
     void onPermissionDenied(String permissionString);
+    void requestPermissionFromNotification(String message, String permissionFor);
 }

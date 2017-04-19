@@ -89,8 +89,4 @@ public class ApplicationsListener implements Listener {
             return true;
         }
     }
-
-    public String getTaskName(){
-        return "access application data";
-    }
 }

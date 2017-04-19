@@ -103,12 +103,14 @@ public class NetworkListener implements Listener {
     @Override
     public void startListening() throws NoSensorFoundException {
         if(!runningStatus){
-            instanciateNetworkReceiver(this, context);
-            instanciateMSMSReceiver(this, context);
-            instanciateMSMSObserver(this, context);
-            instaciateTelephonyListener();
-
-            sendInitalProbes();
+            if(isPermittedByUser()) {
+                instanciateNetworkReceiver(this, context);
+                instanciateMSMSReceiver(this, context);
+                instanciateMSMSObserver(this, context);
+                instaciateTelephonyListener();
+                sendInitalProbes();
+            } else
+                permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your network information.", "network");
         }
 
         runningStatus = true;
