@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -27,8 +26,10 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
+import org.fraunhofer.cese.madcap.authorization.AuthorizationException;
+import org.fraunhofer.cese.madcap.authorization.AuthorizationHandler;
+import org.fraunhofer.cese.madcap.authorization.AuthorizationTaskFactory;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
-import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
 
 import javax.inject.Inject;
 
@@ -45,11 +46,12 @@ public class SignInActivity extends AppCompatActivity {
     @Inject
     AuthenticationProvider authenticationProvider;
 
+    @SuppressWarnings({"WeakerAccess", "unused", "PackageVisibleField"})
+    @Inject
+    AuthorizationTaskFactory authorizationTaskFactory;
+
     private TextView mStatusTextView;
     private ProgressDialog progress;
-
-    @Inject
-    EndpointApiBuilder endpointApiBuilder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,72 +111,7 @@ public class SignInActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         MyApplication.madcapLogger.d(TAG, "pressed sign out");
                         mStatusTextView.setText(R.string.signing_out);
-
-                        authenticationProvider.signout(context, new LogoutResultCallback() {
-                            @Override
-                            public void onServicesUnavailable(int connectionResult) {
-                                String text;
-
-                                switch (connectionResult) {
-                                    case ConnectionResult.SERVICE_MISSING:
-                                        text = context.getString(R.string.play_services_missing);
-                                        break;
-                                    case ConnectionResult.SERVICE_UPDATING:
-                                        text = context.getString(R.string.play_services_updating);
-                                        break;
-                                    case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
-                                        text = context.getString(R.string.play_services_need_updated);
-                                        break;
-                                    case ConnectionResult.SERVICE_DISABLED:
-                                        text = context.getString(R.string.play_services_disabled);
-                                        break;
-                                    case ConnectionResult.SERVICE_INVALID:
-                                        text = context.getString(R.string.play_services_invalid);
-                                        break;
-                                    default:
-                                        text = String.format(context.getString(R.string.play_services_connection_failed), connectionResult);
-                                }
-
-                                MyApplication.madcapLogger.e(TAG, text);
-                                mStatusTextView.setText(text);
-                            }
-
-                            @Override
-                            public void onSignOut(Status result) {
-                                if (result.getStatusCode() == CommonStatusCodes.SUCCESS) {
-                                    MyApplication.madcapLogger.d(TAG, "Logout succeeded. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
-                                    findViewById(R.id.sign_in_button).setEnabled(false);
-                                    findViewById(R.id.sign_out_button).setEnabled(true);
-                                    findViewById(R.id.to_control_button).setEnabled(true);
-                                    mStatusTextView.setText(R.string.post_sign_out);
-                                    Toast.makeText(context, R.string.post_sign_out, Toast.LENGTH_SHORT).show();
-
-                                    //Invalidate EULA acceptance when user logs out
-                                    SharedPreferences.Editor editor = PreferenceManager
-                                            .getDefaultSharedPreferences(context).edit();
-                                    editor.putBoolean(context.getString(R.string.EULA_key), false);
-                                    editor.commit();
-
-                                    stopService(new Intent(context, DataCollectionService.class));
-                                } else {
-
-                                    MyApplication.madcapLogger.e(TAG, "Logout failed. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
-                                    mStatusTextView.setText(String.format(getString(R.string.logout_failed), result.getStatusCode()));
-                                    Toast.makeText(context, String.format(getString(R.string.logout_failed), result.getStatusCode()), Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
-                            @Override
-                            public void onRevokeAccess(Status result) {
-                                MyApplication.madcapLogger.d(TAG, "Revoke access finished. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
-                            }
-
-                            @Override
-                            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                                MyApplication.madcapLogger.w(TAG, "Could not connect to GoogleSignInApi.");
-                                mStatusTextView.setText(R.string.signin_service_connection_failed);
-                            }
-                        });
+                        authenticationProvider.signout(context, createLogoutResultsCallback(context));
                     }
                 }
         );
@@ -210,6 +147,7 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -236,20 +174,45 @@ public class SignInActivity extends AppCompatActivity {
                     progress.setCancelable(false);
                     progress.show();
 
-                    new AsyncTask<Void, Void, Void>() {
-                        protected void onPreExecute() {
-                            // Pre Code
+                    final Context context = this;
+
+                    authorizationTaskFactory.createAuthorizationTask(context, new AuthorizationHandler() {
+                        @Override
+                        public void onAuthorized() {
+                            if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
+                                startService(new Intent(context, DataCollectionService.class).putExtra("callee", TAG));
+                            }
+                            MyApplication.madcapLogger.i(TAG, "User authorized");
+                            progress.dismiss();
+                            startActivity(new Intent(context, MainActivity.class));
+                            finish();
                         }
 
-                        protected Void doInBackground(Void... unused) {
-                            authenticationProvider.checkMadcapRegistrationStatus(SignInActivity.this, getApplicationContext(), endpointApiBuilder);
-                            return null;
+                        @Override
+                        public void onUnauthorized() {
+                            MyApplication.madcapLogger.i(TAG, "User not authorized");
+                            progress.dismiss();
+                            Intent notAuthorizedIntent = new Intent(context, NotAuthorizedActivity.class);
+                            GoogleSignInAccount user = authenticationProvider.getUser();
+                            if(user != null) {
+                                notAuthorizedIntent.putExtra("email", user.getEmail());
+                                notAuthorizedIntent.putExtra("userid", user.getId());
+                            }
+
+                            authenticationProvider.signout(context, createLogoutResultsCallback(context));
+                            finish();
+                            startActivity(getIntent());
+                            startActivity(notAuthorizedIntent);
                         }
 
-                        protected void onPostExecute(Void unused) {
-                            // Post Code
+                        @Override
+                        public void onError(AuthorizationException exception) {
+                            MyApplication.madcapLogger.w(TAG, "User authorization encountered an error:");
+                            progress.dismiss();
+                            Toast.makeText(context, "An error occurred while checking your authorization. Please try signing in again.", Toast.LENGTH_LONG).show();
+                            authenticationProvider.signout(context, createLogoutResultsCallback(context));
                         }
-                    }.execute();
+                    }).execute();
                 }
             } else {
                 findViewById(R.id.sign_in_button).setEnabled(true);
@@ -257,7 +220,7 @@ public class SignInActivity extends AppCompatActivity {
                 findViewById(R.id.to_control_button).setEnabled(false);
                 if (result.getStatus().getStatusCode() == GoogleSignInStatusCodes.SIGN_IN_CANCELLED) {
                     MyApplication.madcapLogger.w(TAG, "SignIn cancelled. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
-                    mStatusTextView.setText("Login cancelled.");
+                    mStatusTextView.setText(getString(R.string.login_cancelled));
                     Toast.makeText(this, "Login cancelled.", Toast.LENGTH_SHORT).show();
                 } else {
                     MyApplication.madcapLogger.w(TAG, "SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
@@ -265,57 +228,6 @@ public class SignInActivity extends AppCompatActivity {
                     Toast.makeText(this, "Login failed, pleas try again", Toast.LENGTH_SHORT).show();
                 }
             }
-        }
-    }
-
-    /**
-     * To be invoked after the authentication provider checked if the user is registered for MADCAP/
-     *
-     * @param valid true, if registered, false otherwise.
-     */
-    protected void onUserValidityChecked(boolean valid) {
-        if (valid) {
-            if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.data_collection_pref), true)) {
-                startService(new Intent(this, DataCollectionService.class).putExtra("callee", TAG));
-            }
-            MyApplication.madcapLogger.d(TAG, "On user validity checked true");
-            progress.dismiss();
-            startActivity(new Intent(this, MainActivity.class));
-            finish();
-        } else {
-            MyApplication.madcapLogger.d(TAG, "On user validity checked false");
-            progress.dismiss();
-            Intent notAuthorizedIntent = new Intent(this, NotAuthorizedActivity.class);
-            GoogleSignInAccount user = authenticationProvider.getUser();
-            if(user != null) {
-                notAuthorizedIntent.putExtra("email", authenticationProvider.getUser().getEmail());
-                notAuthorizedIntent.putExtra("userid", authenticationProvider.getUser().getId());
-            }
-
-            authenticationProvider.signout(getApplicationContext(), new LogoutResultCallback() {
-                @Override
-                public void onServicesUnavailable(int connectionResult) {
-
-                }
-
-                @Override
-                public void onSignOut(Status result) {
-
-                }
-
-                @Override
-                public void onRevokeAccess(Status result) {
-
-                }
-
-                @Override
-                public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-                }
-            });
-            finish();
-            startActivity(getIntent());
-            startActivity(notAuthorizedIntent);
         }
     }
 
@@ -329,5 +241,72 @@ public class SignInActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    private LogoutResultCallback createLogoutResultsCallback(final Context context) {
+        return new LogoutResultCallback() {
+            @Override
+            public void onServicesUnavailable(int connectionResult) {
+                String text;
+
+                switch (connectionResult) {
+                    case ConnectionResult.SERVICE_MISSING:
+                        text = context.getString(R.string.play_services_missing);
+                        break;
+                    case ConnectionResult.SERVICE_UPDATING:
+                        text = context.getString(R.string.play_services_updating);
+                        break;
+                    case ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED:
+                        text = context.getString(R.string.play_services_need_updated);
+                        break;
+                    case ConnectionResult.SERVICE_DISABLED:
+                        text = context.getString(R.string.play_services_disabled);
+                        break;
+                    case ConnectionResult.SERVICE_INVALID:
+                        text = context.getString(R.string.play_services_invalid);
+                        break;
+                    default:
+                        text = String.format(context.getString(R.string.play_services_connection_failed), connectionResult);
+                }
+
+                MyApplication.madcapLogger.e(TAG, text);
+                mStatusTextView.setText(text);
+            }
+
+            @Override
+            public void onSignOut(Status result) {
+                if (result.getStatusCode() == CommonStatusCodes.SUCCESS) {
+                    MyApplication.madcapLogger.d(TAG, "Logout succeeded. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
+                    findViewById(R.id.sign_in_button).setEnabled(false);
+                    findViewById(R.id.sign_out_button).setEnabled(true);
+                    findViewById(R.id.to_control_button).setEnabled(true);
+                    mStatusTextView.setText(R.string.post_sign_out);
+                    Toast.makeText(context, R.string.post_sign_out, Toast.LENGTH_SHORT).show();
+
+                    //Invalidate EULA acceptance when user logs out
+                    SharedPreferences.Editor editor = PreferenceManager
+                            .getDefaultSharedPreferences(context).edit();
+                    editor.putBoolean(context.getString(R.string.EULA_key), false);
+                    editor.apply();
+
+                    stopService(new Intent(context, DataCollectionService.class));
+                } else {
+
+                    MyApplication.madcapLogger.e(TAG, "Logout failed. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
+                    mStatusTextView.setText(String.format(getString(R.string.logout_failed), result.getStatusCode()));
+                    Toast.makeText(context, String.format(getString(R.string.logout_failed), result.getStatusCode()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onRevokeAccess(Status result) {
+                MyApplication.madcapLogger.d(TAG, "Revoke access finished. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
+            }
+
+            @Override
+            public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+                MyApplication.madcapLogger.w(TAG, "Could not connect to GoogleSignInApi.");
+                mStatusTextView.setText(R.string.signin_service_connection_failed);
+            }
+        };
+    }
 
 }
