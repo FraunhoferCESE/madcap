@@ -104,6 +104,7 @@
                 android:background="@android:color/background_light"
                 android:layout_margin="2dp" />
 
+            <!--
             <Button
                 android:id="@+id/to_control_button"
                 android:layout_width="0dp"
@@ -112,6 +113,7 @@
                 android:text="@string/proceedToMain"
                 android:background="@android:color/holo_orange_light"
                 android:layout_margin="2dp" />
+                -->
         </LinearLayout>
 
     </RelativeLayout>
