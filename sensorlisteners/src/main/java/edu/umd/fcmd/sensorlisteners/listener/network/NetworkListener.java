@@ -285,7 +285,6 @@ public class NetworkListener implements Listener {
                 result = "UNKNOWN";
                 break;
             default:
-                Log.d(TAG, "Something went wrong");
                 result = "-";
                 break;
         }
@@ -318,7 +317,6 @@ public class NetworkListener implements Listener {
                 result = "UNKNOWN";
                 break;
             default:
-                Log.d(TAG, "Something went wrong");
                 result = "-";
                 break;
         }

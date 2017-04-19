@@ -186,7 +186,7 @@ class MyApplicationModule {
         config.setDbWriteInterval(2000);
         config.setUploadInterval(900000);
 
-        config.setUploadWifiOnly(false);
+        config.setUploadWifiOnly(true);
 
         return config;
     }
