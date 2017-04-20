@@ -132,7 +132,6 @@ public class SignInActivity extends AppCompatActivity {
                                             MyApplication.madcapLogger.d(TAG, "Logout succeeded. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
                                             findViewById(R.id.sign_in_button).setEnabled(false);
                                             findViewById(R.id.sign_out_button).setEnabled(true);
-                                            findViewById(R.id.to_control_button).setEnabled(true);
                                             mStatusTextView.setText(R.string.post_sign_out);
                                             Toast.makeText(activity, R.string.post_sign_out, Toast.LENGTH_SHORT).show();
 
@@ -165,18 +164,6 @@ public class SignInActivity extends AppCompatActivity {
                     }
                 }
         );
-
-//        findViewById(R.id.to_control_button).setOnClickListener(new View.OnClickListener() {
-//                                                                    @Override
-//                                                                    public void onClick(View v) {
-//                                                                        MyApplication.madcapLogger.d(TAG, "pressed to proceed to Control App");
-//                                                                        startActivity(new Intent(context, MainActivity.class));
-//                                                                    }
-//                                                                }
-//
-//        );
-
-
     }
 
     private void startInteractiveSignin() {
@@ -210,7 +197,6 @@ public class SignInActivity extends AppCompatActivity {
                 authenticationProvider.setUser(acct);
                 findViewById(R.id.sign_in_button).setEnabled(false);
                 findViewById(R.id.sign_out_button).setEnabled(true);
-                findViewById(R.id.to_control_button).setEnabled(true);
                 mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
 
                 startActivity(new Intent(this, AuthorizationActivity.class));
@@ -218,7 +204,6 @@ public class SignInActivity extends AppCompatActivity {
             } else {
                 findViewById(R.id.sign_in_button).setEnabled(true);
                 findViewById(R.id.sign_out_button).setEnabled(false);
-                findViewById(R.id.to_control_button).setEnabled(false);
                 MyApplication.madcapLogger.w(TAG, "SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
                 mStatusTextView.setText(getString(R.string.login_failed));
                 Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();

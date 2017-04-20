@@ -1,6 +1,7 @@
 package org.fraunhofer.cese.madcap;
 
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
+import org.fraunhofer.cese.madcap.authorization.AuthorizationActivity;
 import org.fraunhofer.cese.madcap.boot.OnBootService;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploadTask;
@@ -29,5 +30,5 @@ public interface MyComponent {
     void inject(WelcomeActivity welcomeActivity);
     void inject(OnBootService onBootService);
     void inject(ManualProbeUploadTask manualProbeUploadTask);
-    void inject(NotAuthorizedActivity notAuthorizedActivity);
+    void inject(AuthorizationActivity authorizationActivity);
 }

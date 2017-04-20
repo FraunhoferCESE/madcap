@@ -109,10 +109,15 @@
     <string name="title_activity_sign_up_check">SignUpCheckActivity</string>
 
 
+    <!-- Authorization activity -->
     <string name="auth_check_text">Please wait. MADCAP is checking if you are authorized to participate.</string>
-    <string name="not_authorized_text">Only participants in the NSF Pocket Security study are authorized to use MADCAP. Please visit the Pocket Security website for more information on this research: https://www.pocket-security.org</string>
+    <string name="not_authorized_text">The signed-in user is not authorized to use MADCAP.\n\nOnly participants in the NSF Pocket Security study are authorized to use MADCAP.\n\nPlease go back and sign in with the correct account. If you are interested in participating in this study, visit https://www.pocket-security.org/participants-information/</string>
     <string name="not_authorized_user_email">User email: %s</string>
     <string name="not_authorized_user_id">User id: %s</string>
+    <string name="authorization_error">An error occurred while checking your authorization to use MADCAP. Please go back and try signing in again.</string>
+    <string name="not_authorized_short">Not authorized to use MADCAP</string>
+    <string name="authorization_authorized">Authorization successful.</string>
+
     <!-- EULA -->
     <string name="eula">
         This End User License Agreement (\"EULA\") applies to the MADCAP Smartphone Software Application (the \"App\") developed by Fraunhofer USA, Inc. (\"Licensor\") that you have downloaded from the Google Play Store.

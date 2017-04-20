@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/activity_not_authorized"
+    android:id="@+id/activity_authorization"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="@dimen/activity_vertical_margin"
@@ -11,12 +11,12 @@
     tools:context="org.fraunhofer.cese.madcap.authorization.AuthorizationActivity">
 
     <TextView
-        android:text="@string/not_authorized_text"
+        android:text="@string/auth_check_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:id="@+id/not_authorized_view" />
+        android:id="@+id/authorization_message" />
 
     <TextView
         android:id="@+id/madcap_link_web"
@@ -25,11 +25,10 @@
         android:layout_marginTop="16dp"
         android:autoLink="web"
         android:text="@string/contactLink"
-        android:layout_below="@+id/not_authorized_view"
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:id="@+id/not_authorized_email"
+        android:id="@+id/authorization_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -39,11 +38,11 @@
 
 
     <TextView
-        android:id="@+id/not_authorized_userid"
+        android:id="@+id/authorization_userid"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:autoLink="web"
         android:text=""
-        android:layout_below="@+id/not_authorized_email" />
+        android:layout_below="@+id/authorization_email" />
 
 </RelativeLayout>

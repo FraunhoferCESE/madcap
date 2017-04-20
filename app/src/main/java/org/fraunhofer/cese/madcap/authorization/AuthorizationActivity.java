@@ -14,111 +14,111 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
+import javax.inject.Inject;
+
+/**
+ * Activity that handles authorization of the currently signed in user to the backend and displays results accordingly.
+ */
 public class AuthorizationActivity extends Activity {
 
-    public AuthorizationActivity() {
-        super();
-    }
+    private static final String TAG = "AuthorizationActivity";
+
+    @SuppressWarnings({"CanBeFinal", "PackageVisibleField"})
+    @Inject
+    AuthorizationTaskFactory authorizationTaskFactory;
+
+    @SuppressWarnings({"CanBeFinal", "PackageVisibleField"})
+    @Inject
+    AuthenticationProvider authenticationProvider;
+
+    private ProgressDialog progress;
+
+    private TextView mAuthorizationMessage;
+    private TextView mAuthorizationEmail;
+    private TextView mAuthorizationUserid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //noinspection CastToConcreteClass
+        ((MyApplication) getApplication()).getComponent().inject(this);
+
         setContentView(R.layout.activity_authorization);
 
-//        ((MyApplication) getApplication()).getComponent().inject(this);
-//        GoogleSignInAccount acct = authenticationProvider.getUser();
-//
-//        setContentView(R.layout.activity_not_authorized);
-//        TextView emailText = (TextView) findViewById(R.id.not_authorized_email);
-//        TextView userText = (TextView) findViewById(R.id.not_authorized_userid);
-//
-//        Bundle b = getIntent().getExtras();
-//        if (b != null) {
-//            emailText.setText(getString(R.string.not_authorized_user_email, b.getString("email")));
-//            userText.setText(getString(R.string.not_authorized_user_id, b.getString("userid")));
-//        } else {
-//            emailText.setText("Unknown");
-//            userText.setText("Unknown");
-//        }
-//
-//
-//
-// progress = new ProgressDialog(this);
-//        progress.setMessage("MADCAP is checking your authorization to use the app.");
-//        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-//        progress.setIndeterminate(true);
-//        progress.setProgress(0);
-//        progress.setCancelable(false);
-//        progress.show();
-//
-//        final Context context = this;
-//
-//        authorizationTaskFactory.createAuthorizationTask(context, new AuthorizationHandler() {
-//            @Override
-//            public void onAuthorized() {
-//                if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
-//                    startService(new Intent(context, DataCollectionService.class).putExtra("callee", TAG));
-//                }
-//                MyApplication.madcapLogger.i(TAG, "User authorized");
-//                progress.dismiss();
-//                startActivity(new Intent(context, MainActivity.class));
-//                finish();
-//            }
-//
-//            @Override
-//            public void onUnauthorized() {
-//                MyApplication.madcapLogger.i(TAG, "User not authorized");
-//                progress.dismiss();
-//                Intent notAuthorizedIntent = new Intent(context, NotAuthorizedActivity.class);
-//                GoogleSignInAccount user = authenticationProvider.getUser();
-//                if(user != null) {
-//                    notAuthorizedIntent.putExtra("email", user.getEmail());
-//                    notAuthorizedIntent.putExtra("userid", user.getId());
-//                }
-//
-//                authenticationProvider.signout(context, createLogoutResultsCallback(context));
-//                finish();
-//                startActivity(getIntent());
-//                startActivity(notAuthorizedIntent);
-//            }
-//
-//            @Override
-//            public void onError(AuthorizationException exception) {
-//                MyApplication.madcapLogger.w(TAG, "User authorization encountered an error:");
-//                progress.dismiss();
-//                Toast.makeText(context, "An error occurred while checking your authorization. Please try signing in again.", Toast.LENGTH_LONG).show();
-//                authenticationProvider.signout(context, createLogoutResultsCallback(context));
-//            }
-//        }).execute();
-//    }
+        mAuthorizationMessage = (TextView) findViewById(R.id.authorization_message);
+        mAuthorizationEmail = (TextView) findViewById(R.id.authorization_email);
+        mAuthorizationUserid = (TextView) findViewById(R.id.authorization_userid);
 
+        progress = new ProgressDialog(this);
+        progress.setMessage(getString(R.string.auth_check_text));
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.setIndeterminate(true);
+        progress.setProgress(0);
+        progress.setCancelable(false);
+        progress.show();
 
+        final Context context = this;
+
+        authorizationTaskFactory.createAuthorizationTask(context, new AuthorizationHandler() {
+            @Override
+            public void onAuthorized() {
+                MyApplication.madcapLogger.i(TAG, "User authorized");
+                if (progress.isShowing()) {
+                    progress.dismiss();
+                }
+                mAuthorizationMessage.setText(getString(R.string.authorization_authorized));
+                showUserInfo();
+                Toast.makeText(context, getString(R.string.authorization_authorized), Toast.LENGTH_SHORT).show();
+
+                if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
+                    startService(new Intent(context, DataCollectionService.class).putExtra("callee", TAG));
+                }
+                startActivity(new Intent(context, MainActivity.class));
+                finish();
+            }
+
+            @Override
+            public void onUnauthorized() {
+                MyApplication.madcapLogger.i(TAG, "User not authorized");
+                if (progress.isShowing()) {
+                    progress.dismiss();
+                }
+                mAuthorizationMessage.setText(getString(R.string.not_authorized_text));
+                showUserInfo();
+                Toast.makeText(context, getString(R.string.not_authorized_short), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onError(AuthorizationException exception) {
+                MyApplication.madcapLogger.w(TAG, "User authorization encountered an error: " + exception);
+                if (progress.isShowing()) {
+                    progress.dismiss();
+                }
+                mAuthorizationMessage.setText(getString(R.string.authorization_error));
+                showUserInfo();
+                Toast.makeText(context, getString(R.string.authorization_error), Toast.LENGTH_LONG).show();
+            }
+
+            private void showUserInfo() {
+                GoogleSignInAccount user = authenticationProvider.getUser();
+                if (user != null) {
+                    mAuthorizationEmail.setText(getString(R.string.not_authorized_user_email, user.getEmail()));
+                    mAuthorizationUserid.setText(getString(R.string.not_authorized_user_email, user.getId()));
+                }
+            }
+        }).execute();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
 
     @Override
     protected void onStop() {
         super.onStop();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
+        if (progress.isShowing()) {
+            progress.dismiss();
+        }
     }
 }
