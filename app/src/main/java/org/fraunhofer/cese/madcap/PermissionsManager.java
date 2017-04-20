@@ -183,7 +183,7 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch(requestCode){
             case REQUEST_CODE:
                 contactsCB.setChecked((grantResults[0] == PackageManager.PERMISSION_GRANTED) ? true : false); break;
@@ -197,12 +197,7 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
                 telephoneCB.setChecked((grantResults[0] == PackageManager.PERMISSION_GRANTED) ? true : false); break;
 //            case REQUEST_CODE-5:
 //                networkCB.setChecked((grantResults[0] == PackageManager.PERMISSION_GRANTED) ? true : false); break;
-
         }
-//        if(requestCode == REQUEST_CODE) {
-//            ACCESS_PERMIT = (grantResults[0] == PackageManager.PERMISSION_GRANTED) ? true : false;
-//            dialog.cancel();
-//        }
     }
 
     @Override
