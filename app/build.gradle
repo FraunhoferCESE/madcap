@@ -26,13 +26,13 @@ android {
         throw new GradleException("Could not read version.properties!")
     }
 
-    /*Wrapping inside a method avoids auto incrementing on every gradle task run. Now it runs only when we build apk*/
+    /* Wrapping inside a method avoids auto incrementing on every gradle task run. Now it runs only when we build apk */
     ext.autoIncrementBuildNumber = {
-
         if (versionPropsFile.canRead()) {
             def Properties versionProps = new Properties()
             versionProps.load(new FileInputStream(versionPropsFile))
             versionBuild = versionProps['VERSION_BUILD'].toInteger() + 1
+            println versionBuild
             versionProps['VERSION_BUILD'] = versionBuild.toString()
             versionProps.store(versionPropsFile.newWriter(), null)
         } else {
@@ -58,6 +58,7 @@ android {
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
             signingConfig signingConfigs.release
+            //autoIncrementBuildNumber()
         }
         debug {
             debuggable true

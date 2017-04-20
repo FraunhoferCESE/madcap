@@ -41,4 +41,14 @@ public class MadcapUser {
     public boolean isBeta() {
         return isBeta;
     }
+
+    @Override
+    public String toString() {
+        return "MadcapUser{" +
+                "email='" + email + '\'' +
+                ", userId='" + userId + '\'' +
+                ", isAlpha=" + isAlpha +
+                ", isBeta=" + isBeta +
+                '}';
+    }
 }
