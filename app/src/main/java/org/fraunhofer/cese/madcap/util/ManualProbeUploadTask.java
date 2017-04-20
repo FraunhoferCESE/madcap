@@ -108,14 +108,10 @@ public class ManualProbeUploadTask extends AsyncTask<Probe, Void, Void> {
             if (remoteResult.getAlreadyExists() != null) {
                 MyApplication.madcapLogger.i(TAG, "Manual upload failed. Probe already exits: " + probeEntry);
             }
-        } catch (IOException e) {
-            MyApplication.madcapLogger.w(TAG, e.toString());
+        } catch (IOException ioe) {
+            MyApplication.madcapLogger.w(TAG, ioe.toString());
             MyApplication.madcapLogger.w(TAG, "Manual upload failed. Saving to cache: " + probeEntry);
             cacheFactory.save(probe);
-        } catch (IllegalArgumentException iae){
-            Log.e(TAG,"Illegal Argument Exception");
-            Log.d(TAG,iae.getMessage());
-            iae.printStackTrace();
         }
 
         return null;

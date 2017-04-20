@@ -8,7 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.PermissionsManager;
@@ -33,6 +35,7 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
 
     private static final int RUN_CODE = 1;
     private static final int NOTIFICATION_ID = 918273;
+    private static final int REQUEST_CODE = 996 ;
 
     private NotificationManager mNotificationManager;
 
@@ -64,6 +67,9 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
                     }
                 }
                 break;
+            case Manifest.permission.READ_CONTACTS:
+
+                break;
             case Manifest.permission.ACCESS_WIFI_STATE:
                 MyApplication.madcapLogger.e(TAG, "WiFi access permission denied");
                 break;
@@ -83,7 +89,6 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-        mBuilder.setContentTitle("MADCAP requests a permission");
         mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setPriority(Notification.PRIORITY_HIGH);
@@ -92,18 +97,27 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
             Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent permissionsIntent = PendingIntent.getActivity(context, NOTIFICATION_ID+1, intent, 0);
+
+            mBuilder.setContentTitle("MADCAP requests a permission");
             mBuilder.addAction(R.drawable.ic_stat_madcaplogo,"Settings",permissionsIntent);
+            mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            // mId allows you to update the notification later on.
+            Notification note = mBuilder.build();
+            note.flags |= Notification.FLAG_AUTO_CANCEL;
+            mNotificationManager.notify(RUN_CODE, note);
         }else{
             Intent intent = new Intent(context, PermissionsManager.class);
             PendingIntent permissionsIntent = PendingIntent.getActivity(context, NOTIFICATION_ID, intent, 0);
+
+            mBuilder.setContentTitle("MADCAP requests permissions");
             mBuilder.addAction(R.drawable.ic_stat_madcaplogo,"Settings",permissionsIntent);
+            mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            // mId allows you to update the notification later on.
+            Notification note = mBuilder.build();
+            note.flags |= Notification.FLAG_AUTO_CANCEL;
+            mNotificationManager.notify(RUN_CODE+1, note);
         }
 
 
-        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
-        Notification note = mBuilder.build();
-        note.flags |= Notification.FLAG_AUTO_CANCEL;
-        mNotificationManager.notify(RUN_CODE, note);
     }
 }

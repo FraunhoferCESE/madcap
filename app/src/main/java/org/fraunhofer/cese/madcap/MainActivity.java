@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     private LogoutFragment logoutFragment;
     private QuitFragment quitFragment;
     private AboutFragment aboutFragment;
+    private PermissionsManager permissionsManager;
 
 
     @Override
@@ -97,6 +98,9 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        if(id == R.id.nav_permissions){
+            startActivity(new Intent(MainActivity.this,PermissionsManager.class));
+        }
         if (id == R.id.nav_home) {
             FragmentTransaction ft = mainFragmentManager.beginTransaction();
             ft.replace(R.id.fragmentHolder, startFragment);

@@ -1,10 +1,13 @@
 package org.fraunhofer.cese.madcap.authentication;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -123,29 +126,29 @@ public class AuthenticationProvider {
         MyApplication.madcapLogger.d(TAG, "silentSignIn initiated");
 
         int connectionResult = googleApiAvailability.isGooglePlayServicesAvailable(context);
-        if (connectionResult != ConnectionResult.SUCCESS) {
-            callback.onServicesUnavailable(connectionResult);
-            return;
-        }
+            if (connectionResult != ConnectionResult.SUCCESS) {
+                callback.onServicesUnavailable(connectionResult);
+                return;
+            }
 
-        if (mGoogleApiClient.isConnected()) {
-            doSignin(callback);
-        } else {
-            mGoogleApiClient.registerConnectionFailedListener(callback);
-            mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                @Override
-                public void onConnected(@Nullable Bundle bundle) {
-                    mGoogleApiClient.unregisterConnectionCallbacks(this);
-                    doSignin(callback);
-                }
+            if (mGoogleApiClient.isConnected()) {
+                doSignin(callback);
+            } else {
+                mGoogleApiClient.registerConnectionFailedListener(callback);
+                mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
+                    @Override
+                    public void onConnected(@Nullable Bundle bundle) {
+                        mGoogleApiClient.unregisterConnectionCallbacks(this);
+                        doSignin(callback);
+                    }
 
-                @Override
-                public void onConnectionSuspended(int i) {
-                    MyApplication.madcapLogger.w(TAG, "onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
-                }
-            });
-            mGoogleApiClient.connect();
-        }
+                    @Override
+                    public void onConnectionSuspended(int i) {
+                        MyApplication.madcapLogger.w(TAG, "onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
+                    }
+                });
+                mGoogleApiClient.connect();
+            }
     }
 
     /**
@@ -273,4 +276,5 @@ public class AuthenticationProvider {
             callback.onSignOut(r);
         }
     }
+
 }

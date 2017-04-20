@@ -29,13 +29,14 @@ import com.google.android.gms.common.ConnectionResult;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.authentication.SilentLoginResultCallback;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
 public class WelcomeActivity extends AppCompatActivity {
     private static final String TAG = "WelcomeActivity";
-    private static final int PERMISSION_RESPONSE = 999;
+    private static final int PERMISSION_RQST_CODE = 995;
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
@@ -73,10 +74,24 @@ public class WelcomeActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onStart() {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == PERMISSION_RQST_CODE){
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED) login();
+            else finish();
+        }
+    }
+    @Override
+    protected void onStart() {
         super.onStart();
         MyApplication.madcapLogger.d(TAG, "onStart");
 
+        if (ActivityCompat.checkSelfPermission(WelcomeActivity.this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS}, PERMISSION_RQST_CODE);
+        } else login();
+    }
+
+    protected void login(){
         GoogleSignInAccount user = authenticationProvider.getUser();
         if (user != null) {
             MyApplication.madcapLogger.d(TAG, "User already signed in. Starting MainActivity.");
