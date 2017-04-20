@@ -58,10 +58,12 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     private TextView uploadMessageView;
     private Button uploadButton;
 
+
     /**
      * Defines callbacks for service binding, passed to bindService()
      */
     private ServiceConnection mConnection;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,6 +172,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     }
 
     @Override
+
     protected void onStart() {
         super.onStart();
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
@@ -179,6 +182,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
             if (!mBound) {
                 bindConnection(intent);
+
             }
         }
         updateUiElements(isCollectingData());
