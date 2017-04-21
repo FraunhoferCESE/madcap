@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.madcap.issuehandling;
+package edu.umd.fcmd.sensorlisteners.listener.location;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,6 +8,8 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.greenrobot.eventbus.EventBus;
+
 import javax.inject.Inject;
 
 
@@ -16,27 +18,28 @@ import javax.inject.Inject;
  *
  * A issue manager for some callbacks from the GoogleApiClient
  */
-public class GoogleApiClientConnectionIssueManagerLocation implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LocationConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private final String TAG = getClass().getSimpleName();
 
     /**
      * No argument constructor used for dependency injection
      */
     @Inject
-    public GoogleApiClientConnectionIssueManagerLocation() { }
+    public LocationConnectionCallbacks() { }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.e(TAG, "Conntected");
+        Log.d(TAG, "Connected");
+        EventBus.getDefault().post(new FusedLocationConnectedEvent());
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.e(TAG, "Conntection suspended");
+        Log.d(TAG, "Connection suspended");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.e(TAG, "Conntection failed");
+        Log.d(TAG, "Conntection failed");
     }
 }

@@ -181,7 +181,7 @@ public class LocationListenerTest {
                 mockPermissionDeniedHandler,
                 mockSensorNoAnswerReceivedHandler);
 
-        Assert.assertSame(mockGoogleApiClient, cut.getmGoogleApiClient());
+        Assert.assertSame(mockGoogleApiClient, cut.getApiClient());
     }
 
 }

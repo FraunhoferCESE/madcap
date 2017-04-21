@@ -4,7 +4,6 @@ import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.support.annotation.Nullable;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -13,10 +12,12 @@ import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.LocationServices;
 
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.CacheFactory;
-import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
+import edu.umd.fcmd.sensorlisteners.listener.location.LocationConnectionCallbacks;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 import org.fraunhofer.cese.madcap.util.MadcapBuildVersionProvider;
@@ -31,7 +32,6 @@ import dagger.Module;
 import dagger.Provides;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
-import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.BuildVersionProvider;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
@@ -69,8 +69,21 @@ class MyApplicationModule {
     }
 
     @Provides
+    @Named("FusedLocationProviderApi")
+    GoogleApiClient provideFusedLocationProviderApiClient() {
+        return new GoogleApiClient.Builder(application)
+                .addApi(LocationServices.API)
+                .build();
+    }
+
+    @Provides
+    FusedLocationProviderApi provideFusedLocationProviderApi() {
+        return LocationServices.FusedLocationApi;
+    }
+
+    @Provides
     @Named("AwarenessApi")
-    GoogleApiClient provideGoogleApiClient() {
+    GoogleApiClient provideAwarenessApiClient() {
         return new GoogleApiClient.Builder(application)
                 .addApi(Awareness.API)
                 .build();
@@ -108,16 +121,6 @@ class MyApplicationModule {
      * @return a factory.
      */
     @Provides
-    TimedLocationTaskFactory provideTimedLocationTaskFactory() {
-        return new TimedLocationTaskFactory();
-    }
-
-    /**
-     * Needed by the DataCollectionService.
-     *
-     * @return a factory.
-     */
-    @Provides
     TimedApplicationTaskFactory provideTimedApplicationTask() {
         return new TimedApplicationTaskFactory();
     }
@@ -144,12 +147,12 @@ class MyApplicationModule {
 
     @Provides
     GoogleApiClient.ConnectionCallbacks providesGoogleApiClientConnectionCallbacks() {
-        return new GoogleApiClientConnectionIssueManagerLocation();
+        return new LocationConnectionCallbacks();
     }
 
     @Provides
     GoogleApiClient.OnConnectionFailedListener providesGoogleApiClientConnectionFailedListener() {
-        return new GoogleApiClientConnectionIssueManagerLocation();
+        return new LocationConnectionCallbacks();
     }
 
     @Provides
