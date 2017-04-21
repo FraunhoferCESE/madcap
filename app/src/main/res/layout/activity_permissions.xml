@@ -33,6 +33,13 @@
         android:text="Contacts"
         android:layout_margin="5dp"
         android:padding="2dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="10dp"
+        android:padding="2dp"
+        android:text="Gets the username and accounts on device."/>
 
     <CheckBox
         android:id="@+id/smsCheckBox"
@@ -41,6 +48,13 @@
         android:text="SMS"
         android:layout_margin="5dp"
         android:padding="2dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="10dp"
+        android:padding="2dp"
+        android:text="Gets notified of incoming messages."/>
 
     <CheckBox
         android:id="@+id/locationCheckBox"
@@ -49,6 +63,13 @@
         android:text="Location"
         android:layout_margin="5dp"
         android:padding="2dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="10dp"
+        android:padding="2dp"
+        android:text="Gets location updates few times per hour."/>
 
     <CheckBox
         android:id="@+id/storageCheckBox"
@@ -57,6 +78,13 @@
         android:text="Storage"
         android:layout_margin="5dp"
         android:padding="2dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="10dp"
+        android:padding="2dp"
+        android:text="Gets storage information."/>
 
     <CheckBox
         android:id="@+id/telephoneCheckBox"
@@ -65,5 +93,21 @@
         android:text="Telephone"
         android:layout_margin="5dp"
         android:padding="2dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="10dp"
+        android:padding="2dp"
+        android:text="Gets phone state information."/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Read more about our privacy policy and data gathering at www.pocket-security.org/privacy-policy/"
+        android:layout_margin="30dp"
+        android:padding="2dp"
+        android:autoLink="web"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"/>
 
 </LinearLayout>
