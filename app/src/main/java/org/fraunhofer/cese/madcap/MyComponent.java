@@ -4,7 +4,7 @@ import org.fraunhofer.cese.madcap.authentication.NotAuthorizedActivity;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.boot.OnBootService;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
-import org.fraunhofer.cese.madcap.util.ManualProbeUploadTask;
+import org.fraunhofer.cese.madcap.util.ManualProbeUploadTaskFactory;
 
 
 import javax.inject.Singleton;
@@ -17,6 +17,7 @@ import dagger.Component;
  * Created by llayman on 9/23/2016.
  */
 
+@SuppressWarnings("InterfaceNeverImplemented")
 @Component(modules = MyApplicationModule.class)
 @Singleton
 public interface MyComponent {
@@ -29,6 +30,6 @@ public interface MyComponent {
     void inject(SignInActivity signInActivity);
     void inject(WelcomeActivity welcomeActivity);
     void inject(OnBootService onBootService);
-    void inject(ManualProbeUploadTask manualProbeUploadTask);
+    void inject(ManualProbeUploadTaskFactory manualProbeUploadTaskFactory);
     void inject(NotAuthorizedActivity notAuthorizedActivity);
 }

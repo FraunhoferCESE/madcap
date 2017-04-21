@@ -4,6 +4,7 @@ import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.os.Handler;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -17,11 +18,9 @@ import com.google.android.gms.location.LocationServices;
 
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.CacheFactory;
-import edu.umd.fcmd.sensorlisteners.listener.location.LocationConnectionCallbacks;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 import org.fraunhofer.cese.madcap.util.MadcapBuildVersionProvider;
-import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
 
 import java.util.Calendar;
 
@@ -32,6 +31,7 @@ import dagger.Module;
 import dagger.Provides;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
+import edu.umd.fcmd.sensorlisteners.listener.location.LocationConnectionCallbacks;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.BuildVersionProvider;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
@@ -115,6 +115,9 @@ class MyApplicationModule {
         return Awareness.SnapshotApi;
     }
 
+    @Provides
+    Handler provideHeartBeatRunnerHandler() { return new Handler(); }
+
     /**
      * Needed by the DataCollectionService.
      *
@@ -153,11 +156,6 @@ class MyApplicationModule {
     @Provides
     GoogleApiClient.OnConnectionFailedListener providesGoogleApiClientConnectionFailedListener() {
         return new LocationConnectionCallbacks();
-    }
-
-    @Provides
-    ManualProbeUploader provideManualProbeUploader() {
-        return new ManualProbeUploader();
     }
 
     /**
