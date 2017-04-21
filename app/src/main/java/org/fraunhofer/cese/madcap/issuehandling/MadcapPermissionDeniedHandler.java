@@ -10,11 +10,13 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.PermissionsManager;
 import org.fraunhofer.cese.madcap.R;
+import org.fraunhofer.cese.madcap.WelcomeActivity;
 
 import javax.inject.Inject;
 
@@ -90,7 +92,7 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-        mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setPriority(Notification.PRIORITY_HIGH);
 
@@ -99,12 +101,28 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent permissionsIntent = PendingIntent.getActivity(context, NOTIFICATION_ID+1, intent, 0);
 
+            Intent resultIntent = new Intent(context, WelcomeActivity.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+
+            // Adds the back stack for the Intent (but not the Intent itself)
+            stackBuilder.addParentStack(WelcomeActivity.class);
+            // Adds the Intent that starts the Activity to the top of the stack
+            stackBuilder.addNextIntent(resultIntent);
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(
+                            0,
+                            PendingIntent.FLAG_UPDATE_CURRENT
+                    );
+            mBuilder.setContentIntent(resultPendingIntent);
+
+            mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
+
             mBuilder.setContentTitle("MADCAP requests a permission");
             mBuilder.addAction(R.drawable.ic_stat_madcaplogo,"Settings",permissionsIntent);
             mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             // mId allows you to update the notification later on.
+            mBuilder.setAutoCancel(true);
             Notification note = mBuilder.build();
-            note.flags |= Notification.FLAG_AUTO_CANCEL;
             mNotificationManager.notify(RUN_CODE, note);
         }else{
             Intent intent = new Intent(context, PermissionsManager.class);
@@ -114,8 +132,8 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
             mBuilder.addAction(R.drawable.ic_stat_madcaplogo,"Settings",permissionsIntent);
             mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             // mId allows you to update the notification later on.
+            mBuilder.setAutoCancel(true);
             Notification note = mBuilder.build();
-            note.flags |= Notification.FLAG_AUTO_CANCEL;
             mNotificationManager.notify(RUN_CODE+1, note);
         }
 
