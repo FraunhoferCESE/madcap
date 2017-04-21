@@ -2,20 +2,20 @@ package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import org.fraunhofer.cese.madcap.MyApplication;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 
 import java.sql.SQLException;
 
 /**
  * A helper for accessing the ORMLite database and DAO objects.
- *
+ * <p>
  * See <a href="http://ormlite.com/javadoc/ormlite-core/doc-files/ormlite_4.html#Android-Basics">ORMLite Documentation: Using With Android</a>
  */
 public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
@@ -27,7 +27,7 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
     // any time you make changes to your database objects, you may have to increase the database version
     private static final int DATABASE_VERSION = 1;
 
-    private RuntimeExceptionDao<CacheEntry,String> dao;
+    private RuntimeExceptionDao<CacheEntry, String> dao;
 
     @SuppressWarnings("WeakerAccess")
     public DatabaseOpenHelper(Context context) {
@@ -57,17 +57,7 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase database, @SuppressWarnings("ParameterHidesMemberVariable") ConnectionSource connectionSource, int oldVersion, int newVersion) {
-        try {
-            MyApplication.madcapLogger.i(TAG, "{onUpgrade}");
-            TableUtils.dropTable(connectionSource, CacheEntry.class, true);
-            // after we drop the old databases, we create the new ones
-            onCreate(database, connectionSource);
-        } catch (SQLException e) {
-            MyApplication.madcapLogger.e(TAG, "Can't drop databases", e);
-            //noinspection ProhibitedExceptionThrown
-            throw new RuntimeException(e);
-        }
-
+        MyApplication.madcapLogger.d(TAG, "{onUpgrade}. oldVersion: " + oldVersion + ", newVersion: " + newVersion);
     }
 
     /**
@@ -77,8 +67,7 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
      * @return the dao used to access the SQLLite database
      */
     RuntimeExceptionDao<CacheEntry, String> getDao() {
-        if(dao == null) {
-//            dao = getDao(CacheEntry.class);
+        if (dao == null) {
             dao = getRuntimeExceptionDao(CacheEntry.class);
         }
         return dao;
