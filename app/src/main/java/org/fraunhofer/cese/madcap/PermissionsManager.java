@@ -36,7 +36,7 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
         contactsCB.setOnCheckedChangeListener(this);
         contactsCB.setChecked(
                 (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED) ? true :
-                        getPermissionWithRationale(Manifest.permission.GET_ACCOUNTS, "MADCAP requires permission to read your contacts to get user name."));
+                        getPermissionWithRationale(Manifest.permission.GET_ACCOUNTS, "MADCAP needs to access your Google username and email. It does not read your other contacts."));
 
         locationCB = (CheckBox) findViewById(R.id.locationCheckBox);
         locationCB.setOnCheckedChangeListener(this);
@@ -48,19 +48,19 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
         storageCB.setOnCheckedChangeListener(this);
         storageCB.setChecked(
                 (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) ? true :
-                        getPermissionWithRationale(Manifest.permission.READ_EXTERNAL_STORAGE, "MADCAP requires your permission to read external storage."));
+                        getPermissionWithRationale(Manifest.permission.READ_EXTERNAL_STORAGE, "MADCAP requires your permission to read and write data to your phone's memory."));
 
         smsCB = (CheckBox) findViewById(R.id.smsCheckBox);
         smsCB.setOnCheckedChangeListener(this);
         smsCB.setChecked(
                 (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) ? true :
-                        getPermissionWithRationale(Manifest.permission.READ_SMS, "MADCAP requires your permission to read SMS notification."));
+                        getPermissionWithRationale(Manifest.permission.READ_SMS, "MADCAP needs this permission to know when you receive text messages. It does not read your texts."));
 
         telephoneCB = (CheckBox) findViewById(R.id.telephoneCheckBox);
         telephoneCB.setOnCheckedChangeListener(this);
         telephoneCB.setChecked(
                 (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) ? true :
-                        getPermissionWithRationale(Manifest.permission.READ_PHONE_STATE, "MADCAP requires your permission to read phone state."));
+                        getPermissionWithRationale(Manifest.permission.READ_PHONE_STATE, "MADCAP needs this permission to know when you are making or receiving phone calls."));
 
     }
 
@@ -205,19 +205,19 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
         switch(checkbox.getId()){
             case R.id.contactsCheckBox:
                 if(isChecked) return;
-                getPermissionWithRationale(Manifest.permission.GET_ACCOUNTS, "MADCAP requires permission to read your contacts to get username."); return;
+                getPermissionWithRationale(Manifest.permission.GET_ACCOUNTS, "MADCAP needs to access your Google username and email. It does not read your other contacts."); return;
             case R.id.locationCheckBox:
                 if(isChecked) return;
                 getPermissionWithRationale(Manifest.permission.ACCESS_FINE_LOCATION,"MADCAP requires permission to access your location."); return;
             case R.id.smsCheckBox:
                 if(isChecked) return;
-                getPermissionWithRationale(Manifest.permission.READ_SMS, "MADCAP requires your permission to read SMS notification."); return;
+                getPermissionWithRationale(Manifest.permission.READ_SMS, "MADCAP needs this permission to know when you receive text messages. It does not read your texts."); return;
             case R.id.storageCheckBox:
                 if(isChecked) return;
-                getPermissionWithRationale(Manifest.permission.READ_EXTERNAL_STORAGE, "MADCAP requires your permission to read external storage."); return;
+                getPermissionWithRationale(Manifest.permission.READ_EXTERNAL_STORAGE, "MADCAP requires your permission to read and write data to your phone's memory."); return;
             case R.id.telephoneCheckBox:
                 if(isChecked) return;
-                getPermissionWithRationale(Manifest.permission.READ_PHONE_STATE, "MADCAP requires your permission to read phone state."); return;
+                getPermissionWithRationale(Manifest.permission.READ_PHONE_STATE, "MADCAP needs this permission to know when you are making or receiving phone calls."); return;
 
         }
     }
