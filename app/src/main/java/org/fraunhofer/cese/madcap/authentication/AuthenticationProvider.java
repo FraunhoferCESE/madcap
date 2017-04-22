@@ -129,7 +129,7 @@ public class AuthenticationProvider {
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
 
         if (opr.isDone()) {
-            // In Case there is a result available intermediately. This should happen if they signed in before.
+            // In Case there is a result available immediately. This should happen if they signed in before.
             GoogleSignInResult result = opr.get();
             MyApplication.madcapLogger.d(TAG, "Immediate result available: " + result);
             setUser(result.getSignInAccount());
@@ -155,6 +155,7 @@ public class AuthenticationProvider {
      * @param callback callback handler for logout events
      */
     public void signout(@NonNull Context context, @NonNull final LogoutResultCallback callback) {
+        setUser(null);
         int connectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         if (connectionResult != ConnectionResult.SUCCESS) {
             callback.onServicesUnavailable(connectionResult);
@@ -188,7 +189,6 @@ public class AuthenticationProvider {
      * @param callback specifies how to handle various signout events
      */
     private void doSignout(@NonNull final LogoutResultCallback callback) {
-        setUser(null);
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(@NonNull Status r) {

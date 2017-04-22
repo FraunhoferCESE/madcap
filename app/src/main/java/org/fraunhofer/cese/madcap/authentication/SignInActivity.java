@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -166,6 +167,21 @@ public class SignInActivity extends AppCompatActivity {
         );
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        GoogleSignInAccount acct = authenticationProvider.getUser();
+        if(acct != null) {
+            updateButtonState(true);
+            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+        }
+        else {
+            updateButtonState(false);
+            mStatusTextView.setText(getString(R.string.signed_out));
+        }
+    }
+
     private void startInteractiveSignin() {
         mStatusTextView.setText(R.string.signing_in);
         authenticationProvider.interactiveSignIn(this, RC_SIGN_IN, new LoginResultCallback() {
@@ -184,6 +200,16 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
+    private void updateButtonState(boolean isSignedIn) {
+        if(isSignedIn) {
+            findViewById(R.id.sign_in_button).setEnabled(false);
+            findViewById(R.id.sign_out_button).setEnabled(true);
+        }
+        else {
+            findViewById(R.id.sign_in_button).setEnabled(true);
+            findViewById(R.id.sign_out_button).setEnabled(false);
+        }
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -195,15 +221,11 @@ public class SignInActivity extends AppCompatActivity {
                 GoogleSignInAccount acct = result.getSignInAccount();
 
                 authenticationProvider.setUser(acct);
-                findViewById(R.id.sign_in_button).setEnabled(false);
-                findViewById(R.id.sign_out_button).setEnabled(true);
+                updateButtonState(true);
                 mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-
                 startActivity(new Intent(this, AuthorizationActivity.class));
-
             } else {
-                findViewById(R.id.sign_in_button).setEnabled(true);
-                findViewById(R.id.sign_out_button).setEnabled(false);
+                updateButtonState(false);
                 MyApplication.madcapLogger.w(TAG, "SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
                 mStatusTextView.setText(getString(R.string.login_failed));
                 Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();

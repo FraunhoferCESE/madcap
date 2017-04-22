@@ -45,6 +45,7 @@
 
     <!-- <uses-permission android:name="android.permission.GET_TASKS" /> &lt;!&ndash; We will get rid of this after Anumeet finished his Library &ndash;&gt; -->
 
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -104,9 +105,35 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
+
+
+        <activity
+            android:name=".WelcomeActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_text"
+            android:screenOrientation="portrait"
+            android:theme="@style/MadcapTheme.NoActionBar" />
+
         <activity
             android:name=".authentication.SignInActivity"
             android:label="@string/name_sign_in_activity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MadcapTheme" />
+
+        <activity
+            android:name=".authorization.AuthorizationActivity"
+            android:label="@string/name_authorization_activity"
+            android:parentActivityName=".authentication.SignInActivity"
             android:screenOrientation="portrait"
             android:theme="@style/MadcapTheme" />
 
@@ -121,25 +148,7 @@
             </intent-filter>
         </service>
 
-        <activity
-            android:name=".WelcomeActivity"
-            android:noHistory="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_text"
-            android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme.NoActionBar" />
-        <activity
-            android:name=".authorization.AuthorizationActivity"
-            android:parentActivityName=".authentication.SignInActivity" />
     </application>
 
 </manifest>

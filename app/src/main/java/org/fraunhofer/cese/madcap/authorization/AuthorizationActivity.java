@@ -6,15 +6,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
+import org.fraunhofer.cese.madcap.authentication.LogoutResultCallback;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
@@ -39,6 +43,29 @@ public class AuthorizationActivity extends Activity {
     private TextView mAuthorizationMessage;
     private TextView mAuthorizationEmail;
     private TextView mAuthorizationUserid;
+
+    private final LogoutResultCallback logoutResultCallback = new LogoutResultCallback() {
+        @Override
+        public void onServicesUnavailable(int connectionResult) {
+            MyApplication.madcapLogger.w(TAG, getString(R.string.signin_service_unavailable));
+        }
+
+        @Override
+        public void onSignOut(Status result) {
+            MyApplication.madcapLogger.d(TAG, "User signed out");
+
+        }
+
+        @Override
+        public void onRevokeAccess(Status result) {
+            MyApplication.madcapLogger.d(TAG, "User access revoked.");
+        }
+
+        @Override
+        public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+            MyApplication.madcapLogger.w(TAG, getString(R.string.signin_service_connection_failed));
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,8 +104,9 @@ public class AuthorizationActivity extends Activity {
                 if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
                     startService(new Intent(context, DataCollectionService.class).putExtra("callee", TAG));
                 }
-                startActivity(new Intent(context, MainActivity.class));
-                finish();
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
 
             @Override
@@ -87,9 +115,11 @@ public class AuthorizationActivity extends Activity {
                 if (progress.isShowing()) {
                     progress.dismiss();
                 }
-                mAuthorizationMessage.setText(getString(R.string.not_authorized_text));
+                mAuthorizationMessage.setText(getText(R.string.not_authorized_text));
                 showUserInfo();
                 Toast.makeText(context, getString(R.string.not_authorized_short), Toast.LENGTH_SHORT).show();
+
+                authenticationProvider.signout(context, logoutResultCallback);
             }
 
             @Override
@@ -101,6 +131,8 @@ public class AuthorizationActivity extends Activity {
                 mAuthorizationMessage.setText(getString(R.string.authorization_error));
                 showUserInfo();
                 Toast.makeText(context, getString(R.string.authorization_error), Toast.LENGTH_LONG).show();
+
+                authenticationProvider.signout(context, logoutResultCallback);
             }
 
             private void showUserInfo() {
