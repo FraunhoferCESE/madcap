@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -25,7 +26,7 @@ import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.cache.UploadStrategy;
-import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
+import org.fraunhofer.cese.madcap.util.ManualProbeUploadTaskFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -67,7 +68,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private final IBinder mBinder = new DataCollectionServiceBinder();
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
     private UploadStatusGuiListener uploadStatusGuiListener;
-    private HeartBeatRunner heartBeatRunner;
+
+    @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
+    @Inject
+    HeartBeatRunner heartBeatRunner;
 
     @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
@@ -79,7 +83,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
-    ManualProbeUploader manualProbeUploader;
+    ManualProbeUploadTaskFactory manualProbeUploadTaskFactory;
 
     @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
@@ -173,13 +177,13 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private void sendDataCollectionProbe(String dataCollectionState) {
         DataCollectionProbe probe = new DataCollectionProbe(dataCollectionState);
         probe.setDate(System.currentTimeMillis());
-        manualProbeUploader.uploadManual(probe, getApplication(), cache);
+        manualProbeUploadTaskFactory.create().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, probe);
     }
 
     public void sendLogOutProbe() {
         LogOutProbe probe = new LogOutProbe();
         probe.setDate(System.currentTimeMillis());
-        manualProbeUploader.uploadManual(probe, getApplication(), cache);
+        manualProbeUploadTaskFactory.create().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, probe);
     }
 
     @Override
@@ -189,7 +193,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
         sendDataCollectionProbe(DataCollectionProbe.OFF);
 
-        stopHearthBeat();
+        // Stop the heartbeat
+        if (heartBeatRunner != null) {
+            heartBeatRunner.stop();
+        }
 
         synchronized (listeners) {
             for (Listener listener : listeners) {
@@ -209,10 +216,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
         } else {
             cache.close(UploadStrategy.NORMAL);
         }
-
-        //hideRunNotification();
-
-        //MyApplication.dataCollectionRunning = false;
     }
 
     @Override
@@ -236,7 +239,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     listener.startListening();
                     MyApplication.madcapLogger.d(TAG, listener.getClass().getSimpleName() + " started listening");
                 } catch (NoSensorFoundException nsf) {
-                    MyApplication.madcapLogger.e(TAG, "enableAllListeners", nsf);
+                    MyApplication.madcapLogger.e(TAG, "onStartCommand", nsf);
                 }
             }
         }
@@ -247,29 +250,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
             cacheInitialBootEvent();
         }
 
-        startHearthBeat();
+        // Start the heartbeat
+        new Handler().postDelayed(heartBeatRunner, 100L);
 
         return START_STICKY;
-        //return super.onStartCommand(intent, flags, startId);
-    }
-
-    /**
-     * Starts the reverse Hearthbeat.
-     */
-    private void startHearthBeat() {
-        Handler hearthBeatScheduler = new Handler();
-        heartBeatRunner = new HeartBeatRunner(getApplication(), this, hearthBeatScheduler, cache, manualProbeUploader);
-        new Handler().postDelayed(heartBeatRunner, 100L);
-//        hearthBeatScheduler.scheduleAtFixedRate(new HeartBeatRunner(getApplication(), this, hearthBeatScheduler, cache, manualProbeUploader, 60000L), 0, 60000, TimeUnit.MILLISECONDS);
-    }
-
-    /**
-     * Stops the reverse Hearthbeat.
-     */
-    private void stopHearthBeat() {
-        if (heartBeatRunner != null) {
-            heartBeatRunner.stop();
-        }
     }
 
     /**
