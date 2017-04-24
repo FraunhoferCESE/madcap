@@ -39,7 +39,7 @@
         android:layout_marginLeft="25dp"
         android:layout_marginRight="10dp"
         android:padding="2dp"
-        android:text="Gets the username and accounts on device."/>
+        android:text="@string/contacts_short_rationale"/>
 
     <CheckBox
         android:id="@+id/smsCheckBox"
@@ -54,7 +54,7 @@
         android:layout_marginLeft="25dp"
         android:layout_marginRight="10dp"
         android:padding="2dp"
-        android:text="Gets notified of incoming messages."/>
+        android:text="@string/sms_short_rationale"/>
 
     <CheckBox
         android:id="@+id/locationCheckBox"
@@ -69,7 +69,7 @@
         android:layout_marginLeft="25dp"
         android:layout_marginRight="10dp"
         android:padding="2dp"
-        android:text="Gets location updates few times per hour."/>
+        android:text="@string/location_short_rationale"/>
 
     <CheckBox
         android:id="@+id/storageCheckBox"
@@ -84,7 +84,7 @@
         android:layout_marginLeft="25dp"
         android:layout_marginRight="10dp"
         android:padding="2dp"
-        android:text="Gets storage information."/>
+        android:text="@string/storage_short_rationale"/>
 
     <CheckBox
         android:id="@+id/telephoneCheckBox"
@@ -99,7 +99,22 @@
         android:layout_marginLeft="25dp"
         android:layout_marginRight="10dp"
         android:padding="2dp"
-        android:text="Gets phone state information."/>
+        android:text="@string/telephone_short_rationale"/>
+
+    <CheckBox
+        android:id="@+id/usageStatsCheckBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Usage stats"
+        android:layout_margin="5dp"
+        android:padding="2dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="10dp"
+        android:padding="2dp"
+        android:text="@string/access_usage_short_rationale"/>
 
     <TextView
         android:layout_width="match_parent"

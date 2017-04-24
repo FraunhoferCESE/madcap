@@ -90,8 +90,19 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().performIdentifierAction(R.id.nav_home, 0);
     }
 
-
-
+//    @Override
+//    protected void onStart() {
+//        super.onStart();
+//        permissionsManager = new PermissionsManager();
+//        boolean allPermits;
+//        allPermits = permissionsManager.isContactPermitted() && permissionsManager.isLocationPermitted();
+//        allPermits = allPermits && permissionsManager.isSmsPermitted() && permissionsManager.isStoragePermitted();
+//        allPermits = allPermits && permissionsManager.isTelephonePermitted() && permissionsManager.isUsageStatsPermitted();
+//
+//        if(!allPermits){
+//            startActivity(new Intent(MainActivity.this, PermissionsManager.class));
+//        }
+//    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

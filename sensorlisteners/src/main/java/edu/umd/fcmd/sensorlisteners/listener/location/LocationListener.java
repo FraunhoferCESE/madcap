@@ -107,7 +107,8 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 onLocationChanged(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
             } else {
-                permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your location information.", "location");
+//                permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your location information.", "location");
+                permissionDeniedHandler.requestPermissionFromNotification();
             }
         }
 
@@ -124,7 +125,8 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
             if (isPermittedByUser()) {
                 locationManager.removeUpdates(this);
             } else {
-                permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+//                permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                permissionDeniedHandler.requestPermissionFromNotification();
             }
         }
         runningStatus = false;
@@ -177,8 +179,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 Log.d(TAG, "Network accuracy (" + location.getAccuracy() + ") is more than threshold (" + NETWORK_LOCATION_ACCURACY_THRESHOLD + "). Requesting location from GPS.");
                 if (isPermittedByUser()) {
                     locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-                } else {
-                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+//                } else permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
                 }
             }
             onUpdate(createLocationProbe(location));

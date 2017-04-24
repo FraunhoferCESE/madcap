@@ -67,7 +67,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
     @Nullable
     @Override
     protected Void doInBackground(Void... params) {
-        if (ContextCompat.checkSelfPermission(locationListener.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (locationListener.isPermittedByUser()) {
             Log.d(TAG, "Permission granted");
             while (!isCancelled()) {
                 //noinspection ObjectAllocationInLoop
@@ -98,9 +98,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                     Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
                 }
             }
-        } else {
-            permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
+        } //else permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
         return null;
     }
 

@@ -14,6 +14,7 @@ public interface PermissionDeniedHandler {
      * @param permissionString the permission code according
      * to the manifest.
      */
-    void onPermissionDenied(String permissionString);
-    void requestPermissionFromNotification(String message, String permissionFor);
+//    void onPermissionDenied(String permissionString);
+//    void requestPermissionFromNotification(String message, String permissionFor);
+    void requestPermissionFromNotification();
 }
