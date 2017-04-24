@@ -1,30 +1,23 @@
 package org.fraunhofer.cese.madcap;
 
-import android.content.ClipData;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuView;
 import android.support.v7.widget.Toolbar;
-
-import android.support.v4.app.FragmentManager;
 import android.view.MenuItem;
-import android.view.View;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         StartFragment.OnFragmentInteractionListener,
         HelpFragment.OnFragmentInteractionListener,
-        QuitFragment.OnFragmentInteractionListener,
-        AboutFragment.OnFragmentInteractionListener{
+        AboutFragment.OnFragmentInteractionListener {
     private final String TAG = getClass().getSimpleName();
     private String currentTopFragment;
 
@@ -32,7 +25,6 @@ public class MainActivity extends AppCompatActivity
     private StartFragment startFragment;
     private HelpFragment helpFragment;
     private LogoutFragment logoutFragment;
-    private QuitFragment quitFragment;
     private AboutFragment aboutFragment;
 
 
@@ -46,7 +38,7 @@ public class MainActivity extends AppCompatActivity
             //Restore the fragment's instance
             MyApplication.madcapLogger.d(TAG, "SavedInstanceState not null");
             startFragment = (StartFragment) mainFragmentManager.getFragment(savedInstanceState, "startfragment");
-        }else{
+        } else {
             startFragment = new StartFragment();
         }
 
@@ -69,7 +61,6 @@ public class MainActivity extends AppCompatActivity
         //startFragment = new StartFragment(); // see save instance
         helpFragment = new HelpFragment();
         logoutFragment = new LogoutFragment();
-        //quitFragment = new QuitFragment();
         aboutFragment = new AboutFragment();
 
         //Initial settign up of the main fragement
@@ -85,17 +76,15 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
             FragmentTransaction ft = mainFragmentManager.beginTransaction();
             ft.replace(R.id.fragmentHolder, startFragment);
-            if(!currentTopFragment.equals("start")){
+            if (!"start".equals(currentTopFragment)) {
                 ft.addToBackStack("start");
                 currentTopFragment = "start";
             }
@@ -103,7 +92,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_help) {
             FragmentTransaction ft = mainFragmentManager.beginTransaction();
             ft.replace(R.id.fragmentHolder, helpFragment);
-            if(!currentTopFragment.equals("help")){
+            if (!"help".equals(currentTopFragment)) {
                 ft.addToBackStack("help");
                 currentTopFragment = "help";
             }
@@ -111,30 +100,20 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_sign_out) {
             FragmentTransaction ft = mainFragmentManager.beginTransaction();
             ft.replace(R.id.fragmentHolder, logoutFragment);
-            if(!currentTopFragment.equals("logout")){
+            if (!"logout".equals(currentTopFragment)) {
                 ft.addToBackStack("logout");
-                currentTopFragment ="logout";
+                currentTopFragment = "logout";
             }
             ft.commit();
         } else if (id == R.id.nav_about) {
             FragmentTransaction ft = mainFragmentManager.beginTransaction();
             ft.replace(R.id.fragmentHolder, aboutFragment);
-            if(!currentTopFragment.equals("about")){
+            if (!"about".equals(currentTopFragment)) {
                 ft.addToBackStack("about");
                 currentTopFragment = "about";
             }
             ft.commit();
-        } //else if (id == R.id.nav_quit) {
-//            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-//            ft.replace(R.id.fragmentHolder, quitFragment);
-//            if(!currentTopFragment.equals("quit")){
-//                ft.addToBackStack("quit");
-//                currentTopFragment = "quit";
-//            }
-//            ft.commit();
-//        }
-
-        int checkedID = item.getItemId();
+        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -155,7 +134,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        if(startFragment == null){
+        if (startFragment == null) {
             startFragment = new StartFragment();
 
             //Initial settign up of the main fragement
@@ -175,25 +154,17 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-//            int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
-//            if (backStackEntryCount == 0) {
-//                finish();   // write your code to switch between fragments.
-//            } else {
-//                super.onBackPressed();
-//            }
             super.onBackPressed();
         }
     }
 
-    private void uncheckAll(){
+    private void uncheckAll() {
         MenuItem nav = (MenuItem) findViewById(R.id.nav_home);
         nav.setChecked(false);
         MenuItem sign = (MenuItem) findViewById(R.id.nav_sign_out);
         sign.setChecked(false);
         MenuItem hp = (MenuItem) findViewById(R.id.nav_help);
         hp.setChecked(false);
-//        MenuItem qt = (MenuItem) findViewById(R.id.nav_quit);
-//        qt.setChecked(false);
         MenuItem at = (MenuItem) findViewById(R.id.nav_about);
         at.setChecked(false);
     }

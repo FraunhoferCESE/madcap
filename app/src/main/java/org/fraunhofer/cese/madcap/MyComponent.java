@@ -26,7 +26,6 @@ public interface MyComponent {
     void inject(StartFragment startFragment);
     void inject(HelpFragment helpFragment);
     void inject(LogoutFragment logoutFragment);
-    void inject(QuitFragment quitFragment);
     void inject(SignInActivity signInActivity);
     void inject(WelcomeActivity welcomeActivity);
     void inject(OnBootService onBootService);
