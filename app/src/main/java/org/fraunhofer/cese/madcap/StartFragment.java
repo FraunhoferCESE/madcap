@@ -86,21 +86,20 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
     private ServiceConnection mConnection;
 
 
-    private void bindConnection(Intent intent){
-        MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is "+mBound);
-        if(!mBound){
-            getActivity().getApplicationContext().bindService(intent , mConnection, Context.BIND_AUTO_CREATE);
+    private void bindConnection(Intent intent) {
+        MyApplication.madcapLogger.d(TAG, "Attempt to bind self. Current bound status is " + mBound);
+        if (!mBound) {
+            getActivity().getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
             getCacheCountUpdater().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
-    private void unbindConnection(){
-        MyApplication.madcapLogger.d(TAG, "Attempt to unbind self. Current bound status is "+mBound);
+    private void unbindConnection() {
+        MyApplication.madcapLogger.d(TAG, "Attempt to unbind self. Current bound status is " + mBound);
         cacheCountUpdater.cancel(true);
-        //mDataCollectionService.removeUploadListener(uploadStatusListener);
+        uploadProgressBar.setProgress(0);
         mDataCollectionService.setUploadStatusGuiListener(null);
         getActivity().getApplicationContext().unbindService(mConnection);
-        Log.d(TAG, "removed UploadListener");
         mBound = false;
     }
 
@@ -132,10 +131,9 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
             public void onServiceConnected(ComponentName className,
                                            IBinder service) {
                 // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
-                Log.d(TAG, "New service connection service "+service.toString());
+                Log.d(TAG, "New service connection service " + service.toString());
                 DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
                 mDataCollectionService = binder.getService();
-                //mDataCollectionService.addUploadListener(getUploadStatusListener());
                 mDataCollectionService.setUploadStatusGuiListener(getStatusGuiListener());
                 mBound = true;
                 Log.d(TAG, "added GUI UploadListener");
@@ -145,7 +143,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
             public void onServiceDisconnected(ComponentName arg0) {
                 // Only invoked when hosting service crashed or is killed.
 
-                //mDataCollectionService.removeUploadListener(getUploadStatusListener());
+                uploadProgressBar.setProgress(0);
                 mDataCollectionService.setUploadStatusGuiListener(null);
                 mBound = false;
                 Log.d(TAG, "removed GUI UploadListener");
@@ -165,8 +163,6 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
 
         if (isCollectingData && !mBound) {
             Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
-
-            //bindConnection(intent);
         }
 
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
@@ -179,8 +175,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
             dataCountText = savedInstanceState.getString(STATE_DATA_COUNT);
             uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
         } else {
-            dataCountText = getString(R.string.dataCountText) + " " + prefs.getInt(getString(R.string.data_count), 0)+"";
-            //isCollectingData = true;
+            dataCountText = getString(R.string.dataCountText) + " " + prefs.getInt(getString(R.string.data_count), 0) + "";
         }
 
         //Parse the greeting information
@@ -224,7 +219,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
 
                             MyApplication.madcapLogger.d(TAG, "Current data collection preference is now " + isCollectingData);
                             Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
-                            intent.putExtra("callee",TAG);
+                            intent.putExtra("callee", TAG);
                             getActivity().getApplicationContext().startService(intent);
                             bindConnection(intent);
                             collectionDataStatusText.setText(getString(R.string.datacollectionstatuson));
@@ -260,27 +255,6 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
                         String text = "\nUpload requested on " + df.format(new Date()) + "\n";
                         MyApplication.madcapLogger.d(TAG, "Upload data clicked");
                         onUploadStatusCompletenessUpdate(Completeness.INCOMPLETE);
-
-//                        int status = mDataCollectionService.requestUpload();
-//                        if (status == Cache.UPLOAD_READY)
-//                            text += "Upload started...";
-//                        else if (status == Cache.UPLOAD_ALREADY_IN_PROGRESS)
-//                            text += "Upload in progress...";
-//                        else {
-//                            String errorText = "";
-//                            if ((status & Cache.INTERNAL_ERROR) == Cache.INTERNAL_ERROR)
-//                                errorText += "\n- An internal error occurred and data could not be uploaded.";
-//                            if ((status & Cache.UPLOAD_INTERVAL_NOT_MET) == Cache.UPLOAD_INTERVAL_NOT_MET)
-//                                errorText += "\n- An upload was just requested; please wait a few seconds.";
-//                            if ((status & Cache.NO_INTERNET_CONNECTION) == Cache.NO_INTERNET_CONNECTION)
-//                                errorText += "\n- No WiFi connection detected.";
-//                            if ((status & Cache.DATABASE_LIMIT_NOT_MET) == Cache.DATABASE_LIMIT_NOT_MET)
-//                                errorText += "\n- No entries to upload";
-//
-//                            text += !errorText.isEmpty() ? "Error:" + errorText : "No status to report. Please wait.";
-//                        }
-//                        uploadResultText = text;
-//                        uploadResultView.setText(uploadResultText);
                     }
                 }
         );
@@ -301,12 +275,10 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
             uploadResultText = savedInstanceState.getString(STATE_UPLOAD_STATUS);
         } else {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-            dataCountText = getString(R.string.dataCountText) + " " +prefs.getInt(getString(R.string.data_count), 0)+"";
+            dataCountText = getString(R.string.dataCountText) + " " + prefs.getInt(getString(R.string.data_count), 0) + "";
             uploadResultText = "None.";
-            //isCollectingData = true;
         }
         dataCountView.setText(dataCountText);
-        //uploadResultView.setText(uploadResultText);
 
     }
 
@@ -320,7 +292,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
     }
 
@@ -329,7 +301,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         super.onResume();
 
         Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
-        if (isCollectingData && !mBound){
+        if (isCollectingData && !mBound) {
             bindConnection(intent);
         }
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -338,13 +310,13 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
     @Override
     public void onPause() {
         super.onPause();
-        if(mBound){
+        if (mBound) {
             unbindConnection();
         }
     }
 
     @Override
-    public void onDestroyView(){
+    public void onDestroyView() {
         super.onDestroyView();
         MyApplication.madcapLogger.d(TAG, "onDestroy Fragment");
 
@@ -369,8 +341,8 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
             @Override
             protected Void doInBackground(Void... params) {
                 while (!isCancelled()) {
-                    if(mBound){
-                       // MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
+                    if (mBound) {
+                        // MyApplication.madcapLogger.d(TAG, "cache size "+mDataCollectionService.getCacheSize());
                         publishProgress(mDataCollectionService.getCacheSize());
                     }
                     try {
@@ -391,16 +363,16 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         return cacheCountUpdater;
     }
 
-    private UploadStatusGuiListener getStatusGuiListener(){
+    private UploadStatusGuiListener getStatusGuiListener() {
         return (UploadStatusGuiListener) this;
     }
 
     @Override
-    public void restoreLastUpload(){
+    public void restoreLastUpload() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext().getApplicationContext());
 
         // Restore completeness
-        switch(prefs.getString(getString(R.string.last_upload_completeness), "")){
+        switch (prefs.getString(getString(R.string.last_upload_completeness), "")) {
             case "Status: Complete":
                 onUploadStatusCompletenessUpdate(Completeness.COMPLETE);
                 break;
@@ -462,7 +434,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
      */
     @Override
     public void onUploadStatusCompletenessUpdate(Completeness completeness) {
-        switch (completeness){
+        switch (completeness) {
             case COMPLETE:
                 uploadCompletenessView.setText(getString(R.string.status_complete));
                 break;
