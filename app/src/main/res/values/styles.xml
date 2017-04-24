@@ -1,8 +1,19 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/madcap_main_light</item>
+        <item name="colorPrimaryDark">@color/madcap_black</item>
+        <item name="colorAccent">@color/madcap_main_light</item>
+        <item name="android:colorForeground">@color/madcap_main_color</item>
+    </style>
+
+    <!-- ToolBar -->
+    <style name="ToolBarStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <!--
+        <item name="actionOverflowButtonStyle">@style/ActionButtonOverflowStyle</item>
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
+        -->
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
