@@ -26,7 +26,8 @@
     <string name="last_upload_date">lastUploadDate</string>
     <string name="data_count">dataCount</string>
 
-    <!-- Sign-in fragment -->
+    <!-- Sign-in activity -->
+    <string name="name_sign_in_activity">MADCAP Sign In</string>
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="signing_in">Signing in…</string>
     <string name="signed_out">Signed out</string>
@@ -35,6 +36,7 @@
     <string name="signin_service_unavailable">Google SignIn services are unavailable. Please try again.</string>
     <string name="signin_service_connection_failed">Could not connect to Google SignIn service. Please try again.</string>
     <string name="logout_failed">Logout from MADCAP failed. Error code: %i. Please try again.</string>
+    <string name="login_failed">Login failed. Please try again.</string>
     <string name="silent_signin_failed">MADCAP failed to login automatically. Please open the MADCAP application to sign in.</string>
     <string name="silent_signin_failed_notification_title">MADCAP Automatic SignIn Failed</string>
     <string name="checking_EULA">Checking EULA.</string>
@@ -55,9 +57,6 @@
 
     <!-- Content Description for images -->
     <string name="desc_google_icon">MADCAP Logo</string>
-
-    <!-- Activity Names and Descriptions -->
-    <string name="name_sign_in_activity">MADCAP</string>
 
     <!-- Welcome activity -->
     <string name="help">Help</string>
@@ -104,14 +103,20 @@
 
     <!-- Contact -->
     <string name="contactHeader">Contact</string>
-    <string name="contactLink">For more information, please visit https://www.pocket-security.org.</string>
+    <string name="contactLink">For more information, please visit:\nhttps://www.pocket-security.org.</string>
     <string name="title_activity_sign_up_check">SignUpCheckActivity</string>
 
 
+    <!-- Authorization activity -->
+    <string name="name_authorization_activity">MADCAP Authorization</string>
     <string name="auth_check_text">Please wait. MADCAP is checking if you are authorized to participate.</string>
-    <string name="not_authorized_text">Only participants in the NSF Pocket Security study are authorized to use MADCAP. Please visit the Pocket Security website for more information on this research: https://www.pocket-security.org</string>
+    <string name="not_authorized_text">The signed-in user is not authorized to use MADCAP.\n\nPlease <b>use your Back button back and sign in with an authorized account.</b>\n\nOnly participants in the NSF Pocket Security study are authorized to use MADCAP. If you are interested in participating in this study, visit https://www.pocket-security.org/participants-information/</string>
     <string name="not_authorized_user_email">User email: %s</string>
     <string name="not_authorized_user_id">User id: %s</string>
+    <string name="authorization_error">An error occurred while checking your authorization to use MADCAP. Please go back and try signing in again.</string>
+    <string name="not_authorized_short">Not authorized to use MADCAP</string>
+    <string name="authorization_authorized">Authorization successful. Launching MADCAP...</string>
+
     <!-- EULA -->
     <string name="eula">
         This End User License Agreement (\"EULA\") applies to the MADCAP Smartphone Software Application (the \"App\") developed by Fraunhofer USA, Inc. (\"Licensor\") that you have downloaded from the Google Play Store.

@@ -17,12 +17,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.MyApplication;
-import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
-import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.UserCheckResult;
-import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
-
-
-import java.io.IOException;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -90,31 +84,9 @@ public class AuthenticationProvider {
         }
     }
 
-    /**
-     * To check if the user is signed up for MADCAP
-     * @param signInActivity
-     */
-    void checkMadcapRegistrationStatus(SignInActivity signInActivity, Context context, EndpointApiBuilder endpointApiBuilder){
-
-        ProbeEndpoint appEngineApi = endpointApiBuilder.build(signInActivity.getApplication());
-        try {
-            UserCheckResult userCheckResult = appEngineApi.checkSignedUpUser().execute();
-
-            if(userCheckResult.getAuthorized()){
-                MyApplication.madcapLogger.d(TAG, "User signed up. Redirect now to main activity.");
-                signInActivity.onUserValidityChecked(true);
-            }else{
-                MyApplication.madcapLogger.d(TAG, "User not signed up. Redirect now to sign up screen.");
-                signInActivity.onUserValidityChecked(false);
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     /**
-     * Attemps to perform a silent login using cached credentials
+     * Attempts to perform a silent login using cached credentials
      *
      * @param context  the calling context
      * @param callback callback handler for login event callbacks triggered during the silent login attempt.
@@ -157,7 +129,7 @@ public class AuthenticationProvider {
         OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(mGoogleApiClient);
 
         if (opr.isDone()) {
-            // In Case there is a result available intermediately. This should happen if they signed in before.
+            // In Case there is a result available immediately. This should happen if they signed in before.
             GoogleSignInResult result = opr.get();
             MyApplication.madcapLogger.d(TAG, "Immediate result available: " + result);
             setUser(result.getSignInAccount());
@@ -183,6 +155,7 @@ public class AuthenticationProvider {
      * @param callback callback handler for logout events
      */
     public void signout(@NonNull Context context, @NonNull final LogoutResultCallback callback) {
+        setUser(null);
         int connectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         if (connectionResult != ConnectionResult.SUCCESS) {
             callback.onServicesUnavailable(connectionResult);
@@ -216,7 +189,6 @@ public class AuthenticationProvider {
      * @param callback specifies how to handle various signout events
      */
     private void doSignout(@NonNull final LogoutResultCallback callback) {
-        setUser(null);
         Auth.GoogleSignInApi.revokeAccess(mGoogleApiClient).setResultCallback(new ResultCallback<Status>() {
             @Override
             public void onResult(@NonNull Status r) {
@@ -238,10 +210,13 @@ public class AuthenticationProvider {
 
     /**
      * Returns the last logged in user, if any.
+     *
      * @return The last logged in user.
      */
     @Nullable
-    public GoogleSignInAccount getLastLoggedInUser() { return lastLoggedInUser; }
+    public GoogleSignInAccount getLastLoggedInUser() {
+        return lastLoggedInUser;
+    }
 
 
     /**
@@ -250,9 +225,9 @@ public class AuthenticationProvider {
      * @param user the user to set as currently logged in
      */
     synchronized void setUser(@Nullable GoogleSignInAccount user) {
-        if(this.user != null) {
+        if (this.user != null) {
             lastLoggedInUser = this.user;
-            MyApplication.madcapLogger.d(TAG,"lastLoggedInUser is now: "+lastLoggedInUser);
+            MyApplication.madcapLogger.d(TAG, "lastLoggedInUser is now: " + lastLoggedInUser);
         }
         this.user = user;
     }
