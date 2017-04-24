@@ -52,7 +52,7 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
      *
      * @param permissionString the permission code according
      *                         to the manifest.
-     */
+
     @Override
     public void onPermissionDenied(String permissionString) {
         switch(permissionString){
@@ -88,7 +88,7 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
         }
     }
 
-    public void requestPermissionFromNotification(String message, String permissionFor){
+    public void requestPermissionFromNotification(String message, String permissionFor) {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
@@ -96,10 +96,10 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setPriority(Notification.PRIORITY_HIGH);
 
-        if(permissionFor.equalsIgnoreCase("access_setting")){
+        if (permissionFor.equalsIgnoreCase("access_setting")) {
             Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            PendingIntent permissionsIntent = PendingIntent.getActivity(context, NOTIFICATION_ID+1, intent, 0);
+            PendingIntent permissionsIntent = PendingIntent.getActivity(context, NOTIFICATION_ID + 1, intent, 0);
 
             Intent resultIntent = new Intent(context, WelcomeActivity.class);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
@@ -118,25 +118,42 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
             mBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(message));
 
             mBuilder.setContentTitle("MADCAP requests a permission");
-            mBuilder.addAction(R.drawable.ic_stat_madcaplogo,"Settings",permissionsIntent);
+            mBuilder.addAction(R.drawable.ic_stat_madcaplogo, "Settings", permissionsIntent);
             mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             // mId allows you to update the notification later on.
             mBuilder.setAutoCancel(true);
             Notification note = mBuilder.build();
             mNotificationManager.notify(RUN_CODE, note);
-        }else{
+        } else {
             Intent intent = new Intent(context, PermissionsManager.class);
             PendingIntent permissionsIntent = PendingIntent.getActivity(context, NOTIFICATION_ID, intent, 0);
 
             mBuilder.setContentTitle("MADCAP requests permissions");
-            mBuilder.addAction(R.drawable.ic_stat_madcaplogo,"Settings",permissionsIntent);
+            mBuilder.addAction(R.drawable.ic_stat_madcaplogo, "Settings", permissionsIntent);
             mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             // mId allows you to update the notification later on.
             mBuilder.setAutoCancel(true);
             Notification note = mBuilder.build();
-            mNotificationManager.notify(RUN_CODE+1, note);
+            mNotificationManager.notify(RUN_CODE, note);
         }
+    }*/
 
+    public void requestPermissionFromNotification(){
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
 
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        mBuilder.setPriority(Notification.PRIORITY_HIGH);
+
+        Intent intent = new Intent(context, PermissionsManager.class);
+        PendingIntent permissionsIntent = PendingIntent.getActivity(context, NOTIFICATION_ID, intent, 0);
+
+        mBuilder.setContentTitle("MADCAP requests permissions");
+        mBuilder.addAction(R.drawable.ic_stat_madcaplogo,"Settings", permissionsIntent);
+        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mBuilder.setAutoCancel(true);
+        Notification note = mBuilder.build();
+        mNotificationManager.notify(RUN_CODE, note);
     }
 }
+

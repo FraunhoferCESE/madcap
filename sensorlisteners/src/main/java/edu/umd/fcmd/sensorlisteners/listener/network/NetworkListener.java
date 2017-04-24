@@ -109,8 +109,8 @@ public class NetworkListener implements Listener {
                 instanciateMSMSObserver(this, context);
                 instaciateTelephonyListener();
                 sendInitalProbes();
-            } else
-                permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your network information.", "network");
+            }
+//            else    permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your network information.", "network");
         }
 
         runningStatus = true;

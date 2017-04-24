@@ -167,12 +167,9 @@ public class BluetoothListener implements Listener {
      * Gets the state from the BluetoothAdapter.
      * @return the state of the BluetoothAdapter.
      */
-    public int getState(){
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED){
-            return bluetoothAdapter.getState();
-        }else{
-            permissionDeniedHandler.onPermissionDenied(Manifest.permission.BLUETOOTH);
-            return 0;
-        }
+    public int getState() {
+        if (isPermittedByUser()) return bluetoothAdapter.getState();
+//        }else permissionDeniedHandler.onPermissionDenied(Manifest.permission.BLUETOOTH);
+        return 0;
     }
 }

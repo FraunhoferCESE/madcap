@@ -86,6 +86,8 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onStart();
         Timber.d("onStart");
 
+//        if(new PermissionsManager().isContactPermitted()) login();
+//        else ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS}, PERMISSION_RQST_CODE);
         if (ActivityCompat.checkSelfPermission(WelcomeActivity.this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS}, PERMISSION_RQST_CODE);
         } else login();

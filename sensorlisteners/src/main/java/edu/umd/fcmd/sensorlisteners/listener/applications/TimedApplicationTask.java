@@ -98,9 +98,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                     Thread.currentThread().interrupt();
                     Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
                 }
-            }else{
-                permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-            }
+            }//else{ permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS); }
         }
         return null;
     }
@@ -264,8 +262,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
 
                 this.lastComponent = componentName;
             }
-        }else{
-            permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+//        }else permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         }
     }
 

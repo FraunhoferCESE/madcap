@@ -174,4 +174,26 @@
     </string>
     <string name="accept">Accept</string>
     <string name="title_activity_main2">Main2Activity</string>
+
+    <!-- Permission rationale -->
+    <string name="contacts_rationale">MADCAP needs to access your Google username and email. It does not read your other contacts.</string>
+    <string name="location_rationale">MADCAP requires permission to access your location.</string>
+    <string name="sms_rationale">MADCAP needs this permission to know when you receive text messages. It does not read your texts.</string>
+    <string name="storage_rationale">MADCAP requires your permission to read and write data to your phone\'s memory.</string>
+    <string name="telephone_rationale">MADCAP needs this permission to know when you are making or receiving phone calls.</string>
+    <string name="access_usage_rationale">MADCAP needs this permission to know when you are using an application.</string>
+
+    <!-- Permission mini rationale -->
+
+    <string name="contacts_short_rationale">Gets the username and accounts on device.</string>
+    <string name="location_short_rationale">Gets location updates few times per hour.</string>
+    <string name="sms_short_rationale">Gets notified of incoming messages.</string>
+    <string name="storage_short_rationale">Gets storage information.</string>
+    <string name="telephone_short_rationale">Gets phone state information.</string>
+    <string name="access_usage_short_rationale">Gets phone usage statistics.</string>
+
+
+
+
+
 </resources>

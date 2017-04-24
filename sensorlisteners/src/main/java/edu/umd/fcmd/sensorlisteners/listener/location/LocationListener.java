@@ -144,7 +144,8 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 }
 
             } else {
-                permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your location information.", "location");
+//                permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your location information.", "location");
+                permissionDeniedHandler.requestPermissionFromNotification();
             }
         }
 
@@ -186,7 +187,8 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     locationManager.removeUpdates(this);
                 }
             } else {
-                permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+//                permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                permissionDeniedHandler.requestPermissionFromNotification();
             }
         }
         runningStatus = false;
@@ -236,8 +238,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 Log.d(TAG, "Network accuracy (" + location.getAccuracy() + ") is more than threshold (" + NETWORK_LOCATION_ACCURACY_THRESHOLD + "). Requesting location from GPS.");
                 if (isPermittedByUser()) {
                     locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-                } else {
-                    permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+//                } else permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
                 }
             }
             onUpdate(createLocationProbe(location));
