@@ -109,7 +109,9 @@ public class ProbeDataSetEndpoint {
             throw new OAuthRequestException("ERROR: User is not registered! Id: " + user.getId() + ", email: " + user.getEmail());
         }
 
+
         if (result.getUserId() == null || result.getUserId().isEmpty()) {
+            logger.info("Detected empty user id for: " + result.getEmail());
             result.setUserId(user.getId());
             ofy().save().entity(result).now();
         }
@@ -529,7 +531,8 @@ public class ProbeDataSetEndpoint {
             return new UserCheckResult(false);
         }
 
-        if (result.getUserId() == null) {
+        if (result.getUserId() == null || result.getUserId().isEmpty()) {
+            logger.info("Detected empty user id for: " + result.getEmail());
             result.setUserId(user.getId());
             ofy().save().entity(result).now();
         }
