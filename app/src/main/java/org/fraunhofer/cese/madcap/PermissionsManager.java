@@ -175,11 +175,6 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
                                         Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
                                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intent);
-                                        if(isUsageStatsPermitted()){
-                                            usageStatsCB.setChecked(true);
-                                            usageStatsCB.setClickable(false);
-                                            usageStatsCB.setEnabled(false);
-                                        }
                                         dialog.dismiss();
                                     }
                                 })
@@ -215,24 +210,17 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
     public void onCheckedChanged(CompoundButton checkbox, boolean isChecked) {
         switch(checkbox.getId()){
             case R.id.contactsCheckBox:
-//                if(!isChecked) return;
                 getPermissionWithRationale(Manifest.permission.GET_ACCOUNTS, getString(R.string.contacts_rationale)); return;
             case R.id.locationCheckBox:
-//                if(!isChecked) return;
                 getPermissionWithRationale(Manifest.permission.ACCESS_FINE_LOCATION, getString(R.string.location_rationale)); return;
             case R.id.smsCheckBox:
-//                if(!isChecked) return;
                 getPermissionWithRationale(Manifest.permission.READ_SMS, getString(R.string.sms_rationale)); return;
             case R.id.storageCheckBox:
-//                if(!isChecked) return;
                 getPermissionWithRationale(Manifest.permission.READ_EXTERNAL_STORAGE, getString(R.string.storage_rationale)); return;
             case R.id.telephoneCheckBox:
-//                if(!isChecked) return;
                 getPermissionWithRationale(Manifest.permission.READ_PHONE_STATE, getString(R.string.telephone_rationale)); return;
             case R.id.usageStatsCheckBox:
-//                if(!isChecked) return;
                 getPermissionWithRationale(Settings.ACTION_USAGE_ACCESS_SETTINGS, getString(R.string.access_usage_rationale)); return;
-
         }
     }
 
@@ -267,6 +255,16 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
         } catch (PackageManager.NameNotFoundException e) {
             //do not resolve this catch.
             return false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(isUsageStatsPermitted()){
+            usageStatsCB.setChecked(true);
+            usageStatsCB.setClickable(false);
+            usageStatsCB.setEnabled(false);
         }
     }
 }

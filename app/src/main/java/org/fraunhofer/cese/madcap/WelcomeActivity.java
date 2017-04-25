@@ -80,23 +80,7 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == PERMISSION_RQST_CODE){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED) login();
-            else {
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-                dialogBuilder.setTitle("MADCAP permissions")
-                        .setMessage(getString(R.string.contacts_rationale))
-                        .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS},
-                                                PERMISSION_RQST_CODE);
-                                        dialog.cancel();
-                                    }
-                                })
-                        .setCancelable(true);
-                AlertDialog dialog = dialogBuilder.create();
-                dialog.show();
-            }
+            else finish();
         }
     }
     @Override
@@ -104,10 +88,22 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onStart();
         Timber.d("onStart");
 
-//        if(new PermissionsManager().isContactPermitted()) login();
-//        else ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS}, PERMISSION_RQST_CODE);
         if (ActivityCompat.checkSelfPermission(WelcomeActivity.this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS}, PERMISSION_RQST_CODE);
+            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+            dialogBuilder.setTitle("MADCAP permissions")
+                    .setMessage(getString(R.string.contacts_rationale))
+                    .setPositiveButton("OK",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS},
+                                            PERMISSION_RQST_CODE);
+                                    dialog.cancel();
+                                }
+                            })
+                    .setCancelable(true);
+            AlertDialog dialog = dialogBuilder.create();
+            dialog.show();
         } else login();
     }
 
