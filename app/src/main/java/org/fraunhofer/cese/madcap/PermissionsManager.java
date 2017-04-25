@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AppOpsManager;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -21,7 +23,7 @@ import android.widget.CompoundButton;
  */
 
 public class PermissionsManager extends Activity implements CheckBox.OnCheckedChangeListener{
-    private static final int REQUEST_CODE = 998;
+    private static final int REQUEST_CODE = 996;
 //    private boolean ACCESS_PERMIT = false;
 
     CheckBox contactsCB, locationCB, storageCB;
@@ -34,6 +36,11 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permissions);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        //cancel the notification with the same RUN_CODE that it was created with
+        notificationManager.cancel(998);
+
 
         contactsCB = (CheckBox) findViewById(R.id.contactsCheckBox);
         if(isContactPermitted()){

@@ -36,9 +36,8 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
     private boolean activityUsagePrompted;
     private boolean bluetoothPermissionPrompted;
 
-    private static final int RUN_CODE = 1;
+    private static final int RUN_CODE = 998;
     private static final int NOTIFICATION_ID = 918273;
-    private static final int REQUEST_CODE = 996 ;
 
     private NotificationManager mNotificationManager;
 
@@ -150,10 +149,11 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
 
         mBuilder.setContentTitle("MADCAP requests permissions");
         mBuilder.addAction(R.drawable.ic_stat_madcaplogo,"Settings", permissionsIntent);
-        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mBuilder.setAutoCancel(true);
-        Notification note = mBuilder.build();
-        mNotificationManager.notify(RUN_CODE, note);
+
+        mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.notify(RUN_CODE, mBuilder.build());
+
     }
 }
 
