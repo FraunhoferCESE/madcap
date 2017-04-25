@@ -27,6 +27,8 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import timber.log.Timber;
+
 
 /**
  * Implementation of a two-stage cache for ProbeEntry data. The cache first stores objects in memory, and flushes them to a backing
@@ -153,9 +155,7 @@ public class Cache {
             flush(UploadStrategy.NORMAL);
         }
 
-        if (currentDbSize + memcache.size() % 5 == 0) {
-            EventBus.getDefault().post(new CacheCountUpdate(currentDbSize + memcache.size()));
-        }
+        EventBus.getDefault().post(new CacheCountUpdate(currentDbSize + memcache.size()));
     }
 
     public static class CacheCountUpdate {

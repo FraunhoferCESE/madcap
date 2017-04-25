@@ -23,6 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/introText"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -63,21 +64,12 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/dataCollectionGroup" />
 
-    <TextView
-        android:id="@+id/dataCount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        app:layout_constraintLeft_toRightOf="@+id/dataCountText"
-        app:layout_constraintTop_toTopOf="@+id/dataCountText"
-        android:textIsSelectable="true" />
-
-
     <Button
         android:id="@+id/uploadButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/sendButtonText"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -89,6 +81,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/uploadButton" />
@@ -104,15 +97,6 @@
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
     <TextView
-        android:id="@+id/uploadDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:text="uploadDate"
-        app:layout_constraintLeft_toRightOf="@+id/lastUpload"
-        app:layout_constraintTop_toTopOf="@+id/lastUpload"/>
-
-    <TextView
         android:id="@+id/uploadResult"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -120,7 +104,7 @@
         android:layout_marginStart="8dp"
         android:text="@string/uploadResultText"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/uploadDate" />
+        app:layout_constraintTop_toBottomOf="@+id/lastUpload" />
 
     <TextView
         android:id="@+id/uploadCompleteness"

@@ -10,11 +10,13 @@
     <string name="dataCountText">Data points collected since the last upload: %d</string>
     <string name="uploadResultText">Last upload result: %s</string>
     <string name="sendButtonText">Upload data now</string>
-    <string name="lastUploadDateText">Last upload: %s</string>
+
 
     <string name="pref_dataCollection">datacollectionturnedonoff</string>
     <string name="pref_lastUploadComplete">lastUploadCompleteness</string>
     <string name="pref_lastUploadResult">lastUploadResult</string>
+
+    <string name="lastUploadDateText">Last upload: %s</string>
     <string name="pref_lastUploadDate">lastUploadDate</string>
     <string name="pref_lastUploadDate_default">You have not uploaded any data yet.</string>
 

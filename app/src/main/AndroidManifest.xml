@@ -111,17 +111,12 @@
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
-<!--            <intent-filter>
+            <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-    -->    </activity>
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_text"
-            android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme.NoActionBar" />
-        <activity
+        </activity>
+                <activity
             android:name=".authentication.SignInActivity"
             android:label="@string/name_sign_in_activity"
             android:screenOrientation="portrait"
@@ -148,10 +143,6 @@
             android:name=".Main2Activity"
             android:label="@string/title_text"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
     </application>

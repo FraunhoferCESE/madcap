@@ -5,10 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -38,12 +38,12 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
 
     private SharedPreferences prefs;
 
-    //private UploadStatusListener uploadStatusListener;
-    private AsyncTask<Void, Long, Void> cacheCountUpdater;
-
     //This is the data collection service we bind to.
+    @Nullable
     private DataCollectionService mDataCollectionService;
     private volatile boolean mBound;
+
+    private long mDataCount;
 
     //Ui elements
     private TextView nameTextView;
@@ -55,7 +55,6 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
     private TextView uploadResultView;
     private TextView uploadDateView;
     private TextView uploadCompletenessView;
-    private Button uploadButton;
 
     /**
      * Defines callbacks for service binding, passed to bindService()
@@ -78,7 +77,7 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
         // Initialize views
         dataCountView = (TextView) findViewById(R.id.dataCountText);
         uploadResultView = (TextView) findViewById(R.id.uploadResult);
-        uploadDateView = (TextView) findViewById(R.id.uploadDate);
+        uploadDateView = (TextView) findViewById(R.id.lastUpload);
         uploadCompletenessView = (TextView) findViewById(R.id.uploadCompleteness);
         collectionDataStatusText = (TextView) findViewById(R.id.dataCollectionStatus);
 
@@ -94,7 +93,6 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
                 new CompoundButton.OnCheckedChangeListener() {
                     @Override
                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        boolean isCollectingData;
                         if (isChecked) {
                             // Start the data collection service
                             Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
@@ -114,16 +112,16 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
                 }
         );
 
-        uploadButton = (Button) findViewById(R.id.uploadButton);
+        Button uploadButton = (Button) findViewById(R.id.uploadButton);
         uploadButton.setOnClickListener(
                 new View.OnClickListener() {
-                    private final DateFormat df = DateFormat.getDateTimeInstance();
+                    private final DateFormat format = DateFormat.getDateTimeInstance();
 
                     @Override
-                    public void onClick(View view) {
-                        if (mBound) {
+                    public void onClick(View v) {
+                        if (mBound && (mDataCollectionService != null)) {
                             mDataCollectionService.requestUpload();
-                            uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), df.format(new Date())));
+                            uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), format.format(new Date())));
                             Timber.d("Upload data clicked");
                         } else {
                             Timber.w("Requested manual upload, but DataCollectionService was not bound.");
@@ -138,12 +136,12 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
 
         mConnection = new ServiceConnection() {
             @Override
-            public void onServiceConnected(ComponentName className,
+            public void onServiceConnected(ComponentName name,
                                            IBinder service) {
                 // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
                 Timber.d("New connection service: " + service);
-                DataCollectionService.DataCollectionServiceBinder binder = (DataCollectionService.DataCollectionServiceBinder) service;
-                mDataCollectionService = binder.getService();
+                //noinspection CastToConcreteClass
+                mDataCollectionService = ((DataCollectionService.DataCollectionServiceBinder) service).getService();
                 mBound = true;
 
                 // Update UI elements
@@ -153,7 +151,7 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName arg0) {
+            public void onServiceDisconnected(ComponentName name) {
                 // Only invoked when hosting service crashed or is killed.
                 collectionDataStatusText.setText(getString(R.string.datacollectionstatusoff));
                 dataCollectionLayout.setBackgroundColor(getResources().getColor(R.color.madcap_false_color));
@@ -164,11 +162,6 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
                 Timber.d("onServiceDisconnected");
             }
         };
-
-        // Start the data collection service if enabled.
-        if (isCollectingData()) {
-            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
-        }
     }
 
     @Override
@@ -193,10 +186,11 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
         //Set the toggle button on the last set preference configuration
         collectDataSwitch.setChecked(isCollectingData());
         uploadCompletenessView.setText(prefs.getString(getString(R.string.pref_lastUploadComplete), ""));
+        //noinspection LocalVariableNamingConvention
         String lastUploadDateDefault = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
-        uploadDateView.setText(prefs.getString(getString(R.string.pref_lastUploadDate), lastUploadDateDefault));
+        uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), prefs.getString(getString(R.string.pref_lastUploadDate), lastUploadDateDefault)));
         uploadResultView.setText(prefs.getString(getString(R.string.pref_lastUploadResult), ""));
-        dataCountView.setText(String.format(getString(R.string.dataCountText), prefs.getInt(getString(R.string.pref_dataCount), 0)));
+        dataCountView.setText(String.format(getString(R.string.dataCountText), prefs.getLong(getString(R.string.pref_dataCount), 0L)));
     }
 
     @Override
@@ -207,6 +201,8 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
         if (mBound) {
             unbindConnection();
         }
+
+        prefs.edit().putLong(getString(R.string.pref_dataCount), mDataCount).apply();
     }
 
     @Override
@@ -231,7 +227,7 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
     /**
      * Convenience method for writing the data collection on/off state to preferences
      *
-     * @param isCollectingData
+     * @param isCollectingData boolean value to indicate whether data is being collected or not
      */
     private void setIsCollectingData(boolean isCollectingData) {
         SharedPreferences.Editor editor = prefs.edit();
@@ -244,39 +240,6 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
         Timber.d("Attempt to bind to service. Current bound status is " + mBound);
         if (!mBound) {
             getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-
-//            final Context context = this;
-//            cacheCountUpdater = new AsyncTask<Void, Long, Void>() {
-//                @Override
-//                protected Void doInBackground(Void... params) {
-//                    while (!isCancelled()) {
-//                        if (mBound) {
-//                            publishProgress(mDataCollectionService.getCacheSize());
-//                        }
-//                        try {
-//                            Thread.sleep(CACHE_UPDATE_UI_DELAY);
-//                        } catch (InterruptedException e) {
-//                            MyApplication.madcapLogger.i("Fraunhofer.CacheCounter", "Cache counter task to update UI thread has been interrupted.");
-//                        }
-//                    }
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onProgressUpdate(Long... values) {
-//                    if (dataCountView != null && dataCountView.isShown()) {
-//                        dataCountText = values[0] < 0 ? "Computing..." : Long.toString(values[0]);
-//                        dataCountView.setText(getString(R.string.dataCountText) + " " + dataCountText);
-//
-//                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-//                        SharedPreferences.Editor editor = prefs.edit();
-//                        editor.putLong(getString(R.string.pref_dataCount), values[0]);
-//                        editor.commit();
-//                    }
-//                }
-//            };
-
-//            cacheCountUpdater.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -289,7 +252,7 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCacheCountUpdate(Cache.CacheCountUpdate event) {
         dataCountView.setText(String.format(getString(R.string.dataCountText), event.getCount()));
-        prefs.edit().putLong(getString(R.string.pref_dataCount),0).apply();
+        mDataCount = event.getCount();
     }
 
 
@@ -302,8 +265,6 @@ public class Main2Activity extends AppCompatActivity implements SharedPreference
             uploadCompletenessView.setText(prefs.getString(getString(R.string.pref_lastUploadComplete), ""));
         } else if (getString(R.string.pref_lastUploadResult).equals(key)) {
             uploadResultView.setText(String.format(getString(R.string.uploadResultText), prefs.getString(getString(R.string.pref_lastUploadResult), "")));
-        } else if (getString(R.string.pref_dataCount).equals(key)) {
-            dataCountView.setText(String.format(getString(R.string.dataCountText), prefs.getInt(getString(R.string.pref_dataCount), 0)));
         } else if (getString(R.string.pref_uploadProgress).equals(key)) {
             uploadProgressBar.setProgress(prefs.getInt(getString(R.string.pref_uploadProgress), 0));
         }
