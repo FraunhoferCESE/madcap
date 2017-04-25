@@ -118,6 +118,8 @@ dependencies {
     //Dagger
     compile 'com.google.dagger:dagger:2.5'
     apt 'com.google.dagger:dagger-compiler:2.5'
+
+    compile 'com.jakewharton.timber:timber:4.5.1'
 }
 
 def debugProps = new Properties()

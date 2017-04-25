@@ -1,9 +1,11 @@
 package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -12,8 +14,8 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 
 import org.fraunhofer.cese.madcap.MyApplication;
-import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,6 +46,8 @@ import javax.inject.Singleton;
 public class Cache {
 
     private static final String TAG = "Fraunhofer." + Cache.class.getSimpleName();
+
+    private long currentDbSize = 0;
 
     private Collection<UploadStatusListener> uploadStatusListeners;
 
@@ -127,6 +131,7 @@ public class Cache {
 
         memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>(config.getMaxMemEntries()));
 
+        currentDbSize = getHelper().getDao().countOf();
         if (checkUploadConditions(UploadStrategy.NORMAL) == UPLOAD_READY) {
             upload();
         }
@@ -146,6 +151,22 @@ public class Cache {
         memcache.put(entry.getId(), entry);
         if ((memcache.size() > config.getMaxMemEntries()) && ((System.currentTimeMillis() - lastDbWriteAttempt) > (long) config.getDbWriteInterval())) {
             flush(UploadStrategy.NORMAL);
+        }
+
+        if (currentDbSize + memcache.size() % 5 == 0) {
+            EventBus.getDefault().post(new CacheCountUpdate(currentDbSize + memcache.size()));
+        }
+    }
+
+    public static class CacheCountUpdate {
+        private final long count;
+
+        CacheCountUpdate(long count) {
+            this.count = count;
+        }
+
+        public long getCount() {
+            return count;
         }
     }
 
@@ -174,6 +195,8 @@ public class Cache {
      * @param uploadStrategy the upload strategy to use
      */
     void doPostDatabaseWrite(DatabaseWriteResult result, UploadStrategy uploadStrategy) {
+
+        currentDbSize = getHelper().getDao().countOf();
 
         // 1. Remove ids written to DB from memory
         if ((result.getSavedEntries() != null) && !result.getSavedEntries().isEmpty()) {
@@ -376,6 +399,7 @@ public class Cache {
      * @param uploadResult the upload result passed from the remote upload task
      */
     void doPostUpload(RemoteUploadResult uploadResult) {
+        currentDbSize = getHelper().getDao().countOf();
         uploadTask = null;
         if ((uploadStatusListeners != null) && !uploadStatusListeners.isEmpty()) {
             for (UploadStatusListener listener : uploadStatusListeners) {

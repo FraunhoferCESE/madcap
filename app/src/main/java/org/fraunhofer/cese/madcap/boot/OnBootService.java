@@ -74,7 +74,7 @@ public class OnBootService extends IntentService {
                     if (signInResult.isSuccess()) {
                         MyApplication.madcapLogger.d(TAG, "Google SignIn successfully authenticated user to MADCAP.");
 
-                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
+                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
                             startService(new Intent(context, DataCollectionService.class).putExtra("boot",true));
                         }
                     } else {

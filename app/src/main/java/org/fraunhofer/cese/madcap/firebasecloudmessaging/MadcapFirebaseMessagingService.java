@@ -57,7 +57,7 @@ public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0) {
             MyApplication.madcapLogger.d(TAG, "Message data payload: " + remoteMessage.getData());
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (authenticationProvider.getUser() != null && prefs.getBoolean(getString(R.string.data_collection_pref), true)) {
+            if (authenticationProvider.getUser() != null && prefs.getBoolean(getString(R.string.pref_dataCollection), true)) {
                 processIncomingMessage(remoteMessage.getData());
             }
         }

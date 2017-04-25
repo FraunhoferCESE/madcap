@@ -21,9 +21,10 @@ import dagger.Component;
 @Component(modules = MyApplicationModule.class)
 @Singleton
 public interface MyComponent {
-    void inject(MainActivity activity);
+//    void inject(MainActivity activity);
+    void inject(Main2Activity activity);
     void inject(DataCollectionService dataCollectionService);
-    void inject(StartFragment startFragment);
+//    void inject(StartFragment startFragment);
     void inject(HelpFragment helpFragment);
     void inject(LogoutFragment logoutFragment);
     void inject(SignInActivity signInActivity);

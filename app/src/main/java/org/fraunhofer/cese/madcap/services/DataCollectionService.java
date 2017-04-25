@@ -23,7 +23,6 @@ import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
-import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.cache.UploadStrategy;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploadTaskFactory;
@@ -48,9 +47,7 @@ import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.util.DataCollectionProbe;
 import edu.umd.fcmd.sensorlisteners.model.util.LogOutProbe;
-
-import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.COMPLETE;
-import static org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener.Completeness.INCOMPLETE;
+import timber.log.Timber;
 
 
 /**
@@ -62,12 +59,12 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
     private static final int RUN_CODE = 1;
     private static final int NOTIFICATION_ID = 918273;
+    private static final long HEARTBEAT_DELAY = 100;
 
     private NotificationManager mNotificationManager;
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
-    private UploadStatusGuiListener uploadStatusGuiListener;
 
     @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
@@ -157,7 +154,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
     public void onCreate() {
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
-        MyApplication.madcapLogger.d(TAG, "onCreate Data collection Service " + this);
+        Timber.d("onCreate Data collection Service " + this);
 
         listeners.clear();
 
@@ -188,7 +185,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @Override
     public void onDestroy() {
-        MyApplication.madcapLogger.d(TAG, "onDestroy");
+        Timber.d("onDestroy");
         super.onDestroy();
 
         sendDataCollectionProbe(DataCollectionProbe.OFF);
@@ -201,7 +198,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
         synchronized (listeners) {
             for (Listener listener : listeners) {
                 listener.stopListening();
-                MyApplication.madcapLogger.d(TAG, listener.getClass().getSimpleName() + " stopped listening");
+                Timber.d(listener.getClass().getSimpleName() + " stopped listening");
             }
             listeners.clear();
         }
@@ -226,20 +223,19 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        MyApplication.madcapLogger.d(TAG, "OnStartCommand. Intent callee: " + (intent == null ? "null" : intent.getStringExtra("callee")));
+        Timber.d("OnStartCommand. Intent callee: " + (intent == null ? "null" : intent.getStringExtra("callee")));
 
         sendDataCollectionProbe(DataCollectionProbe.ON);
 
         startForeground(NOTIFICATION_ID, getRunNotification());
-
+        Timber.d("numListeners: " + listeners.size());
         synchronized (listeners) {
             for (Listener listener : listeners) {
                 try {
-                    MyApplication.madcapLogger.d(TAG, "numListeners: " + listeners.size());
                     listener.startListening();
-                    MyApplication.madcapLogger.d(TAG, listener.getClass().getSimpleName() + " started listening");
+                    Timber.d(listener.getClass().getSimpleName() + " started listening");
                 } catch (NoSensorFoundException nsf) {
-                    MyApplication.madcapLogger.e(TAG, "onStartCommand", nsf);
+                    Timber.e(nsf);
                 }
             }
         }
@@ -251,7 +247,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
         }
 
         // Start the heartbeat
-        new Handler().postDelayed(heartBeatRunner, 100L);
+        new Handler().postDelayed(heartBeatRunner, HEARTBEAT_DELAY);
 
         return START_STICKY;
     }
@@ -276,10 +272,10 @@ public class DataCollectionService extends Service implements UploadStatusListen
      * MainActivity call this when the "Upload Now" button is pressed.
      */
     public int requestUpload() {
-        MyApplication.madcapLogger.d(TAG, "Upload requested");
+        Timber.d("Upload requested");
         int status = cache.checkUploadConditions(UploadStrategy.IMMEDIATE);
 
-        MyApplication.madcapLogger.d(TAG, "Status: " + status);
+        Timber.d("Status: " + status);
 
         String text = "Result: ";
         if (status == Cache.UPLOAD_READY) {
@@ -312,52 +308,12 @@ public class DataCollectionService extends Service implements UploadStatusListen
         String date = String.valueOf(new Date());
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(getString(R.string.last_upload_date), date);
-        editor.apply();
-        if (uploadStatusGuiListener != null) {
-            uploadStatusGuiListener.onUploadStatusDateUpdate(date);
-        } else {
-            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
-            cachePendingGuiUpdate();
-        }
-
-
-        editor.putString(getString(R.string.last_upload_result), text);
+        editor.putString(getString(R.string.pref_lastUploadDate), date);
+        editor.putString(getString(R.string.pref_lastUploadResult), text);
+        editor.putString(getString(R.string.pref_lastUploadComplete), getString(R.string.status_complete));
         editor.apply();
 
-        if (uploadStatusGuiListener != null) {
-            uploadStatusGuiListener.onUploadStatusResultUpdate(text);
-            uploadStatusGuiListener.onUploadStatusProgressUpdate(0);
-            uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
-        } else {
-            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
-            cachePendingGuiUpdate();
-        }
         return status;
-    }
-
-
-    /**
-     * Returns the number of entities currently held in the cache.
-     * <p>
-     * From LL: Used by the MainActivity to get a count of entries to display.
-     * Move to DataCollectionService and update the references in the MainActivity.
-     *
-     * @return the number of entities in the cache.
-     * @see Cache#getSize()
-     */
-    public long getCacheSize() {
-        //MyApplication.madcapLogger.d(TAG, "Cache size "+cache.getSize());
-        return cache.getSize();
-    }
-
-    /**
-     * From LL: Called by the MainActivity. Move to DataCollectionService and update reference in MainActivity.
-     * <p>
-     * Should be called when the OS triggers onTrimMemory in the app
-     */
-    public void onTrimMemory() {
-        cache.flush(UploadStrategy.NORMAL);
     }
 
     /**
@@ -398,40 +354,21 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(getString(R.string.last_upload_completeness), getString(R.string.status_complete));
-        editor.putString(getString(R.string.last_upload_result), text);
-        editor.putInt(getString(R.string.last_upload_progress), 100);
+        editor.putString(getString(R.string.pref_lastUploadComplete), getString(R.string.status_complete));
+        editor.putString(getString(R.string.pref_lastUploadResult), text);
+        editor.putInt(getString(R.string.pref_uploadProgress), 100);
         editor.apply();
 
-        if (uploadStatusGuiListener != null) {
-            uploadStatusGuiListener.onUploadStatusCompletenessUpdate(COMPLETE);
-            uploadStatusGuiListener.onUploadStatusResultUpdate(text);
-            uploadStatusGuiListener.onUploadStatusProgressUpdate(100);
-        } else {
-            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered, caching now to the disk.");
-            cachePendingGuiUpdate();
-        }
-        MyApplication.madcapLogger.d(TAG, "Upload result received");
+        Timber.d("Upload result received");
 
     }
-
-    /**
-     * Caches a flag symbolozing that an GUI updated is pending.
-     */
-    private void cachePendingGuiUpdate() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(getString(R.string.gui_update_available), true);
-        editor.apply();
-    }
-
 
     /**
      * Called when the the cache is being closed. The listener is automatically unregistered from the cache immediately after this call.
      */
     @Override
     public void cacheClosing() {
-        MyApplication.madcapLogger.d(TAG, "Cache is closing");
+        Timber.d("Cache is closing");
     }
 
     /**
@@ -443,26 +380,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
     public void progressUpdate(int value) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(getString(R.string.last_upload_progress), value);
+        editor.putInt(getString(R.string.pref_uploadProgress), value);
         editor.apply();
-
-        if (uploadStatusGuiListener != null) {
-            uploadStatusGuiListener.onUploadStatusProgressUpdate(value);
-            if (value < 100) {
-                uploadStatusGuiListener.onUploadStatusCompletenessUpdate(INCOMPLETE);
-            }
-        } else {
-            MyApplication.madcapLogger.d(TAG, "No UploadStatusGuiListener registered");
-            cachePendingGuiUpdate();
-        }
-
-    }
-
-    public void setUploadStatusGuiListener(UploadStatusGuiListener uploadStatusGuiListener) {
-        this.uploadStatusGuiListener = uploadStatusGuiListener;
-        if (uploadStatusGuiListener != null) {
-            uploadStatusGuiListener.restoreLastUpload();
-        }
     }
 
     /**
@@ -509,7 +428,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private Notification getRunNotification() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-        mBuilder.setContentTitle("MADCAP is running in the background.");
+        // TODO: Refactor
+        mBuilder.setContentTitle("MADCAP is collecting research data.");
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setPriority(Notification.PRIORITY_LOW);
 

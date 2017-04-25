@@ -24,6 +24,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import timber.log.Timber;
 
 
 /**
@@ -60,8 +61,7 @@ public class ManualProbeUploadTaskFactory {
                 }
 
                 if (user == null) {
-                    MyApplication.madcapLogger.e(TAG, "No user available for sending manual probe.");
-                    FirebaseCrash.report(new Exception("Attempt to send a manual probe with a null user. Probe: " + probe));
+                    Timber.e("Attempt to send a manual probe with a null user. Probe: " + probe);
                     return null;
                 }
 

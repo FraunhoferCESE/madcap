@@ -7,24 +7,28 @@
     <!-- StartFragment -->
     <string name="introText">Welcome to MADCAP. Thank you for participating in the Pocket Security study!</string>
     <string name="collectDataSwitchText">Collect Data?</string>
-    <string name="dataCountText">Data points collected since the last upload: </string>
-    <string name="uploadResultText">Last upload result: </string>
+    <string name="dataCountText">Data points collected since the last upload: %d</string>
+    <string name="uploadResultText">Last upload result: %s</string>
     <string name="sendButtonText">Upload data now</string>
+    <string name="lastUploadDateText">Last upload: %s</string>
 
-    <string name="data_collection_pref">datacollectionturnedonoff</string>
-    <string name="last_upload_completeness">lastUploadCompleteness</string>
-    <string name="last_upload_result">lastUploadResult</string>
-    <string name="last_upload_progress">lastUploadProgress</string>
-    <string name="gui_update_available">guiUpdateAvailableFlag</string>
+    <string name="pref_dataCollection">datacollectionturnedonoff</string>
+    <string name="pref_lastUploadComplete">lastUploadCompleteness</string>
+    <string name="pref_lastUploadResult">lastUploadResult</string>
+    <string name="pref_lastUploadDate">lastUploadDate</string>
+    <string name="pref_lastUploadDate_default">You have not uploaded any data yet.</string>
+
     <string name="status_complete">Status: Complete</string>
     <string name="status_incomplete">Status: Incomplete</string>
+
+    <string name="pref_uploadProgress">uploadProgress</string>
 
     <string name="datacollectionstatus">Data collection is </string>
     <string name="datacollectionstatuson">Data collection is ON</string>
     <string name="datacollectionstatusoff">Data collection is OFF</string>
-    <string name="last_upload_text">Last upload:</string>
-    <string name="last_upload_date">lastUploadDate</string>
-    <string name="data_count">dataCount</string>
+
+
+    <string name="pref_dataCount">dataCount</string>
 
     <!-- Sign-in activity -->
     <string name="name_sign_in_activity">MADCAP Sign In</string>

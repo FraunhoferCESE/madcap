@@ -16,9 +16,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.authentication.SilentLoginResultCallback;
-import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
@@ -70,7 +70,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if (user != null) {
             MyApplication.madcapLogger.d(TAG, "User already signed in. Starting MainActivity.");
             errorTextView.setText("Welcome " + user.getGivenName() + ' ' + user.getFamilyName());
-            startActivity(new Intent(this, MainActivity.class));
+            startActivity(new Intent(this, Main2Activity.class));
         } else {
             final Context context = this;
             authenticationProvider.silentLogin(this, new SilentLoginResultCallback() {
@@ -116,12 +116,12 @@ public class WelcomeActivity extends AppCompatActivity {
                     if (signInResult.isSuccess()) {
                         MyApplication.madcapLogger.d(TAG, "User successfully signed in and authenticated to MADCAP.");
                         errorTextView.setText("Welcome");
-                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
+                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
                             Intent intent = new Intent(context, DataCollectionService.class);
                             intent.putExtra("callee", TAG);
                             startService(intent);
                         }
-                        startActivity(new Intent(context, MainActivity.class));
+                        startActivity(new Intent(context, Main2Activity.class));
                     } else {
                         MyApplication.madcapLogger.d(TAG, "User could not be authenticated to MADCAP. Starting SignInActivity.");
                         startActivity(new Intent(context, SignInActivity.class));
