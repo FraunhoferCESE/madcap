@@ -1,7 +1,9 @@
 package org.fraunhofer.cese.madcap;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -78,7 +80,23 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == PERMISSION_RQST_CODE){
             if(grantResults[0] == PackageManager.PERMISSION_GRANTED) login();
-            else finish();
+            else {
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+                dialogBuilder.setTitle("MADCAP permissions")
+                        .setMessage(getString(R.string.contacts_rationale))
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS},
+                                                PERMISSION_RQST_CODE);
+                                        dialog.cancel();
+                                    }
+                                })
+                        .setCancelable(true);
+                AlertDialog dialog = dialogBuilder.create();
+                dialog.show();
+            }
         }
     }
     @Override
