@@ -120,13 +120,13 @@
             android:name=".authentication.SignInActivity"
             android:label="@string/name_sign_in_activity"
             android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme" />
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".authorization.AuthorizationActivity"
             android:label="@string/name_authorization_activity"
             android:parentActivityName=".authentication.SignInActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme" />
+            android:theme="@style/AppTheme" />
 
         <service android:name=".firebasecloudmessaging.MadcapFirebaseMessagingService">
             <intent-filter>
@@ -140,9 +140,10 @@
         </service>
 
         <activity
-            android:name=".Main2Activity"
+            android:name=".MainActivity"
             android:label="@string/title_text"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
         </activity>
 
     </application>

@@ -70,7 +70,7 @@ public class WelcomeActivity extends AppCompatActivity {
         if (user != null) {
             MyApplication.madcapLogger.d(TAG, "User already signed in. Starting MainActivity.");
             errorTextView.setText("Welcome " + user.getGivenName() + ' ' + user.getFamilyName());
-            startActivity(new Intent(this, Main2Activity.class));
+            startActivity(new Intent(this, MainActivity.class));
         } else {
             final Context context = this;
             authenticationProvider.silentLogin(this, new SilentLoginResultCallback() {
@@ -121,7 +121,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             intent.putExtra("callee", TAG);
                             startService(intent);
                         }
-                        startActivity(new Intent(context, Main2Activity.class));
+                        startActivity(new Intent(context, MainActivity.class));
                     } else {
                         MyApplication.madcapLogger.d(TAG, "User could not be authenticated to MADCAP. Starting SignInActivity.");
                         startActivity(new Intent(context, SignInActivity.class));

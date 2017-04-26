@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="blue_grey_500">#607d8b</color>
-    <color name="blue_grey_600">#546E7A</color>
-    <color name="blue_grey_700">#455a64</color>
-    <color name="blue_grey_800">#37474F</color>
-    <color name="blue_grey_900">#263238</color>
-    <color name="red">#ff0000</color>
+    <color name="madcap_text">#555555</color>
     <color name="app_main_color">#009dcb</color>
     <color name="app_secondary_color">#f38c15</color>
     <color name="madcap_black">#000000</color>

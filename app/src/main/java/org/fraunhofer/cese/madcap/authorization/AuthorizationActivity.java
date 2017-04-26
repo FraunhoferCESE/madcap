@@ -14,7 +14,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Status;
 
-import org.fraunhofer.cese.madcap.Main2Activity;
+import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
@@ -104,7 +104,7 @@ public class AuthorizationActivity extends Activity {
                 if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
                     startService(new Intent(context, DataCollectionService.class).putExtra("callee", TAG));
                 }
-                Intent intent = new Intent(context, Main2Activity.class);
+                Intent intent = new Intent(context, MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }

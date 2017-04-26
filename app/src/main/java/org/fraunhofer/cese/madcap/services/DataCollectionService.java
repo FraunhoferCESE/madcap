@@ -61,6 +61,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private static final int NOTIFICATION_ID = 918273;
     private static final long HEARTBEAT_DELAY = 100;
 
+    private boolean isRunning;
+
     private NotificationManager mNotificationManager;
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
@@ -223,32 +225,34 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Timber.d("OnStartCommand. Intent callee: " + (intent == null ? "null" : intent.getStringExtra("callee")));
+        Timber.d("onStartCommand. isRunning: " + isRunning);
 
-        sendDataCollectionProbe(DataCollectionProbe.ON);
+        if (!isRunning) {
+            sendDataCollectionProbe(DataCollectionProbe.ON);
 
-        startForeground(NOTIFICATION_ID, getRunNotification());
-        Timber.d("numListeners: " + listeners.size());
-        synchronized (listeners) {
-            for (Listener listener : listeners) {
-                try {
-                    listener.startListening();
-                    Timber.d(listener.getClass().getSimpleName() + " started listening");
-                } catch (NoSensorFoundException nsf) {
-                    Timber.e(nsf);
+            startForeground(NOTIFICATION_ID, getRunNotification());
+            Timber.d("numListeners: " + listeners.size());
+            synchronized (listeners) {
+                for (Listener listener : listeners) {
+                    try {
+                        listener.startListening();
+                        Timber.d(listener.getClass().getSimpleName() + " started listening");
+                    } catch (NoSensorFoundException nsf) {
+                        Timber.e(nsf);
+                    }
                 }
             }
+
+            cache.addUploadListener(this);
+
+            if ((intent != null) && intent.hasExtra("boot")) {
+                cacheInitialBootEvent();
+            }
+
+            // Start the heartbeat
+            new Handler().postDelayed(heartBeatRunner, HEARTBEAT_DELAY);
+            isRunning = true;
         }
-
-        cache.addUploadListener(this);
-
-        if ((intent != null) && intent.hasExtra("boot")) {
-            cacheInitialBootEvent();
-        }
-
-        // Start the heartbeat
-        new Handler().postDelayed(heartBeatRunner, HEARTBEAT_DELAY);
-
         return START_STICKY;
     }
 
@@ -277,7 +281,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
         Timber.d("Status: " + status);
 
-        String text = "Result: ";
+        //TODO: All of the message formatting should be in the view, not here.
+        String text = "";
         if (status == Cache.UPLOAD_READY) {
             cache.flush(UploadStrategy.IMMEDIATE);
             text += "Upload started...";
@@ -309,8 +314,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(getString(R.string.pref_lastUploadDate), date);
-        editor.putString(getString(R.string.pref_lastUploadResult), text);
-        editor.putString(getString(R.string.pref_lastUploadComplete), getString(R.string.status_complete));
+        editor.putString(getString(R.string.pref_lastUploadMessage), text);
+        editor.putString(getString(R.string.pref_lastUploadStatus), getString(R.string.lastUploadStatus_incomplete));
+        editor.putInt(getString(R.string.pref_uploadProgress), 0);
         editor.apply();
 
         return status;
@@ -324,12 +330,17 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @Override
     public void uploadFinished(RemoteUploadResult result) {
 
+        boolean hasError = false;
+
+        //TODO: All of the message formatting should be in the view, not here.
         String text = "";
         if (result == null) {
-            text += "Result: No upload due to an internal error.";
+            text += "No upload due to an internal error.";
+            hasError = true;
         } else if (!result.isUploadAttempted()) {
-            text += "Result: No entries to upload.";
+            text += "No entries to upload.";
         } else if (result.getException() != null) {
+            hasError = true;
             String exceptionMessage;
             if (result.getException().getMessage() != null) {
                 exceptionMessage = result.getException().getMessage();
@@ -339,23 +350,26 @@ public class DataCollectionService extends Service implements UploadStatusListen
                 exceptionMessage = "Unspecified error";
             }
 
-            text += "Result: Upload failed due to " + (exceptionMessage.length() > MAX_EXCEPTION_MESSAGE_LENGTH ? exceptionMessage.substring(0, MAX_EXCEPTION_MESSAGE_LENGTH - 1) : exceptionMessage);
+            text += "Upload failed due to " + (exceptionMessage.length() > MAX_EXCEPTION_MESSAGE_LENGTH ? exceptionMessage.substring(0, MAX_EXCEPTION_MESSAGE_LENGTH - 1) : exceptionMessage);
         } else if (result.getSaveResult() == null) {
-            text += "Result: An error occurred on the remote server.";
+            text += "An error occurred on the remote server.";
+            hasError = true;
         } else {
             //noinspection AccessOfSystemProperties
-            text += "Result:" + System.getProperty("line.separator");
-            text += "\t" + (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
+            text += (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
             if (result.getSaveResult().getAlreadyExists() != null) {
                 //noinspection AccessOfSystemProperties
-                text += System.getProperty("line.separator") + '\t' + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
+                text += System.getProperty("line.separator") + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
             }
         }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(getString(R.string.pref_lastUploadComplete), getString(R.string.status_complete));
-        editor.putString(getString(R.string.pref_lastUploadResult), text);
+        if (hasError) {
+            editor.putString(getString(R.string.pref_lastUploadStatus), getString(R.string.lastUploadStatus_error));
+        }
+        editor.putString(getString(R.string.pref_lastUploadStatus), getString(R.string.lastUploadStatus_complete));
+        editor.putString(getString(R.string.pref_lastUploadMessage), text);
         editor.putInt(getString(R.string.pref_uploadProgress), 100);
         editor.apply();
 

@@ -22,7 +22,7 @@ import dagger.Component;
 @Singleton
 public interface MyComponent {
 //    void inject(MainActivity activity);
-    void inject(Main2Activity activity);
+    void inject(MainActivity activity);
     void inject(DataCollectionService dataCollectionService);
 //    void inject(StartFragment startFragment);
     void inject(HelpFragment helpFragment);

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="org.fraunhofer.cese.madcap.Main2Activity">
+    tools:context="org.fraunhofer.cese.madcap.MainActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -50,8 +50,7 @@
             android:id="@+id/dataCollectionStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:text="@string/datacollectionstatus" />
+            android:layout_marginStart="8dp" />
     </LinearLayout>
 
     <TextView
@@ -87,7 +86,7 @@
         app:layout_constraintTop_toBottomOf="@+id/uploadButton" />
 
     <TextView
-        android:id="@+id/lastUpload"
+        android:id="@+id/lastUploadDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -97,24 +96,31 @@
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />
 
     <TextView
-        android:id="@+id/uploadResult"
+        android:id="@+id/uploadResultHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
-        android:text="@string/uploadResultText"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/lastUpload" />
+        app:layout_constraintTop_toBottomOf="@+id/lastUploadDate" />
 
     <TextView
-        android:id="@+id/uploadCompleteness"
+        android:id="@+id/lastUploadStatus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
-        android:text="uploadCompleteness"
-        app:layout_constraintLeft_toLeftOf="@+id/uploadResult"
-        app:layout_constraintTop_toBottomOf="@+id/uploadResult" />
+        android:text="@string/lastUploadStatus"
+        app:layout_constraintLeft_toLeftOf="@+id/uploadResultHeader"
+        app:layout_constraintTop_toBottomOf="@+id/uploadResultHeader" />
+
+    <TextView
+        android:id="@+id/lastUploadMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/lastUploadMessage"
+        app:layout_constraintLeft_toLeftOf="@+id/uploadResultHeader"
+        app:layout_constraintTop_toBottomOf="@+id/lastUploadStatus" />
 
     <TextView
         android:id="@+id/versionNumberStartFragment"
