@@ -8,7 +8,7 @@ import android.support.v7.app.ActionBar;
  * Created by llayman on 4/27/2017.
  */
 
-public class ChildActivity extends ActionBarActivity {
+public abstract class ChildActivity extends ActionBarActivity {
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -18,4 +18,7 @@ public class ChildActivity extends ActionBarActivity {
             ab.setDisplayHomeAsUpEnabled(true);
         }
     }
+
+    @Override
+    protected abstract void onSignOut();
 }

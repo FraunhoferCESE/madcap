@@ -263,5 +263,8 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         }
     }
 
-
+    @Override
+    protected void onSignOut() {
+        finish();
+    }
 }

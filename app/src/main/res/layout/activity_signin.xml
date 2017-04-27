@@ -6,13 +6,17 @@
     android:layout_height="match_parent"
     tools:context=".authentication.SignInActivity">
 
+    <include
+        android:id="@+id/my_toolbar"
+        layout="@layout/action_bar" />
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/contentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="@id/my_toolbar">
 
         <ImageView
             android:id="@+id/madcap_logo"
@@ -86,6 +90,7 @@
                 android:id="@+id/sign_out_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                style="@style/Widget.AppCompat.Button.Colored"
                 android:text="@string/sign_out"
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"

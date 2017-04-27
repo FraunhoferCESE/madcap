@@ -1,12 +1,16 @@
 package org.fraunhofer.cese.madcap.authentication;
 
+import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,7 +23,11 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
 
+import org.fraunhofer.cese.madcap.AboutActivity;
 import org.fraunhofer.cese.madcap.BuildConfig;
+import org.fraunhofer.cese.madcap.ChildActivity;
+import org.fraunhofer.cese.madcap.HelpActivity;
+import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.authorization.AuthorizationActivity;
@@ -33,7 +41,7 @@ import timber.log.Timber;
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
  * profile.
  */
-public class SignInActivity extends AppCompatActivity {
+public class SignInActivity extends ChildActivity {
 
     private static final int RC_SIGN_IN = 9001;
 
@@ -130,7 +138,7 @@ public class SignInActivity extends AppCompatActivity {
                                     public void onSignOut(Status result) {
                                         if (result.getStatusCode() == CommonStatusCodes.SUCCESS) {
                                             Timber.d("Logout succeeded. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
-                                            updateButtonState(false);
+                                            updateUiState(false);
 
                                             mStatusTextView.setText(R.string.post_sign_out);
                                             Toast.makeText(activity, R.string.post_sign_out, Toast.LENGTH_SHORT).show();
@@ -172,16 +180,19 @@ public class SignInActivity extends AppCompatActivity {
         versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME + ", Build " + BuildConfig.VERSION_CODE);
     }
 
+
+
     @Override
     protected void onResume() {
         super.onResume();
 
         GoogleSignInAccount acct = authenticationProvider.getUser();
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         if (acct != null) {
-            updateButtonState(true);
+            updateUiState(true);
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getEmail()));
         } else {
-            updateButtonState(false);
+            updateUiState(false);
             mStatusTextView.setText(getString(R.string.signed_out));
         }
     }
@@ -204,13 +215,15 @@ public class SignInActivity extends AppCompatActivity {
         });
     }
 
-    private void updateButtonState(boolean isSignedIn) {
+    private void updateUiState(boolean isSignedIn) {
         if (isSignedIn) {
             findViewById(R.id.sign_in_button).setVisibility(View.GONE);
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.my_toolbar).setVisibility(View.VISIBLE);
         } else {
             findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+            findViewById(R.id.my_toolbar).setVisibility(View.INVISIBLE);
         }
     }
 
@@ -224,15 +237,47 @@ public class SignInActivity extends AppCompatActivity {
                 GoogleSignInAccount acct = result.getSignInAccount();
 
                 authenticationProvider.setUser(acct);
-                updateButtonState(true);
+                updateUiState(true);
                 mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
                 startActivity(new Intent(this, AuthorizationActivity.class));
             } else {
-                updateButtonState(false);
+                updateUiState(false);
                 Timber.w("SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
                 mStatusTextView.setText(getString(R.string.login_failed));
                 Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
             }
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_home:
+                startActivity(new Intent(this, MainActivity.class));
+                return true;
+            case R.id.action_signin:
+                startActivity(new Intent(this, SignInActivity.class));
+                return true;
+            case R.id.action_help:
+                startActivity(new Intent(this, HelpActivity.class));
+                return true;
+            case R.id.action_about:
+                startActivity(new Intent(this, AboutActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onSignOut() { }
+
 }

@@ -9,4 +9,9 @@ public class AboutActivity extends ChildActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
     }
+
+    @Override
+    protected void onSignOut() {
+        finish();
+    }
 }

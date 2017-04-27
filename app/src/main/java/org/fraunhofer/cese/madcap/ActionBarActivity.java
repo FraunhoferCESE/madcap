@@ -31,19 +31,21 @@ public abstract class ActionBarActivity extends AppCompatActivity {
         logoutReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                Timber.d("onReceive", "Logout in progress");
-                //At this point you should start the login activity and finish this one
-                finish();
+                onSignOut();
             }
         };
-
         LocalBroadcastManager.getInstance(this).registerReceiver(logoutReceiver, intentFilter);
+
     }
+
+    protected abstract void onSignOut();
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(logoutReceiver);
+        if (logoutReceiver != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(logoutReceiver);
+        }
     }
 
     @Override
@@ -68,7 +70,6 @@ public abstract class ActionBarActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-
             case R.id.action_home:
                 startActivity(new Intent(this, MainActivity.class));
                 return true;

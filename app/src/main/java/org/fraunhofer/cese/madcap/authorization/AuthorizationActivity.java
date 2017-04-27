@@ -14,6 +14,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Status;
 
+import org.fraunhofer.cese.madcap.BuildConfig;
+import org.fraunhofer.cese.madcap.ChildActivity;
 import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
@@ -28,7 +30,7 @@ import timber.log.Timber;
 /**
  * Activity that handles authorization of the currently signed in user to the backend and displays results accordingly.
  */
-public class AuthorizationActivity extends Activity {
+public class AuthorizationActivity extends ChildActivity {
 
     private static final String TAG = "AuthorizationActivity";
 
@@ -106,9 +108,9 @@ public class AuthorizationActivity extends Activity {
                 if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
                     startService(new Intent(context, DataCollectionService.class).putExtra("callee", TAG));
                 }
-                Intent intent = new Intent(context, MainActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+//                Intent intent = new Intent(context, MainActivity.class);
+//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//                startActivity(intent);
             }
 
             @Override
@@ -154,5 +156,10 @@ public class AuthorizationActivity extends Activity {
         if (progress.isShowing()) {
             progress.dismiss();
         }
+    }
+
+    @Override
+    protected void onSignOut() {
+
     }
 }

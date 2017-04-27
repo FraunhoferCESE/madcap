@@ -56,4 +56,9 @@ public class HelpActivity extends ChildActivity {
             }
         });
     }
+
+    @Override
+    protected void onSignOut() {
+        finish();
+    }
 }

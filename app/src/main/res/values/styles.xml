@@ -7,7 +7,7 @@
         <item name="colorAccent">@color/madcap_main_light</item>
         <item name="android:textColor">@color/madcap_text</item>
         <item name="android:colorForeground">@color/madcap_main_color</item>
-        <item name="android:buttonStyle">@style/ButtonColor</item>
+        <!--<item name="android:buttonStyle">@style/ButtonColor</item> -->
     </style>
 
     <style name="ButtonColor" parent="@android:style/Widget.Button">

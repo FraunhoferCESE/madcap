@@ -1,73 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="3"
     tools:context=".authorization.AuthorizationActivity">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/contentView"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:layout_weight="3"
-        android:orientation="vertical"
-        android:background="@color/common_google_signin_btn_text_dark_default"
-        android:weightSum="1"
-        android:gravity="center_horizontal|center">
+        android:layout_height="match_parent"
+        android:padding="8sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:id="@+id/madcap_logo"
-            android:layout_width="185dp"
-            android:layout_height="48dp"
-            android:layout_marginBottom="10dp"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
             android:contentDescription="@string/madcap_icon_desc"
             android:src="@drawable/madcaplogo2"
-            android:paddingBottom="@dimen/g_top_margin"
-            android:layout_weight="0.46"
-            android:layout_marginTop="10dp" />
+            app:layout_constraintBottom_toTopOf="@+id/title_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed"
+            />
 
         <TextView
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="16sp"
             android:gravity="center"
-            android:text="@string/name_main_activity"
+            android:text="@string/app_name"
             android:textColor="@color/madcap_main_light"
-            android:textSize="36sp" />
+            android:textSize="36sp"
+            app:layout_constraintBottom_toTopOf="@+id/authorization_message"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/madcap_logo" />
 
         <TextView
             android:id="@+id/authorization_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
             android:autoLink="web"
-            android:text="@string/auth_check_text" />
+            android:gravity="center"
+            android:text="@string/auth_check_text"
+            app:layout_constraintBottom_toTopOf="@+id/authorization_email"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/title_text" />
 
         <TextView
             android:id="@+id/authorization_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="" />
-
+            android:text=""
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/authorization_userid"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/authorization_message" />
 
         <TextView
             android:id="@+id/authorization_userid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="" />
+            android:text=""
+            android:gravity="center"
+            app:layout_constraintBottom_toTopOf="@+id/madcap_link_web"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/authorization_email" />
 
         <TextView
             android:id="@+id/madcap_link_web"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:text="@string/contactLink"
             android:autoLink="web"
             android:gravity="center"
-            android:text="@string/contactLink"
-            android:textAlignment="center" />
-    </LinearLayout>
-</LinearLayout>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/authorization_userid" />
+
+    </android.support.constraint.ConstraintLayout>
+
+    <include
+        android:id="@+id/versionNumber"
+        layout="@layout/footer" />
+</android.support.constraint.ConstraintLayout>
+
