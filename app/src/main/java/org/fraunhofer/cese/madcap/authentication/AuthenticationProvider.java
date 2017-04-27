@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -17,6 +18,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.MyApplication;
+import org.fraunhofer.cese.madcap.R;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -156,6 +158,10 @@ public class AuthenticationProvider {
      */
     public void signout(@NonNull Context context, @NonNull final LogoutResultCallback callback) {
         setUser(null);
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(context.getString(R.string.madcap_action_logout));
+        LocalBroadcastManager.getInstance(context).sendBroadcast(broadcastIntent);
+
         int connectionResult = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         if (connectionResult != ConnectionResult.SUCCESS) {
             callback.onServicesUnavailable(connectionResult);

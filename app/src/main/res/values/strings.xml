@@ -2,14 +2,16 @@
 
     <string name="app_name">MADCAP</string>
     <string name="versionIntro">MADCAP Version</string>
-    <string name="title_text">MADCAP</string>
+
 
     <!-- ActionBar Menu -->
+    <string name="action_home">Home</string>
     <string name="action_signin">Sign In</string>
     <string name="action_help">Help</string>
     <string name="action_about">About</string>
 
     <!-- MainActivity -->
+    <string name="name_main_activity">MADCAP</string>
     <string name="introText">Welcome to MADCAP. Thank you for participating in the Pocket Security study!</string>
 
     <string name="collectDataSwitchText">Collect Data?</string>
@@ -40,8 +42,12 @@
 
     <string name="pref_dataCount">dataCount</string>
 
+
+    <!-- Logout broadcast -->
+    <string name="madcap_action_logout">org.fraunhofer.cese.madcap.ACTION_LOGOUT</string>
     <!-- Sign-in activity -->
     <string name="name_sign_in_activity">MADCAP Sign In</string>
+    <string name="madcap_icon_desc">MADCAP Logo</string>
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="signing_in">Signing in…</string>
     <string name="signed_out">Signed out</string>
@@ -69,8 +75,7 @@
     <string name="play_services_invalid">Play services are invalid. Please reinstall them and try again.</string>
     <string name="play_services_connection_failed">Play services connection failed. Error code: %i</string>
 
-    <!-- Content Description for images -->
-    <string name="desc_google_icon">MADCAP Logo</string>
+
 
     <!-- Welcome activity -->
     <string name="help">Help</string>

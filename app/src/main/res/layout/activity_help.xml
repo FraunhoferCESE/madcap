@@ -8,7 +8,7 @@
 
     <include
         android:id="@+id/my_toolbar"
-        layout="@layout/actionbar" />
+        layout="@layout/action_bar" />
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/contentView"

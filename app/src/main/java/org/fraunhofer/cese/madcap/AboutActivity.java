@@ -2,7 +2,7 @@ package org.fraunhofer.cese.madcap;
 
 import android.os.Bundle;
 
-public class AboutActivity extends BaseActivity {
+public class AboutActivity extends ChildActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,8 +1,12 @@
 package org.fraunhofer.cese.madcap;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -10,7 +14,37 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-public abstract class BaseActivity extends AppCompatActivity {
+import org.fraunhofer.cese.madcap.authentication.SignInActivity;
+
+import timber.log.Timber;
+
+public abstract class ActionBarActivity extends AppCompatActivity {
+
+    private BroadcastReceiver logoutReceiver;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(getString(R.string.madcap_action_logout));
+        logoutReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Timber.d("onReceive", "Logout in progress");
+                //At this point you should start the login activity and finish this one
+                finish();
+            }
+        };
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(logoutReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(logoutReceiver);
+    }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
@@ -34,8 +68,12 @@ public abstract class BaseActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+
+            case R.id.action_home:
+                startActivity(new Intent(this, MainActivity.class));
+                return true;
             case R.id.action_signin:
-//                newGame();
+                startActivity(new Intent(this, SignInActivity.class));
                 return true;
             case R.id.action_help:
                 startActivity(new Intent(this, HelpActivity.class));

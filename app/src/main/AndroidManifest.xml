@@ -118,7 +118,7 @@
 
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_text"
+            android:label="@string/name_main_activity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".AboutActivity"
@@ -126,9 +126,20 @@
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".HelpActivity"
+            android:label="@string/name_help_activity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".authentication.SignInActivity"
             android:label="@string/name_sign_in_activity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            </activity>
+
         <activity
             android:name=".authorization.AuthorizationActivity"
             android:label="@string/name_authorization_activity"
@@ -139,16 +150,14 @@
             android:noHistory="true"
             android:screenOrientation="portrait"
             android:theme="@style/SplashTheme">
+            <!--
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            -->
         </activity>
-        <activity
-            android:name=".HelpActivity"
-            android:label="@string/name_help_activity"
-            android:parentActivityName=".authentication.SignInActivity"
-            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

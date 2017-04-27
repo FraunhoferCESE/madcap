@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -28,7 +27,7 @@ import java.text.DateFormat;
 
 import timber.log.Timber;
 
-public class MainActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends ActionBarActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String STATE_UPLOAD_STATUS = "uploadStatus";
     private static final String STATE_DATA_COUNT = "dataCount";

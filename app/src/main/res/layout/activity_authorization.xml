@@ -19,11 +19,11 @@
         android:gravity="center_horizontal|center">
 
         <ImageView
-            android:id="@+id/google_icon"
+            android:id="@+id/madcap_logo"
             android:layout_width="185dp"
             android:layout_height="48dp"
             android:layout_marginBottom="10dp"
-            android:contentDescription="@string/desc_google_icon"
+            android:contentDescription="@string/madcap_icon_desc"
             android:src="@drawable/madcaplogo2"
             android:paddingBottom="@dimen/g_top_margin"
             android:layout_weight="0.46"
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:gravity="center"
-            android:text="@string/title_text"
+            android:text="@string/name_main_activity"
             android:textColor="@color/madcap_main_light"
             android:textSize="36sp" />
 

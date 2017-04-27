@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import timber.log.Timber;
 
-public class HelpActivity extends BaseActivity {
+public class HelpActivity extends ChildActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
