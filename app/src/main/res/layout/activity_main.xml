@@ -115,6 +115,6 @@
 
     <include
         android:id="@+id/versionNumber"
-        layout="@layout/activity_footer" />
+        layout="@layout/footer" />
 
 </android.support.constraint.ConstraintLayout>

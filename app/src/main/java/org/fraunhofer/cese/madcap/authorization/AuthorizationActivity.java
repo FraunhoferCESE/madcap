@@ -23,6 +23,8 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 /**
  * Activity that handles authorization of the currently signed in user to the backend and displays results accordingly.
  */
@@ -47,23 +49,23 @@ public class AuthorizationActivity extends Activity {
     private final LogoutResultCallback logoutResultCallback = new LogoutResultCallback() {
         @Override
         public void onServicesUnavailable(int connectionResult) {
-            MyApplication.madcapLogger.w(TAG, getString(R.string.signin_service_unavailable));
+            Timber.w(getString(R.string.signin_service_unavailable));
         }
 
         @Override
         public void onSignOut(Status result) {
-            MyApplication.madcapLogger.d(TAG, "User signed out");
+            Timber.d("User signed out");
 
         }
 
         @Override
         public void onRevokeAccess(Status result) {
-            MyApplication.madcapLogger.d(TAG, "User access revoked.");
+            Timber.d("User access revoked.");
         }
 
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-            MyApplication.madcapLogger.w(TAG, getString(R.string.signin_service_connection_failed));
+            Timber.w(getString(R.string.signin_service_connection_failed));
         }
     };
 
@@ -93,7 +95,7 @@ public class AuthorizationActivity extends Activity {
         authorizationTaskFactory.createAuthorizationTask(context, new AuthorizationHandler() {
             @Override
             public void onAuthorized() {
-                MyApplication.madcapLogger.i(TAG, "User authorized");
+                Timber.i("User authorized");
                 if (progress.isShowing()) {
                     progress.dismiss();
                 }
@@ -111,7 +113,7 @@ public class AuthorizationActivity extends Activity {
 
             @Override
             public void onUnauthorized() {
-                MyApplication.madcapLogger.i(TAG, "User not authorized");
+                Timber.i("User not authorized");
                 if (progress.isShowing()) {
                     progress.dismiss();
                 }
@@ -124,7 +126,7 @@ public class AuthorizationActivity extends Activity {
 
             @Override
             public void onError(AuthorizationException exception) {
-                MyApplication.madcapLogger.w(TAG, "User authorization encountered an error: " + exception);
+                Timber.w("User authorization encountered an error: " + exception);
                 if (progress.isShowing()) {
                     progress.dismiss();
                 }

@@ -81,15 +81,15 @@ public class ManualProbeUploadTaskFactory {
                     ProbeSaveResult remoteResult = appEngineApi.insertProbeDataset(dataSet).execute();
 
                     if ((remoteResult.getSaved() != null) && (remoteResult.getSaved().size() == 1)) {
-                        MyApplication.madcapLogger.d(TAG, "Manual upload succeeded: " + probeEntry);
+                        Timber.d("Manual upload succeeded: " + probeEntry);
                     }
 
                     if (remoteResult.getAlreadyExists() != null) {
-                        MyApplication.madcapLogger.i(TAG, "Manual upload failed. Probe already exits: " + probeEntry);
+                        Timber.i("Manual upload failed. Probe already exits: " + probeEntry);
                     }
                 } catch (IOException e) {
-                    MyApplication.madcapLogger.w(TAG, e.toString());
-                    MyApplication.madcapLogger.w(TAG, "Manual upload failed. Saving to cache: " + probeEntry);
+                    Timber.w(e.toString());
+                    Timber.w("Manual upload failed. Saving to cache: " + probeEntry);
                     cacheFactory.save(probe);
                 }
 

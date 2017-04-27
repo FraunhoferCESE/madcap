@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
 
+import org.fraunhofer.cese.madcap.BuildConfig;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.authorization.AuthorizationActivity;
@@ -49,7 +51,7 @@ public class SignInActivity extends AppCompatActivity {
 
         // Views
         setContentView(R.layout.activity_signin);
-        mStatusTextView = (TextView) findViewById(R.id.status);
+        mStatusTextView = (TextView) findViewById(R.id.signin_status);
 
         // Button listeners
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -162,6 +164,12 @@ public class SignInActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        TextView subtitle = (TextView) findViewById(R.id.subtitle_text);
+        subtitle.setMovementMethod(LinkMovementMethod.getInstance());
+
+        TextView versionNumberText = (TextView) findViewById(R.id.versionNumber);
+        versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME + ", Build " + BuildConfig.VERSION_CODE);
     }
 
     @Override
@@ -171,7 +179,7 @@ public class SignInActivity extends AppCompatActivity {
         GoogleSignInAccount acct = authenticationProvider.getUser();
         if (acct != null) {
             updateButtonState(true);
-            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
+            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getEmail()));
         } else {
             updateButtonState(false);
             mStatusTextView.setText(getString(R.string.signed_out));

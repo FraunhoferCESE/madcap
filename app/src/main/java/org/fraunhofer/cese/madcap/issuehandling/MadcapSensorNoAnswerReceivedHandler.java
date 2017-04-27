@@ -1,8 +1,7 @@
 package org.fraunhofer.cese.madcap.issuehandling;
 
-import org.fraunhofer.cese.madcap.MyApplication;
-
 import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
+import timber.log.Timber;
 
 
 /**
@@ -20,7 +19,7 @@ public class MadcapSensorNoAnswerReceivedHandler implements SensorNoAnswerReceiv
     public void onNoAnswerReceivedForLongTime(String s) {
         switch(s){
             case "Location":
-                MyApplication.madcapLogger.d(TAG, "Did not receive answer for location for a long time");
+                Timber.d("Did not receive answer for location for a long time");
                 break;
         }
     }

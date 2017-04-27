@@ -8,6 +8,8 @@ import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.UserCheckResult;
 
 import java.io.IOException;
 
+import timber.log.Timber;
+
 /**
  * Asynchronous task to check that the currently signed-in user is authorized to upload data to MADCAP.
  */
@@ -29,7 +31,7 @@ public class AuthorizationTask extends AsyncTask<Void, Void, AuthorizationResult
         try {
             result.setUserCheckResult(endpoint.checkSignedUpUser().execute());
         } catch (IOException e) {
-            MyApplication.madcapLogger.w(TAG, e.getMessage());
+            Timber.e(e);
             result.setException(new AuthorizationException(e));
         }
 

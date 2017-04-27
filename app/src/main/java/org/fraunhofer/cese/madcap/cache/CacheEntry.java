@@ -1,10 +1,11 @@
 package org.fraunhofer.cese.madcap.cache;
 
-import org.fraunhofer.cese.madcap.MyApplication;
-import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeEntry;
-
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
+
+import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeEntry;
+
+import timber.log.Timber;
 
 
 /**
@@ -82,7 +83,7 @@ public class CacheEntry {
     @SuppressWarnings("CallToSimpleGetterFromWithinClass")
     static ProbeEntry createProbeEntry(CacheEntry entry) {
         if(entry == null) {
-            MyApplication.madcapLogger.e("CacheEntry","createProbeEntry: CacheEntry parameter is null.");
+            Timber.e("CacheEntry","createProbeEntry: CacheEntry parameter is null.");
             throw new NullPointerException("createProbeEntry: CacheEntry parameter is null.");
         }
 

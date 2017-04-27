@@ -23,6 +23,8 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 public class WelcomeActivity extends AppCompatActivity {
     private static final String TAG = "WelcomeActivity";
 
@@ -37,7 +39,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
-        MyApplication.madcapLogger.d(TAG, "Welcome created");
+        Timber.d("Welcome created");
 
         setContentView(R.layout.activity_welcome);
         errorTextView = (TextView) findViewById(R.id.welcomeErrorTextView);
@@ -52,8 +54,9 @@ public class WelcomeActivity extends AppCompatActivity {
              */
             @Override
             public void onClick(View v) {
-                MyApplication.madcapLogger.d(TAG, "Help toggled");
+                Timber.d("Help toggled");
 
+                // TODO: REfactor to use help activity?
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setData(Uri.parse("https://www.pocket-security.org/app-help/"));
                 startActivity(intent);
@@ -64,11 +67,11 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        MyApplication.madcapLogger.d(TAG, "onStart");
+        Timber.d("onStart");
 
         GoogleSignInAccount user = authenticationProvider.getUser();
         if (user != null) {
-            MyApplication.madcapLogger.d(TAG, "User already signed in. Starting MainActivity.");
+            Timber.d("User already signed in. Starting MainActivity.");
             errorTextView.setText("Welcome " + user.getGivenName() + ' ' + user.getFamilyName());
             startActivity(new Intent(this, MainActivity.class));
         } else {
@@ -77,7 +80,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 @Override
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
                     errorTextView.setText(String.format(getString(R.string.play_services_connection_failed), connectionResult));
-                    MyApplication.madcapLogger.e(TAG, "onStart.onConnectionFailed: Unable to connect to Google Play services. Error code: " + connectionResult);
+                    Timber.e("onStart.onConnectionFailed: Unable to connect to Google Play services. Error code: " + connectionResult);
                     // TODO: Unregister this listener from mGoogleClientApi in AuthenticationProvider?
                 }
 
@@ -105,7 +108,7 @@ public class WelcomeActivity extends AppCompatActivity {
                             text = String.format(getString(R.string.play_services_connection_failed), connectionResult);
                     }
 
-                    MyApplication.madcapLogger.e(TAG, text);
+                    Timber.e(text);
                     errorTextView.setText(text);
                     startActivity(new Intent(context, SignInActivity.class));
                     finish();
@@ -114,7 +117,7 @@ public class WelcomeActivity extends AppCompatActivity {
                 @Override
                 public void onLoginResult(GoogleSignInResult signInResult) {
                     if (signInResult.isSuccess()) {
-                        MyApplication.madcapLogger.d(TAG, "User successfully signed in and authenticated to MADCAP.");
+                        Timber.d("User successfully signed in and authenticated to MADCAP.");
                         errorTextView.setText("Welcome");
                         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
                             Intent intent = new Intent(context, DataCollectionService.class);
@@ -123,7 +126,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         }
                         startActivity(new Intent(context, MainActivity.class));
                     } else {
-                        MyApplication.madcapLogger.d(TAG, "User could not be authenticated to MADCAP. Starting SignInActivity.");
+                        Timber.d("User could not be authenticated to MADCAP. Starting SignInActivity.");
                         startActivity(new Intent(context, SignInActivity.class));
                     }
                     finish();

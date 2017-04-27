@@ -176,14 +176,14 @@ public class Cache {
      * @param uploadStrategy The upload strategy to use
      */
     public void flush(UploadStrategy uploadStrategy) {
-        MyApplication.madcapLogger.d(TAG, "Cache now flushing.");
+        Timber.d("Cache now flushing.");
         lastDbWriteAttempt = System.currentTimeMillis();
 
         AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> task = dbTaskFactory.createWriteTask(context, this, uploadStrategy);
 
         //noinspection unchecked
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ImmutableMap.copyOf(memcache));
-        MyApplication.madcapLogger.d(TAG, task.getStatus().toString());
+        Timber.d(task.getStatus().toString());
 
     }
 
@@ -200,16 +200,16 @@ public class Cache {
 
         // 1. Remove ids written to DB from memory
         if ((result.getSavedEntries() != null) && !result.getSavedEntries().isEmpty()) {
-            MyApplication.madcapLogger.d(TAG, "{doPostDatabaseWrite} entries saved to database: " + result.getSavedEntries().size() + ", new database size: " + result.getDatabaseSize());
+            Timber.d("{doPostDatabaseWrite} entries saved to database: " + result.getSavedEntries().size() + ", new database size: " + result.getDatabaseSize());
             memcache.keySet().removeAll(result.getSavedEntries());
         }
 
         // 2. Do some sanity checking. If DB writing persistently fails, we may need to drop some items from memory.
         //noinspection ThrowableResultOfMethodCallIgnored
         if (result.getError() != null) {
-            MyApplication.madcapLogger.e(TAG, "{doPostDatabaseWrite} Database write failed.", result.getError());
+            Timber.e("{doPostDatabaseWrite} Database write failed.", result.getError());
             if (memcache.size() > config.getMemForcedCleanupLimit()) {
-                MyApplication.madcapLogger.w(TAG, "{doPostDatabaseWrite} Too many cache entries in memory. Purging oldest entries. LIMIT: "
+                Timber.w("{doPostDatabaseWrite} Too many cache entries in memory. Purging oldest entries. LIMIT: "
                         + config.getMemForcedCleanupLimit() + ", memcache size: " + memcache.size());
 
                 // Remove the oldest entries so that config.getMemForcedCleanupLimit() / 2 entries remain
@@ -218,7 +218,7 @@ public class Cache {
                     iterator.next();
                     iterator.remove();
                 }
-                MyApplication.madcapLogger.w(TAG, "{doPostDatabaseWrite} New memcache size: " + memcache.size());
+                Timber.w("{doPostDatabaseWrite} New memcache size: " + memcache.size());
             }
         }
 
@@ -241,7 +241,7 @@ public class Cache {
         try {
             return getHelper().getDao().countOf() + (long) memcache.size();
         } catch (RuntimeException e) {
-            MyApplication.madcapLogger.e(TAG, e.getMessage());
+            Timber.e(e.getMessage());
             return -1L;
         }
     }
@@ -320,17 +320,17 @@ public class Cache {
     public final int checkUploadConditions(UploadStrategy strategy) {
         // 1. Check preconditions
         if (endpointApiBuilder == null) {
-            MyApplication.madcapLogger.w(TAG, "{uploadIfNeeded} No remote app engine API for uploading.");
+            Timber.w("{uploadIfNeeded} No remote app engine API for uploading.");
             return INTERNAL_ERROR;
         }
 
         if (getHelper() == null) {
-            MyApplication.madcapLogger.w(TAG, "{uploadIfNeeded} No helper found");
+            Timber.w("{uploadIfNeeded} No helper found");
             return INTERNAL_ERROR;
         }
 
         if (getHelper().getDao() == null) {
-            MyApplication.madcapLogger.w(TAG, "{uploadIfNeeded} getHelper().getDao() is null");
+            Timber.w("{uploadIfNeeded} getHelper().getDao() is null");
             return INTERNAL_ERROR;
         }
 
@@ -375,7 +375,7 @@ public class Cache {
                 status |= NO_INTERNET_CONNECTION;
             }
         } catch (RuntimeException e) {
-            MyApplication.madcapLogger.e(TAG, "{uploadIfNeeded}  Unable to get count of database entries.", e);
+            Timber.e("{uploadIfNeeded}  Unable to get count of database entries.", e);
             status |= INTERNAL_ERROR;
         }
         return status;
@@ -411,12 +411,12 @@ public class Cache {
         }
 
         if (!uploadResult.isUploadAttempted()) {
-            MyApplication.madcapLogger.i(TAG, "{doPostUpload} Upload aborted: no entries were sent to be uploaded.");
+            Timber.i("{doPostUpload} Upload aborted: no entries were sent to be uploaded.");
             return;
         }
 
         if (uploadResult.getException() != null) {
-            MyApplication.madcapLogger.w(TAG, "{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
+            Timber.w("{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
             dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }

@@ -3,10 +3,8 @@ package org.fraunhofer.cese.madcap;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
-import android.util.Log;
 
 import org.fraunhofer.cese.madcap.logging.CrashReportingTree;
-import org.fraunhofer.cese.madcap.util.MadcapLogger;
 
 import timber.log.Timber;
 
@@ -19,9 +17,6 @@ import timber.log.Timber;
 public class MyApplication extends Application {
     private static final String TAG = "MADCAP.MyApplication";
     private MyComponent component;
-
-    @SuppressWarnings("StaticVariableOfConcreteClass")
-    public static final MadcapLogger madcapLogger = new MadcapLogger();
 
     @Override
     public final void onCreate() {

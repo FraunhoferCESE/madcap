@@ -24,6 +24,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import timber.log.Timber;
+
 /**
  * Main entry point for authentication and getting the currently signed in user.
  * <p>
@@ -58,7 +60,7 @@ public class AuthenticationProvider {
      * @param callback   callback class for handling common login events
      */
     void interactiveSignIn(@NonNull final SignInActivity activity, final int resultCode, @NonNull LoginResultCallback callback) {
-        MyApplication.madcapLogger.d(TAG, "interactiveSignIn initiated");
+        Timber.d("interactiveSignIn initiated");
 
         int connectionResult = googleApiAvailability.isGooglePlayServicesAvailable(activity);
         if (connectionResult != ConnectionResult.SUCCESS) {
@@ -79,7 +81,7 @@ public class AuthenticationProvider {
 
                 @Override
                 public void onConnectionSuspended(int i) {
-                    MyApplication.madcapLogger.w(TAG, "onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
+                    Timber.w("onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
                 }
             });
             mGoogleApiClient.connect();
@@ -94,7 +96,7 @@ public class AuthenticationProvider {
      * @param callback callback handler for login event callbacks triggered during the silent login attempt.
      */
     public void silentLogin(@NonNull Context context, @NonNull final SilentLoginResultCallback callback) {
-        MyApplication.madcapLogger.d(TAG, "silentSignIn initiated");
+        Timber.d("silentSignIn initiated");
 
         int connectionResult = googleApiAvailability.isGooglePlayServicesAvailable(context);
         if (connectionResult != ConnectionResult.SUCCESS) {
@@ -115,7 +117,7 @@ public class AuthenticationProvider {
 
                 @Override
                 public void onConnectionSuspended(int i) {
-                    MyApplication.madcapLogger.w(TAG, "onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
+                    Timber.w("onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
                 }
             });
             mGoogleApiClient.connect();
@@ -133,15 +135,15 @@ public class AuthenticationProvider {
         if (opr.isDone()) {
             // In Case there is a result available immediately. This should happen if they signed in before.
             GoogleSignInResult result = opr.get();
-            MyApplication.madcapLogger.d(TAG, "Immediate result available: " + result);
+            Timber.d("Immediate result available: " + result);
             setUser(result.getSignInAccount());
             callback.onLoginResult(result);
         } else {
-            MyApplication.madcapLogger.d(TAG, "Immediate results are not available.");
+            Timber.d("Immediate results are not available.");
             opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
                 @Override
                 public void onResult(@NonNull GoogleSignInResult r) {
-                    MyApplication.madcapLogger.d(TAG, "Received asynchronous login result. Code: " + r.getStatus().getStatusCode() + ", message: " + r.getStatus().getStatusMessage());
+                    Timber.d("Received asynchronous login result. Code: " + r.getStatus().getStatusCode() + ", message: " + r.getStatus().getStatusMessage());
                     setUser(r.getSignInAccount());
                     callback.onLoginResult(r);
                 }
@@ -181,7 +183,7 @@ public class AuthenticationProvider {
 
                 @Override
                 public void onConnectionSuspended(int i) {
-                    MyApplication.madcapLogger.w(TAG, "onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
+                    Timber.w("onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
                 }
 
             });
@@ -233,7 +235,7 @@ public class AuthenticationProvider {
     synchronized void setUser(@Nullable GoogleSignInAccount user) {
         if (this.user != null) {
             lastLoggedInUser = this.user;
-            MyApplication.madcapLogger.d(TAG, "lastLoggedInUser is now: " + lastLoggedInUser);
+            Timber.d("lastLoggedInUser is now: " + lastLoggedInUser);
         }
         this.user = user;
     }
