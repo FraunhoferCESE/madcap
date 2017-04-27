@@ -1,14 +1,12 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -18,7 +16,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.location.LocationProbe;
@@ -41,7 +39,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
     private final GoogleApiClient mGoogleApiClient;
     private final LocationServiceStatusReceiver locationServiceStatusReceiver;
-    private final PermissionDeniedHandler permissionDeniedHandler;
+    private final PermissionsManager permissionsManager;
 
     private final LocationManager locationManager;
     private volatile boolean runningStatus;
@@ -60,11 +58,11 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                             LocationServiceStatusReceiverFactory locationServiceStatusReceiverFactory,
                             GoogleApiClient.ConnectionCallbacks connectionCallbackClass,
                             GoogleApiClient.OnConnectionFailedListener connectionFailedCallbackClass,
-                            PermissionDeniedHandler permissionDeniedHandler) {
+                            PermissionsManager permissionsManager) {
         this.context = context;
         this.mProbeManager = mProbeManager;
         this.mGoogleApiClient = mGoogleApiClient;
-        this.permissionDeniedHandler = permissionDeniedHandler;
+        this.permissionsManager = permissionsManager;
         locationServiceStatusReceiver = locationServiceStatusReceiverFactory.create(this);
         locationServiceStatusReceiver.sendInitialProbe(context);
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -107,8 +105,8 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 onLocationChanged(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
             } else {
-//                permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your location information.", "location");
-                permissionDeniedHandler.requestPermissionFromNotification();
+//                permissionsManager.requestPermissionFromNotification("MADCAP requires permission to access your location information.", "location");
+                permissionsManager.requestPermissionFromNotification();
             }
         }
 
@@ -125,8 +123,8 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
             if (isPermittedByUser()) {
                 locationManager.removeUpdates(this);
             } else {
-//                permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-                permissionDeniedHandler.requestPermissionFromNotification();
+//                permissionsManager.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+                permissionsManager.requestPermissionFromNotification();
             }
         }
         runningStatus = false;
@@ -143,14 +141,12 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
     @Override
     public boolean isPermittedByUser() {
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_DENIED) {
-            Log.e(TAG,"Location access NOT permitted");
-            return false;
-        }else {
-            Log.v(TAG,"Location access permitted");
+        if (permissionsManager.isLocationPermitted()) {
+            Log.e(TAG,"Location access permitted by user");
             return true;
+        }else {
+            Log.v(TAG,"Location access NOT permitted by user");
+            return false;
         }
     }
 
@@ -179,7 +175,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 Log.d(TAG, "Network accuracy (" + location.getAccuracy() + ") is more than threshold (" + NETWORK_LOCATION_ACCURACY_THRESHOLD + "). Requesting location from GPS.");
                 if (isPermittedByUser()) {
                     locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-//                } else permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+//                } else permissionsManager.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
                 }
             }
             onUpdate(createLocationProbe(location));

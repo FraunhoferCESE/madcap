@@ -5,6 +5,7 @@
     <string name="title_text">MADCAP</string>
 
     <!-- StartFragment -->
+    <string name="hello">Hello Mr.User</string>
     <string name="introText">Welcome to MADCAP. Thank you for participating in the Pocket Security study!</string>
     <string name="collectDataSwitchText">Collect Data?</string>
     <string name="dataCountText">Data points collected since the last upload: </string>
@@ -149,6 +150,7 @@
     <string name="storage_rationale">MADCAP requires your permission to read and write data to your phone\'s memory.</string>
     <string name="telephone_rationale">MADCAP needs this permission to know when you are making or receiving phone calls.</string>
     <string name="access_usage_rationale">MADCAP needs this permission to know when you are using an application.</string>
+    <string name="contacts_rationale_wa">MADCAP needs permission to access your Contacts to get your Google username and email. It does not read your other contacts.</string>
 
     <!-- Permission mini rationale -->
 

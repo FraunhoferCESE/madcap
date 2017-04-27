@@ -4,7 +4,6 @@ import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.support.annotation.Nullable;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -17,7 +16,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.GoogleApiClientConnectionIssueManagerLocation;
-import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 import org.fraunhofer.cese.madcap.util.MadcapBuildVersionProvider;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploader;
@@ -29,7 +28,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.TimedLocationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
@@ -133,7 +132,7 @@ class MyApplicationModule {
     }
 
     @Provides
-    PermissionDeniedHandler providePermissionDeniedHandler(MadcapPermissionDeniedHandler madcapPermissionDeniedHandler) {
+    PermissionsManager providePermissionDeniedHandler(MadcapPermissionsManager madcapPermissionDeniedHandler) {
         return madcapPermissionDeniedHandler;
     }
 

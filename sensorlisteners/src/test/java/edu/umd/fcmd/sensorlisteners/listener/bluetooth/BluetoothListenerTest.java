@@ -4,10 +4,8 @@ import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
-import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.os.Process;
 
 import junit.framework.Assert;
 
@@ -18,13 +16,11 @@ import org.junit.Test;
 import java.util.Iterator;
 import java.util.Set;
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
-import static android.R.attr.permission;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -38,7 +34,7 @@ public class BluetoothListenerTest {
     Context mockContext;
     ProbeManager<Probe> mockProbeManager;
     BluetoothAdapter mockBluetoothAdapter;
-    PermissionDeniedHandler mockPermissionDeniedHandler;
+    PermissionsManager mockPermissionsManager;
     BluetoothInformationReceiverFactory mockBluetoothInformationReceiverFactory;
     IntentFilterFactory mockIntenFilterFactory;
 
@@ -47,7 +43,7 @@ public class BluetoothListenerTest {
         mockContext = mock(Context.class);
         mockProbeManager = (ProbeManager<Probe>) mock(ProbeManager.class);
         mockBluetoothAdapter = mock(BluetoothAdapter.class);
-        mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
+        mockPermissionsManager = mock(PermissionsManager.class);
         mockBluetoothInformationReceiverFactory = mock(BluetoothInformationReceiverFactory.class);
         mockIntenFilterFactory = mock(IntentFilterFactory.class);
     }
@@ -62,7 +58,7 @@ public class BluetoothListenerTest {
         BluetoothListener cut = new BluetoothListener(mockContext,
                 mockProbeManager,
                 mockBluetoothAdapter,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockBluetoothInformationReceiverFactory,
                 mockIntenFilterFactory);
     }
@@ -72,7 +68,7 @@ public class BluetoothListenerTest {
         BluetoothListener cut = new BluetoothListener(mockContext,
                 mockProbeManager,
                 mockBluetoothAdapter,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockBluetoothInformationReceiverFactory,
                 mockIntenFilterFactory);
 
@@ -87,7 +83,7 @@ public class BluetoothListenerTest {
         BluetoothListener cut = new BluetoothListener(mockContext,
                 mockProbeManager,
                 mockBluetoothAdapter,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockBluetoothInformationReceiverFactory,
                 mockIntenFilterFactory);
 
@@ -133,7 +129,7 @@ public class BluetoothListenerTest {
         BluetoothListener cut = new BluetoothListener(mockContext,
                 mockProbeManager,
                 mockBluetoothAdapter,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockBluetoothInformationReceiverFactory,
                 mockIntenFilterFactory);
 
@@ -150,7 +146,7 @@ public class BluetoothListenerTest {
         BluetoothListener cut = new BluetoothListener(mockContext,
                 mockProbeManager,
                 mockBluetoothAdapter,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockBluetoothInformationReceiverFactory,
                 mockIntenFilterFactory);
 
@@ -169,7 +165,7 @@ public class BluetoothListenerTest {
         BluetoothListener cut = new BluetoothListener(mockContext,
                 mockProbeManager,
                 mockBluetoothAdapter,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockBluetoothInformationReceiverFactory,
                 mockIntenFilterFactory);
 
@@ -181,7 +177,7 @@ public class BluetoothListenerTest {
         BluetoothListener cut = new BluetoothListener(mockContext,
                 mockProbeManager,
                 mockBluetoothAdapter,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockBluetoothInformationReceiverFactory,
                 mockIntenFilterFactory);
 
@@ -192,7 +188,7 @@ public class BluetoothListenerTest {
 
         when(mockContext.checkPermission(anyString(), anyInt(), anyInt())).thenReturn(PackageManager.PERMISSION_DENIED);
         Assert.assertEquals(cut.getState(), 0);
-        verify(mockPermissionDeniedHandler).onPermissionDenied(Manifest.permission.BLUETOOTH);
+        verify(mockPermissionsManager).onPermissionDenied(Manifest.permission.BLUETOOTH);
     }
 
 }

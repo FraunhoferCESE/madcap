@@ -8,7 +8,9 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,6 +29,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.UploadStatusGuiListener;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import java.text.DateFormat;
@@ -165,8 +168,27 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
 
         if (isCollectingData && !mBound) {
             Intent intent = new Intent(getActivity().getApplicationContext(), DataCollectionService.class);
-
-            //bindConnection(intent);
+        }
+        final MadcapPermissionsManager permissionManager = new MadcapPermissionsManager(getContext());
+        if(permissionManager.hasAllPermissions()){
+            view.findViewById(R.id.warningBlock).setVisibility(View.GONE);
+        }else {
+            view.findViewById(R.id.warningBlock).setVisibility(View.VISIBLE);
+            ((Button)view.findViewById(R.id.warningBlock_button)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(getContext(), PermissionsActivity.class));
+                }
+            });
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    while(!permissionManager.hasAllPermissions()){
+                        permissionManager.requestPermissionFromNotification();
+                    }
+                }
+            };
+            new Thread(runnable).start();
         }
 
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
@@ -187,7 +209,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         nameTextView = (TextView) view.findViewById(R.id.usernameTextview);
         GoogleSignInAccount user = authenticationProvider.getUser();
         if (user != null) {
-            nameTextView.setText(user.getGivenName() + ' ' + user.getFamilyName());
+            nameTextView.setText("Hi, "+user.getGivenName() + ' ' + user.getFamilyName());
         }
 
         collectionDataStatusText = (TextView) view.findViewById(R.id.collectionDataStatusText);
@@ -197,7 +219,7 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
         //Set up upload progress bar
         uploadProgressBar = (ProgressBar) view.findViewById(R.id.uploadProgressBar);
 
-        //Set up the colorable data collection background
+        //Set up the colourable data collection background
         dataCollectionLayout = (RelativeLayout) view.findViewById(R.id.dataCollectionLayout);
 
         if (isCollectingData) {
@@ -333,6 +355,20 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
             bindConnection(intent);
         }
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        //TODO: implement logic to hide and show warningBlock after layout has been restructured.
+//        MadcapPermissionsManager permissionManager = new MadcapPermissionsManager(getContext());
+//        if(permissionManager.hasAllPermissions()){
+//            view.findViewById(R.id.warningBlock).setVisibility(View.GONE);
+//        }else {
+//            view.findViewById(R.id.warningBlock).setVisibility(View.VISIBLE);
+//            ((Button)view.findViewById(R.id.warningBlock_button)).setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    startActivity(new Intent(getContext(), PermissionsActivity.class));
+//                }
+//            });
+//        }
     }
 
     @Override

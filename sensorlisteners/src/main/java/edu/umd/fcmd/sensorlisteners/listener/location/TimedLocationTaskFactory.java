@@ -2,7 +2,7 @@ package edu.umd.fcmd.sensorlisteners.listener.location;
 
 import com.google.android.gms.awareness.SnapshotApi;
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 
 /**
@@ -19,7 +19,7 @@ public class TimedLocationTaskFactory {
      * @return a new TimedLocationTask
      */
 
-    public TimedLocationTask create(LocationListener locationListener, SnapshotApi snapshotApi, PermissionDeniedHandler permissionDeniedHandler, SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler){
-        return new TimedLocationTask(locationListener, snapshotApi, permissionDeniedHandler, sensorNoAnswerReceivedHandler);
+    public TimedLocationTask create(LocationListener locationListener, SnapshotApi snapshotApi, PermissionsManager permissionsManager, SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler){
+        return new TimedLocationTask(locationListener, snapshotApi, permissionsManager, sensorNoAnswerReceivedHandler);
     }
 }

@@ -2,13 +2,10 @@ package edu.umd.fcmd.sensorlisteners.listener.applications;
 
 import android.content.Context;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -19,13 +16,13 @@ public class TimedApplicationTaskFactoryTest {
     public void create() throws Exception {
         ApplicationsListener mockApplicationsListener = mock(ApplicationsListener.class);
         Context mockContext = mock(Context.class);
-        PermissionDeniedHandler mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
+        PermissionsManager mockPermissionsManager = mock(PermissionsManager.class);
 
         TimedApplicationTaskFactory cut = new TimedApplicationTaskFactory();
 
-        TimedApplicationTask eq = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionDeniedHandler);
+        TimedApplicationTask eq = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionsManager);
 
-        cut.create(mockApplicationsListener, mockContext, mockPermissionDeniedHandler);
+        cut.create(mockApplicationsListener, mockContext, mockPermissionsManager);
     }
 
 }

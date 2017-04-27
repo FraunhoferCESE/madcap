@@ -1,19 +1,16 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.awareness.snapshot.LocationResult;
 import com.google.android.gms.common.api.ResultCallback;
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 import edu.umd.fcmd.sensorlisteners.model.location.LocationProbe;
 
@@ -26,7 +23,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
     private static final int LOCATION_SLEEP_TIME = 15000;
     private final SnapshotApi snapshotApi;
     private final LocationListener locationListener;
-    private final PermissionDeniedHandler permissionDeniedHandler;
+    private final PermissionsManager permissionsManager;
     private final SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler;
     private int attempts;
 
@@ -37,12 +34,12 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
      */
     TimedLocationTask(LocationListener locationListener,
                       SnapshotApi snapshotApi,
-                      PermissionDeniedHandler permissionDeniedHandler,
+                      PermissionsManager permissionsManager,
                       SensorNoAnswerReceivedHandler sensorNoAnswerReceivedHandler) {
         if ((locationListener != null) && (snapshotApi != null)) {
             this.locationListener = locationListener;
             this.snapshotApi = snapshotApi;
-            this.permissionDeniedHandler = permissionDeniedHandler;
+            this.permissionsManager = permissionsManager;
             this.sensorNoAnswerReceivedHandler = sensorNoAnswerReceivedHandler;
         } else {
             throw new NullPointerException("Cannot create a new TimedLocationTask for null parametes.");
@@ -98,7 +95,7 @@ class TimedLocationTask extends AsyncTask<Void, Location, Void> {
                     Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
                 }
             }
-        } //else permissionDeniedHandler.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
+        } //else permissionsManager.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
         return null;
     }
 
