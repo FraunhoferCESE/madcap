@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -39,13 +39,13 @@ import static org.mockito.Mockito.when;
 public class TimedApplicationTaskTest {
     ApplicationsListener mockApplicationsListener;
     Context mockContext;
-    PermissionDeniedHandler mockPermissionDeniedHandler;
+    PermissionsManager mockPermissionsManager;
 
     @Before
     public void setUp() throws Exception {
         mockApplicationsListener = mock(ApplicationsListener.class);
         mockContext = mock(Context.class);
-        mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
+        mockPermissionsManager = mock(PermissionsManager.class);
     }
 
     @After
@@ -61,7 +61,7 @@ public class TimedApplicationTaskTest {
             e.printStackTrace();
         }
 
-        TimedApplicationTask cut21 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionDeniedHandler);
+        TimedApplicationTask cut21 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionsManager);
 
         try {
             setFinalStatic(Build.VERSION.class.getField("SDK_INT"), 19);
@@ -69,7 +69,7 @@ public class TimedApplicationTaskTest {
             e.printStackTrace();
         }
 
-        TimedApplicationTask cut19 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionDeniedHandler);
+        TimedApplicationTask cut19 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionsManager);
 
     }
 
@@ -80,7 +80,7 @@ public class TimedApplicationTaskTest {
 
     @Test
     public void onProgressUpdate() throws Exception {
-        TimedApplicationTask cut = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionDeniedHandler);
+        TimedApplicationTask cut = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionsManager);
 
         ForegroundBackgroundEventsProbe mockForegroundBackgroundEventsProbe = mock(ForegroundBackgroundEventsProbe.class);
 
@@ -97,7 +97,7 @@ public class TimedApplicationTaskTest {
             e.printStackTrace();
         }
 
-        TimedApplicationTask cut21 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionDeniedHandler);
+        TimedApplicationTask cut21 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionsManager);
 
         when(mockContext.getPackageName()).thenReturn("A");
 
@@ -125,7 +125,7 @@ public class TimedApplicationTaskTest {
             e.printStackTrace();
         }
 
-        TimedApplicationTask cut19 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionDeniedHandler);
+        TimedApplicationTask cut19 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionsManager);
 
         Assert.assertTrue(cut19.checkPermissions());
 
@@ -146,7 +146,7 @@ public class TimedApplicationTaskTest {
         when(mockUsageStatsManager.queryEvents(anyLong(), anyLong())).thenReturn(mockUsageEvents);
         when(mockUsageEvents.hasNextEvent()).thenReturn(false);
 
-        TimedApplicationTask cut21 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionDeniedHandler);
+        TimedApplicationTask cut21 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionsManager);
 
         ComponentName mockComponentName = mock(ComponentName.class);
         cut21.checkForNewEvents(mockContext, mockComponentName, 10000);
@@ -170,7 +170,7 @@ public class TimedApplicationTaskTest {
 
         when(mockComponentName2.getClassName()).thenReturn("AAAAAA");
 
-        TimedApplicationTask cut19 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionDeniedHandler);
+        TimedApplicationTask cut19 = new TimedApplicationTask(mockApplicationsListener, mockContext, mockPermissionsManager);
         cut19.checkForNewEvents(mockContext, mockComponentName, 10000);
     }
 

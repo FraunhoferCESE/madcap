@@ -66,6 +66,22 @@
             app:layout_constraintBottom_toTopOf="@+id/helpButton"
             />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:text="@string/contacts_rationale_wa"
+            android:id="@+id/wa_permissionRationale"
+            android:layout_margin="5dp"
+            android:visibility="gone"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Grant"
+            android:id="@+id/wa_grantButton"
+            android:visibility="gone"/>
+
         <Button
             android:id="@+id/helpButton"
             android:text="@string/help"
@@ -83,3 +99,4 @@
         android:id="@+id/versionNumber"
         layout="@layout/footer" />
 </android.support.constraint.ConstraintLayout>
+

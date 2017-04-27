@@ -115,6 +115,44 @@
 
     </android.support.constraint.ConstraintLayout>
 
+    <RelativeLayout
+        android:id="@+id/warningBlock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp">
+
+        <ImageView
+            android:id="@+id/warningBlock_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_warning_black"
+            android:layout_margin="5dp"/>
+
+        <TextView
+            android:id="@+id/warningBlock_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/warningBlock_icon"
+            android:text="Permissions missing"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textStyle="bold"
+            android:padding="5dp"
+            android:layout_margin="5dp"/>
+
+        <Button
+            android:id="@+id/warningBlock_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/warningBlock_text"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:text="Grant now" />
+    </RelativeLayout>
+
     <include
         android:id="@+id/versionNumber"
         layout="@layout/footer" />

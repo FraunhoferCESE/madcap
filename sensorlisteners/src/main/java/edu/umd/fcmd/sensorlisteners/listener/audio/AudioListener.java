@@ -8,7 +8,7 @@ import android.util.Log;
 import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.audio.HeadphoneProbe;
@@ -28,7 +28,7 @@ public class AudioListener implements Listener{
     private final String TAG = getClass().getSimpleName();
     private final Context context;
     private final ProbeManager<Probe> probeProbeManager;
-    private final PermissionDeniedHandler permissionDeniedHandler;
+    private final PermissionsManager permissionsManager;
     private final AudioReceiverFactory audioReceiverFactory;
     private static final int SIGIFICANCE_DELTA = 0;
 
@@ -50,17 +50,17 @@ public class AudioListener implements Listener{
      * @param context the context.
      * @param probeProbeManager the update probe manager.
      * @param audioReceiverFactory the audio receiver factory.
-     * @param permissionDeniedHandler the permission handler.
+     * @param permissionsManager the permission handler.
      */
     @Inject
     public AudioListener(Context context,
                          ProbeManager<Probe> probeProbeManager,
                          AudioReceiverFactory audioReceiverFactory,
-                         PermissionDeniedHandler permissionDeniedHandler){
+                         PermissionsManager permissionsManager){
         this.context = context;
         this.probeProbeManager = probeProbeManager;
         this.audioReceiverFactory = audioReceiverFactory;
-        this.permissionDeniedHandler = permissionDeniedHandler;
+        this.permissionsManager = permissionsManager;
 
         audioManager = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
     }
@@ -104,6 +104,7 @@ public class AudioListener implements Listener{
 
     @Override
     public boolean isPermittedByUser() {
+        //TODO: system check for permission
         //non dangerous permission
         return true;
     }

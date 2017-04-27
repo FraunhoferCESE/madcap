@@ -7,7 +7,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
@@ -22,14 +22,14 @@ public class ApplicationsListenerTest {
     private Context mockContext;
     private ProbeManager<Probe> mockProbeProbeManager;
     private TimedApplicationTaskFactory mockTimedApplicationTaskFactory;
-    private PermissionDeniedHandler mockPermissionDeniedHandler;
+    private PermissionsManager mockPermissionsManager;
 
     @Before
     public void setUp() throws Exception {
         mockContext = mock(Context.class);
         mockProbeProbeManager = (ProbeManager<Probe>) mock(ProbeManager.class);
         mockTimedApplicationTaskFactory = mock(TimedApplicationTaskFactory.class);
-        mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
+        mockPermissionsManager = mock(PermissionsManager.class);
     }
 
     @After
@@ -39,12 +39,12 @@ public class ApplicationsListenerTest {
 
     @Test
     public void constructorTest(){
-        ApplicationsListener cut = new ApplicationsListener(mockContext, mockProbeProbeManager, mockTimedApplicationTaskFactory, mockPermissionDeniedHandler);
+        ApplicationsListener cut = new ApplicationsListener(mockContext, mockProbeProbeManager, mockTimedApplicationTaskFactory, mockPermissionsManager);
     }
 
     @Test
     public void onUpdate() throws Exception {
-        ApplicationsListener cut = new ApplicationsListener(mockContext, mockProbeProbeManager, mockTimedApplicationTaskFactory, mockPermissionDeniedHandler);
+        ApplicationsListener cut = new ApplicationsListener(mockContext, mockProbeProbeManager, mockTimedApplicationTaskFactory, mockPermissionsManager);
 
         Probe mockProbe = mock(Probe.class);
 
@@ -55,10 +55,10 @@ public class ApplicationsListenerTest {
 
     @Test
     public void startListening() throws Exception {
-        ApplicationsListener cut = new ApplicationsListener(mockContext, mockProbeProbeManager, mockTimedApplicationTaskFactory, mockPermissionDeniedHandler);
+        ApplicationsListener cut = new ApplicationsListener(mockContext, mockProbeProbeManager, mockTimedApplicationTaskFactory, mockPermissionsManager);
 
         TimedApplicationTask mockTimedApplicationTask = mock(TimedApplicationTask.class);
-        when(mockTimedApplicationTaskFactory.create(cut, mockContext, mockPermissionDeniedHandler)).thenReturn(mockTimedApplicationTask);
+        when(mockTimedApplicationTaskFactory.create(cut, mockContext, mockPermissionsManager)).thenReturn(mockTimedApplicationTask);
 
         cut.startListening();
         verify(mockTimedApplicationTask).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -66,12 +66,12 @@ public class ApplicationsListenerTest {
 
     @Test
     public void stopListening() throws Exception {
-        ApplicationsListener cut = new ApplicationsListener(mockContext, mockProbeProbeManager, mockTimedApplicationTaskFactory, mockPermissionDeniedHandler);
+        ApplicationsListener cut = new ApplicationsListener(mockContext, mockProbeProbeManager, mockTimedApplicationTaskFactory, mockPermissionsManager);
 
         cut.stopListening();
 
         TimedApplicationTask mockTimedApplicationTask = mock(TimedApplicationTask.class);
-        when(mockTimedApplicationTaskFactory.create(cut, mockContext, mockPermissionDeniedHandler)).thenReturn(mockTimedApplicationTask);
+        when(mockTimedApplicationTaskFactory.create(cut, mockContext, mockPermissionsManager)).thenReturn(mockTimedApplicationTask);
 
         cut.startListening();
         cut.stopListening();

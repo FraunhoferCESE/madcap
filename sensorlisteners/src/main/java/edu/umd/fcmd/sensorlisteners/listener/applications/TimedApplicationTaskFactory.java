@@ -4,7 +4,7 @@ import android.content.Context;
 
 import javax.inject.Inject;
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 
 /**
  * Created by MMueller on 11/17/2016.
@@ -17,7 +17,7 @@ public class TimedApplicationTaskFactory {
     @Inject
     public TimedApplicationTaskFactory() {}
 
-    public TimedApplicationTask create(ApplicationsListener applicationsListener, Context context, PermissionDeniedHandler permissionDeniedHandler){
-        return new TimedApplicationTask(applicationsListener, context, permissionDeniedHandler);
+    public TimedApplicationTask create(ApplicationsListener applicationsListener, Context context, PermissionsManager permissionsManager){
+        return new TimedApplicationTask(applicationsListener, context, permissionsManager);
     }
 }

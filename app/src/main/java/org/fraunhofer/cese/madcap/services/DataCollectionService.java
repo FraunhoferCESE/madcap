@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.services;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,13 +8,13 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
+import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
@@ -243,6 +244,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
                     } catch (NoSensorFoundException nsf) {
                         Timber.e(nsf);
                     }
+
                 }
             }
 
@@ -251,6 +253,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
             if ((intent != null) && intent.hasExtra("boot")) {
                 cacheInitialBootEvent();
             }
+
 
 
             // Start the heartbeat
@@ -402,6 +405,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
         editor.apply();
     }
 
+
     /**
      * Shows the madcap logo in the notification bar,
      * to signal the user that madcap is collecting data.
@@ -466,6 +470,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 //
 
     private Notification getRunNotification() {
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
         // TODO: Refactor

@@ -14,7 +14,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothConnectionProbe;
@@ -41,7 +41,7 @@ public class BluetoothListener implements Listener {
     private final Context context;
     private final BluetoothAdapter bluetoothAdapter;
     private final ProbeManager<Probe> probeManager;
-    private final PermissionDeniedHandler permissionDeniedHandler;
+    private final PermissionsManager permissionsManager;
     private final BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory;
     private final IntentFilterFactory intenFilterFactory;
     private BluetoothInformationReceiver receiver;
@@ -52,13 +52,13 @@ public class BluetoothListener implements Listener {
     public BluetoothListener(Context context,
                              ProbeManager<Probe> probeManager,
                              BluetoothAdapter bluetoothAdapter,
-                             PermissionDeniedHandler permissionDeniedHandler,
+                             PermissionsManager permissionsManager,
                              BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory,
                              IntentFilterFactory intenFilterFactory) {
         this.context = context;
         this.bluetoothAdapter = bluetoothAdapter;
         this.probeManager = probeManager;
-        this.permissionDeniedHandler = permissionDeniedHandler;
+        this.permissionsManager = permissionsManager;
         this.bluetoothInformationReceiverFactory = bluetoothInformationReceiverFactory;
         this.intenFilterFactory = intenFilterFactory;
     }
@@ -169,7 +169,7 @@ public class BluetoothListener implements Listener {
      */
     public int getState() {
         if (isPermittedByUser()) return bluetoothAdapter.getState();
-//        }else permissionDeniedHandler.onPermissionDenied(Manifest.permission.BLUETOOTH);
+//        }else permissionsManager.onPermissionDenied(Manifest.permission.BLUETOOTH);
         return 0;
     }
 }

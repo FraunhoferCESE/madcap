@@ -1,7 +1,5 @@
 package edu.umd.fcmd.sensorlisteners.listener.network;
 
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.le.ScanCallback;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +8,6 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
-import android.provider.Telephony;
 import android.telephony.TelephonyManager;
 
 import junit.framework.Assert;
@@ -22,14 +19,12 @@ import org.junit.Test;
 import java.util.Iterator;
 import java.util.List;
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.network.NFCProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 import static android.content.Context.TELEPHONY_SERVICE;
-import static android.net.wifi.WifiManager.WIFI_STATE_ENABLING;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,7 +37,7 @@ public class NetworkListenerTest {
     ProbeManager<Probe> mockProbeManager;
     ConnectionInfoReceiverFactory mockConnectionInfoReceiverFactory;
     TelephonyListenerFactory mockTelephonyListenerFactory;
-    PermissionDeniedHandler mockPermissionDeniedHandler;
+    PermissionsManager mockPermissionsManager;
     MSMSReceiverFactory mockMSMSReceiverFactory;
     SMSOutObserverFactory mockSMSOutObserverFactory;
     MMSOutObserverFactory mockMMSOutObserverFactory;
@@ -53,7 +48,7 @@ public class NetworkListenerTest {
         mockProbeManager = mock(ProbeManager.class);
         mockConnectionInfoReceiverFactory = mock(ConnectionInfoReceiverFactory.class);
         mockTelephonyListenerFactory = mock(TelephonyListenerFactory.class);
-        mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
+        mockPermissionsManager = mock(PermissionsManager.class);
         mockMSMSReceiverFactory = mock(MSMSReceiverFactory.class);
         mockSMSOutObserverFactory = mock(SMSOutObserverFactory.class);
         mockMMSOutObserverFactory = mock(MMSOutObserverFactory.class);
@@ -73,7 +68,7 @@ public class NetworkListenerTest {
                 mockTelephonyListenerFactory,
                 mockSMSOutObserverFactory,
                 mockMMSOutObserverFactory,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
     }
 
     @Test
@@ -85,7 +80,7 @@ public class NetworkListenerTest {
                 mockTelephonyListenerFactory,
                 mockSMSOutObserverFactory,
                 mockMMSOutObserverFactory,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         Probe mockProbe = mock(Probe.class);
 
@@ -103,7 +98,7 @@ public class NetworkListenerTest {
                 mockTelephonyListenerFactory,
                 mockSMSOutObserverFactory,
                 mockMMSOutObserverFactory,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         TelephonyListener mockTelephonyListener = mock(TelephonyListener.class);
         when(mockTelephonyListenerFactory.create(mockContext, cut)).thenReturn(mockTelephonyListener);
@@ -146,7 +141,7 @@ public class NetworkListenerTest {
                 mockTelephonyListenerFactory,
                 mockSMSOutObserverFactory,
                 mockMMSOutObserverFactory,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         TelephonyListener mockTelephonyListener = mock(TelephonyListener.class);
         when(mockTelephonyListenerFactory.create(mockContext, cut)).thenReturn(mockTelephonyListener);
@@ -190,7 +185,7 @@ public class NetworkListenerTest {
                 mockTelephonyListenerFactory,
                 mockSMSOutObserverFactory,
                 mockMMSOutObserverFactory,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         TelephonyListener mockTelephonyListener = mock(TelephonyListener.class);
         when(mockTelephonyListenerFactory.create(mockContext, cut)).thenReturn(mockTelephonyListener);
@@ -235,7 +230,7 @@ public class NetworkListenerTest {
                 mockTelephonyListenerFactory,
                 mockSMSOutObserverFactory,
                 mockMMSOutObserverFactory,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         Intent mockIntent = mock(Intent.class);
 
@@ -276,7 +271,7 @@ public class NetworkListenerTest {
                 mockTelephonyListenerFactory,
                 mockSMSOutObserverFactory,
                 mockMMSOutObserverFactory,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         WifiManager mockWifiManager = mock(WifiManager.class);
         when(mockContext.getSystemService(Context.WIFI_SERVICE)).thenReturn(mockWifiManager);
@@ -337,7 +332,7 @@ public class NetworkListenerTest {
                 mockTelephonyListenerFactory,
                 mockSMSOutObserverFactory,
                 mockMMSOutObserverFactory,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         NfcManager mockNfcManager = mock(NfcManager.class);
         when(mockContext.getSystemService(Context.NFC_SERVICE)).thenReturn(mockNfcManager);

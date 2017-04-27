@@ -7,14 +7,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
-import android.nfc.tech.NfcA;
-import android.provider.Settings;
 import android.provider.Telephony;
 import android.support.v4.content.ContextCompat;
 import android.telephony.CellLocation;
@@ -32,7 +29,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.network.CallStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.CellLocationProbe;
@@ -42,9 +39,7 @@ import edu.umd.fcmd.sensorlisteners.model.network.NFCProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.WiFiProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
-import static android.R.attr.filter;
 import static android.content.Context.TELEPHONY_SERVICE;
-import static java.security.AccessController.getContext;
 
 /**
  * Created by MMueller on 12/2/2016.
@@ -64,7 +59,7 @@ public class NetworkListener implements Listener {
     private final ProbeManager<Probe> probeProbeManager;
     private final ConnectionInfoReceiverFactory connectionInfoReceiverFactory;
     private final MSMSReceiverFactory msmsReceiverFactory;
-    private final PermissionDeniedHandler permissionDeniedHandler;
+    private final PermissionsManager permissionsManager;
     private TelephonyManager telephonyManager;
     private final TelephonyListenerFactory telephonyListenerFactory;
     private TelephonyListener telephonyListener;
@@ -83,12 +78,12 @@ public class NetworkListener implements Listener {
                            TelephonyListenerFactory telephonyListenerFactory,
                            SMSOutObserverFactory smsOutObserverFactory,
                            MMSOutObserverFactory mmsOutObserverFactory,
-                           PermissionDeniedHandler permissionDeniedHandler){
+                           PermissionsManager permissionsManager){
         this.context = context;
         this.probeProbeManager = probeProbeManager;
         this.connectionInfoReceiverFactory = connectionInfoReceiverFactory;
         this.telephonyListenerFactory = telephonyListenerFactory;
-        this.permissionDeniedHandler = permissionDeniedHandler;
+        this.permissionsManager = permissionsManager;
         this.msmsReceiverFactory = msmsReceiverFactory;
         this.smsOutObserverFactory = smsOutObserverFactory;
         this.mmsOutObserverFactory = mmsOutObserverFactory;
@@ -110,7 +105,7 @@ public class NetworkListener implements Listener {
                 instaciateTelephonyListener();
                 sendInitalProbes();
             }
-//            else    permissionDeniedHandler.requestPermissionFromNotification("MADCAP requires permission to access your network information.", "network");
+//            else    permissionsManager.requestPermissionFromNotification("MADCAP requires permission to access your network information.", "network");
         }
 
         runningStatus = true;
@@ -152,13 +147,12 @@ public class NetworkListener implements Listener {
 
     @Override
     public boolean isPermittedByUser() {
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_DENIED
-                || ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_DENIED) {
-            Log.e(TAG,"Network access NOT permitted");
-            return false;
-        }else {
-            Log.v(TAG,"Network access permitted");
+        if (permissionsManager.isLocationPermitted() && permissionsManager.isTelephonePermitted()) {
+            Log.e(TAG,"Network access permitted by user");
             return true;
+        }else {
+            Log.v(TAG,"Network access NOT permitted");
+            return false;
         }
     }
 

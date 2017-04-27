@@ -3,26 +3,29 @@ package org.fraunhofer.cese.madcap;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AppOpsManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
+
 /**
  * Created by PGuruprasad on 18/04/2017.
+ *
+ * Activity to show a list of permission used by MADCAP
+ * and request for missing permissions.
+ *
+ * Permission getter is closely tied to this activity.
  */
 
-public class PermissionsManager extends Activity implements CheckBox.OnCheckedChangeListener{
+public class PermissionsActivity extends Activity implements CheckBox.OnCheckedChangeListener{
     private static final int REQUEST_CODE = 996;
 //    private boolean ACCESS_PERMIT = false;
 
@@ -32,10 +35,14 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
 
+    MadcapPermissionsManager permissionsManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permissions);
+
+        permissionsManager = new MadcapPermissionsManager(this);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //cancel the notification with the same RUN_CODE that it was created with
@@ -43,44 +50,43 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
 
 
         contactsCB = (CheckBox) findViewById(R.id.contactsCheckBox);
-        if(isContactPermitted()){
+        if(permissionsManager.isContactPermitted()){
             contactsCB.setChecked(true); contactsCB.setClickable(false); contactsCB.setEnabled(false);
         }
         contactsCB.setOnCheckedChangeListener(this);
 
         locationCB = (CheckBox) findViewById(R.id.locationCheckBox);
-        if(isLocationPermitted()){
+        if(permissionsManager.isLocationPermitted()){
             locationCB.setChecked(true); locationCB.setClickable(false); locationCB.setEnabled(false);
         }
         locationCB.setOnCheckedChangeListener(this);
 
         storageCB = (CheckBox) findViewById(R.id.storageCheckBox);
-        if(isStoragePermitted()){
+        if(permissionsManager.isStoragePermitted()){
             storageCB.setChecked(true); storageCB.setClickable(false); storageCB.setEnabled(false);
         }
         storageCB.setOnCheckedChangeListener(this);
 
 
         smsCB = (CheckBox) findViewById(R.id.smsCheckBox);
-        if(isSmsPermitted()){
+        if(permissionsManager.isSmsPermitted()){
             smsCB.setChecked(true); smsCB.setClickable(false); smsCB.setEnabled(false);
         }
         smsCB.setOnCheckedChangeListener(this);
 
 
         telephoneCB = (CheckBox) findViewById(R.id.telephoneCheckBox);
-        if(isTelephonePermitted()){
+        if(permissionsManager.isTelephonePermitted()){
             telephoneCB.setChecked(true); telephoneCB.setClickable(false); telephoneCB.setEnabled(false);
         }
         telephoneCB.setOnCheckedChangeListener(this);
 
 
         usageStatsCB = (CheckBox) findViewById(R.id.usageStatsCheckBox);
-        if(isUsageStatsPermitted()){
+        if(permissionsManager.isUsageStatsPermitted()){
             usageStatsCB.setChecked(true); usageStatsCB.setClickable(false); usageStatsCB.setEnabled(false);
         }
         usageStatsCB.setOnCheckedChangeListener(this);
-
     }
 
     private void getPermissionWithRationale(String permit, String rationale) {
@@ -94,7 +100,7 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        ActivityCompat.requestPermissions(PermissionsManager.this, new String[]{Manifest.permission.GET_ACCOUNTS},
+                                        ActivityCompat.requestPermissions(PermissionsActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS},
                                                 REQUEST_CODE);
                                         dialog.cancel();
                                     }
@@ -111,7 +117,7 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        ActivityCompat.requestPermissions(PermissionsManager.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                                        ActivityCompat.requestPermissions(PermissionsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                                 REQUEST_CODE-1);
                                         dialog.cancel();
                                     }
@@ -128,7 +134,7 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        ActivityCompat.requestPermissions(PermissionsManager.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
+                                        ActivityCompat.requestPermissions(PermissionsActivity.this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},
                                                 REQUEST_CODE-2);
                                         dialog.cancel();
                                     }
@@ -145,7 +151,7 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        ActivityCompat.requestPermissions(PermissionsManager.this, new String[]{Manifest.permission.READ_SMS},
+                                        ActivityCompat.requestPermissions(PermissionsActivity.this, new String[]{Manifest.permission.READ_SMS},
                                                 REQUEST_CODE-3);
                                         dialog.cancel();
                                     }
@@ -162,7 +168,7 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
                                 new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        ActivityCompat.requestPermissions(PermissionsManager.this, new String[]{Manifest.permission.READ_PHONE_STATE},
+                                        ActivityCompat.requestPermissions(PermissionsActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE},
                                                 REQUEST_CODE-4);
                                         dialog.dismiss();
                                     }
@@ -195,7 +201,6 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if((grantResults[0] == PackageManager.PERMISSION_GRANTED))
             switch(requestCode){
                 case REQUEST_CODE:
@@ -231,44 +236,10 @@ public class PermissionsManager extends Activity implements CheckBox.OnCheckedCh
         }
     }
 
-    public boolean isContactPermitted(){
-        return (ActivityCompat.checkSelfPermission(PermissionsManager.this, Manifest.permission.GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED); //? true : false;
-    }
-
-    public boolean isLocationPermitted(){
-        return (ActivityCompat.checkSelfPermission(PermissionsManager.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED);// ? true : false;
-    }
-
-    public boolean isSmsPermitted(){
-        return (ActivityCompat.checkSelfPermission(PermissionsManager.this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED);// ? true : false;
-    }
-
-    public boolean isStoragePermitted(){
-        return (ActivityCompat.checkSelfPermission(PermissionsManager.this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);// ? true : false;
-    }
-
-    public boolean isTelephonePermitted(){
-        return (ActivityCompat.checkSelfPermission(PermissionsManager.this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);// ? true : false;
-    }
-
-    public boolean isUsageStatsPermitted(){
-//        return (ActivityCompat.checkSelfPermission(PermissionsManager.this, Settings.ACTION_USAGE_ACCESS_SETTINGS) == PackageManager.PERMISSION_GRANTED) ? true : false;
-        try {
-            ApplicationInfo appInfo = getPackageManager().getApplicationInfo(getPackageName(),0);
-            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(APP_OPS_SERVICE);
-            int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, appInfo.uid, appInfo.packageName);
-            return (mode == AppOpsManager.MODE_ALLOWED);
-
-        } catch (PackageManager.NameNotFoundException e) {
-            //do not resolve this catch.
-            return false;
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
-        if(isUsageStatsPermitted()){
+        if(permissionsManager.isUsageStatsPermitted()){
             usageStatsCB.setChecked(true);
             usageStatsCB.setClickable(false);
             usageStatsCB.setEnabled(false);

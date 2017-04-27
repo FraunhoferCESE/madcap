@@ -74,6 +74,7 @@ public class PowerListener implements Listener {
 
     @Override
     public boolean isPermittedByUser() {
+        //TODO: system check for permission
         //non dangerous permission
         return true;
     }

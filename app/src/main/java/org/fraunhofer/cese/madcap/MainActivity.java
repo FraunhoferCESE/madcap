@@ -1,6 +1,5 @@
 package org.fraunhofer.cese.madcap;
 
-
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
@@ -20,6 +19,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -28,6 +28,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.text.DateFormat;
 
 import timber.log.Timber;
+
 
 /**
  * Creates the main activity for MADCAP.
@@ -44,7 +45,9 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     private DataCollectionService mDataCollectionService;
     private volatile boolean mBound;
 
+
     private long mDataCount;
+
 
     //Ui elements
     private TextView nameTextView;
@@ -63,6 +66,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
      * Defines callbacks for service binding, passed to bindService()
      */
     private ServiceConnection mConnection;
+
 
 
     @Override
@@ -127,6 +131,28 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                 }
         );
 
+        final MadcapPermissionsManager permissionManager = new MadcapPermissionsManager(this);
+        if(permissionManager.hasAllPermissions()){
+            findViewById(R.id.warningBlock).setVisibility(View.GONE);
+        }else {
+            findViewById(R.id.warningBlock).setVisibility(View.VISIBLE);
+            ((Button)findViewById(R.id.warningBlock_button)).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this, PermissionsActivity.class));
+                }
+            });
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    while(!permissionManager.hasAllPermissions()){
+                        permissionManager.requestPermissionFromNotification();
+                    }
+                }
+            };
+            new Thread(runnable).start();
+        }
+
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name,
@@ -171,7 +197,9 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         }
     }
 
+
     @Override
+
 
     protected void onStart() {
         super.onStart();

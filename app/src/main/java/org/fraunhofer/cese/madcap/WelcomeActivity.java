@@ -24,6 +24,7 @@ import com.google.android.gms.common.ConnectionResult;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.authentication.SilentLoginResultCallback;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
@@ -42,6 +43,10 @@ public class WelcomeActivity extends AppCompatActivity {
     AuthenticationProvider authenticationProvider;
     private TextView welcomeMessageView;
 
+    private TextView errorTextView, permissionRationaleTV;
+    Button grantButton;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +58,9 @@ public class WelcomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
         welcomeMessageView = (TextView) findViewById(R.id.welcomeMessage);
         welcomeMessageView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        permissionRationaleTV = (TextView) findViewById(R.id.wa_permissionRationale);
+        grantButton = (Button) findViewById(R.id.wa_grantButton);
 
         Button helpButton = (Button) findViewById(R.id.helpButton);
         helpButton.setOnClickListener(new View.OnClickListener() {
@@ -79,16 +87,35 @@ public class WelcomeActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == PERMISSION_RQST_CODE){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED) login();
-            else finish();
+            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                permissionRationaleTV.setVisibility(View.GONE);
+                grantButton.setVisibility(View.GONE);
+                login();
+            }
+            else {
+
+                permissionRationaleTV.setVisibility(View.VISIBLE);
+
+                grantButton.setVisibility(View.VISIBLE);
+                grantButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ActivityCompat.requestPermissions(WelcomeActivity.this, new String[]{Manifest.permission.GET_ACCOUNTS},
+                                PERMISSION_RQST_CODE);
+                    }
+                });
+
+            }
         }
     }
+
     @Override
     protected void onStart() {
         super.onStart();
         Timber.d("onStart");
 
-        if (ActivityCompat.checkSelfPermission(WelcomeActivity.this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
+        MadcapPermissionsManager permissionsManager = new MadcapPermissionsManager(this);
+        if (!permissionsManager.isContactPermitted()) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
             dialogBuilder.setTitle("MADCAP permissions")
                     .setMessage(getString(R.string.contacts_rationale))
@@ -101,7 +128,7 @@ public class WelcomeActivity extends AppCompatActivity {
                                     dialog.cancel();
                                 }
                             })
-                    .setCancelable(true);
+                    .setCancelable(false);
             AlertDialog dialog = dialogBuilder.create();
             dialog.show();
         } else login();
