@@ -4,7 +4,12 @@
     <string name="versionIntro">MADCAP Version</string>
     <string name="title_text">MADCAP</string>
 
-    <!-- StartFragment -->
+    <!-- ActionBar Menu -->
+    <string name="action_signin">Sign In</string>
+    <string name="action_help">Help</string>
+    <string name="action_about">About</string>
+
+    <!-- MainActivity -->
     <string name="introText">Welcome to MADCAP. Thank you for participating in the Pocket Security study!</string>
 
     <string name="collectDataSwitchText">Collect Data?</string>
@@ -31,8 +36,6 @@
 
     <string name="pref_lastUploadMessage">lastUploadMessage</string>
     <string name="lastUploadMessage">%s</string>
-
-
 
 
     <string name="pref_dataCount">dataCount</string>
@@ -78,11 +81,14 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
 
-    <!-- Help fragment -->
+    <!-- Help activity -->
+    <string name="name_help_activity">MADCAP Help</string>
     <string name="help_text">If you have questions, do not hestitate to contact us. You may contact us directly through email or view online help using one of the buttons below.</string>
     <string name="go_to_online_help">View Online Help</string>
-    <string name="contact">Send an email</string>
+    <string name="contact">Send an Email</string>
     <string name="contactEmail">madcap@pocket-security.org</string>
+    <string name="contactSubject">MADCAP/Pocket Security contact</string>
+    <string name="onlineHelpURL">https://www.pocket-security.org/app-help/</string>
 
     <!-- Logout fragment -->
     <string name="logout_text">You can sign out from MADCAP at any time. MADCAP does not collect data while you are signed out.</string>
@@ -94,7 +100,8 @@
 
     <string name="last_hearthbeat">Hearthbeat</string>
 
-    <!-- About fragment -->
+    <!-- About activity -->
+    <string name="name_about_activity">About MADCAP</string>
     <string name="aboutHeader">About</string>
     <string name="aboutText1">MADCAP is part of the Pocket Security research project from the University of Maryland and Fraunhofer USA, Inc.</string>
     <string name="aboutText2">This app is intended for pre-selected users only. MADCAP collects data about the apps you use on your smartphone, your location, and activities such as making phone calls. Please refer to the privacy policy for complete details. This app may also post security notifications and other alerts.</string>
@@ -114,7 +121,7 @@
 
     <!-- Contact -->
     <string name="contactHeader">Contact</string>
-    <string name="contactLink">For more information, please visit:\nhttps://www.pocket-security.org.</string>
+    <string name="contactLink">Please visit https://www.pocket-security.org.</string>
     <string name="title_activity_sign_up_check">SignUpCheckActivity</string>
 
 

@@ -6,24 +6,16 @@
     android:layout_height="match_parent"
     tools:context="org.fraunhofer.cese.madcap.MainActivity">
 
-    <android.support.v7.widget.Toolbar
+    <include
         android:id="@+id/my_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ToolBarStyle"
-        tools:ignore="UnusedAttribute" />
+        layout="@layout/actionbar" />
 
     <TextView
         android:id="@+id/introText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/introText"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -33,8 +25,8 @@
         android:id="@+id/dataCollectionGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -67,8 +59,8 @@
         android:id="@+id/uploadButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="@string/sendButtonText"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -79,8 +71,8 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/uploadButton" />
@@ -99,8 +91,8 @@
         android:id="@+id/uploadResultHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lastUploadDate" />
 
@@ -122,14 +114,9 @@
         app:layout_constraintLeft_toLeftOf="@+id/uploadResultHeader"
         app:layout_constraintTop_toBottomOf="@+id/lastUploadStatus" />
 
-    <TextView
-        android:id="@+id/versionNumberStartFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/versionIntro"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <include
+        android:id="@+id/versionNumber"
+        layout="@layout/activity_footer"
+        />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,0 +1,27 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+    <item
+        android:id="@+id/action_favorite"
+        android:icon="@drawable/ic_favorite_black_48dp"
+        android:title="@string/action_favorite"
+        app:showAsAction="ifRoom"/>
+-->
+    <!-- Settings, should always be in the overflow -->
+    <!-- permission manager will go here -->
+    <item
+        android:id="@+id/action_signin"
+        android:icon="@drawable/ic_vpn_key_black_24dp"
+        android:title="@string/action_signin" />
+
+    <item
+        android:id="@+id/action_help"
+        android:icon="@drawable/ic_help_black_24dp"
+        android:title="@string/action_help" />
+
+    <item
+        android:id="@+id/action_about"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/action_about" />
+
+</menu>

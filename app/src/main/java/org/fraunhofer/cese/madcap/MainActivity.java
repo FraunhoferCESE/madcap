@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -29,7 +28,7 @@ import java.text.DateFormat;
 
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends BaseActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final String STATE_UPLOAD_STATUS = "uploadStatus";
     private static final String STATE_DATA_COUNT = "dataCount";
@@ -66,10 +65,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
         setContentView(R.layout.activity_main);
-
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -126,10 +121,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
                     }
                 }
         );
-
-        TextView versionNumberText = (TextView) findViewById(R.id.versionNumberStartFragment);
-        versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME);
-
 
         mConnection = new ServiceConnection() {
             @Override
@@ -188,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
         uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), prefs.getString(getString(R.string.pref_lastUploadDate), lastUploadDateDefault)));
         uploadStatusView.setText(prefs.getString(getString(R.string.pref_lastUploadStatus), ""));
         uploadMessageView.setText(String.format(getString(R.string.lastUploadMessage), prefs.getString(getString(R.string.pref_lastUploadMessage), "")));
-        if(uploadStatusView.getText().length() !=0) {
+        if (uploadStatusView.getText().length() != 0) {
             uploadResultView.setText(getString(R.string.uploadResultHeader));
         }
         uploadProgressBar.setProgress(prefs.getInt(getString(R.string.pref_uploadProgress), 0));
@@ -257,8 +248,6 @@ public class MainActivity extends AppCompatActivity implements SharedPreferences
     }
 
 
-
-    
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (getString(R.string.pref_lastUploadDate).equals(key)) {

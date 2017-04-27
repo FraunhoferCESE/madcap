@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="org.fraunhofer.cese.madcap.AboutActivity">
+
+    <include
+        android:id="@+id/my_toolbar"
+        layout="@layout/actionbar" />
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/contentView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
+
+        <TextView
+            android:id="@+id/aboutHeader"
+            style="@style/headerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/aboutHeader"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/aboutText1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/aboutText1"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/aboutHeader" />
+
+        <TextView
+            android:id="@+id/aboutText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8sp"
+            android:text="@string/aboutText2"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/aboutText1" />
+
+        <TextView
+            android:id="@+id/aboutSponsor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8sp"
+            android:text="@string/aboutSponsor"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/aboutText2" />
+
+        <TextView
+            android:id="@+id/ppHeader"
+            style="@style/headerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16sp"
+            android:text="@string/ppHeader"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/aboutSponsor" />
+
+        <TextView
+            android:id="@+id/ppText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ppText"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ppHeader" />
+
+        <TextView
+            android:id="@+id/ppLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:autoLink="web"
+            android:text="@string/ppLink"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ppText" />
+
+        <TextView
+            android:id="@+id/licenseHeader"
+            style="@style/headerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16sp"
+            android:text="@string/licenseHeader"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ppLink" />
+
+
+        <TextView
+            android:id="@+id/licenseText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/licenseText"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/licenseHeader" />
+
+        <TextView
+            android:id="@+id/apache2License"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="8sp"
+            android:autoLink="web"
+            android:text="@string/apache2License"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/licenseText" />
+
+        <TextView
+            android:id="@+id/madcapLicense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8sp"
+            android:autoLink="web"
+            android:text="@string/madcapLicense"
+            app:layout_constraintLeft_toRightOf="@+id/apache2License"
+            app:layout_constraintTop_toBottomOf="@+id/apache2License" />
+
+        <TextView
+            android:id="@+id/androiddevicenamesLicense"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8sp"
+            android:autoLink="web"
+            android:text="@string/androiddevicenamesLicense"
+            app:layout_constraintLeft_toRightOf="@+id/apache2License"
+            app:layout_constraintTop_toBottomOf="@+id/madcapLicense" />
+
+
+        <TextView
+            android:id="@+id/contactHeader"
+            style="@style/headerText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="16sp"
+            android:text="@string/contactHeader"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/androiddevicenamesLicense" />
+
+        <TextView
+            android:id="@+id/contactLink"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:autoLink="web"
+            android:text="@string/contactLink"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contactHeader" />
+    </android.support.constraint.ConstraintLayout>
+
+    <include
+        android:id="@+id/versionNumber"
+        layout="@layout/activity_footer" />
+
+</android.support.constraint.ConstraintLayout>

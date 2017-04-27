@@ -16,6 +16,7 @@
 
     <!-- ToolBar -->
     <style name="ToolBarStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:navigationIcon">@drawable/madcaplogobackground</item>
         <!--
         <item name="actionOverflowButtonStyle">@style/ActionButtonOverflowStyle</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
@@ -26,4 +27,8 @@
         <item name="android:windowBackground">@drawable/background_splash</item>
     </style>
 
+    <style name="headerText">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

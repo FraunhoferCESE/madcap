@@ -6,7 +6,6 @@ import org.fraunhofer.cese.madcap.boot.OnBootService;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploadTaskFactory;
 
-
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -21,11 +20,8 @@ import dagger.Component;
 @Component(modules = MyApplicationModule.class)
 @Singleton
 public interface MyComponent {
-//    void inject(MainActivity activity);
     void inject(MainActivity activity);
     void inject(DataCollectionService dataCollectionService);
-//    void inject(StartFragment startFragment);
-    void inject(HelpFragment helpFragment);
     void inject(LogoutFragment logoutFragment);
     void inject(SignInActivity signInActivity);
     void inject(WelcomeActivity welcomeActivity);
