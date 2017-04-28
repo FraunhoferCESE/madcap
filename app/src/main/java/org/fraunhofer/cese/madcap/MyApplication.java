@@ -8,6 +8,7 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
 
 import org.fraunhofer.cese.madcap.logging.CrashReportingTree;
+import org.greenrobot.eventbus.EventBus;
 
 import timber.log.Timber;
 
@@ -32,6 +33,9 @@ public class MyApplication extends Application {
         } else {
             Timber.plant(new CrashReportingTree());
         }
+
+        EventBus eventBus = EventBus.builder().logNoSubscriberMessages(false).
+                sendNoSubscriberEvent(false).installDefaultEventBus();
 
         FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
@@ -65,7 +69,7 @@ public class MyApplication extends Application {
     }
 
     @Override
-    public void onTerminate(){
+    public void onTerminate() {
         super.onTerminate();
         Timber.d(TAG, "Application terminated");
     }
