@@ -15,6 +15,9 @@
     <string name="name_main_activity">MADCAP</string>
     <string name="introText">Welcome to MADCAP. Thank you for participating in the Pocket Security study!</string>
 
+    <string name="permissions_missing">Permissions missing</string>
+    <string name="permission_button_text">Grant now</string>
+
     <string name="collectDataSwitchText">Collect Data?</string>
     <string name="pref_dataCollection">datacollectionturnedonoff</string>
     <string name="dataCollection_on">Data collection is ON</string>

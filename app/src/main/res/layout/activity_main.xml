@@ -18,13 +18,55 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
 
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/warningBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent">
+
+            <ImageView
+                android:id="@+id/warningBlock_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_warning_black"
+                android:layout_marginBottom="36sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/warningBlock_text"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/warningBlock_button"
+                app:layout_constraintHorizontal_chainStyle="packed"/>
+
+            <TextView
+                android:id="@+id/warningBlock_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8sp"
+                android:background="@color/light_red"
+                android:text="@string/permissions_missing"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toRightOf="@id/warningBlock_icon"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/warningBlock_button"/>
+
+            <Button
+                android:id="@+id/warningBlock_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/permission_button_text"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/warningBlock_icon" />
+        </android.support.constraint.ConstraintLayout>
+
         <TextView
             android:id="@+id/introText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/introText"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/warningBlock" />
 
         <LinearLayout
             android:id="@+id/dataCollectionGroup"
@@ -91,9 +133,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:textIsSelectable="true"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lastUploadDate"
-            android:textIsSelectable="true" />
+            app:layout_constraintTop_toBottomOf="@+id/lastUploadDate" />
 
         <TextView
             android:id="@+id/lastUploadStatus"
@@ -115,43 +157,6 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <RelativeLayout
-        android:id="@+id/warningBlock"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp">
-
-        <ImageView
-            android:id="@+id/warningBlock_icon"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_warning_black"
-            android:layout_margin="5dp"/>
-
-        <TextView
-            android:id="@+id/warningBlock_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/warningBlock_icon"
-            android:text="Permissions missing"
-            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-            android:textStyle="bold"
-            android:padding="5dp"
-            android:layout_margin="5dp"/>
-
-        <Button
-            android:id="@+id/warningBlock_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/warningBlock_text"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:text="Grant now" />
-    </RelativeLayout>
 
     <include
         android:id="@+id/versionNumber"

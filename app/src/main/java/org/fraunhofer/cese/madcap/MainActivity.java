@@ -132,18 +132,6 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                 }
         );
 
-        if (permissionManager.hasAllPermissions()) {
-            findViewById(R.id.warningBlock).setVisibility(View.GONE);
-        } else {
-            findViewById(R.id.warningBlock).setVisibility(View.VISIBLE);
-            ((Button) findViewById(R.id.warningBlock_button)).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(MainActivity.this, PermissionsActivity.class));
-                }
-            });
-        }
-
         mConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name,
@@ -172,6 +160,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             }
         };
     }
+
 
     private void updateUiElements(boolean isCollectingData) {
         if (isCollectingData) {
@@ -216,6 +205,18 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             uploadResultView.setText(getString(R.string.uploadResultHeader));
         }
         uploadProgressBar.setProgress(prefs.getInt(getString(R.string.pref_uploadProgress), 0));
+
+        if (permissionManager.hasAllPermissions()) {
+            findViewById(R.id.warningBlock).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.warningBlock).setVisibility(View.VISIBLE);
+            findViewById(R.id.warningBlock_button).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    startActivity(new Intent(MainActivity.this, PermissionsActivity.class));
+                }
+            });
+        }
     }
 
     @Override
