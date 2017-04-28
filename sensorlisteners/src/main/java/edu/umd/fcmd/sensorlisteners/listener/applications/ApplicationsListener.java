@@ -50,14 +50,19 @@ public class ApplicationsListener implements Listener {
 
     @Override
     public void startListening() throws NoSensorFoundException {
-        if(!runningStatus){
-            timedApplicationTask = timedApplicationTaskFactory.create(this, context, permissionsManager);
-            timedApplicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            timedApplicationTask.sendInitialProbes();
+        if (!runningStatus) {
+            if (isPermittedByUser()) {
+                timedApplicationTask = timedApplicationTaskFactory.create(this, context, permissionsManager);
+                timedApplicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                timedApplicationTask.sendInitialProbes();
+                runningStatus = true;
+            } else {
+                permissionsManager.requestPermissionFromNotification();
+                Log.i(TAG, "Application listener NOT listening");
+                runningStatus = false;
+            }
         }
-        runningStatus = true;
     }
-
 
     @Override
     public void stopListening() {
@@ -75,8 +80,9 @@ public class ApplicationsListener implements Listener {
 
     @Override
     public boolean isPermittedByUser() {
-       if (permissionsManager.isUsageStatsPermitted())
-       {            Log.e(TAG,"Usage access setting access permitted by user");
+        if (permissionsManager.isUsageStatsPermitted())
+        {
+            Log.e(TAG,"Usage access setting access permitted by user");
             return true;
         }else {
             Log.v(TAG,"Usage access setting access NOT permitted by user");

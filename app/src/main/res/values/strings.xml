@@ -189,6 +189,7 @@
     <string name="telephone_rationale">MADCAP needs this permission to know when you are making or receiving phone calls.</string>
     <string name="access_usage_rationale">MADCAP needs this permission to know when you are using an application.</string>
     <string name="contacts_rationale_wa">MADCAP needs permission to access your Contacts to get your Google username and email. It does not read your other contacts.</string>
+    <string name="bluetooth_rationale">MADAP need permission to access your bluetooth state to know when you are connected via Bluetooth.</string>
 
     <!-- Permission mini rationale -->
 
@@ -198,6 +199,7 @@
     <string name="storage_short_rationale">Gets storage information.</string>
     <string name="telephone_short_rationale">Gets phone state information.</string>
     <string name="access_usage_short_rationale">Gets phone usage statistics.</string>
+    <string name="bluetooth_short_rationale">Gets bluetooth state information.</string>
 
 
 

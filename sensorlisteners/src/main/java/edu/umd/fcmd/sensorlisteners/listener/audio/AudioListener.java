@@ -72,19 +72,25 @@ public class AudioListener implements Listener{
 
     @Override
     public void startListening() throws NoSensorFoundException {
-        if(!runningState){
-            sendInitialProbes();
-            audioReceiver = audioReceiverFactory.create(this);
+        if(!runningState) {
+            if (isPermittedByUser()) {
+                sendInitialProbes();
+                audioReceiver = audioReceiverFactory.create(this);
 
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(AudioManager.ACTION_HEADSET_PLUG);
-            intentFilter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
-            intentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
+                IntentFilter intentFilter = new IntentFilter();
+                intentFilter.addAction(AudioManager.ACTION_HEADSET_PLUG);
+                intentFilter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
+                intentFilter.addAction("android.media.VOLUME_CHANGED_ACTION");
 
-            context.registerReceiver(audioReceiver, intentFilter);
+                context.registerReceiver(audioReceiver, intentFilter);
+            }
+
+            runningState = true;
+        }else {
+            permissionsManager.requestPermissionFromNotification();
+            Log.i(TAG,"Audio listener NOT listening");
+            runningState = false;
         }
-
-        runningState = true;
     }
 
     @Override

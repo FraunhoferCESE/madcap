@@ -126,26 +126,25 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     public synchronized void startListening() throws NoSensorFoundException {
         Log.d(TAG, "startListening. Strategy: " + locationStrategy);
         if (!runningStatus) {
-            if (locationStrategy == STRATEGY_FUSED) {
-                EventBus.getDefault().register(this);
-            }
-
             if (isPermittedByUser()) {
+                if (locationStrategy == STRATEGY_FUSED) {
+                    EventBus.getDefault().register(this);
+                }
                 if (locationStrategy == STRATEGY_FUSED) {
                     apiClient.connect();
                 } else {
                     onLocationChanged(locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER));
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                 }
-
-
+                runningStatus = true;
             } else {
-//                permissionsManager.requestPermissionFromNotification("MADCAP requires permission to access your location information.", "location");
                 permissionsManager.requestPermissionFromNotification();
+                Log.i(TAG,"Location listener NOT listening");
+                runningStatus = false;
             }
         }
 
-        runningStatus = true;
+
     }
 
     @Subscribe
@@ -210,7 +209,6 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
         if (permissionsManager.isLocationPermitted()) {
             Log.e(TAG, "Location access permitted by user");
-
             return true;
         } else {
             Log.v(TAG, "Location access NOT permitted by user");

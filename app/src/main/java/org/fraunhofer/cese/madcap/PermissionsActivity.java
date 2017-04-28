@@ -32,6 +32,7 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
 
     CheckBox contactsCB, locationCB, storageCB;
     CheckBox smsCB, telephoneCB, usageStatsCB;
+    CheckBox bluetoothCB;
 
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
@@ -101,6 +102,14 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
             usageStatsCB.setEnabled(false);
         }
         usageStatsCB.setOnCheckedChangeListener(this);
+
+        bluetoothCB = (CheckBox) findViewById(R.id.bluetoothCheckBox);
+        if (permissionsManager.isBluetoothPermitted()) {
+            bluetoothCB.setChecked(true);
+            bluetoothCB.setClickable(false);
+            bluetoothCB.setEnabled(false);
+        }
+        bluetoothCB.setOnCheckedChangeListener(this);
     }
 
     private void getPermissionWithRationale(String permit, String rationale) {
@@ -192,6 +201,23 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
                 dialog.show();
                 break;
 
+            case Manifest.permission.BLUETOOTH:
+                dialogBuilder.setTitle("MADCAP permissions")
+                        .setMessage(rationale)
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        ActivityCompat.requestPermissions(PermissionsActivity.this, new String[]{Manifest.permission.BLUETOOTH},
+                                                REQUEST_CODE - 5);
+                                        dialog.dismiss();
+                                    }
+                                })
+                        .setCancelable(true);
+                dialog = dialogBuilder.create();
+                dialog.show();
+                break;
+
             case Settings.ACTION_USAGE_ACCESS_SETTINGS:
                 dialogBuilder.setTitle("MADCAP permissions")
                         .setMessage(rationale)
@@ -215,36 +241,74 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if ((grantResults[0] == PackageManager.PERMISSION_GRANTED))
-            switch (requestCode) {
-                case REQUEST_CODE:
+        switch (requestCode) {
+            case REQUEST_CODE:
+                if ((grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     contactsCB.setChecked(true);
                     contactsCB.setClickable(false);
                     contactsCB.setEnabled(false);
-                    break;
-                case REQUEST_CODE - 1:
+                } else {
+                    contactsCB.setChecked(false);
+                    contactsCB.setClickable(true);
+                    contactsCB.setEnabled(true);
+                }
+                break;
+            case REQUEST_CODE - 1:
+                if ((grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     locationCB.setChecked(true);
                     locationCB.setClickable(false);
                     locationCB.setEnabled(false);
-                    break;
-                case REQUEST_CODE - 2:
+                } else {
+                    locationCB.setChecked(false);
+                    locationCB.setClickable(true);
+                    locationCB.setEnabled(true);
+                }
+                break;
+            case REQUEST_CODE - 2:
+                if ((grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     storageCB.setChecked(true);
                     storageCB.setClickable(false);
                     storageCB.setEnabled(false);
-                    break;
-                case REQUEST_CODE - 3:
+                } else {
+                    storageCB.setChecked(false);
+                    storageCB.setClickable(true);
+                    storageCB.setEnabled(true);
+                }
+                break;
+            case REQUEST_CODE - 3:
+                if ((grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     smsCB.setChecked(true);
                     smsCB.setClickable(false);
                     smsCB.setEnabled(false);
-                    break;
-                case REQUEST_CODE - 4:
+                } else {
+                    smsCB.setChecked(false);
+                    smsCB.setClickable(true);
+                    smsCB.setEnabled(true);
+                }
+                break;
+            case REQUEST_CODE - 4:
+                if ((grantResults[0] == PackageManager.PERMISSION_GRANTED)){
                     telephoneCB.setChecked(true);
                     telephoneCB.setClickable(false);
                     telephoneCB.setEnabled(false);
-                    break;
-//                case REQUEST_CODE-5:
-//                    usageStatsCB.setChecked(true); usageStatsCB.setClickable(false); usageStatsCB.setEnabled(false); break;
-            }
+                }else {
+                    telephoneCB.setChecked(false);
+                    telephoneCB.setClickable(true);
+                    telephoneCB.setEnabled(true);
+                }
+                break;
+            case REQUEST_CODE-5:
+                if ((grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    bluetoothCB.setChecked(true);
+                    bluetoothCB.setClickable(false);
+                    bluetoothCB.setEnabled(false);
+                }else {
+                    bluetoothCB.setChecked(false);
+                    bluetoothCB.setClickable(true);
+                    bluetoothCB.setEnabled(true);
+                }
+                break;
+        }
     }
 
     @Override
@@ -267,6 +331,9 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
                 return;
             case R.id.usageStatsCheckBox:
                 getPermissionWithRationale(Settings.ACTION_USAGE_ACCESS_SETTINGS, getString(R.string.access_usage_rationale));
+                return;
+            case R.id.bluetoothCheckBox:
+                getPermissionWithRationale(Manifest.permission.BLUETOOTH, getString(R.string.bluetooth_rationale));
                 return;
         }
     }

@@ -70,22 +70,29 @@ public class BluetoothListener implements Listener {
 
     @Override
     public void startListening() throws NoSensorFoundException {
-        if(!runningState && (bluetoothAdapter != null)){
-            receiver = bluetoothInformationReceiverFactory.create(this);
-            IntentFilter intentFilter = intenFilterFactory.create();
-            intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
-            intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
-            intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-            intentFilter.addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED);
-            intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            intentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
-            intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-            context.registerReceiver(receiver, intentFilter);
+        if(!runningState && (bluetoothAdapter != null)) {
+            if(isPermittedByUser()) {
+                receiver = bluetoothInformationReceiverFactory.create(this);
+                IntentFilter intentFilter = intenFilterFactory.create();
+                intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
+                intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
+                intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+                intentFilter.addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED);
+                intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                intentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
+                intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
+                context.registerReceiver(receiver, intentFilter);
 
-            createInitialProbes();
+                createInitialProbes();
+                runningState = true;
+            }
+            else {
+                permissionsManager.requestPermissionFromNotification();
+                Log.i(TAG,"Bluetooth listener NOT listening");
+                runningState = false;
+            }
         }
-        runningState = true;
     }
 
     @Override
@@ -107,14 +114,12 @@ public class BluetoothListener implements Listener {
     @Override
     public boolean isPermittedByUser() {
         //non dangerous permission
-        if (ContextCompat.checkSelfPermission(context,
-                Manifest.permission.BLUETOOTH)
-                == PackageManager.PERMISSION_DENIED) {
+        if (permissionsManager.isBluetoothPermitted()) {
+            Log.i(TAG,"Bluetooth access permitted");
+            return true;
+        }else {
             Log.e(TAG,"Bluetooth access NOT permitted");
             return false;
-        }else {
-            Log.v(TAG,"Bluetooth access permitted");
-            return true;
         }
     }
 

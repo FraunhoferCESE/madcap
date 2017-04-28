@@ -104,11 +104,13 @@ public class NetworkListener implements Listener {
                 instanciateMSMSObserver(this, context);
                 instaciateTelephonyListener();
                 sendInitalProbes();
+                runningStatus = true;
+            }else {
+                permissionsManager.requestPermissionFromNotification();
+                Log.i(TAG,"Bluetooth listener NOT listening");
+                runningStatus = false;
             }
-//            else    permissionsManager.requestPermissionFromNotification("MADCAP requires permission to access your network information.", "network");
         }
-
-        runningStatus = true;
     }
 
     /**

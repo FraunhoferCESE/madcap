@@ -44,17 +44,23 @@ public class PowerListener implements Listener {
 
     @Override
     public void startListening() throws NoSensorFoundException {
-        if(!runningState){
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction("android.intent.action.ACTION_POWER_CONNECTED");
-            intentFilter.addAction("android.intent.action.ACTION_POWER_DISCONNECTED");
-            intentFilter.addAction("android.intent.action.BATTERY_CHANGED");
+        if (!runningState) {
+            if (isPermittedByUser()) {
+                IntentFilter intentFilter = new IntentFilter();
+                intentFilter.addAction("android.intent.action.ACTION_POWER_CONNECTED");
+                intentFilter.addAction("android.intent.action.ACTION_POWER_DISCONNECTED");
+                intentFilter.addAction("android.intent.action.BATTERY_CHANGED");
 
-            Intent batteryIntent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-            receiver = new PowerInformationReceiver(this, getInitialPowerLevel(batteryIntent));
-            context.registerReceiver(receiver, intentFilter);
+                Intent batteryIntent = context.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+                receiver = new PowerInformationReceiver(this, getInitialPowerLevel(batteryIntent));
+                context.registerReceiver(receiver, intentFilter);
+                runningState = true;
+            } else {
+//                permissionsManager.requestPermissionFromNotification();
+                Log.i(TAG,"Location listener NOT listening");
+                runningState = false;
+            }
         }
-        runningState = true;
     }
 
     @Override

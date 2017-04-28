@@ -239,8 +239,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
             synchronized (listeners) {
                 for (Listener listener : listeners) {
                     try {
+                        Timber.d("Starting " + listener.getClass().getSimpleName());
                         listener.startListening();
-                        Timber.d(listener.getClass().getSimpleName() + " started listening");
                     } catch (NoSensorFoundException nsf) {
                         Timber.e(nsf);
                     }

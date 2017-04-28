@@ -90,6 +90,11 @@ public class MadcapPermissionsManager implements PermissionsManager {
     }
 
     @Override
+    public boolean isBluetoothPermitted(){
+        return (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED);// ? true : false;
+    }
+
+    @Override
     public boolean isUsageStatsPermitted(){
 //        return (ActivityCompat.checkSelfPermission(PermissionsActivity.this, Settings.ACTION_USAGE_ACCESS_SETTINGS) == PackageManager.PERMISSION_GRANTED) ? true : false;
         try {
