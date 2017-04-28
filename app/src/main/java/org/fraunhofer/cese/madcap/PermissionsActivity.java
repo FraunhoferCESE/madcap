@@ -16,6 +16,8 @@ import android.widget.CompoundButton;
 
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 
+import javax.inject.Inject;
+
 /**
  * Created by PGuruprasad on 18/04/2017.
  *
@@ -25,7 +27,7 @@ import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
  * Permission getter is closely tied to this activity.
  */
 
-public class PermissionsActivity extends Activity implements CheckBox.OnCheckedChangeListener{
+public class PermissionsActivity extends ChildActivity implements CheckBox.OnCheckedChangeListener{
     private static final int REQUEST_CODE = 996;
 //    private boolean ACCESS_PERMIT = false;
 
@@ -35,14 +37,16 @@ public class PermissionsActivity extends Activity implements CheckBox.OnCheckedC
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
 
+    @Inject
     MadcapPermissionsManager permissionsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        ((MyApplication) getApplication()).getComponent().inject(this);
         setContentView(R.layout.activity_permissions);
 
-        permissionsManager = new MadcapPermissionsManager(this);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         //cancel the notification with the same RUN_CODE that it was created with
@@ -244,5 +248,10 @@ public class PermissionsActivity extends Activity implements CheckBox.OnCheckedC
             usageStatsCB.setClickable(false);
             usageStatsCB.setEnabled(false);
         }
+    }
+
+    @Override
+    protected void onSignOut() {
+        finish();
     }
 }

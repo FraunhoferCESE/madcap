@@ -41,6 +41,9 @@ public class WelcomeActivity extends AppCompatActivity {
     @SuppressWarnings("PackageVisibleField")
     @Inject
     AuthenticationProvider authenticationProvider;
+
+    @Inject
+    MadcapPermissionsManager permissionsManager;
     private TextView welcomeMessageView;
 
     private TextView errorTextView, permissionRationaleTV;
@@ -114,7 +117,6 @@ public class WelcomeActivity extends AppCompatActivity {
         super.onStart();
         Timber.d("onStart");
 
-        MadcapPermissionsManager permissionsManager = new MadcapPermissionsManager(this);
         if (!permissionsManager.isContactPermitted()) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
             dialogBuilder.setTitle("MADCAP permissions")

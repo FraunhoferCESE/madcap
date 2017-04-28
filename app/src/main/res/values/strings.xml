@@ -7,6 +7,7 @@
     <!-- ActionBar Menu -->
     <string name="action_home">Home</string>
     <string name="action_signin">Sign In</string>
+    <string name="action_permissions">Permission</string>
     <string name="action_help">Help</string>
     <string name="action_about">About</string>
 
@@ -108,6 +109,9 @@
     <string name="quitButtonText">Quit pocket security.</string>
 
     <string name="last_hearthbeat">Hearthbeat</string>
+
+    <!-- PErmissions activity -->
+    <string name="name_permissions_activity">Permissions for MADCAP</string>
 
     <!-- About activity -->
     <string name="name_about_activity">About MADCAP</string>

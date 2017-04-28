@@ -27,6 +27,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DateFormat;
 
+import javax.inject.Inject;
+
 import timber.log.Timber;
 
 
@@ -45,9 +47,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     private DataCollectionService mDataCollectionService;
     private volatile boolean mBound;
 
-
     private long mDataCount;
-
 
     //Ui elements
     private TextView nameTextView;
@@ -67,6 +67,8 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
      */
     private ServiceConnection mConnection;
 
+    @Inject
+    MadcapPermissionsManager permissionManager;
 
 
     @Override
@@ -131,12 +133,11 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                 }
         );
 
-        final MadcapPermissionsManager permissionManager = new MadcapPermissionsManager(this);
-        if(permissionManager.hasAllPermissions()){
+        if (permissionManager.hasAllPermissions()) {
             findViewById(R.id.warningBlock).setVisibility(View.GONE);
-        }else {
+        } else {
             findViewById(R.id.warningBlock).setVisibility(View.VISIBLE);
-            ((Button)findViewById(R.id.warningBlock_button)).setOnClickListener(new View.OnClickListener() {
+            ((Button) findViewById(R.id.warningBlock_button)).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     startActivity(new Intent(MainActivity.this, PermissionsActivity.class));
@@ -179,8 +180,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_green));
             uploadButton.setEnabled(true);
             uploadButton.setAlpha(ALPHA_ENABLED);
-        }
-        else {
+        } else {
             collectionDataStatusText.setText(getString(R.string.dataCollection_off));
             collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_red));
             uploadButton.setEnabled(false);

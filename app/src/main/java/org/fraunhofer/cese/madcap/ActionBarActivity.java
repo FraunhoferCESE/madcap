@@ -84,6 +84,9 @@ public abstract class ActionBarActivity extends AppCompatActivity {
             case R.id.action_signin:
                 startActivity(new Intent(this, SignInActivity.class));
                 return true;
+            case R.id.action_permissions:
+                startActivity(new Intent(this, PermissionsActivity.class));
+                return true;
             case R.id.action_help:
                 startActivity(new Intent(this, HelpActivity.class));
                 return true;

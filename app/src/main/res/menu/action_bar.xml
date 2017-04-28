@@ -14,6 +14,10 @@
         android:title="@string/action_signin" />
 
     <item
+        android:id="@+id/action_permissions"
+        android:icon="@drawable/ic_vpn_key_black_24dp"
+        android:title="@string/action_permissions" />
+    <item
         android:id="@+id/action_help"
         android:icon="@drawable/ic_help_black_24dp"
         android:title="@string/action_help" />
