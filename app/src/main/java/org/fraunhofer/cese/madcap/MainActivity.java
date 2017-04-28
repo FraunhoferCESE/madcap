@@ -97,7 +97,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                             getApplicationContext().stopService(intent);
 
                             collectionDataStatusText.setText(getString(R.string.dataCollection_off));
-                            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(context, R.color.madcap_false_color));
+                            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(context, R.color.light_red));
                             setIsCollectingData(false);
                         }
                     }
@@ -133,7 +133,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
                 // Update UI elements
                 collectionDataStatusText.setText(getString(R.string.dataCollection_on));
-                collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(context, R.color.madcap_true_color));
+                collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(context, R.color.light_green));
                 setIsCollectingData(true);
             }
 
@@ -141,7 +141,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             public void onServiceDisconnected(ComponentName name) {
                 // Only invoked when hosting service crashed or is killed.
                 collectionDataStatusText.setText(getString(R.string.dataCollection_off));
-                collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(context, R.color.madcap_false_color));
+                collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(context, R.color.light_red));
 
                 setIsCollectingData(false);
                 mDataCollectionService = null;
@@ -163,10 +163,10 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                 bindConnection(intent);
             }
             collectionDataStatusText.setText(getString(R.string.dataCollection_on));
-            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.madcap_true_color));
+            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_green));
         } else {
             collectionDataStatusText.setText(getString(R.string.dataCollection_off));
-            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.madcap_false_color));
+            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_red));
 
         }
 
@@ -245,7 +245,6 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         dataCountView.setText(String.format(getString(R.string.dataCountText), event.getCount()));
         mDataCount = event.getCount();
     }
-
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {

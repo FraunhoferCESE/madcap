@@ -1,6 +1,5 @@
 package org.fraunhofer.cese.madcap.authentication;
 
-import android.content.BroadcastReceiver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -24,7 +23,6 @@ import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
 
 import org.fraunhofer.cese.madcap.AboutActivity;
-import org.fraunhofer.cese.madcap.BuildConfig;
 import org.fraunhofer.cese.madcap.ChildActivity;
 import org.fraunhofer.cese.madcap.HelpActivity;
 import org.fraunhofer.cese.madcap.MainActivity;
@@ -175,11 +173,7 @@ public class SignInActivity extends ChildActivity {
 
         TextView subtitle = (TextView) findViewById(R.id.subtitle_text);
         subtitle.setMovementMethod(LinkMovementMethod.getInstance());
-
-        TextView versionNumberText = (TextView) findViewById(R.id.versionNumber);
-        versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME + ", Build " + BuildConfig.VERSION_CODE);
     }
-
 
 
     @Override
@@ -278,6 +272,7 @@ public class SignInActivity extends ChildActivity {
     }
 
     @Override
-    protected void onSignOut() { }
+    protected void onSignOut() {
+    }
 
 }

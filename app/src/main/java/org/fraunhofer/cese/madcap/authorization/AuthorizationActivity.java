@@ -108,9 +108,9 @@ public class AuthorizationActivity extends ChildActivity {
                 if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
                     startService(new Intent(context, DataCollectionService.class).putExtra("callee", TAG));
                 }
-//                Intent intent = new Intent(context, MainActivity.class);
-//                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-//                startActivity(intent);
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
             }
 
             @Override
@@ -143,7 +143,7 @@ public class AuthorizationActivity extends ChildActivity {
                 GoogleSignInAccount user = authenticationProvider.getUser();
                 if (user != null) {
                     mAuthorizationEmail.setText(getString(R.string.not_authorized_user_email, user.getEmail()));
-                    mAuthorizationUserid.setText(getString(R.string.not_authorized_user_email, user.getId()));
+                    mAuthorizationUserid.setText(getString(R.string.not_authorized_user_id, user.getId()));
                 }
             }
         }).execute();

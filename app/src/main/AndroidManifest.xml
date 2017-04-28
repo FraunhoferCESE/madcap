@@ -133,6 +133,7 @@
         <activity
             android:name=".authentication.SignInActivity"
             android:label="@string/name_sign_in_activity"
+            android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait" >
             </activity>
 
