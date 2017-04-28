@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap;
 
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -27,11 +28,13 @@ import java.text.DateFormat;
 
 import timber.log.Timber;
 
+/**
+ * Creates the main activity for MADCAP.
+ */
 public class MainActivity extends ActionBarActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final String STATE_UPLOAD_STATUS = "uploadStatus";
-    private static final String STATE_DATA_COUNT = "dataCount";
-    private static final String STATE_COLLECTING_DATA = "isCollectingData";
+    private static final float ALPHA_DISABLED = 0.5f;
+    private static final float ALPHA_ENABLED = 1.0f;
 
     private SharedPreferences prefs;
 
@@ -52,6 +55,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     private TextView uploadDateView;
     private TextView uploadStatusView;
     private TextView uploadMessageView;
+    private Button uploadButton;
 
     /**
      * Defines callbacks for service binding, passed to bindService()
@@ -78,8 +82,9 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         //Set up upload progress bar
         uploadProgressBar = (ProgressBar) findViewById(R.id.progressBar);
 
+        uploadButton = (Button) findViewById(R.id.uploadButton);
+
         //Set the switch
-        final Context context = this;
         collectDataSwitch = (Switch) findViewById(R.id.switch1);
         collectDataSwitch.setOnCheckedChangeListener(
                 new CompoundButton.OnCheckedChangeListener() {
@@ -96,15 +101,13 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                             Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
                             getApplicationContext().stopService(intent);
 
-                            collectionDataStatusText.setText(getString(R.string.dataCollection_off));
-                            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(context, R.color.light_red));
+                            updateUiElements(false);
                             setIsCollectingData(false);
                         }
                     }
                 }
         );
 
-        Button uploadButton = (Button) findViewById(R.id.uploadButton);
         uploadButton.setOnClickListener(
                 new View.OnClickListener() {
                     private final DateFormat format = DateFormat.getDateTimeInstance();
@@ -132,23 +135,37 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                 mBound = true;
 
                 // Update UI elements
-                collectionDataStatusText.setText(getString(R.string.dataCollection_on));
-                collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(context, R.color.light_green));
+                updateUiElements(true);
                 setIsCollectingData(true);
             }
 
             @Override
             public void onServiceDisconnected(ComponentName name) {
                 // Only invoked when hosting service crashed or is killed.
-                collectionDataStatusText.setText(getString(R.string.dataCollection_off));
-                collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(context, R.color.light_red));
 
+                updateUiElements(false);
                 setIsCollectingData(false);
+
                 mDataCollectionService = null;
                 mBound = false;
                 Timber.d("onServiceDisconnected");
             }
         };
+    }
+
+    private void updateUiElements(boolean isCollectingData) {
+        if (isCollectingData) {
+            collectionDataStatusText.setText(getString(R.string.dataCollection_on));
+            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_green));
+            uploadButton.setEnabled(true);
+            uploadButton.setAlpha(ALPHA_ENABLED);
+        }
+        else {
+            collectionDataStatusText.setText(getString(R.string.dataCollection_off));
+            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_red));
+            uploadButton.setEnabled(false);
+            uploadButton.setAlpha(ALPHA_DISABLED);
+        }
     }
 
     @Override
@@ -162,13 +179,8 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             if (!mBound) {
                 bindConnection(intent);
             }
-            collectionDataStatusText.setText(getString(R.string.dataCollection_on));
-            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_green));
-        } else {
-            collectionDataStatusText.setText(getString(R.string.dataCollection_off));
-            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_red));
-
         }
+        updateUiElements(isCollectingData());
 
         //Set the toggle button on the last set preference configuration
         collectDataSwitch.setChecked(isCollectingData());
@@ -220,6 +232,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
      *
      * @param isCollectingData boolean value to indicate whether data is being collected or not
      */
+    @SuppressLint("ApplySharedPref")
     private void setIsCollectingData(boolean isCollectingData) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(getString(R.string.pref_dataCollection), isCollectingData);
@@ -248,6 +261,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        //noinspection IfStatementWithTooManyBranches
         if (getString(R.string.pref_lastUploadDate).equals(key)) {
             String lastUploadDateDefault = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
             uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), prefs.getString(getString(R.string.pref_lastUploadDate), lastUploadDateDefault)));

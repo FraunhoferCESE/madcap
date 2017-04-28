@@ -1,6 +1,5 @@
 package org.fraunhofer.cese.madcap.authorization;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +13,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Status;
 
-import org.fraunhofer.cese.madcap.BuildConfig;
 import org.fraunhofer.cese.madcap.ChildActivity;
 import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;

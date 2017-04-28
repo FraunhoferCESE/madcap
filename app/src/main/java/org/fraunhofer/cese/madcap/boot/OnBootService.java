@@ -35,14 +35,12 @@ import timber.log.Timber;
 
 public class OnBootService extends IntentService {
 
-    private static final String TAG = "OnBootService";
-
     @SuppressWarnings("PackageVisibleField")
     @Inject
     AuthenticationProvider authManager;
 
     public OnBootService() {
-        super(TAG);
+        super("OnBootService");
     }
 
     @Override
@@ -53,7 +51,6 @@ public class OnBootService extends IntentService {
 
         if (authManager.getUser() != null) {
             Intent sintent = new Intent(this, DataCollectionService.class);
-            sintent.putExtra("callee",TAG);
             sintent.putExtra("boot", true);
             startService(sintent);
         } else {

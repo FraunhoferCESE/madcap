@@ -5,9 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 
 /**
- * Created by llayman on 4/27/2017.
+ * Base class for child activities. Provides the "Up" button to the ActionBar.
  */
-
 public abstract class ChildActivity extends ActionBarActivity {
 
     @Override
@@ -18,7 +17,4 @@ public abstract class ChildActivity extends ActionBarActivity {
             ab.setDisplayHomeAsUpEnabled(true);
         }
     }
-
-    @Override
-    protected abstract void onSignOut();
 }

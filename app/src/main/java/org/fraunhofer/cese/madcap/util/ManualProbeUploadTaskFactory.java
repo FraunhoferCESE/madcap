@@ -5,9 +5,7 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.firebase.crash.FirebaseCrash;
 
-import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeDataSet;

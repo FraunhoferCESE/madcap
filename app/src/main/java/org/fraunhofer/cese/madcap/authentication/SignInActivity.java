@@ -78,7 +78,7 @@ public class SignInActivity extends ChildActivity {
                     startInteractiveSignin();
                 } else {
                     // Show and retrieve approval for the EULA.
-                    new AppEULA(activity).show(new EULAListener() {
+                    new EulaProvider(activity).show(new EULAListener() {
                         @Override
                         public void onAccept() {
                             // User has accepted the EULA. Proceed with sign in.
@@ -187,7 +187,6 @@ public class SignInActivity extends ChildActivity {
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getEmail()));
         } else {
             updateUiState(false);
-            mStatusTextView.setText(getString(R.string.signed_out));
         }
     }
 

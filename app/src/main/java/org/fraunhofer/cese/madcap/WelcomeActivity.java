@@ -25,13 +25,15 @@ import javax.inject.Inject;
 
 import timber.log.Timber;
 
+/**
+ * Create the welcome activity
+ */
 public class WelcomeActivity extends AppCompatActivity {
-    private static final String TAG = "WelcomeActivity";
 
     @SuppressWarnings("PackageVisibleField")
     @Inject
     AuthenticationProvider authenticationProvider;
-    private TextView errorTextView;
+    private TextView welcomeMessageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +44,8 @@ public class WelcomeActivity extends AppCompatActivity {
         Timber.d("Welcome created");
 
         setContentView(R.layout.activity_welcome);
-        errorTextView = (TextView) findViewById(R.id.welcomeErrorTextView);
-        errorTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        welcomeMessageView = (TextView) findViewById(R.id.welcomeMessage);
+        welcomeMessageView.setMovementMethod(LinkMovementMethod.getInstance());
 
         Button helpButton = (Button) findViewById(R.id.helpButton);
         helpButton.setOnClickListener(new View.OnClickListener() {
@@ -56,12 +58,14 @@ public class WelcomeActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Timber.d("Help toggled");
 
-                // TODO: REfactor to use help activity?
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://www.pocket-security.org/app-help/"));
+                intent.setData(Uri.parse(getString(R.string.onlineHelpURL)));
                 startActivity(intent);
             }
         });
+
+        TextView versionNumberText = (TextView) findViewById(R.id.versionNumber);
+        versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME + ", Build " + BuildConfig.VERSION_CODE);
     }
 
     @Override
@@ -72,14 +76,14 @@ public class WelcomeActivity extends AppCompatActivity {
         GoogleSignInAccount user = authenticationProvider.getUser();
         if (user != null) {
             Timber.d("User already signed in. Starting MainActivity.");
-            errorTextView.setText("Welcome " + user.getGivenName() + ' ' + user.getFamilyName());
+            welcomeMessageView.setText(String.format(getString(R.string.welcome_signin_success), user.getEmail()));
             startActivity(new Intent(this, MainActivity.class));
         } else {
             final Context context = this;
             authenticationProvider.silentLogin(this, new SilentLoginResultCallback() {
                 @Override
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                    errorTextView.setText(String.format(getString(R.string.play_services_connection_failed), connectionResult));
+                    welcomeMessageView.setText(String.format(getString(R.string.play_services_connection_failed), connectionResult));
                     Timber.e("onStart.onConnectionFailed: Unable to connect to Google Play services. Error code: " + connectionResult);
                     // TODO: Unregister this listener from mGoogleClientApi in AuthenticationProvider?
                 }
@@ -108,25 +112,27 @@ public class WelcomeActivity extends AppCompatActivity {
                             text = String.format(getString(R.string.play_services_connection_failed), connectionResult);
                     }
 
-                    Timber.e(text);
-                    errorTextView.setText(text);
+                    Timber.w("SilentLogin unavailable", text, "Starting SignInActivity");
+                    welcomeMessageView.setText(text);
                     startActivity(new Intent(context, SignInActivity.class));
                     finish();
                 }
 
                 @Override
                 public void onLoginResult(GoogleSignInResult signInResult) {
-                    if (signInResult.isSuccess()) {
+                    GoogleSignInAccount acct = signInResult.getSignInAccount();
+                    if (signInResult.isSuccess() && (acct != null)) {
                         Timber.d("User successfully signed in and authenticated to MADCAP.");
-                        errorTextView.setText("Welcome");
+                        welcomeMessageView.setText(String.format(getString(R.string.welcome_signin_success), acct.getEmail()));
                         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
+                            Timber.d("Data Collection is on");
                             Intent intent = new Intent(context, DataCollectionService.class);
-                            intent.putExtra("callee", TAG);
                             startService(intent);
                         }
                         startActivity(new Intent(context, MainActivity.class));
                     } else {
                         Timber.d("User could not be authenticated to MADCAP. Starting SignInActivity.");
+                        welcomeMessageView.setText(getString(R.string.weclome_signin_failed));
                         startActivity(new Intent(context, SignInActivity.class));
                     }
                     finish();

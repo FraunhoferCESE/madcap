@@ -5,7 +5,7 @@ package org.fraunhofer.cese.madcap.authentication;
  * <p>
  * Created by llayman on 4/6/2017.
  */
-public interface EULAListener {
+interface EULAListener {
 
     /**
      * The EULA pop-up shows Accept or Cancel. This method is called after the user presses the Accept button.

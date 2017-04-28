@@ -59,11 +59,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
     private static final int RUN_CODE = 1;
     private static final int NOTIFICATION_ID = 918273;
-    private static final long HEARTBEAT_DELAY = 100;
+    private static final long HEARTBEAT_DELAY = 100l;
 
     private boolean isRunning;
-
-    private NotificationManager mNotificationManager;
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
@@ -356,9 +354,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
             hasError = true;
         } else {
             //noinspection AccessOfSystemProperties
-            text += (result.getSaveResult().getSaved() == null ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
+            text += ((result.getSaveResult().getSaved() == null) ? 0 : result.getSaveResult().getSaved().size()) + " entries saved.";
             if (result.getSaveResult().getAlreadyExists() != null) {
-                //noinspection AccessOfSystemProperties
+                //noinspection AccessOfSystemProperties,StringConcatenationMissingWhitespace
                 text += System.getProperty("line.separator") + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
             }
         }
@@ -398,52 +396,11 @@ public class DataCollectionService extends Service implements UploadStatusListen
         editor.apply();
     }
 
-    /**
-     * Shows the madcap logo in the notification bar,
-     * to signal the user that madcap is collecting data.
-     */
-    @SuppressWarnings("unused")
-    private void showRunNotification() {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-        mBuilder.setContentTitle("MADCAP is running in the background.");
-        mBuilder.setDefaults(Notification.DEFAULT_ALL);
-        mBuilder.setPriority(Notification.PRIORITY_LOW);
-
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, WelcomeActivity.class);
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(WelcomeActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-
-        mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        // mId allows you to update the notification later on.
-        Notification note = mBuilder.build();
-        note.flags |= Notification.FLAG_NO_CLEAR;
-
-        mNotificationManager.notify(RUN_CODE, note);
-    }
-
-    private Notification getRunNotification() {
+   private Notification getRunNotification() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
         // TODO: Refactor
-        mBuilder.setContentTitle("MADCAP is collecting research data.");
+        mBuilder.setContentTitle("MADCAP is collecting research data");
         mBuilder.setDefaults(Notification.DEFAULT_ALL);
         mBuilder.setPriority(Notification.PRIORITY_LOW);
 
@@ -467,8 +424,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
                 );
         mBuilder.setContentIntent(resultPendingIntent);
 
-        mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+       NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
         Notification note = mBuilder.build();
         note.flags |= Notification.FLAG_NO_CLEAR;

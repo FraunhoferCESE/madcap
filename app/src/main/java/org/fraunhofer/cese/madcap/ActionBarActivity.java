@@ -16,8 +16,10 @@ import android.widget.TextView;
 
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 
-import timber.log.Timber;
-
+/**
+ * Base class for MADCAP activities that should include an Action Bar
+ */
+@SuppressWarnings("AbstractClassExtendsConcreteClass")
 public abstract class ActionBarActivity extends AppCompatActivity {
 
     private BroadcastReceiver logoutReceiver;
@@ -38,6 +40,9 @@ public abstract class ActionBarActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Called when the user signs out of MADCAP. Activities may want to finish(). Activities can also no-op.
+     */
     protected abstract void onSignOut();
 
     @Override
@@ -52,9 +57,11 @@ public abstract class ActionBarActivity extends AppCompatActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
 
+        // Create the action bar
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         setSupportActionBar(myToolbar);
 
+        // Set the version number at the bottom of the activity
         TextView versionNumberText = (TextView) findViewById(R.id.versionNumber);
         versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME + ", Build " + BuildConfig.VERSION_CODE);
     }
@@ -66,6 +73,7 @@ public abstract class ActionBarActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressWarnings("ClassReferencesSubclass")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection

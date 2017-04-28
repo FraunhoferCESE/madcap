@@ -13,8 +13,6 @@ import timber.log.Timber;
  * This Receiver listrens to the ON_BOOT_COMPLETE intent.
  */
 public class OnBootCompleteBroadcastReceiver extends BroadcastReceiver {
-    private static final String TAG = "OnBootCompleteBroadcastReceiver";
-
 
     @Override
     public void onReceive(Context context, Intent intent){

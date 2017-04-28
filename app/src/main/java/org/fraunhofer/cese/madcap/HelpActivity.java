@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import timber.log.Timber;
 
+/**
+ * Creates the Help activity
+ */
 public class HelpActivity extends ChildActivity {
 
     @Override
@@ -18,6 +21,7 @@ public class HelpActivity extends ChildActivity {
         //noinspection CastToConcreteClass
         setContentView(R.layout.activity_help);
 
+        // Create contact button to open email help
         Button contactMadcapButton = (Button) findViewById(R.id.contactMadcapButton);
         contactMadcapButton.setOnClickListener(new View.OnClickListener() {
             /**

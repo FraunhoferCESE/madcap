@@ -39,7 +39,7 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 /**
  * This class defines the providers to use for dependency injection
  */
-@SuppressWarnings({"SameReturnValue", "InstanceMethodNamingConvention", "MethodMayBeStatic"})
+@SuppressWarnings({"SameReturnValue", "InstanceMethodNamingConvention", "MethodMayBeStatic", "TypeMayBeWeakened"})
 @Module
 class MyApplicationModule {
 
@@ -133,6 +133,7 @@ class MyApplicationModule {
         return new MadcapSensorNoAnswerReceivedHandler();
     }
 
+    @SuppressWarnings("unchecked")
     @Provides
     ProbeManager<Probe> provideProbeManager(CacheFactory cacheFactory) {
         return cacheFactory;

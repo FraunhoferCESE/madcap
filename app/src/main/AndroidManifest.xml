@@ -11,38 +11,6 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
-    <!--
-    <compatible-screens>
-
-        <screen
-            android:screenDensity="ldpi"
-            android:screenSize="small" />
-        <screen
-            android:screenDensity="mdpi"
-            android:screenSize="small" />
-        <screen
-            android:screenDensity="hdpi"
-            android:screenSize="small" />
-        <screen
-            android:screenDensity="xhdpi"
-            android:screenSize="small" />
-
-        <screen
-            android:screenDensity="ldpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="mdpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="hdpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="xhdpi"
-            android:screenSize="normal" />
-    </compatible-screens>
-    -->
-
-
     <!-- <uses-permission android:name="android.permission.GET_TASKS" /> &lt;!&ndash; We will get rid of this after Anumeet finished his Library &ndash;&gt; -->
 
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
@@ -145,18 +113,13 @@
         <activity
             android:name=".WelcomeActivity"
             android:noHistory="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
+            android:screenOrientation="portrait">
+            <!--android:theme="@style/SplashTheme"> -->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!--
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            -->
         </activity>
 
     </application>

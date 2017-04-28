@@ -58,7 +58,7 @@
     <string name="signin_service_unavailable">Google SignIn services are unavailable. Please try again.</string>
     <string name="signin_service_connection_failed">Could not connect to Google SignIn service. Please try again.</string>
     <string name="logout_failed">Logout from MADCAP failed. Error code: %i. Please try again.</string>
-    <string name="login_failed">Login failed. Please try again.</string>
+    <string name="login_failed">Login failed. Please check your internet connection and try again.</string>
     <string name="silent_signin_failed">MADCAP failed to login automatically. Please open the MADCAP application to sign in.</string>
     <string name="silent_signin_failed_notification_title">MADCAP Automatic SignIn Failed</string>
     <string name="checking_EULA">Checking EULA.</string>
@@ -81,7 +81,9 @@
 
     <!-- Welcome activity -->
     <string name="help">Help</string>
-    <string name="welcome">Welcome</string>
+    <string name="welcome">Welcome to MADCAP! Attempting automatic signin...</string>
+    <string name="welcome_signin_success">Signed in as %s</string>
+    <string name="weclome_signin_failed">User could not be authenticated to MADCAP. Starting Signin activity.</string>
 
     <!-- Main activity -->
     <string name="navigation_drawer_open">Open navigation drawer</string>

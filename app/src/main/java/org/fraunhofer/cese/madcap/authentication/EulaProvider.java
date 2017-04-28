@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.authentication;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -18,10 +19,10 @@ import org.fraunhofer.cese.madcap.R;
  * <p>
  * From https://jayeshcp.wordpress.com/2013/07/23/showing-eula-in-android-app/
  */
-public class AppEULA {
+class EulaProvider {
     private final Activity mContext;
 
-    public AppEULA(Activity context) {
+    EulaProvider(Activity context) {
         mContext = context;
     }
 
@@ -30,12 +31,13 @@ public class AppEULA {
      *
      * @param listener a EULAListener callback object whose methods are triggered based on whether the user accepts or declines the EULA
      */
-    public void show(final EULAListener listener) {
+    void show(final EULAListener listener) {
         final SharedPreferences prefs = PreferenceManager
                 .getDefaultSharedPreferences(mContext);
 
-        final String EulaKey = mContext.getString(R.string.EULA_key);
-        boolean bAlreadyAccepted = prefs.getBoolean(EulaKey, false);
+        final String eulaKey = mContext.getString(R.string.EULA_key);
+        //noinspection BooleanVariableAlwaysNegated
+        boolean bAlreadyAccepted = prefs.getBoolean(eulaKey, false);
         if (!bAlreadyAccepted) {
 
             // EULA title
@@ -55,13 +57,14 @@ public class AppEULA {
                     .setPositiveButton(R.string.accept,
                             new DialogInterface.OnClickListener() {
 
+                                @SuppressLint("ApplySharedPref")
                                 @Override
                                 public void onClick(
                                         DialogInterface dialog, int which) {
                                     // Mark this version as read.
                                     SharedPreferences.Editor editor = prefs
                                             .edit();
-                                    editor.putBoolean(EulaKey, true);
+                                    editor.putBoolean(eulaKey, true);
                                     editor.commit();
 
                                     // Close dialog
@@ -72,8 +75,9 @@ public class AppEULA {
                                     mContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
                                     // Callback to indicate the user accepted the EULA
-                                    if (listener != null)
+                                    if (listener != null) {
                                         listener.onAccept();
+                                    }
                                 }
                             })
                     .setNegativeButton(android.R.string.cancel,
@@ -85,15 +89,14 @@ public class AppEULA {
                                     mContext.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
 
                                     // Callback to indicate the user declined the EULA
-                                    if (listener != null)
+                                    if (listener != null) {
                                         listener.onCancel();
+                                    }
                                 }
 
                             });
             builder.create().show();
         }
     }
-
-
 }
 
