@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="org.fraunhofer.cese.madcap">
 
-
     <supports-screens
         android:anyDensity="true"
         android:largeScreens="true"

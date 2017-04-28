@@ -177,7 +177,6 @@
 
     </string>
     <string name="accept">Accept</string>
-    <string name="title_activity_main2">Main2Activity</string>
 
     <!-- Permission rationale -->
     <string name="contacts_rationale">MADCAP needs to access your Google username and email. It does not read your other contacts.</string>
@@ -196,8 +195,6 @@
     <string name="storage_short_rationale">Gets storage information.</string>
     <string name="telephone_short_rationale">Gets phone state information.</string>
     <string name="access_usage_short_rationale">Gets phone usage statistics.</string>
-
-
 
 
 

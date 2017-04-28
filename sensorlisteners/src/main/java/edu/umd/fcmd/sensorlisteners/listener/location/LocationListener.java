@@ -1,15 +1,12 @@
 package edu.umd.fcmd.sensorlisteners.listener.location;
 
-import android.Manifest;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -141,6 +138,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                     locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME, MIN_DISTANCE, this);
                 }
 
+
             } else {
 //                permissionsManager.requestPermissionFromNotification("MADCAP requires permission to access your location information.", "location");
                 permissionsManager.requestPermissionFromNotification();
@@ -211,11 +209,11 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     public boolean isPermittedByUser() {
 
         if (permissionsManager.isLocationPermitted()) {
-            Log.e(TAG,"Location access permitted by user");
+            Log.e(TAG, "Location access permitted by user");
 
             return true;
-        }else {
-            Log.v(TAG,"Location access NOT permitted by user");
+        } else {
+            Log.v(TAG, "Location access NOT permitted by user");
             return false;
         }
     }

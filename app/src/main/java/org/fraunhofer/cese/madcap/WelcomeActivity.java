@@ -65,6 +65,9 @@ public class WelcomeActivity extends AppCompatActivity {
         permissionRationaleTV = (TextView) findViewById(R.id.wa_permissionRationale);
         grantButton = (Button) findViewById(R.id.wa_grantButton);
 
+        permissionRationaleTV = (TextView) findViewById(R.id.wa_permissionRationale);
+        grantButton = (Button) findViewById(R.id.wa_grantButton);
+
         Button helpButton = (Button) findViewById(R.id.helpButton);
         helpButton.setOnClickListener(new View.OnClickListener() {
             /**
@@ -89,13 +92,12 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == PERMISSION_RQST_CODE){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        if (requestCode == PERMISSION_RQST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 permissionRationaleTV.setVisibility(View.GONE);
                 grantButton.setVisibility(View.GONE);
                 login();
-            }
-            else {
+            } else {
 
                 permissionRationaleTV.setVisibility(View.VISIBLE);
 
@@ -116,7 +118,6 @@ public class WelcomeActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         Timber.d("onStart");
-
         if (!permissionsManager.isContactPermitted()) {
             AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
             dialogBuilder.setTitle("MADCAP permissions")
@@ -136,7 +137,7 @@ public class WelcomeActivity extends AppCompatActivity {
         } else login();
     }
 
-    protected void login(){
+    protected void login() {
         GoogleSignInAccount user = authenticationProvider.getUser();
         if (user != null) {
             Timber.d("User already signed in. Starting MainActivity.");

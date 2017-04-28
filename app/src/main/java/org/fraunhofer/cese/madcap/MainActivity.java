@@ -70,7 +70,6 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     @Inject
     MadcapPermissionsManager permissionManager;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -190,7 +189,6 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
 
     @Override
-
 
     protected void onStart() {
         super.onStart();
