@@ -6,6 +6,7 @@ import android.app.AppOpsManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
@@ -23,6 +24,10 @@ import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 
 /**
  * Created by MMueller on 11/15/2016.
+ *
+ * Edited by PGuruprasad on 4/27/2017.
+ *
+ * All permission handling is now centralised in MadcapPermissionManager
  */
 
 public class MadcapPermissionsManager implements PermissionsManager {

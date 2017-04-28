@@ -142,15 +142,6 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                     startActivity(new Intent(MainActivity.this, PermissionsActivity.class));
                 }
             });
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    while(!permissionManager.hasAllPermissions()){
-                        permissionManager.requestPermissionFromNotification();
-                    }
-                }
-            };
-            new Thread(runnable).start();
         }
 
         mConnection = new ServiceConnection() {
