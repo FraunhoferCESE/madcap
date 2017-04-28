@@ -79,7 +79,6 @@ class DatabaseAsyncTaskFactory {
                     return result;
                 }
 
-                Collection<String> savedEntries = new ArrayList<>(1000);
                 RuntimeExceptionDao<CacheEntry, String> dao;
                 try {
                     dao = databaseHelper.getDao();
@@ -94,6 +93,7 @@ class DatabaseAsyncTaskFactory {
                 }
 
                 // Try to save objects to the database. Supports partial saves, i.e., only some objects are saved.
+                Collection<String> savedEntries = new ArrayList<>(1000);
                 try {
                     if (memcaches != null) {
                         for (Map<String, CacheEntry> memcache : memcaches) {
@@ -193,7 +193,7 @@ class DatabaseAsyncTaskFactory {
      * @return the new task instance
      */
 
-    AsyncTask<Void, Void, Void> createCleanupTask(final Context context, final Cache cache, final int dbEntryLimit) {
+    AsyncTask<Void, Void, Void> createCleanupTask(final Context context, final Cache cache, final long dbEntryLimit) {
         //noinspection OverloadedVarargsMethod
         return new AsyncTask<Void, Void, Void>() {
             private static final int CURSOR_INCREMENT = 250;
@@ -205,7 +205,7 @@ class DatabaseAsyncTaskFactory {
                 Timber.d("Running task to determine if database is still within size limits");
                 Thread.currentThread().setName(TAG);
 
-                if ((dbEntryLimit < 0) || (cache == null)) {
+                if ((dbEntryLimit < 0L) || (cache == null)) {
                     return null;
                 }
 
@@ -216,13 +216,13 @@ class DatabaseAsyncTaskFactory {
 
                 RuntimeExceptionDao<CacheEntry, String> dao = databaseHelper.getDao();
                 long size = dao.countOf();
-                if (size < (long) dbEntryLimit) {
+                if (size < dbEntryLimit) {
                     Timber.i("No cleanup needed. Database limit: " + dbEntryLimit + " > Database size: " + size);
                 } else {
                     Timber.i("Attempting cleanup. Database limit: " + dbEntryLimit + " <= Database size: " + size);
-                    long numToDelete = size - (long) (dbEntryLimit / 2);
 
                     try {
+                        long numToDelete = size - (dbEntryLimit / 2L);
                         List<CacheEntry> toDelete = dao.queryBuilder()
                                 .selectColumns(CacheEntry.ID_FIELD_NAME)
                                 .orderBy(CacheEntry.TIMESTAMP_FIELD_NAME, true)

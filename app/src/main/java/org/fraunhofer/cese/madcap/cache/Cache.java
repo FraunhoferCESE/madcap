@@ -1,19 +1,16 @@
 package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 
-import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
 import org.greenrobot.eventbus.EventBus;
 
@@ -47,10 +44,17 @@ import timber.log.Timber;
 @Singleton
 public class Cache {
 
-    private static final String TAG = "Fraunhofer." + Cache.class.getSimpleName();
+    private static final String MAX_MEM_ENTRIES_KEY = "max_mem_entries";
+    private static final String MAX_DB_ENTRIES_KEY = "max_db_entries";
+    private static final String MEM_FORCED_CLEANUP_LIMIT_KEY = "mem_forced_cleanup_limit";
+    private static final String DB_FORCED_CLEANUP_LIMIT_KEY = "db_forced_cleanup_limit";
+    private static final String DB_WRITE_INTERVAL_KEY = "db_write_interval";
+    private static final String UPLOAD_INTERVAL_KEY = "upload_interval";
+    private static final String UPLOAD_ON_WIFI_ONLY_KEY = "upload_on_wifi_only";
 
-    private long currentDbSize = 0;
+    private long currentDbSize;
 
+    @Nullable
     private Collection<UploadStatusListener> uploadStatusListeners;
 
     /**
@@ -95,11 +99,6 @@ public class Cache {
     private final ConnectivityManager connManager;
 
     /**
-     * Configuration settings the govern cache behavior.
-     */
-    private final CacheConfig config;
-
-    /**
      * Factory for creating asynchronous tasks to access the database
      */
     private final DatabaseAsyncTaskFactory dbTaskFactory;
@@ -114,16 +113,16 @@ public class Cache {
      */
     private final EndpointApiBuilder endpointApiBuilder;
 
+    private final FirebaseRemoteConfig mFirebaseRemoteConfig;
+
     @Inject
     public Cache(Context context,
                  ConnectivityManager connManager,
-                 CacheConfig config,
                  DatabaseAsyncTaskFactory dbWriteTaskFactory,
                  RemoteUploadAsyncTaskFactory uploadTaskFactory,
                  EndpointApiBuilder endpointApiBuilder) {
         this.context = context;
         this.connManager = connManager;
-        this.config = config;
         dbTaskFactory = dbWriteTaskFactory;
         this.uploadTaskFactory = uploadTaskFactory;
         this.endpointApiBuilder = endpointApiBuilder;
@@ -131,7 +130,8 @@ public class Cache {
         lastDbWriteAttempt = System.currentTimeMillis();
         lastUploadAttempt = 0L;
 
-        memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>(config.getMaxMemEntries()));
+        mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>((int) mFirebaseRemoteConfig.getLong(MAX_MEM_ENTRIES_KEY)));
 
         currentDbSize = getHelper().getDao().countOf();
         if (checkUploadConditions(UploadStrategy.NORMAL) == UPLOAD_READY) {
@@ -151,13 +151,14 @@ public class Cache {
         }
 
         memcache.put(entry.getId(), entry);
-        if ((memcache.size() > config.getMaxMemEntries()) && ((System.currentTimeMillis() - lastDbWriteAttempt) > (long) config.getDbWriteInterval())) {
+        if (((long) memcache.size() > mFirebaseRemoteConfig.getLong(MAX_MEM_ENTRIES_KEY)) && ((System.currentTimeMillis() - lastDbWriteAttempt) > mFirebaseRemoteConfig.getLong(DB_WRITE_INTERVAL_KEY))) {
             flush(UploadStrategy.NORMAL);
         }
 
-        EventBus.getDefault().post(new CacheCountUpdate(currentDbSize + memcache.size()));
+        EventBus.getDefault().post(new CacheCountUpdate(currentDbSize + (long) memcache.size()));
     }
 
+    @SuppressWarnings("PublicInnerClass")
     public static class CacheCountUpdate {
         private final long count;
 
@@ -208,13 +209,14 @@ public class Cache {
         //noinspection ThrowableResultOfMethodCallIgnored
         if (result.getError() != null) {
             Timber.e("{doPostDatabaseWrite} Database write failed.", result.getError());
-            if (memcache.size() > config.getMemForcedCleanupLimit()) {
+            long memLimit = mFirebaseRemoteConfig.getLong(MEM_FORCED_CLEANUP_LIMIT_KEY);
+            if ((long) memcache.size() > memLimit) {
                 Timber.w("{doPostDatabaseWrite} Too many cache entries in memory. Purging oldest entries. LIMIT: "
-                        + config.getMemForcedCleanupLimit() + ", memcache size: " + memcache.size());
+                        + memLimit + ", memcache size: " + memcache.size());
 
                 // Remove the oldest entries so that config.getMemForcedCleanupLimit() / 2 entries remain
                 Iterator<String> iterator = memcache.keySet().iterator();
-                while (iterator.hasNext() && (memcache.size() > (config.getMemForcedCleanupLimit() / 2))) {
+                while (iterator.hasNext() && ((long) memcache.size() > (memLimit / 2L))) {
                     iterator.next();
                     iterator.remove();
                 }
@@ -303,12 +305,12 @@ public class Cache {
     /**
      * Number of db entries before upload in "immediate" configuration
      */
-    private static final int IMMEDIATE_MAX_DB_ENTRIES = 1;
+    private static final long IMMEDIATE_MAX_DB_ENTRIES = 1L;
 
     /**
      * Wait interval in millis between successfive upload attempts in "immediate" configuration
      */
-    private static final int IMMEDIATE_UPLOAD_INTERVAL = 5000;
+    private static final long IMMEDIATE_UPLOAD_INTERVAL = 5000L;
 
     /**
      * This method checks if the conditions are met to trigger a remote upload, and then starts an asynchronous task to perform
@@ -341,17 +343,17 @@ public class Cache {
         }
 
         // 3. Determine if an upload is ready based on parameters
-        int maxDbEntries;
-        int uploadInterval;
-        boolean wifiOnly = config.isUploadWifiOnly();
+        long maxDbEntries;
+        long uploadInterval;
+        boolean wifiOnly = mFirebaseRemoteConfig.getBoolean(UPLOAD_ON_WIFI_ONLY_KEY);
 
 
         if (strategy == UploadStrategy.IMMEDIATE) {
             maxDbEntries = IMMEDIATE_MAX_DB_ENTRIES;
             uploadInterval = IMMEDIATE_UPLOAD_INTERVAL;
         } else {
-            maxDbEntries = config.getMaxDbEntries();
-            uploadInterval = config.getUploadInterval();
+            maxDbEntries = mFirebaseRemoteConfig.getLong(MAX_DB_ENTRIES_KEY);
+            uploadInterval = mFirebaseRemoteConfig.getLong(UPLOAD_INTERVAL_KEY);
         }
 
         int status = UPLOAD_READY;
@@ -361,11 +363,11 @@ public class Cache {
                 numEntries += (long) memcache.size();
             }
 
-            if (numEntries < (long) maxDbEntries) {
+            if (numEntries < maxDbEntries) {
                 status |= DATABASE_LIMIT_NOT_MET;
             }
 
-            if ((System.currentTimeMillis() - lastUploadAttempt) <= (long) uploadInterval) {
+            if ((System.currentTimeMillis() - lastUploadAttempt) <= uploadInterval) {
                 status |= UPLOAD_INTERVAL_NOT_MET;
             }
 
@@ -385,7 +387,7 @@ public class Cache {
      * Starts an asynchronous task to perform the upload
      */
     private void upload() {
-        Log.d(TAG, "Upload now called");
+        Timber.d("Upload now called");
         lastUploadAttempt = System.currentTimeMillis();
 
         uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, endpointApiBuilder, uploadStatusListeners).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -417,7 +419,7 @@ public class Cache {
 
         if (uploadResult.getException() != null) {
             Timber.w("{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
-            dbTaskFactory.createCleanupTask(context, this, config.getDbForcedCleanupLimit()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            dbTaskFactory.createCleanupTask(context, this, mFirebaseRemoteConfig.getLong(DB_FORCED_CLEANUP_LIMIT_KEY)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 

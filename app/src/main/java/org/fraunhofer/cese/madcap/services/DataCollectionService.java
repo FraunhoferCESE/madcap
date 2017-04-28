@@ -1,7 +1,6 @@
 package org.fraunhofer.cese.madcap.services;
 
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -12,9 +11,14 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
@@ -26,12 +30,15 @@ import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.cache.UploadStrategy;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploadTaskFactory;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.EventBusBuilder;
 
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
@@ -59,7 +66,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
     private static final int RUN_CODE = 1;
     private static final int NOTIFICATION_ID = 918273;
-    private static final long HEARTBEAT_DELAY = 100l;
+    private static final long HEARTBEAT_DELAY = 100L;
 
     private boolean isRunning;
 
@@ -69,6 +76,16 @@ public class DataCollectionService extends Service implements UploadStatusListen
     @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
     HeartBeatRunner heartBeatRunner;
+
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    @Named("HeartbeatHandler")
+    Handler heartbeatHandler;
+
+    @SuppressWarnings("PackageVisibleField")
+    @Inject
+    @Named("RemoteConfigUpdateHandler")
+    Handler remoteConfigUpdateHandler;
 
     @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
@@ -169,6 +186,33 @@ public class DataCollectionService extends Service implements UploadStatusListen
             listeners.add(auidioListener);
         }
 
+        Timber.d("Starting remoteConfigUpdateHandler");
+        remoteConfigUpdateHandler.post(new Runnable() {
+            private final Runnable runnable = this;
+            private static final long FIREBASE_CACHE_EXPIRATION = 3600L;
+            private static final long FIREBASE_CONFIG_UPDATE_INTERVAL = 3600000L;
+
+
+            @Override
+            public void run() {
+                // Periodically check to see if there is a configuration updated pushed through firebase.
+                FirebaseRemoteConfig.getInstance().fetch(FIREBASE_CACHE_EXPIRATION).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // After config data is successfully fetched, it must be activated before newly fetched
+                            // values are returned.
+                            Timber.d("Fetch of remote FirebaseConfig successful.");
+                            FirebaseRemoteConfig.getInstance().activateFetched();
+                        } else {
+                            Timber.w("Fetching Firebase config was not successful");
+                            Timber.w(task.getException());
+                        }
+                        remoteConfigUpdateHandler.postDelayed(runnable, FIREBASE_CONFIG_UPDATE_INTERVAL);
+                    }
+                });
+            }
+        });
     }
 
     private void sendDataCollectionProbe(String dataCollectionState) {
@@ -190,10 +234,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
         sendDataCollectionProbe(DataCollectionProbe.OFF);
 
-        // Stop the heartbeat
-        if (heartBeatRunner != null) {
-            heartBeatRunner.stop();
-        }
+        heartbeatHandler.removeCallbacksAndMessages(null);
+        remoteConfigUpdateHandler.removeCallbacksAndMessages(null);
 
         synchronized (listeners) {
             for (Listener listener : listeners) {
@@ -248,7 +290,8 @@ public class DataCollectionService extends Service implements UploadStatusListen
             }
 
             // Start the heartbeat
-            new Handler().postDelayed(heartBeatRunner, HEARTBEAT_DELAY);
+            Timber.d("Starting heartbeatHandler");
+            heartbeatHandler.postDelayed(heartBeatRunner, HEARTBEAT_DELAY);
             isRunning = true;
         }
         return START_STICKY;
@@ -330,6 +373,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
         boolean hasError = false;
 
+
         //TODO: All of the message formatting should be in the view, not here.
         String text = "";
         if (result == null) {
@@ -396,7 +440,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
         editor.apply();
     }
 
-   private Notification getRunNotification() {
+    private Notification getRunNotification() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
         // TODO: Refactor
@@ -424,7 +468,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
                 );
         mBuilder.setContentIntent(resultPendingIntent);
 
-       NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
         Notification note = mBuilder.build();
         note.flags |= Notification.FLAG_NO_CLEAR;

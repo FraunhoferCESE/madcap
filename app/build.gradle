@@ -95,6 +95,7 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
 
+    compile 'com.google.firebase:firebase-config:10.2.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.j256.ormlite:ormlite-android:5.0'
     compile 'com.google.android.gms:play-services-auth:10.2.1'
