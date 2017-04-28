@@ -180,15 +180,6 @@ public class StartFragment extends Fragment implements UploadStatusGuiListener {
                     startActivity(new Intent(getContext(), PermissionsActivity.class));
                 }
             });
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    while(!permissionManager.hasAllPermissions()){
-                        permissionManager.requestPermissionFromNotification();
-                    }
-                }
-            };
-            new Thread(runnable).start();
         }
 
         dataCountView = (TextView) view.findViewById(R.id.dataCountText);
