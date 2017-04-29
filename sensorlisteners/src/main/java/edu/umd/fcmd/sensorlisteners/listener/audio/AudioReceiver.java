@@ -11,7 +11,7 @@ import edu.umd.fcmd.sensorlisteners.model.audio.RingerProbe;
 
 /**
  * Created by MMueller on 1/24/2017.
- *
+ * <p>
  * Handling incoming audio related intents.
  */
 public class AudioReceiver extends BroadcastReceiver {
@@ -19,7 +19,7 @@ public class AudioReceiver extends BroadcastReceiver {
 
     private final AudioListener audioListener;
 
-    public AudioReceiver(AudioListener audioListener){
+    public AudioReceiver(AudioListener audioListener) {
         this.audioListener = audioListener;
     }
 
@@ -74,11 +74,8 @@ public class AudioReceiver extends BroadcastReceiver {
                 ringerProbe.setMode(audioListener.getCurrentRingerMode());
                 audioListener.onUpdate(ringerProbe);
                 break;
-            case "android.media.VOLUME_CHANGED_ACTION":
-                audioListener.evaluateVolumeChanges();
-                break;
             default:
-                Log.i(TAG, "Audio Receiver received undefined action: "+intent.getAction());
+                Log.i(TAG, "Audio Receiver received undefined action: " + intent.getAction());
                 break;
         }
     }
