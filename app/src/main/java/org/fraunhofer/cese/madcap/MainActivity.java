@@ -11,9 +11,7 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
-import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -27,11 +25,18 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.text.DateFormat;
 import java.util.Date;
 
+import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
 import timber.log.Timber;
 
 /**
  * Creates the main activity for MADCAP.
  */
+@SuppressWarnings("PackageVisibleField")
 public class MainActivity extends ActionBarActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
@@ -39,7 +44,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     private static final float ALPHA_DISABLED = 0.5f;
     private static final float ALPHA_ENABLED = 1.0f;
 
-    private SharedPreferences prefs;
+    @Inject SharedPreferences prefs;
 
     //This is the data collection service we bind to.
     @Nullable
@@ -49,17 +54,16 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     private long mDataCount;
 
     //Ui elements
-    private TextView nameTextView;
-    private TextView collectionDataStatusText;
-    private Switch collectDataSwitch;
-    private TextView uploadProgressText;
-    private ProgressBar uploadProgressBar;
-    private TextView dataCountView;
-    private TextView uploadResultView;
-    private TextView uploadDateView;
-    private TextView uploadStatusView;
-    private TextView uploadMessageView;
-    private Button uploadButton;
+    @BindView(R.id.dataCollectionStatus) TextView collectionDataStatusText;
+    @BindView(R.id.dataCollectionSwitch) Switch collectDataSwitch;
+    @BindView(R.id.progressText) TextView uploadProgressText;
+    @BindView(R.id.progressBar) ProgressBar uploadProgressBar;
+    @BindView(R.id.dataCountText) TextView dataCountView;
+    @BindView(R.id.uploadResultHeader) TextView uploadResultView;
+    @BindView(R.id.lastUploadDate) TextView uploadDateView;
+    @BindView(R.id.lastUploadStatus) TextView uploadStatusView;
+    @BindView(R.id.lastUploadMessage) TextView uploadMessageView;
+    @BindView(R.id.uploadButton) Button uploadButton;
 
     /**
      * Defines callbacks for service binding, passed to bindService()
@@ -69,65 +73,11 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //noinspection CastToConcreteClass
-        ((MyApplication) getApplication()).getComponent().inject(this);
         setContentView(R.layout.activity_main);
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // Initialize views
-        collectionDataStatusText = (TextView) findViewById(R.id.dataCollectionStatus);
-        dataCountView = (TextView) findViewById(R.id.dataCountText);
-        uploadDateView = (TextView) findViewById(R.id.lastUploadDate);
-        uploadResultView = (TextView) findViewById(R.id.uploadResultHeader);
-        uploadStatusView = (TextView) findViewById(R.id.lastUploadStatus);
-        uploadMessageView = (TextView) findViewById(R.id.lastUploadMessage);
-
-        //Set up upload progress bar
-        uploadProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        uploadProgressText = (TextView) findViewById(R.id.progressText);
-
-        uploadButton = (Button) findViewById(R.id.uploadButton);
-
-        //Set the switch
-        collectDataSwitch = (Switch) findViewById(R.id.switch1);
-        collectDataSwitch.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            // Start the data collection service
-                            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
-                            getApplicationContext().startService(intent);
-                            bindConnection(intent);
-                        } else {
-                            // Stop the data collection service
-                            unbindConnection();
-                            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
-                            getApplicationContext().stopService(intent);
-
-                            updateUiElements(false);
-                            setIsCollectingData(false);
-                        }
-                    }
-                }
-        );
-
-        uploadButton.setOnClickListener(
-                new View.OnClickListener() {
-                    private final DateFormat format = DateFormat.getDateTimeInstance();
-
-                    @Override
-                    public void onClick(View v) {
-                        if (mBound && (mDataCollectionService != null)) {
-                            mDataCollectionService.requestUpload();
-                            Timber.d("Upload data clicked");
-                        } else {
-                            Timber.w("Requested manual upload, but DataCollectionService was not bound.");
-                        }
-                    }
-                }
-        );
+        //noinspection CastToConcreteClass
+        ((MyApplication) getApplication()).getComponent().inject(this);
+        ButterKnife.bind(this);
 
         mConnection = new ServiceConnection() {
             @Override
@@ -156,6 +106,34 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                 Timber.d("onServiceDisconnected");
             }
         };
+    }
+
+    @OnClick(R.id.uploadButton)
+    void onClickUploadButton() {
+        if (mBound && (mDataCollectionService != null)) {
+            mDataCollectionService.requestUpload();
+            Timber.d("Upload data clicked");
+        } else {
+            Timber.w("Requested manual upload, but DataCollectionService was not bound.");
+        }
+    }
+
+    @OnCheckedChanged(R.id.dataCollectionSwitch)
+    void onDataCollectionToggle(boolean isChecked) {
+        if (isChecked) {
+            // Start the data collection service
+            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
+            getApplicationContext().startService(intent);
+            bindConnection(intent);
+        } else {
+            // Stop the data collection service
+            unbindConnection();
+            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
+            getApplicationContext().stopService(intent);
+
+            updateUiElements(false);
+            setIsCollectingData(false);
+        }
     }
 
     private void updateUiElements(boolean isCollectingData) {

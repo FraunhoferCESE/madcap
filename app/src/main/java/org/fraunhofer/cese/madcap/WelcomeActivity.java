@@ -8,8 +8,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -23,53 +21,49 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import timber.log.Timber;
 
 /**
  * Create the welcome activity
  */
+@SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal"})
 public class WelcomeActivity extends AppCompatActivity {
 
-    @SuppressWarnings("PackageVisibleField")
     @Inject
     AuthenticationProvider authenticationProvider;
-    private TextView welcomeMessageView;
+
+    @BindView(R.id.welcomeMessage) TextView welcomeMessageView;
+
+    @BindView(R.id.buildVersion) TextView buildVersion;
+
+    @BindView(R.id.buildNumber) TextView buildNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_welcome);
 
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
-        Timber.d("Welcome created");
+        ButterKnife.bind(this);
 
-        setContentView(R.layout.activity_welcome);
-        welcomeMessageView = (TextView) findViewById(R.id.welcomeMessage);
         welcomeMessageView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        Button helpButton = (Button) findViewById(R.id.helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
-            /**
-             * Called when a view has been clicked.
-             *
-             * @param v The view that was clicked.
-             */
-            @Override
-            public void onClick(View v) {
-                Timber.d("Help toggled");
-
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(getString(R.string.onlineHelpURL)));
-                startActivity(intent);
-            }
-        });
-
         // Set the version number at the bottom of the activity
-        // Set the version number at the bottom of the activity
-        TextView buildVersion = (TextView) findViewById(R.id.buildVersion);
         buildVersion.setText(String.format(getString(R.string.buildVersion), BuildConfig.VERSION_NAME));
-        TextView buildNumber = (TextView) findViewById(R.id.buildNumber);
         buildNumber.setText(String.format(getString(R.string.buildNumber), BuildConfig.VERSION_CODE));
+    }
+
+    @OnClick(R.id.helpButton)
+    void onClickHelpButton() {
+        Timber.d("Help toggled");
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(getString(R.string.onlineHelpURL)));
+        startActivity(intent);
     }
 
     @Override
