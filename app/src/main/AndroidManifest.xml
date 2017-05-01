@@ -87,7 +87,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/name_main_activity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop" />
         <activity
             android:name=".AboutActivity"
             android:label="@string/name_about_activity"

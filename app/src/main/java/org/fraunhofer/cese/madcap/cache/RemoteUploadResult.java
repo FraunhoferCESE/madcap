@@ -2,16 +2,14 @@ package org.fraunhofer.cese.madcap.cache;
 
 import android.content.Context;
 
-import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeSaveResult;
-
-import java.util.Collection;
+import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
 
 /**
  * Class for capturing the results of remote upload attempts by the cache.
  *
  * @see Cache
- * @see RemoteUploadAsyncTaskFactory#createRemoteUploadTask(Context, Cache, ProbeEndpoint, Collection)
+ * @see RemoteUploadAsyncTaskFactory#createRemoteUploadTask(Context, Cache, EndpointApiBuilder)
  */
 public class RemoteUploadResult {
 

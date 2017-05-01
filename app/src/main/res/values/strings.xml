@@ -4,6 +4,9 @@
     <string name="buildVersion">MADCAP Version %s</string>
     <string name="buildNumber">Build %d</string>
 
+    <string name="capacity_warning_title">MADCAP needs to upload!</string>
+    <string name="capacity_warning">MADCAP is at %2.2f%% database capacity. Please upload soon or data will be lost.</string>
+    <string name="warning_icon_description">warning icon</string>
 
     <!-- ActionBar Menu -->
     <string name="action_settings">Settings</string>
@@ -189,5 +192,6 @@
     <string name="DB_WRITE_INTERVAL_KEY">db_write_interval</string>
     <string name="UPLOAD_INTERVAL_KEY">upload_interval</string>
     <string name="UPLOAD_ON_WIFI_ONLY_KEY">upload_on_wifi_only</string>
+    <string name="CLEANUP_WARNING_LIMIT_KEY">cleanup_warning_limit</string>
 
 </resources>

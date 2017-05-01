@@ -15,16 +15,52 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="8sp"
+        android:animateLayoutChanges="true"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/warningBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/capacity_warning_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:src="@drawable/ic_warning_black_24dp"
+                android:contentDescription="@string/warning_icon_description"
+                app:layout_constraintEnd_toStartOf="@+id/capacity_warning_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/capacity_warning_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8sp"
+                android:paddingStart="8sp"
+                android:paddingEnd="8sp"
+                android:background="@color/light_red"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/capacity_warning_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:textIsSelectable="true" />
+        </android.support.constraint.ConstraintLayout>
+
 
         <TextView
             android:id="@+id/introText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/introText"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/warningBlock" />
 
         <LinearLayout
             android:id="@+id/dataCollectionGroup"
@@ -73,24 +109,24 @@
             android:id="@+id/progressText"
             android:layout_width="40sp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
             android:gravity="end"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/progressBar"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/uploadButton"
-            />
+            android:textIsSelectable="true" />
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="@style/progressBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/progressText"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toEndOf="@id/progressText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/progressText"
-            app:layout_constraintBottom_toBottomOf="@id/progressText"/>
+            app:layout_constraintTop_toTopOf="@id/progressText" />
 
         <TextView
             android:id="@+id/lastUploadDate"
@@ -106,9 +142,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:textIsSelectable="true"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lastUploadDate"
-            android:textIsSelectable="true" />
+            app:layout_constraintTop_toBottomOf="@+id/lastUploadDate" />
 
         <TextView
             android:id="@+id/lastUploadStatus"
