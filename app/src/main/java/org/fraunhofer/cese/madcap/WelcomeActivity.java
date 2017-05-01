@@ -8,76 +8,81 @@ import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.authentication.SilentLoginResultCallback;
-import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
-public class WelcomeActivity extends AppCompatActivity {
-    private static final String TAG = "WelcomeActivity";
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import timber.log.Timber;
 
-    @SuppressWarnings("PackageVisibleField")
+/**
+ * Create the welcome activity
+ */
+@SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal"})
+public class WelcomeActivity extends AppCompatActivity {
+
     @Inject
     AuthenticationProvider authenticationProvider;
-    private TextView errorTextView;
+
+    @BindView(R.id.welcomeMessage) TextView welcomeMessageView;
+
+    @BindView(R.id.buildVersion) TextView buildVersion;
+
+    @BindView(R.id.buildNumber) TextView buildNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_welcome);
 
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
-        MyApplication.madcapLogger.d(TAG, "Welcome created");
+        ButterKnife.bind(this);
 
-        setContentView(R.layout.activity_welcome);
-        errorTextView = (TextView) findViewById(R.id.welcomeErrorTextView);
-        errorTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        welcomeMessageView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        Button helpButton = (Button) findViewById(R.id.helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
-            /**
-             * Called when a view has been clicked.
-             *
-             * @param v The view that was clicked.
-             */
-            @Override
-            public void onClick(View v) {
-                MyApplication.madcapLogger.d(TAG, "Help toggled");
+        // Set the version number at the bottom of the activity
+        buildVersion.setText(String.format(getString(R.string.buildVersion), BuildConfig.VERSION_NAME));
+        buildNumber.setText(String.format(getString(R.string.buildNumber), BuildConfig.VERSION_CODE));
+    }
 
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse("https://www.pocket-security.org/app-help/"));
-                startActivity(intent);
-            }
-        });
+    @OnClick(R.id.helpButton)
+    void onClickHelpButton() {
+        Timber.d("Help toggled");
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(getString(R.string.onlineHelpURL)));
+        startActivity(intent);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        MyApplication.madcapLogger.d(TAG, "onStart");
+        Timber.d("onStart");
 
         GoogleSignInAccount user = authenticationProvider.getUser();
         if (user != null) {
-            MyApplication.madcapLogger.d(TAG, "User already signed in. Starting MainActivity.");
-            errorTextView.setText("Welcome " + user.getGivenName() + ' ' + user.getFamilyName());
+            Timber.d("User already signed in. Starting MainActivity.");
+            welcomeMessageView.setText(String.format(getString(R.string.welcome_signin_success), user.getEmail()));
             startActivity(new Intent(this, MainActivity.class));
         } else {
             final Context context = this;
             authenticationProvider.silentLogin(this, new SilentLoginResultCallback() {
                 @Override
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                    errorTextView.setText(String.format(getString(R.string.play_services_connection_failed), connectionResult));
-                    MyApplication.madcapLogger.e(TAG, "onStart.onConnectionFailed: Unable to connect to Google Play services. Error code: " + connectionResult);
+                    welcomeMessageView.setText(String.format(getString(R.string.play_services_connection_failed), connectionResult));
+                    Timber.e("onStart.onConnectionFailed: Unable to connect to Google Play services. Error code: " + connectionResult);
                     // TODO: Unregister this listener from mGoogleClientApi in AuthenticationProvider?
                 }
 
@@ -105,25 +110,27 @@ public class WelcomeActivity extends AppCompatActivity {
                             text = String.format(getString(R.string.play_services_connection_failed), connectionResult);
                     }
 
-                    MyApplication.madcapLogger.e(TAG, text);
-                    errorTextView.setText(text);
+                    Timber.w("SilentLogin unavailable", text, "Starting SignInActivity");
+                    welcomeMessageView.setText(text);
                     startActivity(new Intent(context, SignInActivity.class));
                     finish();
                 }
 
                 @Override
                 public void onLoginResult(GoogleSignInResult signInResult) {
-                    if (signInResult.isSuccess()) {
-                        MyApplication.madcapLogger.d(TAG, "User successfully signed in and authenticated to MADCAP.");
-                        errorTextView.setText("Welcome");
-                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
+                    GoogleSignInAccount acct = signInResult.getSignInAccount();
+                    if (signInResult.isSuccess() && (acct != null)) {
+                        Timber.d("User successfully signed in and authenticated to MADCAP.");
+                        welcomeMessageView.setText(String.format(getString(R.string.welcome_signin_success), acct.getEmail()));
+                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
+                            Timber.d("Data Collection is on");
                             Intent intent = new Intent(context, DataCollectionService.class);
-                            intent.putExtra("callee", TAG);
                             startService(intent);
                         }
                         startActivity(new Intent(context, MainActivity.class));
                     } else {
-                        MyApplication.madcapLogger.d(TAG, "User could not be authenticated to MADCAP. Starting SignInActivity.");
+                        Timber.d("User could not be authenticated to MADCAP. Starting SignInActivity.");
+                        welcomeMessageView.setText(getString(R.string.weclome_signin_failed));
                         startActivity(new Intent(context, SignInActivity.class));
                     }
                     finish();

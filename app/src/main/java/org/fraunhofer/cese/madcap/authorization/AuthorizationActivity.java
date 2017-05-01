@@ -1,6 +1,5 @@
 package org.fraunhofer.cese.madcap.authorization;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +13,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.Status;
 
+import org.fraunhofer.cese.madcap.ChildActivity;
 import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
@@ -23,10 +23,12 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 /**
  * Activity that handles authorization of the currently signed in user to the backend and displays results accordingly.
  */
-public class AuthorizationActivity extends Activity {
+public class AuthorizationActivity extends ChildActivity {
 
     private static final String TAG = "AuthorizationActivity";
 
@@ -47,23 +49,23 @@ public class AuthorizationActivity extends Activity {
     private final LogoutResultCallback logoutResultCallback = new LogoutResultCallback() {
         @Override
         public void onServicesUnavailable(int connectionResult) {
-            MyApplication.madcapLogger.w(TAG, getString(R.string.signin_service_unavailable));
+            Timber.w(getString(R.string.signin_service_unavailable));
         }
 
         @Override
         public void onSignOut(Status result) {
-            MyApplication.madcapLogger.d(TAG, "User signed out");
+            Timber.d("User signed out");
 
         }
 
         @Override
         public void onRevokeAccess(Status result) {
-            MyApplication.madcapLogger.d(TAG, "User access revoked.");
+            Timber.d("User access revoked.");
         }
 
         @Override
         public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-            MyApplication.madcapLogger.w(TAG, getString(R.string.signin_service_connection_failed));
+            Timber.w(getString(R.string.signin_service_connection_failed));
         }
     };
 
@@ -93,7 +95,7 @@ public class AuthorizationActivity extends Activity {
         authorizationTaskFactory.createAuthorizationTask(context, new AuthorizationHandler() {
             @Override
             public void onAuthorized() {
-                MyApplication.madcapLogger.i(TAG, "User authorized");
+                Timber.i("User authorized");
                 if (progress.isShowing()) {
                     progress.dismiss();
                 }
@@ -101,7 +103,7 @@ public class AuthorizationActivity extends Activity {
                 showUserInfo();
                 Toast.makeText(context, getString(R.string.authorization_authorized), Toast.LENGTH_SHORT).show();
 
-                if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
+                if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
                     startService(new Intent(context, DataCollectionService.class).putExtra("callee", TAG));
                 }
                 Intent intent = new Intent(context, MainActivity.class);
@@ -111,7 +113,7 @@ public class AuthorizationActivity extends Activity {
 
             @Override
             public void onUnauthorized() {
-                MyApplication.madcapLogger.i(TAG, "User not authorized");
+                Timber.i("User not authorized");
                 if (progress.isShowing()) {
                     progress.dismiss();
                 }
@@ -124,7 +126,7 @@ public class AuthorizationActivity extends Activity {
 
             @Override
             public void onError(AuthorizationException exception) {
-                MyApplication.madcapLogger.w(TAG, "User authorization encountered an error: " + exception);
+                Timber.w("User authorization encountered an error: " + exception);
                 if (progress.isShowing()) {
                     progress.dismiss();
                 }
@@ -139,7 +141,7 @@ public class AuthorizationActivity extends Activity {
                 GoogleSignInAccount user = authenticationProvider.getUser();
                 if (user != null) {
                     mAuthorizationEmail.setText(getString(R.string.not_authorized_user_email, user.getEmail()));
-                    mAuthorizationUserid.setText(getString(R.string.not_authorized_user_email, user.getId()));
+                    mAuthorizationUserid.setText(getString(R.string.not_authorized_user_id, user.getId()));
                 }
             }
         }).execute();
@@ -152,5 +154,10 @@ public class AuthorizationActivity extends Activity {
         if (progress.isShowing()) {
             progress.dismiss();
         }
+    }
+
+    @Override
+    protected void onSignOut() {
+
     }
 }

@@ -1,212 +1,273 @@
 package org.fraunhofer.cese.madcap;
 
-import android.content.ClipData;
-import android.net.Uri;
+import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.menu.MenuView;
-import android.support.v7.widget.Toolbar;
+import android.os.IBinder;
+import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
+import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.Switch;
+import android.widget.TextView;
 
-import android.support.v4.app.FragmentManager;
-import android.view.MenuItem;
-import android.view.View;
+import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.List;
+import java.text.DateFormat;
+import java.util.Date;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        StartFragment.OnFragmentInteractionListener,
-        HelpFragment.OnFragmentInteractionListener,
-        QuitFragment.OnFragmentInteractionListener,
-        AboutFragment.OnFragmentInteractionListener{
-    private final String TAG = getClass().getSimpleName();
-    private String currentTopFragment;
+import javax.inject.Inject;
 
-    private FragmentManager mainFragmentManager;
-    private StartFragment startFragment;
-    private HelpFragment helpFragment;
-    private LogoutFragment logoutFragment;
-    private QuitFragment quitFragment;
-    private AboutFragment aboutFragment;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
+import timber.log.Timber;
 
+/**
+ * Creates the main activity for MADCAP.
+ */
+@SuppressWarnings("PackageVisibleField")
+public class MainActivity extends ActionBarActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
+
+    private static final float ALPHA_DISABLED = 0.5f;
+    private static final float ALPHA_ENABLED = 1.0f;
+
+    @Inject SharedPreferences prefs;
+
+    //This is the data collection service we bind to.
+    @Nullable
+    private DataCollectionService mDataCollectionService;
+    private volatile boolean mBound;
+
+    private long mDataCount;
+
+    //Ui elements
+    @BindView(R.id.dataCollectionStatus) TextView collectionDataStatusText;
+    @BindView(R.id.dataCollectionSwitch) Switch collectDataSwitch;
+    @BindView(R.id.progressText) TextView uploadProgressText;
+    @BindView(R.id.progressBar) ProgressBar uploadProgressBar;
+    @BindView(R.id.dataCountText) TextView dataCountView;
+    @BindView(R.id.uploadResultHeader) TextView uploadResultView;
+    @BindView(R.id.lastUploadDate) TextView uploadDateView;
+    @BindView(R.id.lastUploadStatus) TextView uploadStatusView;
+    @BindView(R.id.lastUploadMessage) TextView uploadMessageView;
+    @BindView(R.id.uploadButton) Button uploadButton;
+
+    /**
+     * Defines callbacks for service binding, passed to bindService()
+     */
+    private ServiceConnection mConnection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mainFragmentManager = getSupportFragmentManager();
-
-        if (savedInstanceState != null) {
-            //Restore the fragment's instance
-            MyApplication.madcapLogger.d(TAG, "SavedInstanceState not null");
-            startFragment = (StartFragment) mainFragmentManager.getFragment(savedInstanceState, "startfragment");
-        }else{
-            startFragment = new StartFragment();
-        }
-
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        //Hamburger Menu
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        //noinspection CastToConcreteClass
+        ((MyApplication) getApplication()).getComponent().inject(this);
+        ButterKnife.bind(this);
 
-        //Top navigation bar
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name,
+                                           IBinder service) {
+                // We've bound to DataCollectionService, cast the IBinder and get DataCollectionService instance
+                Timber.d("New connection service: " + service);
+                //noinspection CastToConcreteClass
+                mDataCollectionService = ((DataCollectionService.DataCollectionServiceBinder) service).getService();
+                mBound = true;
 
-        // Section for all fragments being shown in the main activity
-        //startFragment = new StartFragment(); // see save instance
-        helpFragment = new HelpFragment();
-        logoutFragment = new LogoutFragment();
-        //quitFragment = new QuitFragment();
-        aboutFragment = new AboutFragment();
+                // Update UI elements
+                updateUiElements(true);
+                setIsCollectingData(true);
+            }
 
-        //Initial settign up of the main fragement
-        FragmentTransaction ft = mainFragmentManager.beginTransaction();
-        ft.replace(R.id.fragmentHolder, startFragment);
-        ft.commit();
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+                // Only invoked when hosting service crashed or is killed.
 
-        currentTopFragment = "start";
+                updateUiElements(false);
+                setIsCollectingData(false);
 
-        navigationView.getMenu().getItem(0).setChecked(true);
-
-        navigationView.getMenu().performIdentifierAction(R.id.nav_home, 0);
+                mDataCollectionService = null;
+                mBound = false;
+                Timber.d("onServiceDisconnected");
+            }
+        };
     }
 
-
-
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_home) {
-            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.replace(R.id.fragmentHolder, startFragment);
-            if(!currentTopFragment.equals("start")){
-                ft.addToBackStack("start");
-                currentTopFragment = "start";
-            }
-            ft.commit();
-        } else if (id == R.id.nav_help) {
-            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.replace(R.id.fragmentHolder, helpFragment);
-            if(!currentTopFragment.equals("help")){
-                ft.addToBackStack("help");
-                currentTopFragment = "help";
-            }
-            ft.commit();
-        } else if (id == R.id.nav_sign_out) {
-            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.replace(R.id.fragmentHolder, logoutFragment);
-            if(!currentTopFragment.equals("logout")){
-                ft.addToBackStack("logout");
-                currentTopFragment ="logout";
-            }
-            ft.commit();
-        } else if (id == R.id.nav_about) {
-            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.replace(R.id.fragmentHolder, aboutFragment);
-            if(!currentTopFragment.equals("about")){
-                ft.addToBackStack("about");
-                currentTopFragment = "about";
-            }
-            ft.commit();
-        } //else if (id == R.id.nav_quit) {
-//            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-//            ft.replace(R.id.fragmentHolder, quitFragment);
-//            if(!currentTopFragment.equals("quit")){
-//                ft.addToBackStack("quit");
-//                currentTopFragment = "quit";
-//            }
-//            ft.commit();
-//        }
-
-        int checkedID = item.getItemId();
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-
-    /**
-     * Dispatch onResume() to fragments.  Note that for better inter-operation
-     * with older versions of the platform, at the point of this call the
-     * fragments attached to the activity are <em>not</em> resumed.  This means
-     * that in some cases the previous state may still be saved, not allowing
-     * fragment transactions that modify the state.  To correctly interact
-     * with fragments in their proper state, you should instead override
-     * {@link #onResumeFragments()}.
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if(startFragment == null){
-            startFragment = new StartFragment();
-
-            //Initial settign up of the main fragement
-            FragmentTransaction ft = mainFragmentManager.beginTransaction();
-            ft.add(R.id.fragmentHolder, startFragment);
-            ft.commit();
-        }
-    }
-
-    /**
-     * Take care of popping the fragment back stack or finishing the activity
-     * as appropriate.
-     */
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+    @OnClick(R.id.uploadButton)
+    void onClickUploadButton() {
+        if (mBound && (mDataCollectionService != null)) {
+            mDataCollectionService.requestUpload();
+            Timber.d("Upload data clicked");
         } else {
-//            int backStackEntryCount = getSupportFragmentManager().getBackStackEntryCount();
-//            if (backStackEntryCount == 0) {
-//                finish();   // write your code to switch between fragments.
-//            } else {
-//                super.onBackPressed();
-//            }
-            super.onBackPressed();
+            Timber.w("Requested manual upload, but DataCollectionService was not bound.");
         }
     }
 
-    private void uncheckAll(){
-        MenuItem nav = (MenuItem) findViewById(R.id.nav_home);
-        nav.setChecked(false);
-        MenuItem sign = (MenuItem) findViewById(R.id.nav_sign_out);
-        sign.setChecked(false);
-        MenuItem hp = (MenuItem) findViewById(R.id.nav_help);
-        hp.setChecked(false);
-//        MenuItem qt = (MenuItem) findViewById(R.id.nav_quit);
-//        qt.setChecked(false);
-        MenuItem at = (MenuItem) findViewById(R.id.nav_about);
-        at.setChecked(false);
+    @OnCheckedChanged(R.id.dataCollectionSwitch)
+    void onDataCollectionToggle(boolean isChecked) {
+        if (isChecked) {
+            // Start the data collection service
+            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
+            getApplicationContext().startService(intent);
+            bindConnection(intent);
+        } else {
+            // Stop the data collection service
+            unbindConnection();
+            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
+            getApplicationContext().stopService(intent);
+
+            updateUiElements(false);
+            setIsCollectingData(false);
+        }
+    }
+
+    private void updateUiElements(boolean isCollectingData) {
+        if (isCollectingData) {
+            collectionDataStatusText.setText(getString(R.string.dataCollection_on));
+            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_green));
+            uploadButton.setEnabled(true);
+            uploadButton.setAlpha(ALPHA_ENABLED);
+        } else {
+            collectionDataStatusText.setText(getString(R.string.dataCollection_off));
+            collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_red));
+            uploadButton.setEnabled(false);
+            uploadButton.setAlpha(ALPHA_DISABLED);
+        }
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    protected void onStart() {
+        super.onStart();
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+        EventBus.getDefault().register(this);
 
+        if (isCollectingData()) {
+            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
+            if (!mBound) {
+                bindConnection(intent);
+            }
+        }
+        updateUiElements(isCollectingData());
+
+        //Set the toggle button on the last set preference configuration
+        collectDataSwitch.setChecked(isCollectingData());
+        dataCountView.setText(String.format(getString(R.string.dataCountText), prefs.getLong(getString(R.string.pref_dataCount), 0L)));
+        uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), formatDate()));
+        uploadStatusView.setText(prefs.getString(getString(R.string.pref_lastUploadStatus), ""));
+        uploadMessageView.setText(String.format(getString(R.string.lastUploadMessage), prefs.getString(getString(R.string.pref_lastUploadMessage), "")));
+        if (uploadStatusView.getText().length() != 0) {
+            uploadResultView.setText(getString(R.string.uploadResultHeader));
+        }
+        uploadProgressBar.setProgress(prefs.getInt(getString(R.string.pref_uploadProgress), 0));
+        uploadProgressText.setText(String.format(getString(R.string.uploadPercentText), prefs.getInt(getString(R.string.pref_uploadProgress), 0)));
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        //Save the fragment's instance
-//        getSupportFragmentManager().putFragment(outState, "startfragment", startFragment);
-        super.onSaveInstanceState(outState);
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+        PreferenceManager.getDefaultSharedPreferences(this).unregisterOnSharedPreferenceChangeListener(this);
+        if (mBound) {
+            unbindConnection();
+        }
+
+        prefs.edit().putLong(getString(R.string.pref_dataCount), mDataCount).apply();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Timber.d("onDestroy");
+
+        if (mBound) {
+            unbindConnection();
+        }
+    }
+
+    /**
+     * Convenience method for getting the preference representing whether the user has turned data collection on/off
+     *
+     * @return @code{true} if data collection is turned on or not specified, @code{false} otherwise
+     */
+    private boolean isCollectingData() {
+        return prefs.getBoolean(getString(R.string.pref_dataCollection), true);
+    }
+
+    /**
+     * Convenience method for writing the data collection on/off state to preferences
+     *
+     * @param isCollectingData boolean value to indicate whether data is being collected or not
+     */
+    @SuppressLint("ApplySharedPref")
+    private void setIsCollectingData(boolean isCollectingData) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(getString(R.string.pref_dataCollection), isCollectingData);
+        editor.commit();
+        Timber.d("Current data collection preference is now " + isCollectingData);
+    }
+
+    private void bindConnection(Intent intent) {
+        Timber.d("Attempt to bind to service. Current bound status is " + mBound);
+        if (!mBound) {
+            getApplicationContext().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        }
+    }
+
+    private void unbindConnection() {
+        Timber.d("Attempt to unbind service connection. Current bound status is " + mBound);
+        getApplicationContext().unbindService(mConnection);
+        mBound = false;
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onCacheCountUpdate(Cache.CacheCountUpdate event) {
+        dataCountView.setText(String.format(getString(R.string.dataCountText), event.getCount()));
+        mDataCount = event.getCount();
+    }
+
+    private String formatDate() {
+        String result = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
+        long date = prefs.getLong(getString(R.string.pref_lastUploadDate), 0L);
+        if (date != 0L) {
+            result = DATE_FORMAT.format(new Date(date));
+        }
+        return result;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        //noinspection IfStatementWithTooManyBranches
+        if (getString(R.string.pref_lastUploadDate).equals(key)) {
+            uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), formatDate()));
+        } else if (getString(R.string.pref_lastUploadStatus).equals(key)) {
+            uploadResultView.setText(getString(R.string.uploadResultHeader));
+            uploadStatusView.setText(prefs.getString(getString(R.string.pref_lastUploadStatus), ""));
+        } else if (getString(R.string.pref_lastUploadMessage).equals(key)) {
+            uploadResultView.setText(getString(R.string.uploadResultHeader));
+            uploadMessageView.setText(String.format(getString(R.string.lastUploadMessage), prefs.getString(getString(R.string.pref_lastUploadMessage), "")));
+        } else if (getString(R.string.pref_uploadProgress).equals(key)) {
+            uploadProgressBar.setProgress(prefs.getInt(getString(R.string.pref_uploadProgress), 0));
+            uploadProgressText.setText(String.format(getString(R.string.uploadPercentText), prefs.getInt(getString(R.string.pref_uploadProgress), 0)));
+        }
+    }
+
+    @Override
+    protected void onSignOut() {
+        finish();
     }
 }

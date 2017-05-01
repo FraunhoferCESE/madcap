@@ -11,38 +11,6 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
-    <!--
-    <compatible-screens>
-
-        <screen
-            android:screenDensity="ldpi"
-            android:screenSize="small" />
-        <screen
-            android:screenDensity="mdpi"
-            android:screenSize="small" />
-        <screen
-            android:screenDensity="hdpi"
-            android:screenSize="small" />
-        <screen
-            android:screenDensity="xhdpi"
-            android:screenSize="small" />
-
-        <screen
-            android:screenDensity="ldpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="mdpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="hdpi"
-            android:screenSize="normal" />
-        <screen
-            android:screenDensity="xhdpi"
-            android:screenSize="normal" />
-    </compatible-screens>
-    -->
-
-
     <!-- <uses-permission android:name="android.permission.GET_TASKS" /> &lt;!&ndash; We will get rid of this after Anumeet finished his Library &ndash;&gt; -->
 
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
@@ -82,7 +50,7 @@
         android:fullBackupContent="false"
         android:icon="@drawable/madcaplogobackground"
         android:label="@string/app_name"
-        android:theme="@style/MadcapTheme"
+        android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
@@ -105,38 +73,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-
-
-        <activity
-            android:name=".WelcomeActivity"
-            android:noHistory="true"
-            android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".MainActivity"
-            android:label="@string/title_text"
-            android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme.NoActionBar" />
-
-        <activity
-            android:name=".authentication.SignInActivity"
-            android:label="@string/name_sign_in_activity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme" />
-
-        <activity
-            android:name=".authorization.AuthorizationActivity"
-            android:label="@string/name_authorization_activity"
-            android:parentActivityName=".authentication.SignInActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/MadcapTheme" />
-
         <service android:name=".firebasecloudmessaging.MadcapFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -148,6 +84,42 @@
             </intent-filter>
         </service>
 
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/name_main_activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AboutActivity"
+            android:label="@string/name_about_activity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".HelpActivity"
+            android:label="@string/name_help_activity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".authentication.SignInActivity"
+            android:label="@string/name_sign_in_activity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".authorization.AuthorizationActivity"
+            android:label="@string/name_authorization_activity"
+            android:parentActivityName=".authentication.SignInActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".SettingsActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".WelcomeActivity"
+            android:noHistory="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
     </application>
 

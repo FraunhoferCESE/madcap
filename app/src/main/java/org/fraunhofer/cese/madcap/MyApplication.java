@@ -3,38 +3,46 @@ package org.fraunhofer.cese.madcap;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
-import android.util.Log;
 
-import org.fraunhofer.cese.madcap.util.MadcapLogger;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+
+import org.fraunhofer.cese.madcap.logging.CrashReportingTree;
+import org.greenrobot.eventbus.EventBus;
+
+import timber.log.Timber;
 
 /**
  * Class used to handle lifecycle events for the entire application
  * <p>
  * Created by llayman on 9/23/2016.
  */
-//@ReportsCrashes(
-//        formUri = "https://madcap.cloudant.com/acra-madcap/_design/acra-storage/_update/report",
-//        reportType = org.acra.sender.HttpSender.Type.JSON,
-//        httpMethod = org.acra.sender.HttpSender.Method.PUT,
-//        formUriBasicAuthLogin="agioneciellacenclichasem",
-//        formUriBasicAuthPassword="69f1b42d55cdfb9d7e1dc3f0a9deccb0750a64fe",
-//        mode = ReportingInteractionMode.TOAST,
-//        resToastText = R.string.crash_toast_text
-//)
+
 public class MyApplication extends Application {
     private static final String TAG = "MADCAP.MyApplication";
     private MyComponent component;
-
-    @SuppressWarnings("StaticVariableOfConcreteClass")
-    public static final MadcapLogger madcapLogger = new MadcapLogger();
 
     @Override
     public final void onCreate() {
         super.onCreate();
 
-        madcapLogger.d(TAG, "on create of My application has been called");
+        Timber.d(TAG, "on create of My application has been called");
 
-//        FirebaseApp.initializeApp(this);
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        } else {
+            Timber.plant(new CrashReportingTree());
+        }
+
+        EventBus eventBus = EventBus.builder().logNoSubscriberMessages(false).
+                sendNoSubscriberEvent(false).installDefaultEventBus();
+
+        FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .build();
+        mFirebaseRemoteConfig.setConfigSettings(configSettings);
+        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
 
         // Initialize the Component used to inject dependencies.
         component = DaggerMyComponent.builder()
@@ -59,8 +67,8 @@ public class MyApplication extends Application {
     }
 
     @Override
-    public void onTerminate(){
+    public void onTerminate() {
         super.onTerminate();
-        Log.d(TAG, "Application terminated");
+        Timber.d(TAG, "Application terminated");
     }
 }

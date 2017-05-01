@@ -4,15 +4,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.fraunhofer.cese.madcap.MyApplication;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
 
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
-
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeSaveResult;
@@ -27,6 +24,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 /**
  * Factory for creating asynchronous remote data storage tasks.
@@ -81,7 +80,7 @@ public class RemoteUploadAsyncTaskFactory {
                 }
 
                 ProbeEndpoint appEngineApi = endpointApiBuilder.build(context);
-                MyApplication.madcapLogger.i(TAG, "Attempting to upload " + numCachedEntries + " to " + appEngineApi.getRootUrl());
+                Timber.i("Attempting to upload " + numCachedEntries + " to " + appEngineApi.getRootUrl());
 
                 ProbeSaveResult saveResult = new ProbeSaveResult();
                 saveResult.setSaved(new ArrayList<String>(250));
@@ -115,7 +114,7 @@ public class RemoteUploadAsyncTaskFactory {
                         if (remoteResult.getAlreadyExists() != null) {
                             saveResult.getAlreadyExists().addAll(ImmutableList.copyOf(remoteResult.getAlreadyExists()));
                         }
-                        MyApplication.madcapLogger.i(TAG, "Uploaded chunk " + ((offset / (long) BUFFER_SIZE) + 1L) + " (" + offset + '-' + (offset + (long) BUFFER_SIZE > numCachedEntries ? numCachedEntries : offset + (long) BUFFER_SIZE) + ") - " +
+                        Timber.i("Uploaded chunk " + ((offset / (long) BUFFER_SIZE) + 1L) + " (" + offset + '-' + (offset + (long) BUFFER_SIZE > numCachedEntries ? numCachedEntries : offset + (long) BUFFER_SIZE) + ") - " +
                                 "Saved: " + (remoteResult.getSaved() == null ? 0 : remoteResult.getSaved().size()) +
                                 ", Already existed: " + (remoteResult.getAlreadyExists() == null ? 0 : remoteResult.getAlreadyExists().size()));
                         offset += (long) BUFFER_SIZE;
@@ -123,21 +122,21 @@ public class RemoteUploadAsyncTaskFactory {
 
                     } catch (IOException | SQLException e) {
                         result.setException(e);
-                        MyApplication.madcapLogger.w(TAG, "Upload failed", e);
+                        Timber.w("Upload failed", e);
                     }
                 }
                 result.setSaveResult(saveResult);
-                MyApplication.madcapLogger.i(TAG, "Upload finished. Saved: " + saveResult.getSaved().size() + " entries, Already existed: " + saveResult.getAlreadyExists().size()
+                Timber.i("Upload finished. Saved: " + saveResult.getSaved().size() + " entries, Already existed: " + saveResult.getAlreadyExists().size()
                         + ", Exception: " + (result.getException() != null));
 
 
                 // Remove uploaded entries from the database
                 if (saveResult.getAlreadyExists().isEmpty() && saveResult.getSaved().isEmpty()) {
-                    MyApplication.madcapLogger.i(TAG, "No save results to remove from database.");
+                    Timber.i("No save results to remove from database.");
                 } else {
-                    MyApplication.madcapLogger.d(TAG, "Removing entries from database.");
+                    Timber.d("Removing entries from database.");
                     @SuppressWarnings("unchecked") int numRemovedEntries = removeIds(databaseHelper, saveResult.getSaved(), saveResult.getAlreadyExists());
-                    MyApplication.madcapLogger.d(TAG, "Database entries removed: " + numRemovedEntries);
+                    Timber.d("Database entries removed: " + numRemovedEntries);
                 }
 
                 return result;

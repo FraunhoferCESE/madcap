@@ -8,10 +8,11 @@ import com.j256.ormlite.dao.RuntimeExceptionDao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
-import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 
 import java.sql.SQLException;
+
+import timber.log.Timber;
 
 /**
  * A helper for accessing the ORMLite database and DAO objects.
@@ -41,11 +42,11 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase database, @SuppressWarnings("ParameterHidesMemberVariable") ConnectionSource connectionSource) {
         try {
-            MyApplication.madcapLogger.i(TAG, "{onCreate}");
+            Timber.i("{onCreate}");
             TableUtils.createTable(connectionSource, CacheEntry.class);
 
         } catch (SQLException e) {
-            MyApplication.madcapLogger.e(TAG, "Can't create database", e);
+            Timber.e("Can't create database", e);
             //noinspection ProhibitedExceptionThrown
             throw new RuntimeException(e);
         }
@@ -57,7 +58,7 @@ public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
      */
     @Override
     public void onUpgrade(SQLiteDatabase database, @SuppressWarnings("ParameterHidesMemberVariable") ConnectionSource connectionSource, int oldVersion, int newVersion) {
-        MyApplication.madcapLogger.d(TAG, "{onUpgrade}. oldVersion: " + oldVersion + ", newVersion: " + newVersion);
+        Timber.d("{onUpgrade}. oldVersion: " + oldVersion + ", newVersion: " + newVersion);
     }
 
     /**

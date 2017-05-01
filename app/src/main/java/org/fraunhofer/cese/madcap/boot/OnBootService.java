@@ -24,6 +24,8 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 
 /**
  * Service to attempt automatic login and start of MADCAP data collection on boot.
@@ -33,25 +35,22 @@ import javax.inject.Inject;
 
 public class OnBootService extends IntentService {
 
-    private static final String TAG = "OnBootService";
-
     @SuppressWarnings("PackageVisibleField")
     @Inject
     AuthenticationProvider authManager;
 
     public OnBootService() {
-        super(TAG);
+        super("OnBootService");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
-        MyApplication.madcapLogger.d(TAG, "onHandleIntent");
+        Timber.d("onHandleIntent");
 
         if (authManager.getUser() != null) {
             Intent sintent = new Intent(this, DataCollectionService.class);
-            sintent.putExtra("callee",TAG);
             sintent.putExtra("boot", true);
             startService(sintent);
         } else {
@@ -59,26 +58,26 @@ public class OnBootService extends IntentService {
             authManager.silentLogin(this, new SilentLoginResultCallback() {
                 @Override
                 public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                    MyApplication.madcapLogger.w(TAG, "Google Play Services connection failed. Error code: " + connectionResult);
+                    Timber.w("Google Play Services connection failed. Error code: " + connectionResult);
                     loginFailed();
                 }
 
                 @Override
                 public void onServicesUnavailable(int connectionResult) {
-                    MyApplication.madcapLogger.w(TAG, "Google SignIn API is unavailable. Error code: " + connectionResult);
+                    Timber.w("Google SignIn API is unavailable. Error code: " + connectionResult);
                     loginFailed();
                 }
 
                 @Override
                 public void onLoginResult(GoogleSignInResult signInResult) {
                     if (signInResult.isSuccess()) {
-                        MyApplication.madcapLogger.d(TAG, "Google SignIn successfully authenticated user to MADCAP.");
+                        Timber.d("Google SignIn successfully authenticated user to MADCAP.");
 
-                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.data_collection_pref), true)) {
+                        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
                             startService(new Intent(context, DataCollectionService.class).putExtra("boot",true));
                         }
                     } else {
-                        MyApplication.madcapLogger.w(TAG, "Google SignIn failed to authenticate user to MADCAP.");
+                        Timber.w("Google SignIn failed to authenticate user to MADCAP.");
                         loginFailed();
                     }
                 }

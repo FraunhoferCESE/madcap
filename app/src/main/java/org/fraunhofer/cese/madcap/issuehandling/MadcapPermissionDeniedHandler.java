@@ -6,13 +6,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
 
-import org.fraunhofer.cese.madcap.MyApplication;
-
-import java.util.List;
-
 import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import timber.log.Timber;
 
 /**
  * Created by MMueller on 11/15/2016.
@@ -42,14 +39,14 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
     public void onPermissionDenied(String permissionString) {
         switch(permissionString){
             case Manifest.permission.ACCESS_FINE_LOCATION:
-                MyApplication.madcapLogger.e(TAG, "Location permission denied");
+                Timber.e("Location permission denied");
                 //Do some more things like kicking off a timer.
                 break;
             case Settings.ACTION_USAGE_ACCESS_SETTINGS:
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     //This only works on api level 21+
                     if(!actionUsagePrompted){
-                        MyApplication.madcapLogger.e(TAG, "Action usage access denied");
+                        Timber.e("Action usage access denied");
                         Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
                         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
@@ -58,16 +55,16 @@ public class MadcapPermissionDeniedHandler implements PermissionDeniedHandler {
                 }
                 break;
             case Manifest.permission.ACCESS_WIFI_STATE:
-                MyApplication.madcapLogger.e(TAG, "WiFi access permission denied");
+                Timber.e("WiFi access permission denied");
                 break;
             case Manifest.permission.BLUETOOTH:
                 if(!bluetoothPermissionPrompted){
-                    MyApplication.madcapLogger.e(TAG, "Bluetooth permission deniedd");
+                    Timber.e("Bluetooth permission deniedd");
                     bluetoothPermissionPrompted = true;
                 }
                 break;
             default:
-                MyApplication.madcapLogger.e(TAG, "Unknown permission denied");
+                Timber.e("Unknown permission denied");
                 break;
         }
     }

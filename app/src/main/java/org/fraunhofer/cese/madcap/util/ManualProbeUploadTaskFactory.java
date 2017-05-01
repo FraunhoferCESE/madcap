@@ -5,9 +5,7 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.firebase.crash.FirebaseCrash;
 
-import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeDataSet;
@@ -24,6 +22,7 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import timber.log.Timber;
 
 
 /**
@@ -60,8 +59,7 @@ public class ManualProbeUploadTaskFactory {
                 }
 
                 if (user == null) {
-                    MyApplication.madcapLogger.e(TAG, "No user available for sending manual probe.");
-                    FirebaseCrash.report(new Exception("Attempt to send a manual probe with a null user. Probe: " + probe));
+                    Timber.e("Attempt to send a manual probe with a null user. Probe: " + probe);
                     return null;
                 }
 
@@ -81,15 +79,15 @@ public class ManualProbeUploadTaskFactory {
                     ProbeSaveResult remoteResult = appEngineApi.insertProbeDataset(dataSet).execute();
 
                     if ((remoteResult.getSaved() != null) && (remoteResult.getSaved().size() == 1)) {
-                        MyApplication.madcapLogger.d(TAG, "Manual upload succeeded: " + probeEntry);
+                        Timber.d("Manual upload succeeded: " + probeEntry);
                     }
 
                     if (remoteResult.getAlreadyExists() != null) {
-                        MyApplication.madcapLogger.i(TAG, "Manual upload failed. Probe already exits: " + probeEntry);
+                        Timber.i("Manual upload failed. Probe already exits: " + probeEntry);
                     }
                 } catch (IOException e) {
-                    MyApplication.madcapLogger.w(TAG, e.toString());
-                    MyApplication.madcapLogger.w(TAG, "Manual upload failed. Saving to cache: " + probeEntry);
+                    Timber.w(e.toString());
+                    Timber.w("Manual upload failed. Saving to cache: " + probeEntry);
                     cacheFactory.save(probe);
                 }
 

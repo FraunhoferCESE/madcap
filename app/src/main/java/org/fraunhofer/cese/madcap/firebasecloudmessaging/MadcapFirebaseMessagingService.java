@@ -13,7 +13,6 @@ import android.support.v4.app.TaskStackBuilder;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
-import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
@@ -21,6 +20,8 @@ import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import java.util.Map;
 
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 import static android.graphics.Color.RED;
 
@@ -51,13 +52,13 @@ public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
         // For Madcap we want to make sure only data messages are being received.
 
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        MyApplication.madcapLogger.d(TAG, "From: " + remoteMessage.getFrom());
+        Timber.d("From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
-            MyApplication.madcapLogger.d(TAG, "Message data payload: " + remoteMessage.getData());
+            Timber.d("Message data payload: " + remoteMessage.getData());
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (authenticationProvider.getUser() != null && prefs.getBoolean(getString(R.string.data_collection_pref), true)) {
+            if (authenticationProvider.getUser() != null && prefs.getBoolean(getString(R.string.pref_dataCollection), true)) {
                 processIncomingMessage(remoteMessage.getData());
             }
         }

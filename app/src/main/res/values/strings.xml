@@ -1,42 +1,66 @@
 <resources>
 
     <string name="app_name">MADCAP</string>
-    <string name="versionIntro">MADCAP Version</string>
-    <string name="title_text">MADCAP</string>
+    <string name="buildVersion">MADCAP Version %s</string>
+    <string name="buildNumber">Build %d</string>
 
-    <!-- StartFragment -->
+
+    <!-- ActionBar Menu -->
+    <string name="action_settings">Settings</string>
+    <string name="action_signin">Sign Out</string>
+    <string name="action_help">Help</string>
+    <string name="action_about">About</string>
+
+    <!-- MainActivity -->
+    <string name="name_main_activity">MADCAP</string>
     <string name="introText">Welcome to MADCAP. Thank you for participating in the Pocket Security study!</string>
+
     <string name="collectDataSwitchText">Collect Data?</string>
-    <string name="dataCountText">Data points collected since the last upload: </string>
-    <string name="uploadResultText">Last upload result: </string>
+    <string name="pref_dataCollection">datacollectionturnedonoff</string>
+    <string name="dataCollection_on">Data collection is ON</string>
+    <string name="dataCollection_off">Data collection is OFF</string>
+
+    <string name="dataCountText">Data points collected since the last upload: %d</string>
+
     <string name="sendButtonText">Upload data now</string>
+    <string name="pref_uploadProgress">uploadProgress</string>
 
-    <string name="data_collection_pref">datacollectionturnedonoff</string>
-    <string name="last_upload_completeness">lastUploadCompleteness</string>
-    <string name="last_upload_result">lastUploadResult</string>
-    <string name="last_upload_progress">lastUploadProgress</string>
-    <string name="gui_update_available">guiUpdateAvailableFlag</string>
-    <string name="status_complete">Status: Complete</string>
-    <string name="status_incomplete">Status: Incomplete</string>
+    <string name="lastUploadDateText">Last upload: %s</string>
+    <string name="pref_lastUploadDate">lastUploadDate</string>
+    <string name="pref_lastUploadDate_default">You have not uploaded any data yet.</string>
 
-    <string name="datacollectionstatus">Data collection is </string>
-    <string name="datacollectionstatuson">Data collection is ON</string>
-    <string name="datacollectionstatusoff">Data collection is OFF</string>
-    <string name="last_upload_text">Last upload:</string>
-    <string name="last_upload_date">lastUploadDate</string>
-    <string name="data_count">dataCount</string>
+    <string name="uploadPercentText">%d%%</string>
+    <string name="uploadResultHeader">Last upload result:</string>
+
+    <string name="pref_lastUploadStatus">lastUploadStatus</string>
+    <string name="lastUploadStatus">%s</string>
+    <string name="lastUploadStatus_complete">Status: Complete</string>
+    <string name="lastUploadStatus_incomplete">Status: Incomplete</string>
+    <string name="lastUploadStatus_error">Status: Error</string>
+
+    <string name="pref_lastUploadMessage">lastUploadMessage</string>
+    <string name="lastUploadMessage">%s</string>
+
+
+    <string name="pref_dataCount">dataCount</string>
+
+
+    <!-- Logout broadcast -->
+    <string name="madcap_action_logout">org.fraunhofer.cese.madcap.ACTION_LOGOUT</string>
 
     <!-- Sign-in activity -->
     <string name="name_sign_in_activity">MADCAP Sign In</string>
+    <string name="madcap_icon_desc">MADCAP Logo</string>
+    <string name="signin_subtitle">Part of the <a href="https://www.pocket-security.org">NSF Pocket Security</a> research project.</string>
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="signing_in">Signing in…</string>
-    <string name="signed_out">Signed out</string>
+    <string name="signed_out">Signed out. Please sign in below.</string>
     <string name="post_sign_out">You are now signed out of MADCAP.</string>
     <string name="signing_out">Signing out...</string>
     <string name="signin_service_unavailable">Google SignIn services are unavailable. Please try again.</string>
     <string name="signin_service_connection_failed">Could not connect to Google SignIn service. Please try again.</string>
     <string name="logout_failed">Logout from MADCAP failed. Error code: %i. Please try again.</string>
-    <string name="login_failed">Login failed. Please try again.</string>
+    <string name="login_failed">Login failed. Please check your internet connection and try again.</string>
     <string name="silent_signin_failed">MADCAP failed to login automatically. Please open the MADCAP application to sign in.</string>
     <string name="silent_signin_failed_notification_title">MADCAP Automatic SignIn Failed</string>
     <string name="checking_EULA">Checking EULA.</string>
@@ -55,23 +79,26 @@
     <string name="play_services_invalid">Play services are invalid. Please reinstall them and try again.</string>
     <string name="play_services_connection_failed">Play services connection failed. Error code: %i</string>
 
-    <!-- Content Description for images -->
-    <string name="desc_google_icon">MADCAP Logo</string>
 
     <!-- Welcome activity -->
     <string name="help">Help</string>
-    <string name="welcome">Welcome</string>
+    <string name="welcome">Welcome to MADCAP! Attempting automatic signin...</string>
+    <string name="welcome_signin_success">Signed in as %s</string>
+    <string name="weclome_signin_failed">User could not be authenticated to MADCAP. Starting Signin activity.</string>
 
     <!-- Main activity -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
 
-    <!-- Help fragment -->
+    <!-- Help activity -->
+    <string name="name_help_activity">MADCAP Help</string>
     <string name="help_text">If you have questions, do not hestitate to contact us. You may contact us directly through email or view online help using one of the buttons below.</string>
     <string name="go_to_online_help">View Online Help</string>
-    <string name="contact">Send an email</string>
+    <string name="contact">Send an Email</string>
     <string name="contactEmail">madcap@pocket-security.org</string>
+    <string name="contactSubject">MADCAP/Pocket Security contact</string>
+    <string name="onlineHelpURL">https://www.pocket-security.org/app-help/</string>
 
     <!-- Logout fragment -->
     <string name="logout_text">You can sign out from MADCAP at any time. MADCAP does not collect data while you are signed out.</string>
@@ -83,7 +110,8 @@
 
     <string name="last_hearthbeat">Hearthbeat</string>
 
-    <!-- About fragment -->
+    <!-- About activity -->
+    <string name="name_about_activity">About MADCAP</string>
     <string name="aboutHeader">About</string>
     <string name="aboutText1">MADCAP is part of the Pocket Security research project from the University of Maryland and Fraunhofer USA, Inc.</string>
     <string name="aboutText2">This app is intended for pre-selected users only. MADCAP collects data about the apps you use on your smartphone, your location, and activities such as making phone calls. Please refer to the privacy policy for complete details. This app may also post security notifications and other alerts.</string>
@@ -103,14 +131,19 @@
 
     <!-- Contact -->
     <string name="contactHeader">Contact</string>
-    <string name="contactLink">For more information, please visit:\nhttps://www.pocket-security.org.</string>
+    <string name="contactLink">Please visit https://www.pocket-security.org.</string>
     <string name="title_activity_sign_up_check">SignUpCheckActivity</string>
 
+    <!-- SettingsActivity -->
+    <string name="name_settings_activity">Settings</string>
+    <string name="upload_on_wifi_text">Allow MADCAP to upload data using cellular data?</string>
+    <string name="upload_on_wifi_text_disabled">Allow MADCAP to upload data using cellular data?<![CDATA[<br><font color="#8B0000">The administrator has disabled this option.</font>]]></string>
+    <string name="pref_upload_on_wifi">uploadOnWifi</string>
 
     <!-- Authorization activity -->
     <string name="name_authorization_activity">MADCAP Authorization</string>
     <string name="auth_check_text">Please wait. MADCAP is checking if you are authorized to participate.</string>
-    <string name="not_authorized_text">The signed-in user is not authorized to use MADCAP.\n\nPlease <b>use your Back button back and sign in with an authorized account.</b>\n\nOnly participants in the NSF Pocket Security study are authorized to use MADCAP. If you are interested in participating in this study, visit https://www.pocket-security.org/participants-information/</string>
+    <string name="not_authorized_text">The signed-in user is not authorized to use MADCAP.\n\nOnly participants in the NSF Pocket Security study are authorized to use MADCAP. If you are interested in participating in this study, visit https://www.pocket-security.org/participants-information/</string>
     <string name="not_authorized_user_email">User email: %s</string>
     <string name="not_authorized_user_id">User id: %s</string>
     <string name="authorization_error">An error occurred while checking your authorization to use MADCAP. Please go back and try signing in again.</string>
@@ -146,4 +179,15 @@
 
     </string>
     <string name="accept">Accept</string>
+
+
+    <!-- Firebase config constants -->
+    <string name="MAX_MEM_ENTRIES_KEY">max_mem_entries</string>
+    <string name="MAX_DB_ENTRIES_KEY">max_db_entries</string>
+    <string name="MEM_FORCED_CLEANUP_LIMIT_KEY">mem_forced_cleanup_limit</string>
+    <string name="DB_FORCED_CLEANUP_LIMIT_KEY">db_forced_cleanup_limit</string>
+    <string name="DB_WRITE_INTERVAL_KEY">db_write_interval</string>
+    <string name="UPLOAD_INTERVAL_KEY">upload_interval</string>
+    <string name="UPLOAD_ON_WIFI_ONLY_KEY">upload_on_wifi_only</string>
+
 </resources>

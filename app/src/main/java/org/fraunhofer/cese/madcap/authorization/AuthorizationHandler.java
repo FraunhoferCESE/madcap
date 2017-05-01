@@ -4,7 +4,7 @@ package org.fraunhofer.cese.madcap.authorization;
  * Describes the callback methods for processing authorization results to MADCAP backend.
  */
 
-public interface AuthorizationHandler {
+interface AuthorizationHandler {
     /**
      * Called when the user has been successfully authorized to upload to the MADCAP backend.
      */

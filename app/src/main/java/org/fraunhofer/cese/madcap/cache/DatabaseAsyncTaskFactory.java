@@ -4,8 +4,6 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.fraunhofer.cese.madcap.MyApplication;
-
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.j256.ormlite.android.apptools.OpenHelperManager;
@@ -19,6 +17,8 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+
+import timber.log.Timber;
 
 /**
  * Factory for creating aysnchronous database related tasks.
@@ -79,7 +79,6 @@ class DatabaseAsyncTaskFactory {
                     return result;
                 }
 
-                Collection<String> savedEntries = new ArrayList<>(1000);
                 RuntimeExceptionDao<CacheEntry, String> dao;
                 try {
                     dao = databaseHelper.getDao();
@@ -94,6 +93,7 @@ class DatabaseAsyncTaskFactory {
                 }
 
                 // Try to save objects to the database. Supports partial saves, i.e., only some objects are saved.
+                Collection<String> savedEntries = new ArrayList<>(1000);
                 try {
                     if (memcaches != null) {
                         for (Map<String, CacheEntry> memcache : memcaches) {
@@ -106,7 +106,7 @@ class DatabaseAsyncTaskFactory {
                                         skippedCount++;
                                     }
                                 }
-                                MyApplication.madcapLogger.d(TAG, "{doInBackground} Skipped " + skippedCount + " entries already in database.");
+                                Timber.d("{doInBackground} Skipped " + skippedCount + " entries already in database.");
                             }
                         }
                     }
@@ -130,7 +130,7 @@ class DatabaseAsyncTaskFactory {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
-                MyApplication.madcapLogger.d(TAG, "onPreExecute");
+                Timber.d("onPreExecute");
             }
 
 
@@ -138,7 +138,7 @@ class DatabaseAsyncTaskFactory {
             public void onPostExecute(DatabaseWriteResult result) {
                 OpenHelperManager.releaseHelper();
                 cache.doPostDatabaseWrite(result, uploadStrategy);
-                MyApplication.madcapLogger.d(TAG, "onPostExecute");
+                Timber.d("onPostExecute");
             }
 
             /**
@@ -153,14 +153,14 @@ class DatabaseAsyncTaskFactory {
             protected void onProgressUpdate(Void... values) {
                 super.onProgressUpdate(values);
 
-                MyApplication.madcapLogger.d(TAG, "onProgress update");
+                Timber.d("onProgress update");
             }
 
             @Override
             protected void onCancelled(DatabaseWriteResult result) {
                 super.onCancelled(result);
                 OpenHelperManager.releaseHelper();
-                MyApplication.madcapLogger.d(TAG, "onCancelled dbWriteResult");
+                Timber.d("onCancelled dbWriteResult");
             }
 
             /**
@@ -179,7 +179,7 @@ class DatabaseAsyncTaskFactory {
             protected void onCancelled() {
                 super.onCancelled();
 
-                MyApplication.madcapLogger.d(TAG, "onCancelled no args");
+                Timber.d("onCancelled no args");
             }
         };
     }
@@ -193,7 +193,7 @@ class DatabaseAsyncTaskFactory {
      * @return the new task instance
      */
 
-    AsyncTask<Void, Void, Void> createCleanupTask(final Context context, final Cache cache, final int dbEntryLimit) {
+    AsyncTask<Void, Void, Void> createCleanupTask(final Context context, final Cache cache, final long dbEntryLimit) {
         //noinspection OverloadedVarargsMethod
         return new AsyncTask<Void, Void, Void>() {
             private static final int CURSOR_INCREMENT = 250;
@@ -202,10 +202,10 @@ class DatabaseAsyncTaskFactory {
             @android.support.annotation.Nullable
             @Override
             protected Void doInBackground(Void... params) {
-                MyApplication.madcapLogger.d(TAG, "Running task to determine if database is still within size limits");
+                Timber.d("Running task to determine if database is still within size limits");
                 Thread.currentThread().setName(TAG);
 
-                if ((dbEntryLimit < 0) || (cache == null)) {
+                if ((dbEntryLimit < 0L) || (cache == null)) {
                     return null;
                 }
 
@@ -216,13 +216,13 @@ class DatabaseAsyncTaskFactory {
 
                 RuntimeExceptionDao<CacheEntry, String> dao = databaseHelper.getDao();
                 long size = dao.countOf();
-                if (size < (long) dbEntryLimit) {
-                    MyApplication.madcapLogger.i(TAG, "No cleanup needed. Database limit: " + dbEntryLimit + " > Database size: " + size);
+                if (size < dbEntryLimit) {
+                    Timber.i("No cleanup needed. Database limit: " + dbEntryLimit + " > Database size: " + size);
                 } else {
-                    MyApplication.madcapLogger.i(TAG, "Attempting cleanup. Database limit: " + dbEntryLimit + " <= Database size: " + size);
-                    long numToDelete = size - (long) (dbEntryLimit / 2);
+                    Timber.i("Attempting cleanup. Database limit: " + dbEntryLimit + " <= Database size: " + size);
 
                     try {
+                        long numToDelete = size - (dbEntryLimit / 2L);
                         List<CacheEntry> toDelete = dao.queryBuilder()
                                 .selectColumns(CacheEntry.ID_FIELD_NAME)
                                 .orderBy(CacheEntry.TIMESTAMP_FIELD_NAME, true)
@@ -245,9 +245,9 @@ class DatabaseAsyncTaskFactory {
                             cursor += CURSOR_INCREMENT;
                         }
 
-                        MyApplication.madcapLogger.i(TAG, "Cleanup completed. New database size: " + dao.countOf());
+                        Timber.i("Cleanup completed. New database size: " + dao.countOf());
                     } catch (SQLException e) {
-                        MyApplication.madcapLogger.e(TAG, "Unable to delete entries from database", e);
+                        Timber.e("Unable to delete entries from database", e);
                     }
                 }
                 return null;

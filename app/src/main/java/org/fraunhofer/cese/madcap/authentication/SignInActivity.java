@@ -5,9 +5,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
+import android.support.v7.widget.Toolbar;
+import android.text.method.LinkMovementMethod;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +22,10 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
 
+import org.fraunhofer.cese.madcap.AboutActivity;
+import org.fraunhofer.cese.madcap.ChildActivity;
+import org.fraunhofer.cese.madcap.HelpActivity;
+import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.authorization.AuthorizationActivity;
@@ -27,13 +33,14 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
  * profile.
  */
-public class SignInActivity extends AppCompatActivity {
+public class SignInActivity extends ChildActivity {
 
-    private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
 
     @SuppressWarnings("PackageVisibleField")
@@ -48,11 +55,9 @@ public class SignInActivity extends AppCompatActivity {
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
 
-        MyApplication.madcapLogger.d(TAG, "onCreate");
-
         // Views
-        setContentView(R.layout.signinactivity);
-        mStatusTextView = (TextView) findViewById(R.id.status);
+        setContentView(R.layout.activity_signin);
+        mStatusTextView = (TextView) findViewById(R.id.signin_status);
 
         // Button listeners
         SignInButton signInButton = (SignInButton) findViewById(R.id.sign_in_button);
@@ -62,7 +67,7 @@ public class SignInActivity extends AppCompatActivity {
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyApplication.madcapLogger.d(TAG, "pressed sign in");
+                Timber.d("pressed sign in");
                 mStatusTextView.setText(R.string.checking_EULA);
 
                 boolean bAlreadyAccepted = PreferenceManager
@@ -73,7 +78,7 @@ public class SignInActivity extends AppCompatActivity {
                     startInteractiveSignin();
                 } else {
                     // Show and retrieve approval for the EULA.
-                    new AppEULA(activity).show(new EULAListener() {
+                    new EulaProvider(activity).show(new EULAListener() {
                         @Override
                         public void onAccept() {
                             // User has accepted the EULA. Proceed with sign in.
@@ -95,7 +100,7 @@ public class SignInActivity extends AppCompatActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        MyApplication.madcapLogger.d(TAG, "pressed sign out");
+                        Timber.d("pressed sign out");
                         mStatusTextView.setText(R.string.signing_out);
                         authenticationProvider.signout(activity,
                                 new LogoutResultCallback() {
@@ -123,16 +128,16 @@ public class SignInActivity extends AppCompatActivity {
                                                 text = String.format(activity.getString(R.string.play_services_connection_failed), connectionResult);
                                         }
 
-                                        MyApplication.madcapLogger.e(TAG, text);
+                                        Timber.w(text);
                                         mStatusTextView.setText(text);
                                     }
 
                                     @Override
                                     public void onSignOut(Status result) {
                                         if (result.getStatusCode() == CommonStatusCodes.SUCCESS) {
-                                            MyApplication.madcapLogger.d(TAG, "Logout succeeded. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
-                                            findViewById(R.id.sign_in_button).setEnabled(false);
-                                            findViewById(R.id.sign_out_button).setEnabled(true);
+                                            Timber.d("Logout succeeded. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
+                                            updateUiState(false);
+
                                             mStatusTextView.setText(R.string.post_sign_out);
                                             Toast.makeText(activity, R.string.post_sign_out, Toast.LENGTH_SHORT).show();
 
@@ -145,7 +150,7 @@ public class SignInActivity extends AppCompatActivity {
                                             stopService(new Intent(activity, DataCollectionService.class));
                                         } else {
 
-                                            MyApplication.madcapLogger.e(TAG, "Sign out failed. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
+                                            Timber.w("Sign out failed. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
                                             mStatusTextView.setText(String.format(getString(R.string.logout_failed), result.getStatusCode()));
                                             Toast.makeText(activity, String.format(getString(R.string.logout_failed), result.getStatusCode()), Toast.LENGTH_SHORT).show();
                                         }
@@ -153,32 +158,35 @@ public class SignInActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onRevokeAccess(Status result) {
-                                        MyApplication.madcapLogger.d(TAG, "Revoke access finished. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
+                                        Timber.d("Revoke access finished. Status code: " + result.getStatusCode() + ", Message: " + result.getStatusMessage());
                                     }
 
                                     @Override
                                     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                                        MyApplication.madcapLogger.w(TAG, "Could not connect to GoogleSignInApi.");
+                                        Timber.w("Could not connect to GoogleSignInApi.");
                                         mStatusTextView.setText(R.string.signin_service_connection_failed);
                                     }
                                 });
                     }
                 }
         );
+
+        TextView subtitle = (TextView) findViewById(R.id.subtitle_text);
+        subtitle.setMovementMethod(LinkMovementMethod.getInstance());
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
 
         GoogleSignInAccount acct = authenticationProvider.getUser();
-        if(acct != null) {
-            updateButtonState(true);
-            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
-        }
-        else {
-            updateButtonState(false);
-            mStatusTextView.setText(getString(R.string.signed_out));
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        if (acct != null) {
+            updateUiState(true);
+            mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getEmail()));
+        } else {
+            updateUiState(false);
         }
     }
 
@@ -188,26 +196,27 @@ public class SignInActivity extends AppCompatActivity {
 
             @Override
             public void onServicesUnavailable(int connectionResult) {
-                MyApplication.madcapLogger.w(TAG, "Google SignIn services are unavailable.");
+                Timber.w("Google SignIn services are unavailable.");
                 mStatusTextView.setText(R.string.signin_service_unavailable);
             }
 
             @Override
             public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-                MyApplication.madcapLogger.w(TAG, "Could not connect to GoogleSignInApi.");
+                Timber.w("Could not connect to GoogleSignInApi.");
                 mStatusTextView.setText(R.string.signin_service_connection_failed);
             }
         });
     }
 
-    private void updateButtonState(boolean isSignedIn) {
-        if(isSignedIn) {
-            findViewById(R.id.sign_in_button).setEnabled(false);
-            findViewById(R.id.sign_out_button).setEnabled(true);
-        }
-        else {
-            findViewById(R.id.sign_in_button).setEnabled(true);
-            findViewById(R.id.sign_out_button).setEnabled(false);
+    private void updateUiState(boolean isSignedIn) {
+        if (isSignedIn) {
+            findViewById(R.id.sign_in_button).setVisibility(View.GONE);
+            findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.my_toolbar).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.sign_in_button).setVisibility(View.VISIBLE);
+            findViewById(R.id.sign_out_button).setVisibility(View.GONE);
+            findViewById(R.id.my_toolbar).setVisibility(View.INVISIBLE);
         }
     }
 
@@ -221,12 +230,12 @@ public class SignInActivity extends AppCompatActivity {
                 GoogleSignInAccount acct = result.getSignInAccount();
 
                 authenticationProvider.setUser(acct);
-                updateButtonState(true);
+                updateUiState(true);
                 mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
                 startActivity(new Intent(this, AuthorizationActivity.class));
             } else {
-                updateButtonState(false);
-                MyApplication.madcapLogger.w(TAG, "SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
+                updateUiState(false);
+                Timber.w("SignIn failed. Status code: " + result.getStatus().getStatusCode() + ", Status message: " + result.getStatus().getStatusMessage());
                 mStatusTextView.setText(getString(R.string.login_failed));
                 Toast.makeText(this, getString(R.string.login_failed), Toast.LENGTH_SHORT).show();
             }
@@ -234,13 +243,14 @@ public class SignInActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            finish();
-            return true;
-        }
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.action_bar, menu);
+        return true;
+    }
 
-        return super.onKeyDown(keyCode, event);
+    @Override
+    protected void onSignOut() {
     }
 
 }
