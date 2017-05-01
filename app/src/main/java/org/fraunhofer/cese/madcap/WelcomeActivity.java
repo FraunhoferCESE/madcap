@@ -64,8 +64,12 @@ public class WelcomeActivity extends AppCompatActivity {
             }
         });
 
-        TextView versionNumberText = (TextView) findViewById(R.id.versionNumber);
-        versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME + ", Build " + BuildConfig.VERSION_CODE);
+        // Set the version number at the bottom of the activity
+        // Set the version number at the bottom of the activity
+        TextView buildVersion = (TextView) findViewById(R.id.buildVersion);
+        buildVersion.setText(String.format(getString(R.string.buildVersion), BuildConfig.VERSION_NAME));
+        TextView buildNumber = (TextView) findViewById(R.id.buildNumber);
+        buildNumber.setText(String.format(getString(R.string.buildNumber), BuildConfig.VERSION_CODE));
     }
 
     @Override

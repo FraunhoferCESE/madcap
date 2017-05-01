@@ -26,4 +26,9 @@
         <item name="android:textSize">20sp</item>
         <item name="android:textStyle">bold</item>
     </style>
+
+    <style name ="progressBar" parent="Widget.AppCompat.ProgressBar.Horizontal">
+        <item name="android:minHeight">16dp</item>
+        <item name="android:maxHeight">16dp</item>
+    </style>
 </resources>

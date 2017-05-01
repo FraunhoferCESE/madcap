@@ -1,12 +1,13 @@
 <resources>
 
     <string name="app_name">MADCAP</string>
-    <string name="versionIntro">MADCAP Version</string>
+    <string name="buildVersion">MADCAP Version %s</string>
+    <string name="buildNumber">Build %d</string>
 
 
     <!-- ActionBar Menu -->
     <string name="action_home">Home</string>
-    <string name="action_signin">Sign In</string>
+    <string name="action_signin">Sign Out</string>
     <string name="action_help">Help</string>
     <string name="action_about">About</string>
 
@@ -28,6 +29,7 @@
     <string name="pref_lastUploadDate">lastUploadDate</string>
     <string name="pref_lastUploadDate_default">You have not uploaded any data yet.</string>
 
+    <string name="uploadPercentText">%d%%</string>
     <string name="uploadResultHeader">Last upload result:</string>
 
     <string name="pref_lastUploadStatus">lastUploadStatus</string>

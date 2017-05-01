@@ -68,14 +68,29 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dataCountText" />
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
+
+        <TextView
+            android:id="@+id/progressText"
+            android:layout_width="40sp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/uploadButton" />
+            android:layout_marginEnd="16dp"
+            android:gravity="end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/progressBar"
+            app:layout_constraintTop_toBottomOf="@+id/uploadButton"
+            />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@style/progressBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@id/progressText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/progressText"
+            app:layout_constraintBottom_toBottomOf="@id/progressText"/>
 
         <TextView
             android:id="@+id/lastUploadDate"
@@ -84,7 +99,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/lastUploadDateText"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+            app:layout_constraintTop_toBottomOf="@+id/progressText" />
 
         <TextView
             android:id="@+id/uploadResultHeader"

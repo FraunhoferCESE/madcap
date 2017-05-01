@@ -30,8 +30,6 @@ import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.cache.UploadStrategy;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploadTaskFactory;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.EventBusBuilder;
 
 import java.util.Date;
 import java.util.List;
@@ -351,10 +349,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
             text += errorText.isEmpty() ? "No status to report. Please wait." : ("Error:" + errorText);
         }
 
-        String date = String.valueOf(new Date());
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(getString(R.string.pref_lastUploadDate), date);
+        editor.putLong(getString(R.string.pref_lastUploadDate), new Date().getTime());
         editor.putString(getString(R.string.pref_lastUploadMessage), text);
         editor.putString(getString(R.string.pref_lastUploadStatus), getString(R.string.lastUploadStatus_incomplete));
         editor.putInt(getString(R.string.pref_uploadProgress), 0);

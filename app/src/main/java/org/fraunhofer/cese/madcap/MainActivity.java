@@ -23,8 +23,11 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.w3c.dom.Text;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import timber.log.Timber;
 
@@ -32,6 +35,8 @@ import timber.log.Timber;
  * Creates the main activity for MADCAP.
  */
 public class MainActivity extends ActionBarActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm:ss aaa, MMM d yyyy");
 
     private static final float ALPHA_DISABLED = 0.5f;
     private static final float ALPHA_ENABLED = 1.0f;
@@ -49,6 +54,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     private TextView nameTextView;
     private TextView collectionDataStatusText;
     private Switch collectDataSwitch;
+    private TextView uploadProgressText;
     private ProgressBar uploadProgressBar;
     private TextView dataCountView;
     private TextView uploadResultView;
@@ -81,6 +87,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
         //Set up upload progress bar
         uploadProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        uploadProgressText= (TextView) findViewById(R.id.progressText);
 
         uploadButton = (Button) findViewById(R.id.uploadButton);
 
@@ -159,8 +166,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_green));
             uploadButton.setEnabled(true);
             uploadButton.setAlpha(ALPHA_ENABLED);
-        }
-        else {
+        } else {
             collectionDataStatusText.setText(getString(R.string.dataCollection_off));
             collectionDataStatusText.setBackgroundColor(ContextCompat.getColor(this, R.color.light_red));
             uploadButton.setEnabled(false);
@@ -187,13 +193,14 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         dataCountView.setText(String.format(getString(R.string.dataCountText), prefs.getLong(getString(R.string.pref_dataCount), 0L)));
         //noinspection LocalVariableNamingConvention
         String lastUploadDateDefault = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
-        uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), prefs.getString(getString(R.string.pref_lastUploadDate), lastUploadDateDefault)));
+        uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), formatDate()));
         uploadStatusView.setText(prefs.getString(getString(R.string.pref_lastUploadStatus), ""));
         uploadMessageView.setText(String.format(getString(R.string.lastUploadMessage), prefs.getString(getString(R.string.pref_lastUploadMessage), "")));
         if (uploadStatusView.getText().length() != 0) {
             uploadResultView.setText(getString(R.string.uploadResultHeader));
         }
         uploadProgressBar.setProgress(prefs.getInt(getString(R.string.pref_uploadProgress), 0));
+        uploadProgressText.setText(String.format(getString(R.string.uploadPercentText), prefs.getInt(getString(R.string.pref_uploadProgress), 0)));
     }
 
     @Override
@@ -259,12 +266,20 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         mDataCount = event.getCount();
     }
 
+    private String formatDate() {
+        String result = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
+        long date = prefs.getLong(getString(R.string.pref_lastUploadDate), 0);
+        if (date != 0) {
+            result = dateFormat.format(new Date(date));
+        }
+        return result;
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         //noinspection IfStatementWithTooManyBranches
         if (getString(R.string.pref_lastUploadDate).equals(key)) {
-            String lastUploadDateDefault = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
-            uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), prefs.getString(getString(R.string.pref_lastUploadDate), lastUploadDateDefault)));
+            uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), formatDate()));
         } else if (getString(R.string.pref_lastUploadStatus).equals(key)) {
             uploadResultView.setText(getString(R.string.uploadResultHeader));
             uploadStatusView.setText(prefs.getString(getString(R.string.pref_lastUploadStatus), ""));
@@ -273,6 +288,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             uploadMessageView.setText(String.format(getString(R.string.lastUploadMessage), prefs.getString(getString(R.string.pref_lastUploadMessage), "")));
         } else if (getString(R.string.pref_uploadProgress).equals(key)) {
             uploadProgressBar.setProgress(prefs.getInt(getString(R.string.pref_uploadProgress), 0));
+            uploadProgressText.setText(String.format(getString(R.string.uploadPercentText), prefs.getInt(getString(R.string.pref_uploadProgress), 0)));
         }
     }
 

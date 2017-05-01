@@ -80,6 +80,6 @@
     </android.support.constraint.ConstraintLayout>
 
     <include
-        android:id="@+id/versionNumber"
+        android:id="@+id/footer"
         layout="@layout/footer" />
 </android.support.constraint.ConstraintLayout>

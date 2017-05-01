@@ -250,27 +250,6 @@ public class SignInActivity extends ChildActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_home:
-                startActivity(new Intent(this, MainActivity.class));
-                return true;
-            case R.id.action_signin:
-                startActivity(new Intent(this, SignInActivity.class));
-                return true;
-            case R.id.action_help:
-                startActivity(new Intent(this, HelpActivity.class));
-                return true;
-            case R.id.action_about:
-                startActivity(new Intent(this, AboutActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     protected void onSignOut() {
     }
 
