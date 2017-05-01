@@ -102,20 +102,19 @@
             android:name=".authentication.SignInActivity"
             android:label="@string/name_sign_in_activity"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait" >
-            </activity>
-
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".authorization.AuthorizationActivity"
             android:label="@string/name_authorization_activity"
             android:parentActivityName=".authentication.SignInActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".SettingsActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".WelcomeActivity"
             android:noHistory="true"
             android:screenOrientation="portrait">
-            <!--android:theme="@style/SplashTheme"> -->
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -43,8 +43,6 @@ public class MyApplication extends Application {
                 .build();
         mFirebaseRemoteConfig.setConfigSettings(configSettings);
         mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
-//        mFirebaseRemoteConfig.fetch();
-
 
         // Initialize the Component used to inject dependencies.
         component = DaggerMyComponent.builder()

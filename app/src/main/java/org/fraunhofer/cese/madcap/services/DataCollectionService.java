@@ -194,6 +194,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
             @Override
             public void run() {
                 // Periodically check to see if there is a configuration updated pushed through firebase.
+
                 FirebaseRemoteConfig.getInstance().fetch(FIREBASE_CACHE_EXPIRATION).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

@@ -23,10 +23,8 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.w3c.dom.Text;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import timber.log.Timber;
@@ -36,7 +34,7 @@ import timber.log.Timber;
  */
 public class MainActivity extends ActionBarActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("h:mm:ss aaa, MMM d yyyy");
+    private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
 
     private static final float ALPHA_DISABLED = 0.5f;
     private static final float ALPHA_ENABLED = 1.0f;
@@ -87,7 +85,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
         //Set up upload progress bar
         uploadProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-        uploadProgressText= (TextView) findViewById(R.id.progressText);
+        uploadProgressText = (TextView) findViewById(R.id.progressText);
 
         uploadButton = (Button) findViewById(R.id.uploadButton);
 
@@ -191,8 +189,6 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         //Set the toggle button on the last set preference configuration
         collectDataSwitch.setChecked(isCollectingData());
         dataCountView.setText(String.format(getString(R.string.dataCountText), prefs.getLong(getString(R.string.pref_dataCount), 0L)));
-        //noinspection LocalVariableNamingConvention
-        String lastUploadDateDefault = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
         uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), formatDate()));
         uploadStatusView.setText(prefs.getString(getString(R.string.pref_lastUploadStatus), ""));
         uploadMessageView.setText(String.format(getString(R.string.lastUploadMessage), prefs.getString(getString(R.string.pref_lastUploadMessage), "")));
@@ -268,9 +264,9 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
     private String formatDate() {
         String result = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
-        long date = prefs.getLong(getString(R.string.pref_lastUploadDate), 0);
-        if (date != 0) {
-            result = dateFormat.format(new Date(date));
+        long date = prefs.getLong(getString(R.string.pref_lastUploadDate), 0L);
+        if (date != 0L) {
+            result = DATE_FORMAT.format(new Date(date));
         }
         return result;
     }

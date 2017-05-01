@@ -3,8 +3,10 @@ package org.fraunhofer.cese.madcap;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -15,6 +17,7 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
@@ -117,12 +120,26 @@ class MyApplicationModule {
     @Provides
     @Singleton
     @Named("HeartbeatHandler")
-    Handler provideHeartBeatRunnerHandler() { return new Handler(); }
+    Handler provideHeartBeatRunnerHandler() {
+        return new Handler();
+    }
 
     @Provides
     @Singleton
     @Named("RemoteConfigUpdateHandler")
-    Handler provideRemoteConfigUpdateHandler() { return new Handler(); }
+    Handler provideRemoteConfigUpdateHandler() {
+        return new Handler();
+    }
+
+    @Provides
+    FirebaseRemoteConfig provideFirebaseRemoteConfig() {
+        return FirebaseRemoteConfig.getInstance();
+    }
+
+    @Provides
+    SharedPreferences provideSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(application);
+    }
 
     /**
      * Needed by the DataCollectionService.
