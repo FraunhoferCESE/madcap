@@ -113,7 +113,7 @@ class RemoteUploadAsyncTaskFactory {
                     ProbeDataSet dataSet = new ProbeDataSet();
                     dataSet.setTimestamp(Calendar.getInstance().getTimeInMillis());
                     dataSet.setEntryList(toUpload);
-                    result.setUploadAttempted(true);
+                    result.setUploadAttempted();
 
                     ProbeSaveResult remoteResult = appEngineApi.insertProbeDataset(dataSet).execute();
                     if (remoteResult.getSaved() != null) {

@@ -7,7 +7,6 @@
     tools:context=".authorization.AuthorizationActivity">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/contentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8sp"
@@ -24,8 +23,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            />
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/title_text"
@@ -59,8 +57,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text=""
             android:gravity="center"
+            android:text=""
             app:layout_constraintBottom_toTopOf="@+id/authorization_userid"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -70,8 +68,8 @@
             android:id="@+id/authorization_userid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
             android:gravity="center"
+            android:text=""
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -79,8 +77,6 @@
 
     </android.support.constraint.ConstraintLayout>
 
-    <include
-        android:id="@+id/versionNumber"
-        layout="@layout/footer" />
+    <include layout="@layout/footer" />
 </android.support.constraint.ConstraintLayout>
 

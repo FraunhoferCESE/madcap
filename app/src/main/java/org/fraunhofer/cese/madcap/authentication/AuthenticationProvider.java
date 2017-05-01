@@ -58,6 +58,7 @@ public class AuthenticationProvider {
      * @param resultCode the result code that is listened for by the calling activity's {@link android.app.Activity#onActivityResult(int, int, Intent)} method
      * @param callback   callback class for handling common login events
      */
+    @SuppressWarnings("SameParameterValue")
     void interactiveSignIn(@NonNull final SignInActivity activity, final int resultCode, @NonNull LoginResultCallback callback) {
         Timber.d("interactiveSignIn initiated");
 

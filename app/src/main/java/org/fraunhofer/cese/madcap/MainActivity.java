@@ -302,6 +302,12 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
     @Subscribe
     public void uploadFinished(RemoteUploadResult result) {
+
+        if(mBound && mDataCollectionService != null) {
+            long mDataCount = mDataCollectionService.getCount();
+            dataCountView.setText(String.format(getString(R.string.dataCountText),mDataCount));
+        }
+
         if (warningBlock.getVisibility() == View.GONE) {
             return;
         }

@@ -20,7 +20,7 @@ import java.sql.SQLException;
  *
  * Created by Lucas on 10/5/2015.
  */
-@SuppressWarnings("ExtendsUtilityClass")
+@SuppressWarnings({"ExtendsUtilityClass", "WeakerAccess"})
 public class DatabaseConfigUtil extends OrmLiteConfigUtil {
 
     @SuppressWarnings("ConstantNamingConvention")

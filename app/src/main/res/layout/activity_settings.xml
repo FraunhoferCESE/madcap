@@ -11,7 +11,6 @@
         layout="@layout/action_bar" />
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/contentView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16sp"
@@ -27,22 +26,21 @@
             app:layout_constraintEnd_toStartOf="@+id/uploadOnWifiOption"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:textIsSelectable="true" />
 
         <CheckBox
             android:id="@+id/uploadOnWifiOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8sp"
+            android:layout_marginStart="8sp"
+            app:layout_constraintBottom_toBottomOf="@id/uploadOnWifiText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/uploadOnWifiText"
-            app:layout_constraintTop_toTopOf="@id/uploadOnWifiText"
-            app:layout_constraintBottom_toBottomOf="@id/uploadOnWifiText"/>
+            app:layout_constraintTop_toTopOf="@id/uploadOnWifiText" />
 
     </android.support.constraint.ConstraintLayout>
 
 
-    <include
-        android:id="@+id/footer"
-        layout="@layout/footer" />
+    <include layout="@layout/footer" />
 </android.support.constraint.ConstraintLayout>

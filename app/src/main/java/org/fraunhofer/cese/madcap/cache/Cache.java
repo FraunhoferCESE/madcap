@@ -239,7 +239,7 @@ public class Cache {
             return -1L;
         }
         try {
-            return getHelper().getDao().countOf() + (long) memcache.size();
+            return currentDbSize + (long) memcache.size();
         } catch (RuntimeException e) {
             Timber.e(e.getMessage());
             return -1L;

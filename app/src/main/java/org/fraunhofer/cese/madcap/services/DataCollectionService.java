@@ -292,7 +292,7 @@ public class DataCollectionService extends Service {
      * You can move this to the DataCollectionService and have the
      * MainActivity call this when the "Upload Now" button is pressed.
      */
-    public int requestUpload() {
+    public void requestUpload() {
         Timber.d("Upload requested");
         int status = cache.checkUploadConditions(UploadStrategy.IMMEDIATE);
 
@@ -333,8 +333,6 @@ public class DataCollectionService extends Service {
         editor.putString(getString(R.string.pref_lastUploadStatus), getString(R.string.lastUploadStatus_incomplete));
         editor.putInt(getString(R.string.pref_uploadProgress), 0);
         editor.apply();
-
-        return status;
     }
 
     /**
@@ -474,5 +472,9 @@ public class DataCollectionService extends Service {
         } else {
             mNotificationManager.cancel(CAPACITY_NOTIFICATION_ID);
         }
+    }
+
+    public long getCount() {
+        return cache.getSize();
     }
 }

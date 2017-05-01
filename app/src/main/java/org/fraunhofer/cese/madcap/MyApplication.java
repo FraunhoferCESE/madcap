@@ -34,15 +34,15 @@ public class MyApplication extends Application {
             Timber.plant(new CrashReportingTree());
         }
 
-        EventBus eventBus = EventBus.builder().logNoSubscriberMessages(false).
+        EventBus.builder().logNoSubscriberMessages(false).
                 sendNoSubscriberEvent(false).installDefaultEventBus();
 
-        FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfig firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
         FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
                 .setDeveloperModeEnabled(BuildConfig.DEBUG)
                 .build();
-        mFirebaseRemoteConfig.setConfigSettings(configSettings);
-        mFirebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
+        firebaseRemoteConfig.setConfigSettings(configSettings);
+        firebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
 
         // Initialize the Component used to inject dependencies.
         component = DaggerMyComponent.builder()

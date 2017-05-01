@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.madcap.firebasecloudmessaging;
+package org.fraunhofer.cese.madcap.firebase;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -55,10 +55,10 @@ public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
         Timber.d("From: " + remoteMessage.getFrom());
 
         // Check if message contains a data payload.
-        if (remoteMessage.getData().size() > 0) {
+        if (!remoteMessage.getData().isEmpty()) {
             Timber.d("Message data payload: " + remoteMessage.getData());
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            if (authenticationProvider.getUser() != null && prefs.getBoolean(getString(R.string.pref_dataCollection), true)) {
+            if ((authenticationProvider.getUser() != null) && prefs.getBoolean(getString(R.string.pref_dataCollection), true)) {
                 processIncomingMessage(remoteMessage.getData());
             }
         }
@@ -84,7 +84,7 @@ public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void showUiNotification(String title, String text, String info) {
+    private void showUiNotification(CharSequence title, CharSequence text, CharSequence info) {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(android.R.drawable.ic_dialog_alert);
         mBuilder.setContentTitle(title);

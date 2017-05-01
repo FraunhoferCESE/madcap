@@ -9,7 +9,7 @@ import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
  * Class for capturing the results of remote upload attempts by the cache.
  *
  * @see Cache
- * @see RemoteUploadAsyncTaskFactory#createRemoteUploadTask(Context, Cache, EndpointApiBuilder)
+ * @see RemoteUploadAsyncTaskFactory#createRemoteUploadTask(Context, EndpointApiBuilder)
  */
 public class RemoteUploadResult {
 
@@ -17,7 +17,8 @@ public class RemoteUploadResult {
     private ProbeSaveResult saveResult;
     private Throwable exception;
 
-    RemoteUploadResult() {  }
+    RemoteUploadResult() {
+    }
 
     public boolean isUploadAttempted() {
         return uploadAttempted;
@@ -31,8 +32,8 @@ public class RemoteUploadResult {
         return exception;
     }
 
-    void setUploadAttempted(boolean uploadAttempted) {
-        this.uploadAttempted = uploadAttempted;
+    void setUploadAttempted() {
+        uploadAttempted = true;
     }
 
     void setSaveResult(ProbeSaveResult saveResult) {

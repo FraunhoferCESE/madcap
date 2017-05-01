@@ -46,7 +46,7 @@ public class AuthorizationTask extends AsyncTask<Void, Void, AuthorizationResult
 
         UserCheckResult userCheckResult = result.getUserCheckResult();
         if (userCheckResult == null) {
-            handler.onError(new AuthorizationException("userCheckResult is null"));
+            handler.onError(new AuthorizationException());
         } else if (userCheckResult.getAuthorized()) {
             handler.onAuthorized();
         } else {

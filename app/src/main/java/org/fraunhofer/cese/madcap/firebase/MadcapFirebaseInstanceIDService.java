@@ -1,4 +1,4 @@
-package org.fraunhofer.cese.madcap.firebasecloudmessaging;
+package org.fraunhofer.cese.madcap.firebase;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
