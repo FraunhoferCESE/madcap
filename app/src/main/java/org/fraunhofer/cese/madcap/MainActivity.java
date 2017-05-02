@@ -178,7 +178,6 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
 
     @Override
-
     protected void onStart() {
         super.onStart();
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);

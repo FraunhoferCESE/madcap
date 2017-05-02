@@ -18,6 +18,7 @@ import android.service.notification.StatusBarNotification;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
@@ -28,7 +29,10 @@ import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
 import org.fraunhofer.cese.madcap.cache.UploadStrategy;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploadTaskFactory;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Date;
 import java.util.List;
@@ -38,6 +42,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityListener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
@@ -165,9 +170,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
             //dangerous listeners
             listeners.add(locationListener);
             listeners.add(applicationsListener);
-            listeners.add(activityListener);
             listeners.add(networkListener);
             //non dangerous listeners
+            listeners.add(activityListener);
             listeners.add(systemListener);
             listeners.add(bluetoothListener);
             listeners.add(powerListener);
@@ -194,6 +199,9 @@ public class DataCollectionService extends Service implements UploadStatusListen
         super.onDestroy();
 
         sendDataCollectionProbe(DataCollectionProbe.OFF);
+
+        //unregister EventBus listener for permission changes
+        EventBus.getDefault().unregister(this);
 
         // Stop the heartbeat
         if (heartBeatRunner != null) {
@@ -234,33 +242,47 @@ public class DataCollectionService extends Service implements UploadStatusListen
         if (!isRunning) {
             sendDataCollectionProbe(DataCollectionProbe.ON);
 
-            startForeground(NOTIFICATION_ID, getRunNotification());
-            Timber.d("numListeners: " + listeners.size());
-            synchronized (listeners) {
-                for (Listener listener : listeners) {
-                    try {
-                        Timber.d("Starting " + listener.getClass().getSimpleName());
-                        listener.startListening();
-                    } catch (NoSensorFoundException nsf) {
-                        Timber.e(nsf);
-                    }
-
-                }
-            }
+            startBackgroundServicesAndProbes();
 
             cache.addUploadListener(this);
 
             if ((intent != null) && intent.hasExtra("boot")) {
                 cacheInitialBootEvent();
             }
-
-
-
             // Start the heartbeat
             new Handler().postDelayed(heartBeatRunner, HEARTBEAT_DELAY);
             isRunning = true;
+
+            //register EventBus listener for permission changes
+            Log.v(TAG,"Listening for permission on EventBus");
+            EventBus.getDefault().register(this);
         }
         return START_STICKY;
+    }
+
+    private void startBackgroundServicesAndProbes() {
+        startForeground(NOTIFICATION_ID, showRunningInBackgroundNotification());
+        Timber.d("numListeners: " + listeners.size());
+        synchronized (listeners) {
+            for (Listener listener : listeners) {
+                try {
+                    Timber.d("Starting " + listener.getClass().getSimpleName());
+                    listener.startListening();
+                } catch (NoSensorFoundException nsf) {
+                    Timber.e(nsf);
+                }
+
+            }
+        }
+    }
+
+    /**
+     * Called from PermissionsActivity when a dangerous permission is granted.
+     */
+    @Subscribe
+    public void onPermissionGrantedEvent(MadcapPermissionsManager.PermissionGrantedEvent event) {
+        Log.v(TAG,"in Permission granted event");
+        startBackgroundServicesAndProbes();
     }
 
     /**
@@ -405,7 +427,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
         editor.apply();
     }
 
-    private Notification getRunNotification() {
+    private Notification showRunningInBackgroundNotification() {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);

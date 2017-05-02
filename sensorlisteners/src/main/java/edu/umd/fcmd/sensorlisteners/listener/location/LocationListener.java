@@ -40,7 +40,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     private static final long MAX_TIME = 600000;
 
     private static final int STRATEGY_FUSED = 1;
-    private static final int STRAGEY_LEGACY = 2;
+    private static final int STRATEGY_LEGACY = 2;
 
     private final int locationStrategy;
     private static final int GPS_PERMIT = 1;
@@ -96,6 +96,9 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         this.context.registerReceiver(locationServiceStatusReceiver, intentFilter);
 
         mPendingIntent = PendingIntent.getService(context, 1, new Intent(context, FusedLocationService.class), 0);
+
+        //register for EventBus listener
+
     }
 
     /**
@@ -124,6 +127,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
      */
     @Override
     public synchronized void startListening() throws NoSensorFoundException {
+        //TODO: check locationStrategy logic
         Log.d(TAG, "startListening. Strategy: " + locationStrategy);
         if (!runningStatus) {
             if (isPermittedByUser()) {
@@ -138,13 +142,12 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 }
                 runningStatus = true;
             } else {
-                permissionsManager.requestPermissionFromNotification();
                 Log.i(TAG,"Location listener NOT listening");
+                permissionsManager.requestPermissionFromNotification();
+
                 runningStatus = false;
             }
         }
-
-
     }
 
     @Subscribe
@@ -161,37 +164,27 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
     @Override
     public synchronized void stopListening() {
+        //TODO: check logic
         if (runningStatus) {
             if (locationServiceStatusReceiver != null) {
                 context.unregisterReceiver(locationServiceStatusReceiver);
             }
 
-
             if (locationStrategy == STRATEGY_FUSED) {
                 EventBus.getDefault().unregister(this);
             }
-
-            if (isPermittedByUser()) {
-                if (locationStrategy == STRATEGY_FUSED) {
-                    if (apiClient.isConnected()) {
-                        onLocationChanged(fusedLocationProviderApi.getLastLocation(apiClient));
-                    }
-                    fusedLocationProviderApi.removeLocationUpdates(apiClient, mPendingIntent);
-                    apiClient.disconnect();
-                } else {
-                    locationManager.removeUpdates(this);
+            if (locationStrategy == STRATEGY_FUSED) {
+                if (apiClient.isConnected()) {
+                    onLocationChanged(fusedLocationProviderApi.getLastLocation(apiClient));
                 }
+                fusedLocationProviderApi.removeLocationUpdates(apiClient, mPendingIntent);
+                apiClient.disconnect();
             } else {
-//                permissionsManager.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
-                permissionsManager.requestPermissionFromNotification();
+                locationManager.removeUpdates(this);
             }
         }
         runningStatus = false;
     }
-
-//    private static boolean hasPermission(Context context, String permission) {
-//        return ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
-//    }
 
     @Override
     public boolean isRunning() {
@@ -206,7 +199,6 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
     @Override
     public boolean isPermittedByUser() {
-
         if (permissionsManager.isLocationPermitted()) {
             Log.e(TAG, "Location access permitted by user");
             return true;
@@ -215,7 +207,6 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
             return false;
         }
     }
-
 
     /**
      * Called when the location has changed.
@@ -232,7 +223,6 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
                 Log.d(TAG, "Network accuracy (" + location.getAccuracy() + ") is more than threshold (" + NETWORK_LOCATION_ACCURACY_THRESHOLD + "). Requesting location from GPS.");
                 if (isPermittedByUser()) {
                     locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, this, null);
-//                } else permissionsManager.onPermissionDenied(Manifest.permission.ACCESS_FINE_LOCATION);
                 }
             }
             onUpdate(createLocationProbe(location));

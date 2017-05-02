@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import org.fraunhofer.cese.madcap.PermissionsActivity;
 import org.fraunhofer.cese.madcap.R;
@@ -58,10 +59,12 @@ public class MadcapPermissionsManager implements PermissionsManager {
         mBuilder.setContentTitle("MADCAP requests permissions");
         mBuilder.addAction(R.drawable.ic_stat_madcaplogo, "Settings", permissionsIntent);
         mBuilder.setAutoCancel(true);
+        mBuilder.setOnlyAlertOnce(true);
         Notification notification = mBuilder.build();
 
         mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(RUN_CODE, notification);
+
     }
 
     @Override
@@ -96,7 +99,6 @@ public class MadcapPermissionsManager implements PermissionsManager {
 
     @Override
     public boolean isUsageStatsPermitted(){
-//        return (ActivityCompat.checkSelfPermission(PermissionsActivity.this, Settings.ACTION_USAGE_ACCESS_SETTINGS) == PackageManager.PERMISSION_GRANTED) ? true : false;
         try {
             ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(),0);
             AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
@@ -117,6 +119,18 @@ public class MadcapPermissionsManager implements PermissionsManager {
                 && isSmsPermitted()
                 && isTelephonePermitted()
         );
+    }
+
+    public static class PermissionGrantedEvent {
+        private final String message;
+
+        public PermissionGrantedEvent(String message) {
+            this.message = message;
+        }
+
+        public String onPermissionGrantedEvent() {
+            return message;
+        }
     }
 }
 

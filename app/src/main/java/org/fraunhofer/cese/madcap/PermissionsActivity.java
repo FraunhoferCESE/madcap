@@ -10,12 +10,17 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
+import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
+
+import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 
 /**
  * Created by PGuruprasad on 18/04/2017.
@@ -32,7 +37,6 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
 
     CheckBox contactsCB, locationCB, storageCB;
     CheckBox smsCB, telephoneCB, usageStatsCB;
-    CheckBox bluetoothCB;
 
     AlertDialog.Builder dialogBuilder;
     AlertDialog dialog;
@@ -48,6 +52,7 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
         setContentView(R.layout.activity_permissions);
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
         //cancel the notification with the same RUN_CODE that it was created with
         notificationManager.cancel(998);
 
@@ -102,14 +107,6 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
             usageStatsCB.setEnabled(false);
         }
         usageStatsCB.setOnCheckedChangeListener(this);
-
-        bluetoothCB = (CheckBox) findViewById(R.id.bluetoothCheckBox);
-        if (permissionsManager.isBluetoothPermitted()) {
-            bluetoothCB.setChecked(true);
-            bluetoothCB.setClickable(false);
-            bluetoothCB.setEnabled(false);
-        }
-        bluetoothCB.setOnCheckedChangeListener(this);
     }
 
     private void getPermissionWithRationale(String permit, String rationale) {
@@ -201,23 +198,6 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
                 dialog.show();
                 break;
 
-            case Manifest.permission.BLUETOOTH:
-                dialogBuilder.setTitle("MADCAP permissions")
-                        .setMessage(rationale)
-                        .setPositiveButton("OK",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        ActivityCompat.requestPermissions(PermissionsActivity.this, new String[]{Manifest.permission.BLUETOOTH},
-                                                REQUEST_CODE - 5);
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .setCancelable(true);
-                dialog = dialogBuilder.create();
-                dialog.show();
-                break;
-
             case Settings.ACTION_USAGE_ACCESS_SETTINGS:
                 dialogBuilder.setTitle("MADCAP permissions")
                         .setMessage(rationale)
@@ -247,6 +227,7 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
                     contactsCB.setChecked(true);
                     contactsCB.setClickable(false);
                     contactsCB.setEnabled(false);
+                    EventBus.getDefault().post(new MadcapPermissionsManager.PermissionGrantedEvent("Contacts"));
                 } else {
                     contactsCB.setChecked(false);
                     contactsCB.setClickable(true);
@@ -258,6 +239,7 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
                     locationCB.setChecked(true);
                     locationCB.setClickable(false);
                     locationCB.setEnabled(false);
+                    EventBus.getDefault().post(new MadcapPermissionsManager.PermissionGrantedEvent("Location"));
                 } else {
                     locationCB.setChecked(false);
                     locationCB.setClickable(true);
@@ -269,6 +251,7 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
                     storageCB.setChecked(true);
                     storageCB.setClickable(false);
                     storageCB.setEnabled(false);
+                    EventBus.getDefault().post(new MadcapPermissionsManager.PermissionGrantedEvent("Storage"));
                 } else {
                     storageCB.setChecked(false);
                     storageCB.setClickable(true);
@@ -280,6 +263,7 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
                     smsCB.setChecked(true);
                     smsCB.setClickable(false);
                     smsCB.setEnabled(false);
+                    EventBus.getDefault().post(new MadcapPermissionsManager.PermissionGrantedEvent("SMS"));
                 } else {
                     smsCB.setChecked(false);
                     smsCB.setClickable(true);
@@ -291,21 +275,11 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
                     telephoneCB.setChecked(true);
                     telephoneCB.setClickable(false);
                     telephoneCB.setEnabled(false);
+                    EventBus.getDefault().post(new MadcapPermissionsManager.PermissionGrantedEvent("Telephony"));
                 }else {
                     telephoneCB.setChecked(false);
                     telephoneCB.setClickable(true);
                     telephoneCB.setEnabled(true);
-                }
-                break;
-            case REQUEST_CODE-5:
-                if ((grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    bluetoothCB.setChecked(true);
-                    bluetoothCB.setClickable(false);
-                    bluetoothCB.setEnabled(false);
-                }else {
-                    bluetoothCB.setChecked(false);
-                    bluetoothCB.setClickable(true);
-                    bluetoothCB.setEnabled(true);
                 }
                 break;
         }
@@ -332,9 +306,9 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
             case R.id.usageStatsCheckBox:
                 getPermissionWithRationale(Settings.ACTION_USAGE_ACCESS_SETTINGS, getString(R.string.access_usage_rationale));
                 return;
-            case R.id.bluetoothCheckBox:
-                getPermissionWithRationale(Manifest.permission.BLUETOOTH, getString(R.string.bluetooth_rationale));
-                return;
+//            case R.id.bluetoothCheckBox:
+//                getPermissionWithRationale(Manifest.permission.BLUETOOTH, getString(R.string.bluetooth_rationale));
+//                return;
         }
     }
 
@@ -345,6 +319,7 @@ public class PermissionsActivity extends ChildActivity implements CheckBox.OnChe
             usageStatsCB.setChecked(true);
             usageStatsCB.setClickable(false);
             usageStatsCB.setEnabled(false);
+            EventBus.getDefault().post(new MadcapPermissionsManager.PermissionGrantedEvent("UsageStats"));
         }
     }
 

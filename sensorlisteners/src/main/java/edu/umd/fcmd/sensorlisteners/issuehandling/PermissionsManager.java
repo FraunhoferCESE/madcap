@@ -27,4 +27,5 @@ public interface PermissionsManager {
     boolean isBluetoothPermitted();
 
     boolean isUsageStatsPermitted();
+
 }

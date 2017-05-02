@@ -119,6 +119,8 @@ dependencies {
     apt 'com.google.dagger:dagger-compiler:2.5'
 
     compile 'com.jakewharton.timber:timber:4.5.1'
+
+    compile 'org.greenrobot:eventbus:3.0.0'
 }
 
 def debugProps = new Properties()

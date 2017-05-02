@@ -112,20 +112,20 @@
                 android:padding="2dp"
                 android:text="@string/telephone_short_rationale"/>
 
-            <CheckBox
-                android:id="@+id/bluetoothCheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bluetooth"
-                android:layout_margin="5dp"
-                android:padding="2dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="10dp"
-                android:padding="2dp"
-                android:text="@string/bluetooth_short_rationale"/>
+            <!--<CheckBox-->
+                <!--android:id="@+id/bluetoothCheckBox"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Bluetooth"-->
+                <!--android:layout_margin="5dp"-->
+                <!--android:padding="2dp"/>-->
+            <!--<TextView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginLeft="25dp"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:padding="2dp"-->
+                <!--android:text="@string/bluetooth_short_rationale"/>-->
 
             <CheckBox
                 android:id="@+id/usageStatsCheckBox"

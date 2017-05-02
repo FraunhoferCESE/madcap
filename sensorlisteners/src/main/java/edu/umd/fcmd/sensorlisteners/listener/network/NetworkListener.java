@@ -1,24 +1,24 @@
 package edu.umd.fcmd.sensorlisteners.listener.network;
 
 
-import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.provider.Telephony;
-import android.support.v4.content.ContextCompat;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.math.BigInteger;
 import java.net.InetAddress;
@@ -106,8 +106,9 @@ public class NetworkListener implements Listener {
                 sendInitalProbes();
                 runningStatus = true;
             }else {
+                Log.i(TAG,"Network listener NOT listening");
                 permissionsManager.requestPermissionFromNotification();
-                Log.i(TAG,"Bluetooth listener NOT listening");
+
                 runningStatus = false;
             }
         }

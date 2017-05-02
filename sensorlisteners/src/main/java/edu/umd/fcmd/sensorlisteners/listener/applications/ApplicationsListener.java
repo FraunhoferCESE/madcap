@@ -1,11 +1,11 @@
 package edu.umd.fcmd.sensorlisteners.listener.applications;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.provider.Settings;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import javax.inject.Inject;
 
@@ -57,8 +57,9 @@ public class ApplicationsListener implements Listener {
                 timedApplicationTask.sendInitialProbes();
                 runningStatus = true;
             } else {
-                permissionsManager.requestPermissionFromNotification();
                 Log.i(TAG, "Application listener NOT listening");
+                permissionsManager.requestPermissionFromNotification();
+
                 runningStatus = false;
             }
         }
