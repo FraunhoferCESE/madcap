@@ -177,7 +177,15 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
         //Set the toggle button on the last set preference configuration
         collectDataSwitch.setChecked(isCollectingData());
-        dataCountView.setText(String.format(getString(R.string.dataCountText), prefs.getLong(getString(R.string.pref_dataCount), 0L)));
+
+
+        if (mBound && mDataCollectionService != null) {
+            mDataCount = mDataCollectionService.getCount();
+        } else {
+            mDataCount = prefs.getLong(getString(R.string.pref_dataCount), 0L);
+        }
+
+        dataCountView.setText(String.format(getString(R.string.dataCountText), mDataCount));
         uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), formatDate()));
         uploadStatusView.setText(prefs.getString(getString(R.string.pref_lastUploadStatus), ""));
         uploadMessageView.setText(String.format(getString(R.string.lastUploadMessage), prefs.getString(getString(R.string.pref_lastUploadMessage), "")));
@@ -303,9 +311,9 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     @Subscribe
     public void uploadFinished(RemoteUploadResult result) {
 
-        if(mBound && mDataCollectionService != null) {
-            long mDataCount = mDataCollectionService.getCount();
-            dataCountView.setText(String.format(getString(R.string.dataCountText),mDataCount));
+        if (mBound && (mDataCollectionService != null)) {
+            mDataCount = mDataCollectionService.getCount();
+            dataCountView.setText(String.format(getString(R.string.dataCountText), mDataCount));
         }
 
         if (warningBlock.getVisibility() == View.GONE) {

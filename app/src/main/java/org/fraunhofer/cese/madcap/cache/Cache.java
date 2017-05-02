@@ -193,7 +193,7 @@ public class Cache {
      * @param result object containing information on successfully saved entries (if any) and errors that occured
      */
     @Subscribe
-    void doPostDatabaseWrite(DatabaseWriteResult result) {
+    public void doPostDatabaseWrite(DatabaseWriteResult result) {
 
         currentDbSize = getHelper().getDao().countOf();
 
@@ -377,7 +377,7 @@ public class Cache {
      * @param uploadResult the upload result passed from the remote upload task
      */
     @Subscribe
-    void doPostUpload(RemoteUploadResult uploadResult) {
+    public void doPostUpload(RemoteUploadResult uploadResult) {
         currentDbSize = getHelper().getDao().countOf();
         uploadTask = null;
 

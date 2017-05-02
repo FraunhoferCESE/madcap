@@ -441,7 +441,7 @@ public class DataCollectionService extends Service {
     }
 
     @Subscribe
-    void onCacheCountUpdate(Cache.CacheCountUpdate update) {
+    public void onCacheCountUpdate(Cache.CacheCountUpdate update) {
         if (update == null) {
             return;
         }
