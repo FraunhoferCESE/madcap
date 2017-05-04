@@ -62,8 +62,10 @@ public abstract class ActionBarActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
 
         // Set the version number at the bottom of the activity
-        TextView versionNumberText = (TextView) findViewById(R.id.versionNumber);
-        versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME + ", Build " + BuildConfig.VERSION_CODE);
+        TextView buildVersion = (TextView) findViewById(R.id.buildVersion);
+        buildVersion.setText(String.format(getString(R.string.buildVersion), BuildConfig.VERSION_NAME));
+        TextView buildNumber = (TextView) findViewById(R.id.buildNumber);
+        buildNumber.setText(String.format(getString(R.string.buildNumber), BuildConfig.VERSION_CODE));
     }
 
     @Override
@@ -78,8 +80,8 @@ public abstract class ActionBarActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_home:
-                startActivity(new Intent(this, MainActivity.class));
+            case R.id.action_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
                 return true;
             case R.id.action_signin:
                 startActivity(new Intent(this, SignInActivity.class));

@@ -14,7 +14,7 @@
     </entry>
     <entry>
         <key>db_forced_cleanup_limit</key>
-        <value>30000</value>
+        <value>50000</value>
     </entry>
     <entry>
         <key>db_write_interval</key>
@@ -27,5 +27,9 @@
     <entry>
         <key>upload_on_wifi_only</key>
         <value>true</value>
+    </entry>
+    <entry>
+        <key>cleanup_warning_limit</key>
+        <value>90.0</value>
     </entry>
 </defaultsMap>

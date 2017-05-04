@@ -8,7 +8,6 @@
     tools:context=".WelcomeActivity">
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/contentView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8sp"
@@ -25,8 +24,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed"
-            />
+            app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
             android:id="@+id/title_text"
@@ -60,11 +58,10 @@
             android:layout_margin="16sp"
             android:gravity="center"
             android:text="@string/welcome"
+            app:layout_constraintBottom_toTopOf="@+id/helpButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/subtitle_text"
-            app:layout_constraintBottom_toTopOf="@+id/helpButton"
-            />
+            app:layout_constraintTop_toBottomOf="@id/subtitle_text" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -84,19 +81,16 @@
 
         <Button
             android:id="@+id/helpButton"
-            android:text="@string/help"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/help"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/welcomeMessage"
-            app:layout_constraintBottom_toBottomOf="parent"
-             />
+            app:layout_constraintTop_toBottomOf="@id/welcomeMessage" />
 
     </android.support.constraint.ConstraintLayout>
 
-    <include
-        android:id="@+id/versionNumber"
-        layout="@layout/footer" />
+    <include layout="@layout/footer" />
 </android.support.constraint.ConstraintLayout>
 

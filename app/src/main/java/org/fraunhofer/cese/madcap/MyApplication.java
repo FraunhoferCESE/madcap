@@ -4,7 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfigSettings;
+
 import org.fraunhofer.cese.madcap.logging.CrashReportingTree;
+import org.greenrobot.eventbus.EventBus;
 
 import timber.log.Timber;
 
@@ -22,13 +26,23 @@ public class MyApplication extends Application {
     public final void onCreate() {
         super.onCreate();
 
+        Timber.d(TAG, "on create of My application has been called");
+
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         } else {
             Timber.plant(new CrashReportingTree());
         }
 
-        Timber.d(TAG, "on create of My application has been called");
+        EventBus.builder().logNoSubscriberMessages(false).
+                sendNoSubscriberEvent(false).installDefaultEventBus();
+
+        FirebaseRemoteConfig firebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
+        FirebaseRemoteConfigSettings configSettings = new FirebaseRemoteConfigSettings.Builder()
+                .setDeveloperModeEnabled(BuildConfig.DEBUG)
+                .build();
+        firebaseRemoteConfig.setConfigSettings(configSettings);
+        firebaseRemoteConfig.setDefaults(R.xml.remote_config_defaults);
 
         // Initialize the Component used to inject dependencies.
         component = DaggerMyComponent.builder()
@@ -53,7 +67,7 @@ public class MyApplication extends Application {
     }
 
     @Override
-    public void onTerminate(){
+    public void onTerminate() {
         super.onTerminate();
         Timber.d(TAG, "Application terminated");
     }

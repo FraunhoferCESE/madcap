@@ -15,6 +15,7 @@ import timber.log.Timber;
  * @author Lucas
  * @see ProbeEntry
  */
+@SuppressWarnings("WeakerAccess")
 @DatabaseTable(tableName = "probedata")
 public class CacheEntry {
 

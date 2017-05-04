@@ -7,7 +7,7 @@ package org.fraunhofer.cese.madcap.authorization;
 @SuppressWarnings({"SerializableClassInSecureContext", "SerializableHasSerializationMethods", "serial"})
 class AuthorizationException extends Exception {
 
-    AuthorizationException(String message) { super(message); }
+    AuthorizationException() { super("userCheckResult is null"); }
 
     AuthorizationException(Throwable cause) {
         super(cause);

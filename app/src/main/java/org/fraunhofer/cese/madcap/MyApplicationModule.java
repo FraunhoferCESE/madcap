@@ -3,8 +3,10 @@ package org.fraunhofer.cese.madcap;
 import android.app.Application;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.awareness.Awareness;
@@ -14,11 +16,10 @@ import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
 import com.google.android.gms.location.LocationServices;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
-import org.fraunhofer.cese.madcap.cache.CacheConfig;
 import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
-import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 import org.fraunhofer.cese.madcap.util.MadcapBuildVersionProvider;
 
 import java.util.Calendar;
@@ -115,7 +116,28 @@ class MyApplicationModule {
     }
 
     @Provides
-    Handler provideHeartBeatRunnerHandler() { return new Handler(); }
+    @Singleton
+    @Named("HeartbeatHandler")
+    Handler provideHeartBeatRunnerHandler() {
+        return new Handler();
+    }
+
+    @Provides
+    @Singleton
+    @Named("RemoteConfigUpdateHandler")
+    Handler provideRemoteConfigUpdateHandler() {
+        return new Handler();
+    }
+
+    @Provides
+    FirebaseRemoteConfig provideFirebaseRemoteConfig() {
+        return FirebaseRemoteConfig.getInstance();
+    }
+
+    @Provides
+    SharedPreferences provideSharedPreferences() {
+        return PreferenceManager.getDefaultSharedPreferences(application);
+    }
 
     /**
      * Needed by the DataCollectionService.
@@ -125,11 +147,6 @@ class MyApplicationModule {
     @Provides
     TimedApplicationTaskFactory provideTimedApplicationTask() {
         return new TimedApplicationTaskFactory();
-    }
-
-    @Provides
-    MadcapSensorNoAnswerReceivedHandler provideSensorNoAnswerReceivedHandler() {
-        return new MadcapSensorNoAnswerReceivedHandler();
     }
 
     @SuppressWarnings("unchecked")
@@ -167,29 +184,6 @@ class MyApplicationModule {
     @Singleton
     final ConnectivityManager provideConnectivityManager() {
         return (ConnectivityManager) application.getSystemService(Context.CONNECTIVITY_SERVICE);
-    }
-
-
-    /**
-     * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
-     *
-     * @return the CacheConfig to use
-     */
-    @Provides
-    CacheConfig provideCacheConfig() {
-        CacheConfig config = new CacheConfig();
-        config.setMaxMemEntries(40);
-        config.setMaxDbEntries(1000);
-
-        config.setMemForcedCleanupLimit(5000);
-        config.setDbForcedCleanupLimit(30000); // value must ensure that we do not exceed Google API limits for a single request
-
-        config.setDbWriteInterval(2000);
-        config.setUploadInterval(900000);
-
-        config.setUploadWifiOnly(true);
-
-        return config;
     }
 
     @Provides

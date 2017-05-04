@@ -12,14 +12,17 @@ import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.SystemClock;
-import android.preference.PreferenceManager;
-import android.service.notification.StatusBarNotification;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
+import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.WelcomeActivity;
@@ -27,7 +30,7 @@ import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
-import org.fraunhofer.cese.madcap.cache.UploadStatusListener;
+import org.fraunhofer.cese.madcap.cache.UploadProgressEvent;
 import org.fraunhofer.cese.madcap.cache.UploadStrategy;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploadTaskFactory;
@@ -39,6 +42,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
@@ -61,67 +65,52 @@ import timber.log.Timber;
 /**
  * The main service that manages all listeners that collect data. This service is responsible for handling lifecycle events.
  */
+@SuppressWarnings("PackageVisibleField")
 @Singleton
-public class DataCollectionService extends Service implements UploadStatusListener {
+public class DataCollectionService extends Service {
     private static final String TAG = "Madcap DataColl Service";
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
     private static final int RUN_CODE = 1;
     private static final int NOTIFICATION_ID = 918273;
-    private static final long HEARTBEAT_DELAY = 100l;
+    private static final int CAPACITY_NOTIFICATION_ID = 126731245;
+    private static final long HEARTBEAT_DELAY = 100L;
 
     private boolean isRunning;
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
 
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
+
     @Inject
     HeartBeatRunner heartBeatRunner;
 
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
-    Cache cache;
+    @Named("HeartbeatHandler")
+    Handler heartbeatHandler;
 
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
     @Inject
-    AuthenticationProvider authManager;
+    @Named("RemoteConfigUpdateHandler")
+    Handler remoteConfigUpdateHandler;
 
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
-    @Inject
-    ManualProbeUploadTaskFactory manualProbeUploadTaskFactory;
 
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess"})
-    @Inject
-    LocationListener locationListener;
+    @Inject Cache cache;
 
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
-    @Inject
-    ApplicationsListener applicationsListener;
+    @Inject AuthenticationProvider authManager;
 
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
-    @Inject
-    BluetoothListener bluetoothListener;
+    @Inject ManualProbeUploadTaskFactory manualProbeUploadTaskFactory;
 
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
-    @Inject
-    ActivityListener activityListener;
+    @Inject LocationListener locationListener;
+    @Inject ApplicationsListener applicationsListener;
+    @Inject BluetoothListener bluetoothListener;
+    @Inject ActivityListener activityListener;
+    @Inject PowerListener powerListener;
+    @Inject NetworkListener networkListener;
+    @Inject SystemListener systemListener;
+    @Inject AudioListener auidioListener;
 
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
-    @Inject
-    PowerListener powerListener;
+    @Inject FirebaseRemoteConfig firebaseRemoteConfig;
 
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
-    @Inject
-    NetworkListener networkListener;
-
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
-    @Inject
-    SystemListener systemListener;
-
-    @SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal", "unused"})
-    @Inject
-    AudioListener auidioListener;
-
+    @Inject SharedPreferences prefs;
 
     /**
      * Return the communication channel to the service.  May return null if
@@ -179,6 +168,35 @@ public class DataCollectionService extends Service implements UploadStatusListen
             listeners.add(auidioListener);
         }
 
+        Timber.d("Starting remoteConfigUpdateHandler");
+        remoteConfigUpdateHandler.post(new Runnable() {
+            private final Runnable runnable = this;
+            private static final long FIREBASE_CACHE_EXPIRATION = 3600L;
+            private static final long FIREBASE_CONFIG_UPDATE_INTERVAL = 3600000L;
+
+
+            @Override
+            public void run() {
+                // Periodically check to see if there is a configuration updated pushed through firebase.
+
+                firebaseRemoteConfig.fetch(FIREBASE_CACHE_EXPIRATION).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            // After config data is successfully fetched, it must be activated before newly fetched
+                            // values are returned.
+                            Timber.d("Fetch of remote FirebaseConfig successful.");
+                            firebaseRemoteConfig.activateFetched();
+                        } else {
+                            Timber.w("Fetching Firebase config was not successful");
+                            Timber.w(task.getException());
+                        }
+                        remoteConfigUpdateHandler.postDelayed(runnable, FIREBASE_CONFIG_UPDATE_INTERVAL);
+                    }
+                });
+            }
+        });
+        EventBus.getDefault().register(this);
     }
 
     private void sendDataCollectionProbe(String dataCollectionState) {
@@ -198,15 +216,12 @@ public class DataCollectionService extends Service implements UploadStatusListen
         Timber.d("onDestroy");
         super.onDestroy();
 
-        sendDataCollectionProbe(DataCollectionProbe.OFF);
-
-        //unregister EventBus listener for permission changes
         EventBus.getDefault().unregister(this);
 
-        // Stop the heartbeat
-        if (heartBeatRunner != null) {
-            heartBeatRunner.stop();
-        }
+        sendDataCollectionProbe(DataCollectionProbe.OFF);
+
+        heartbeatHandler.removeCallbacksAndMessages(null);
+        remoteConfigUpdateHandler.removeCallbacksAndMessages(null);
 
         synchronized (listeners) {
             for (Listener listener : listeners) {
@@ -215,8 +230,6 @@ public class DataCollectionService extends Service implements UploadStatusListen
             }
             listeners.clear();
         }
-
-        cache.removeUploadListener(this);
 
         // Any closeout or disconnect operations
         // This is a very bad kludge to handle the case where the user is signed out and all data should be uploaded immediately.
@@ -244,13 +257,12 @@ public class DataCollectionService extends Service implements UploadStatusListen
 
             startBackgroundServicesAndProbes();
 
-            cache.addUploadListener(this);
-
             if ((intent != null) && intent.hasExtra("boot")) {
                 cacheInitialBootEvent();
             }
             // Start the heartbeat
-            new Handler().postDelayed(heartBeatRunner, HEARTBEAT_DELAY);
+            Timber.d("Starting heartbeatHandler");
+            heartbeatHandler.postDelayed(heartBeatRunner, HEARTBEAT_DELAY);
             isRunning = true;
 
             //register EventBus listener for permission changes
@@ -261,7 +273,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
     }
 
     private void startBackgroundServicesAndProbes() {
-        startForeground(NOTIFICATION_ID, showRunningInBackgroundNotification());
+        startForeground(NOTIFICATION_ID, getRunNotification());
         Timber.d("numListeners: " + listeners.size());
         synchronized (listeners) {
             for (Listener listener : listeners) {
@@ -304,7 +316,7 @@ public class DataCollectionService extends Service implements UploadStatusListen
      * You can move this to the DataCollectionService and have the
      * MainActivity call this when the "Upload Now" button is pressed.
      */
-    public int requestUpload() {
+    public void requestUpload() {
         Timber.d("Upload requested");
         int status = cache.checkUploadConditions(UploadStrategy.IMMEDIATE);
 
@@ -339,27 +351,24 @@ public class DataCollectionService extends Service implements UploadStatusListen
             text += errorText.isEmpty() ? "No status to report. Please wait." : ("Error:" + errorText);
         }
 
-        String date = String.valueOf(new Date());
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(getString(R.string.pref_lastUploadDate), date);
+        editor.putLong(getString(R.string.pref_lastUploadDate), new Date().getTime());
         editor.putString(getString(R.string.pref_lastUploadMessage), text);
         editor.putString(getString(R.string.pref_lastUploadStatus), getString(R.string.lastUploadStatus_incomplete));
         editor.putInt(getString(R.string.pref_uploadProgress), 0);
         editor.apply();
-
-        return status;
     }
 
     /**
-     * Called when a remote upload attempt has finished.
+     * Triggered when a remote upload attempt has finished.
      *
      * @param result the remote upload result, which can be {@code null} in certain rare cases of an internal error.
      */
-    @Override
+    @Subscribe
     public void uploadFinished(RemoteUploadResult result) {
 
         boolean hasError = false;
+
 
         //TODO: All of the message formatting should be in the view, not here.
         String text = "";
@@ -390,9 +399,11 @@ public class DataCollectionService extends Service implements UploadStatusListen
                 //noinspection AccessOfSystemProperties,StringConcatenationMissingWhitespace
                 text += System.getProperty("line.separator") + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
             }
+            NotificationManager mNotificationManager =
+                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager.cancel(CAPACITY_NOTIFICATION_ID);
         }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = prefs.edit();
         if (hasError) {
             editor.putString(getString(R.string.pref_lastUploadStatus), getString(R.string.lastUploadStatus_error));
@@ -407,28 +418,18 @@ public class DataCollectionService extends Service implements UploadStatusListen
     }
 
     /**
-     * Called when the the cache is being closed. The listener is automatically unregistered from the cache immediately after this call.
-     */
-    @Override
-    public void cacheClosing() {
-        Timber.d("Cache is closing");
-    }
-
-    /**
      * Provides the percentage of upload that is completed thus far.
      *
-     * @param value The percentage of the uploaded completed thus far
+     * @param event The percentage of the uploaded completed thus far
      */
-    @Override
-    public void progressUpdate(int value) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    @Subscribe
+    public void progressUpdate(UploadProgressEvent event) {
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(getString(R.string.pref_uploadProgress), value);
+        editor.putInt(getString(R.string.pref_uploadProgress), event.getValue());
         editor.apply();
     }
 
-    private Notification showRunningInBackgroundNotification() {
-
+    private Notification getRunNotification() {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
         mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
         // TODO: Refactor
@@ -456,11 +457,48 @@ public class DataCollectionService extends Service implements UploadStatusListen
                 );
         mBuilder.setContentIntent(resultPendingIntent);
 
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
         Notification note = mBuilder.build();
         note.flags |= Notification.FLAG_NO_CLEAR;
 
         return note;
+    }
+
+    @Subscribe
+    public void onCacheCountUpdate(Cache.CacheCountUpdate update) {
+        if (update == null) {
+            return;
+        }
+
+        //noinspection MagicNumber
+        double percentage = ((double) update.getCount() * 100.0d) / (double) firebaseRemoteConfig.getLong(getString(R.string.DB_FORCED_CLEANUP_LIMIT_KEY));
+        double limit = firebaseRemoteConfig.getDouble(getString(R.string.CLEANUP_WARNING_LIMIT_KEY));
+
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (percentage >= limit) {
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setAutoCancel(true)
+                            .setSmallIcon(R.drawable.ic_stat_madcaplogo)
+                            .setContentTitle(getString(R.string.capacity_warning_title))
+                            .setContentText(String.format(getString(R.string.capacity_warning), percentage))
+                            .setPriority(Notification.PRIORITY_HIGH);
+
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addParentStack(MainActivity.class);
+            stackBuilder.addNextIntent(new Intent(this, MainActivity.class));
+            PendingIntent resultPendingIntent =
+                    stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+            mBuilder.setContentIntent(resultPendingIntent);
+            mNotificationManager.notify(CAPACITY_NOTIFICATION_ID, mBuilder.build());
+        } else {
+            mNotificationManager.cancel(CAPACITY_NOTIFICATION_ID);
+        }
+    }
+
+    public long getCount() {
+        return cache.getSize();
     }
 }

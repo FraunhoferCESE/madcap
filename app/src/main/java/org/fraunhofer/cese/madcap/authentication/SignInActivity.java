@@ -6,11 +6,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.Toolbar;
 import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,10 +21,7 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.Status;
 
-import org.fraunhofer.cese.madcap.AboutActivity;
 import org.fraunhofer.cese.madcap.ChildActivity;
-import org.fraunhofer.cese.madcap.HelpActivity;
-import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.authorization.AuthorizationActivity;
@@ -182,7 +177,6 @@ public class SignInActivity extends ChildActivity {
         super.onResume();
 
         GoogleSignInAccount acct = authenticationProvider.getUser();
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         if (acct != null) {
             updateUiState(true);
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getEmail()));
@@ -250,28 +244,6 @@ public class SignInActivity extends ChildActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_home:
-                startActivity(new Intent(this, MainActivity.class));
-                return true;
-            case R.id.action_signin:
-                startActivity(new Intent(this, SignInActivity.class));
-                return true;
-            case R.id.action_help:
-                startActivity(new Intent(this, HelpActivity.class));
-                return true;
-            case R.id.action_about:
-                startActivity(new Intent(this, AboutActivity.class));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-
     protected void onSignOut() {
 
     }

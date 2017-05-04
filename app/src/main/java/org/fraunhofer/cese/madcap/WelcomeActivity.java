@@ -29,64 +29,60 @@ import org.fraunhofer.cese.madcap.services.DataCollectionService;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import timber.log.Timber;
 
 /**
  * Create the welcome activity
  */
+@SuppressWarnings({"PackageVisibleField", "WeakerAccess", "CanBeFinal"})
 public class WelcomeActivity extends AppCompatActivity {
     private static final String TAG = "WelcomeActivity";
     private static final int PERMISSION_RQST_CODE = 995;
 
-    @SuppressWarnings("PackageVisibleField")
     @Inject
     AuthenticationProvider authenticationProvider;
 
     @Inject
     MadcapPermissionsManager permissionsManager;
-    private TextView welcomeMessageView;
+    @BindView(R.id.welcomeMessage) TextView welcomeMessageView;
 
-    private TextView errorTextView, permissionRationaleTV;
-    Button grantButton;
+    @BindView(R.id.buildVersion) TextView buildVersion;
+
+    @BindView(R.id.buildNumber) TextView buildNumber;
+
+    @BindView(R.id.wa_permissionRationale) TextView permissionRationaleTV;
+
+    @BindView(R.id.wa_grantButton) Button grantButton;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_welcome);
 
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
-        Timber.d("Welcome created");
+        ButterKnife.bind(this);
 
-        setContentView(R.layout.activity_welcome);
-        welcomeMessageView = (TextView) findViewById(R.id.welcomeMessage);
         welcomeMessageView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        permissionRationaleTV = (TextView) findViewById(R.id.wa_permissionRationale);
-        grantButton = (Button) findViewById(R.id.wa_grantButton);
 
-        permissionRationaleTV = (TextView) findViewById(R.id.wa_permissionRationale);
-        grantButton = (Button) findViewById(R.id.wa_grantButton);
+        // Set the version number at the bottom of the activity
+        buildVersion.setText(String.format(getString(R.string.buildVersion), BuildConfig.VERSION_NAME));
+        buildNumber.setText(String.format(getString(R.string.buildNumber), BuildConfig.VERSION_CODE));
+    }
 
-        Button helpButton = (Button) findViewById(R.id.helpButton);
-        helpButton.setOnClickListener(new View.OnClickListener() {
-            /**
-             * Called when a view has been clicked.
-             *
-             * @param v The view that was clicked.
-             */
-            @Override
-            public void onClick(View v) {
-                Timber.d("Help toggled");
+    @OnClick(R.id.helpButton)
+    void onClickHelpButton() {
+        Timber.d("Help toggled");
 
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(getString(R.string.onlineHelpURL)));
-                startActivity(intent);
-            }
-        });
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(getString(R.string.onlineHelpURL)));
+        startActivity(intent);
 
-        TextView versionNumberText = (TextView) findViewById(R.id.versionNumber);
-        versionNumberText.setText(getString(R.string.versionIntro) + ' ' + BuildConfig.VERSION_NAME + ", Build " + BuildConfig.VERSION_CODE);
     }
 
     @Override

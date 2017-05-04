@@ -10,37 +10,52 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
+import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.text.DateFormat;
+import java.util.Date;
 
 import javax.inject.Inject;
 
+import javax.inject.Inject;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
+import butterknife.OnClick;
 import timber.log.Timber;
 
 
 /**
  * Creates the main activity for MADCAP.
  */
+@SuppressWarnings("PackageVisibleField")
 public class MainActivity extends ActionBarActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static final DateFormat DATE_FORMAT = DateFormat.getDateTimeInstance();
 
     private static final float ALPHA_DISABLED = 0.5f;
     private static final float ALPHA_ENABLED = 1.0f;
 
-    private SharedPreferences prefs;
+    @Inject FirebaseRemoteConfig firebaseRemoteConfig;
+    @Inject SharedPreferences prefs;
 
     //This is the data collection service we bind to.
     @Nullable
@@ -50,16 +65,20 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     private long mDataCount;
 
     //Ui elements
-    private TextView nameTextView;
-    private TextView collectionDataStatusText;
-    private Switch collectDataSwitch;
-    private ProgressBar uploadProgressBar;
-    private TextView dataCountView;
-    private TextView uploadResultView;
-    private TextView uploadDateView;
-    private TextView uploadStatusView;
-    private TextView uploadMessageView;
-    private Button uploadButton;
+    @BindView(R.id.dataCollectionStatus) TextView collectionDataStatusText;
+    @BindView(R.id.dataCollectionSwitch) Switch collectDataSwitch;
+    @BindView(R.id.progressText) TextView uploadProgressText;
+    @BindView(R.id.progressBar) ProgressBar uploadProgressBar;
+    @BindView(R.id.dataCountText) TextView dataCountView;
+    @BindView(R.id.uploadResultHeader) TextView uploadResultView;
+    @BindView(R.id.lastUploadDate) TextView uploadDateView;
+    @BindView(R.id.lastUploadStatus) TextView uploadStatusView;
+    @BindView(R.id.lastUploadMessage) TextView uploadMessageView;
+    @BindView(R.id.uploadButton) Button uploadButton;
+    @BindView(R.id.capacity_warning_icon) ImageView capacityWarningIcon;
+    @BindView(R.id.capacity_warning_text) TextView capacityWarningText;
+
+    @BindView(R.id.warningBlock) ConstraintLayout warningBlock;
 
 
     /**
@@ -73,64 +92,11 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //noinspection CastToConcreteClass
-        ((MyApplication) getApplication()).getComponent().inject(this);
         setContentView(R.layout.activity_main);
 
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        // Initialize views
-        collectionDataStatusText = (TextView) findViewById(R.id.dataCollectionStatus);
-        dataCountView = (TextView) findViewById(R.id.dataCountText);
-        uploadDateView = (TextView) findViewById(R.id.lastUploadDate);
-        uploadResultView = (TextView) findViewById(R.id.uploadResultHeader);
-        uploadStatusView = (TextView) findViewById(R.id.lastUploadStatus);
-        uploadMessageView = (TextView) findViewById(R.id.lastUploadMessage);
-
-        //Set up upload progress bar
-        uploadProgressBar = (ProgressBar) findViewById(R.id.progressBar);
-
-        uploadButton = (Button) findViewById(R.id.uploadButton);
-
-        //Set the switch
-        collectDataSwitch = (Switch) findViewById(R.id.switch1);
-        collectDataSwitch.setOnCheckedChangeListener(
-                new CompoundButton.OnCheckedChangeListener() {
-                    @Override
-                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                        if (isChecked) {
-                            // Start the data collection service
-                            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
-                            getApplicationContext().startService(intent);
-                            bindConnection(intent);
-                        } else {
-                            // Stop the data collection service
-                            unbindConnection();
-                            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
-                            getApplicationContext().stopService(intent);
-
-                            updateUiElements(false);
-                            setIsCollectingData(false);
-                        }
-                    }
-                }
-        );
-
-        uploadButton.setOnClickListener(
-                new View.OnClickListener() {
-                    private final DateFormat format = DateFormat.getDateTimeInstance();
-
-                    @Override
-                    public void onClick(View v) {
-                        if (mBound && (mDataCollectionService != null)) {
-                            mDataCollectionService.requestUpload();
-                            Timber.d("Upload data clicked");
-                        } else {
-                            Timber.w("Requested manual upload, but DataCollectionService was not bound.");
-                        }
-                    }
-                }
-        );
+        //noinspection CastToConcreteClass
+        ((MyApplication) getApplication()).getComponent().inject(this);
+        ButterKnife.bind(this);
 
         mConnection = new ServiceConnection() {
             @Override
@@ -161,6 +127,33 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         };
     }
 
+    @OnClick(R.id.uploadButton)
+    void onClickUploadButton() {
+        if (mBound && (mDataCollectionService != null)) {
+            mDataCollectionService.requestUpload();
+            Timber.d("Upload data clicked");
+        } else {
+            Timber.w("Requested manual upload, but DataCollectionService was not bound.");
+        }
+    }
+
+    @OnCheckedChanged(R.id.dataCollectionSwitch)
+    void onDataCollectionToggle(boolean isChecked) {
+        if (isChecked) {
+            // Start the data collection service
+            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
+            getApplicationContext().startService(intent);
+            bindConnection(intent);
+        } else {
+            // Stop the data collection service
+            unbindConnection();
+            Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
+            getApplicationContext().stopService(intent);
+
+            updateUiElements(false);
+            setIsCollectingData(false);
+        }
+    }
 
     private void updateUiElements(boolean isCollectingData) {
         if (isCollectingData) {
@@ -194,10 +187,16 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
         //Set the toggle button on the last set preference configuration
         collectDataSwitch.setChecked(isCollectingData());
-        dataCountView.setText(String.format(getString(R.string.dataCountText), prefs.getLong(getString(R.string.pref_dataCount), 0L)));
-        //noinspection LocalVariableNamingConvention
-        String lastUploadDateDefault = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
-        uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), prefs.getString(getString(R.string.pref_lastUploadDate), lastUploadDateDefault)));
+
+
+        if (mBound && mDataCollectionService != null) {
+            mDataCount = mDataCollectionService.getCount();
+        } else {
+            mDataCount = prefs.getLong(getString(R.string.pref_dataCount), 0L);
+        }
+
+        dataCountView.setText(String.format(getString(R.string.dataCountText), mDataCount));
+        uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), formatDate()));
         uploadStatusView.setText(prefs.getString(getString(R.string.pref_lastUploadStatus), ""));
         uploadMessageView.setText(String.format(getString(R.string.lastUploadMessage), prefs.getString(getString(R.string.pref_lastUploadMessage), "")));
         if (uploadStatusView.getText().length() != 0) {
@@ -216,6 +215,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                 }
             });
         }
+        uploadProgressText.setText(String.format(getString(R.string.uploadPercentText), prefs.getInt(getString(R.string.pref_uploadProgress), 0)));
     }
 
     @Override
@@ -277,16 +277,42 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCacheCountUpdate(Cache.CacheCountUpdate event) {
+        if (event == null) {
+            return;
+        }
+
         dataCountView.setText(String.format(getString(R.string.dataCountText), event.getCount()));
         mDataCount = event.getCount();
+
+        //noinspection MagicNumber
+        double percentage = ((double) event.getCount() * 100.0d) / (double) firebaseRemoteConfig.getLong(getString(R.string.DB_FORCED_CLEANUP_LIMIT_KEY));
+        double limit = firebaseRemoteConfig.getDouble(getString(R.string.CLEANUP_WARNING_LIMIT_KEY));
+
+        if (percentage >= limit) {
+            if (warningBlock.getVisibility() == View.GONE) {
+                warningBlock.setVisibility(View.VISIBLE);
+            }
+            capacityWarningText.setText(String.format(getString(R.string.capacity_warning), percentage));
+
+        } else if (warningBlock.getVisibility() != View.GONE) {
+            warningBlock.setVisibility(View.GONE);
+        }
+    }
+
+    private String formatDate() {
+        String result = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
+        long date = prefs.getLong(getString(R.string.pref_lastUploadDate), 0L);
+        if (date != 0L) {
+            result = DATE_FORMAT.format(new Date(date));
+        }
+        return result;
     }
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         //noinspection IfStatementWithTooManyBranches
         if (getString(R.string.pref_lastUploadDate).equals(key)) {
-            String lastUploadDateDefault = prefs.getString(getString(R.string.pref_lastUploadDate_default), "");
-            uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), prefs.getString(getString(R.string.pref_lastUploadDate), lastUploadDateDefault)));
+            uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), formatDate()));
         } else if (getString(R.string.pref_lastUploadStatus).equals(key)) {
             uploadResultView.setText(getString(R.string.uploadResultHeader));
             uploadStatusView.setText(prefs.getString(getString(R.string.pref_lastUploadStatus), ""));
@@ -295,11 +321,29 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             uploadMessageView.setText(String.format(getString(R.string.lastUploadMessage), prefs.getString(getString(R.string.pref_lastUploadMessage), "")));
         } else if (getString(R.string.pref_uploadProgress).equals(key)) {
             uploadProgressBar.setProgress(prefs.getInt(getString(R.string.pref_uploadProgress), 0));
+            uploadProgressText.setText(String.format(getString(R.string.uploadPercentText), prefs.getInt(getString(R.string.pref_uploadProgress), 0)));
         }
     }
 
     @Override
     protected void onSignOut() {
         finish();
+    }
+
+    @Subscribe
+    public void uploadFinished(RemoteUploadResult result) {
+
+        if (mBound && (mDataCollectionService != null)) {
+            mDataCount = mDataCollectionService.getCount();
+            dataCountView.setText(String.format(getString(R.string.dataCountText), mDataCount));
+        }
+
+        if (warningBlock.getVisibility() == View.GONE) {
+            return;
+        }
+
+        if ((result != null) && (result.getSaveResult() != null) && !result.getSaveResult().getSaved().isEmpty()) {
+            warningBlock.setVisibility(View.GONE);
+        }
     }
 }

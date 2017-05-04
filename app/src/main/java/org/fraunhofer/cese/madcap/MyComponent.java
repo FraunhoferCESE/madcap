@@ -22,6 +22,8 @@ import dagger.Component;
 public interface MyComponent {
     void inject(MainActivity activity);
 
+    void inject(SettingsActivity settingsActivity);
+
     void inject(DataCollectionService dataCollectionService);
 
     void inject(SignInActivity signInActivity);

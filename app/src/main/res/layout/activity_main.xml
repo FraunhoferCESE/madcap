@@ -10,24 +10,25 @@
         android:id="@+id/my_toolbar"
         layout="@layout/action_bar"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        tools:layout_editor_absoluteY="0dp"
-        tools:layout_editor_absoluteX="0dp" />
+        android:layout_width="match_parent"/>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/contentView"
-        android:layout_width="395dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:padding="8sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/warningBlock"
-            android:layout_width="379dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent">
+
+                    android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8sp"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
 
             <ImageView
                 android:id="@+id/warningBlock_icon"
@@ -62,7 +63,34 @@
                 android:text="@string/permission_button_text"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/warningBlock_icon" />
+
+
+            <ImageView
+                android:id="@+id/capacity_warning_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="@string/warning_icon_description"
+                android:src="@drawable/ic_warning_black_24dp"
+                app:layout_constraintEnd_toStartOf="@+id/capacity_warning_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <TextView
+                android:id="@+id/capacity_warning_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8sp"
+                android:background="@color/light_red"
+                android:paddingEnd="8sp"
+                android:paddingStart="8sp"
+                android:textIsSelectable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/capacity_warning_icon"
+                app:layout_constraintTop_toTopOf="parent" />
         </android.support.constraint.ConstraintLayout>
+
 
         <TextView
             android:id="@+id/introText"
@@ -71,6 +99,9 @@
             android:text="@string/introText"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/warningBlock" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/warningBlock" />
+
 
         <LinearLayout
             android:id="@+id/dataCollectionGroup"
@@ -83,7 +114,7 @@
             app:layout_constraintTop_toBottomOf="@+id/introText">
 
             <Switch
-                android:id="@+id/switch1"
+                android:id="@+id/dataCollectionSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/collectDataSwitchText" />
@@ -114,14 +145,30 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dataCountText" />
 
+
+        <TextView
+            android:id="@+id/progressText"
+            android:layout_width="40sp"
+
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:gravity="end"
+            android:textIsSelectable="true"
+            app:layout_constraintEnd_toStartOf="@+id/progressBar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/uploadButton" />
+
         <ProgressBar
             android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="379dp"
+            style="@style/progressBar"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/uploadButton" />
+            app:layout_constraintBottom_toBottomOf="@id/progressText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@id/progressText"
+            app:layout_constraintTop_toTopOf="@id/progressText" />
 
         <TextView
             android:id="@+id/lastUploadDate"
@@ -130,7 +177,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/lastUploadDateText"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+            app:layout_constraintTop_toBottomOf="@+id/progressText" />
 
         <TextView
             android:id="@+id/uploadResultHeader"
@@ -161,13 +208,6 @@
 
     </android.support.constraint.ConstraintLayout>
 
-
-    <include
-        android:id="@+id/versionNumber"
-        layout="@layout/footer"
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        tools:layout_editor_absoluteY="634dp"
-        tools:layout_editor_absoluteX="151dp" />
+    <include layout="@layout/footer" />
 
 </android.support.constraint.ConstraintLayout>
