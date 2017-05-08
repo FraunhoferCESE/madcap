@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by MMueller on 12/27/2016.
  */
-public class NetworkListenerTest {
+public class WifiListenerTest {
     Context mockContext;
     ProbeManager<Probe> mockProbeManager;
     ConnectionInfoReceiverFactory mockConnectionInfoReceiverFactory;
@@ -61,7 +61,7 @@ public class NetworkListenerTest {
 
     @Test
     public void consturctorTest() throws Exception {
-        NetworkListener cut = new NetworkListener(mockContext,
+        WifiListener cut = new WifiListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
                 mockMSMSReceiverFactory,
@@ -73,7 +73,7 @@ public class NetworkListenerTest {
 
     @Test
     public void onUpdate() throws Exception {
-        NetworkListener cut = new NetworkListener(mockContext,
+        WifiListener cut = new WifiListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
                 mockMSMSReceiverFactory,
@@ -91,7 +91,7 @@ public class NetworkListenerTest {
 
     @Test
     public void startListening() throws Exception {
-        NetworkListener cut = new NetworkListener(mockContext,
+        WifiListener cut = new WifiListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
                 mockMSMSReceiverFactory,
@@ -134,7 +134,7 @@ public class NetworkListenerTest {
 
     @Test
     public void stopListening() throws Exception {
-        NetworkListener cut = new NetworkListener(mockContext,
+        WifiListener cut = new WifiListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
                 mockMSMSReceiverFactory,
@@ -178,7 +178,7 @@ public class NetworkListenerTest {
 
     @Test
     public void isRunning() throws Exception {
-        NetworkListener cut = new NetworkListener(mockContext,
+        WifiListener cut = new WifiListener(mockContext,
         mockProbeManager,
                 mockConnectionInfoReceiverFactory,
                 mockMSMSReceiverFactory,
@@ -223,7 +223,7 @@ public class NetworkListenerTest {
 
     @Test
     public void getWifiState() throws Exception {
-        NetworkListener cut = new NetworkListener(mockContext,
+        WifiListener cut = new WifiListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
                 mockMSMSReceiverFactory,
@@ -264,7 +264,7 @@ public class NetworkListenerTest {
 
     @Test
     public void getCurrentSecurityLevel() throws Exception {
-        NetworkListener cut = new NetworkListener(mockContext,
+        WifiListener cut = new WifiListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
                 mockMSMSReceiverFactory,
@@ -325,7 +325,7 @@ public class NetworkListenerTest {
 
     @Test
     public void getCurrentNFCState(){
-        NetworkListener cut = new NetworkListener(mockContext,
+        WifiListener cut = new WifiListener(mockContext,
                 mockProbeManager,
                 mockConnectionInfoReceiverFactory,
                 mockMSMSReceiverFactory,

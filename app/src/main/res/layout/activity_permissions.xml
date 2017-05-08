@@ -1,159 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context="org.fraunhofer.cese.madcap.PermissionsActivity">
 
     <include
         android:id="@+id/my_toolbar"
-        layout="@layout/action_bar" />
-    <ScrollView
+        layout="@layout/action_bar"/>
+
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24sp"
+        android:padding="8sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
+
+        <TextView
+            android:id="@+id/headerText"
+            style="@style/headerText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <ImageView
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:src="@drawable/madcaplogo2"
-                    android:layout_margin="5dp"
-                    android:padding="2dp"
-                    android:id="@+id/permissionsLogo"/>
+            android:text="@string/permissions_header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-                <TextView
-                    android:id="@+id/textView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="MADCAP uses the following permissions"
-                    android:layout_margin="5dp"
-                    android:layout_marginLeft="0dp"
-                    android:padding="2dp"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
-                    android:layout_toRightOf="@id/permissionsLogo"
-                    android:maxLines="2"/>
-            </RelativeLayout>
+        <TextView
+            android:id="@+id/contactsText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            android:text="@string/contacts_short_rationale"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerText"
+            app:layout_constraintEnd_toStartOf="@+id/contactsCheckBox"/>
 
-            <CheckBox
-                android:id="@+id/contactsCheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Contacts"
-                android:layout_margin="5dp"
-                android:padding="2dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="10dp"
-                android:padding="2dp"
-                android:text="@string/contacts_short_rationale"/>
+        <CheckBox
+            android:id="@+id/contactsCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/contactsText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/contactsText"
+            app:layout_constraintTop_toTopOf="@id/contactsText"
+            />
 
-            <CheckBox
-                android:id="@+id/smsCheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SMS"
-                android:layout_margin="5dp"
-                android:padding="2dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="10dp"
-                android:padding="2dp"
-                android:text="@string/sms_short_rationale"/>
+        <TextView
+            android:id="@+id/smsText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            android:text="@string/sms_short_rationale"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/smsCheckBox"
+            app:layout_constraintTop_toBottomOf="@id/contactsText"/>
 
-            <CheckBox
-                android:id="@+id/locationCheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Location"
-                android:layout_margin="5dp"
-                android:padding="2dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="10dp"
-                android:padding="2dp"
-                android:text="@string/location_short_rationale"/>
+        <CheckBox
+            android:id="@+id/smsCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/smsText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/smsText"
+            app:layout_constraintTop_toTopOf="@id/smsText"/>
 
-            <CheckBox
-                android:id="@+id/storageCheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Storage"
-                android:layout_margin="5dp"
-                android:padding="2dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="10dp"
-                android:padding="2dp"
-                android:text="@string/storage_short_rationale"/>
+        <TextView
+            android:id="@+id/locationText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            android:text="@string/location_short_rationale"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/locationCheckBox"
+            app:layout_constraintTop_toBottomOf="@id/smsText"/>
 
-            <CheckBox
-                android:id="@+id/telephoneCheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Telephone"
-                android:layout_margin="5dp"
-                android:padding="2dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="10dp"
-                android:padding="2dp"
-                android:text="@string/telephone_short_rationale"/>
+        <CheckBox
+            android:id="@+id/locationCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/locationText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/locationText"
+            app:layout_constraintTop_toTopOf="@id/locationText"
+            />
 
-            <!--<CheckBox-->
-                <!--android:id="@+id/bluetoothCheckBox"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Bluetooth"-->
-                <!--android:layout_margin="5dp"-->
-                <!--android:padding="2dp"/>-->
-            <!--<TextView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_marginLeft="25dp"-->
-                <!--android:layout_marginRight="10dp"-->
-                <!--android:padding="2dp"-->
-                <!--android:text="@string/bluetooth_short_rationale"/>-->
+        <TextView
+            android:id="@+id/telephoneText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            android:text="@string/telephone_short_rationale"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/telephoneCheckBox"
+            app:layout_constraintTop_toBottomOf="@id/locationText"
+            />
 
-            <CheckBox
-                android:id="@+id/usageStatsCheckBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Usage stats"
-                android:layout_margin="5dp"
-                android:padding="2dp"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginRight="10dp"
-                android:padding="2dp"
-                android:text="@string/access_usage_short_rationale"/>
+        <CheckBox
+            android:id="@+id/telephoneCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/telephoneText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/telephoneText"
+            app:layout_constraintTop_toTopOf="@id/telephoneText"
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Read more about our privacy policy and data gathering at www.pocket-security.org/privacy-policy/"
-                android:layout_margin="30dp"
-                android:padding="2dp"
-                android:autoLink="web"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"/>
-        </LinearLayout>
-    </ScrollView>
+            />
 
-    <include
-        android:id="@+id/versionNumber"
-        layout="@layout/footer" />
-</LinearLayout>
+
+        <TextView
+            android:id="@+id/usageText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            android:text="@string/access_usage_short_rationale"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/usageStatsCheckBox"
+            app:layout_constraintTop_toBottomOf="@id/telephoneText"
+            />
+
+        <CheckBox
+            android:id="@+id/usageStatsCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/usageText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/usageText"
+            app:layout_constraintTop_toTopOf="@id/usageText"
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:autoLink="web"
+            android:gravity="center"
+            android:text="@string/permissions_more_inf"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/usageText"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <include layout="@layout/footer"/>
+</android.support.constraint.ConstraintLayout>

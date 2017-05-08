@@ -12,6 +12,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 
 /**
  * Created by MMueller on 11/15/2016.
@@ -19,8 +21,6 @@ import javax.inject.Inject;
  * A issue manager for some callbacks from the GoogleApiClient
  */
 public class LocationConnectionCallbacks implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private final String TAG = getClass().getSimpleName();
-
     /**
      * No argument constructor used for dependency injection
      */
@@ -29,17 +29,20 @@ public class LocationConnectionCallbacks implements GoogleApiClient.ConnectionCa
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        Log.d(TAG, "Connected");
+        Timber.d("Connected");
         EventBus.getDefault().post(new FusedLocationConnectedEvent());
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d(TAG, "Connection suspended");
+        Timber.w("Connection suspended");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "Conntection failed");
+        Timber.w("Connection failed");
+    }
+
+    public class FusedLocationConnectedEvent {
     }
 }

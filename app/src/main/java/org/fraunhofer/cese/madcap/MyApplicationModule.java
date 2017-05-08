@@ -1,12 +1,18 @@
 package org.fraunhofer.cese.madcap;
 
 import android.app.Application;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
+import android.nfc.NfcAdapter;
+import android.nfc.NfcManager;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.telephony.TelephonyManager;
+
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.awareness.Awareness;
@@ -35,6 +41,8 @@ import edu.umd.fcmd.sensorlisteners.listener.location.LocationConnectionCallback
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.BuildVersionProvider;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
+
+import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
  * This class defines the providers to use for dependency injection
@@ -209,5 +217,26 @@ class MyApplicationModule {
     GoogleApiAvailability providesGoogleApiAvailability() {
         return GoogleApiAvailability.getInstance();
     }
+
+    @Provides
+    NotificationManager provideNotificationManager() {
+        return (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    @Provides
+    TelephonyManager provideTelephonyManager() {
+        return (TelephonyManager) application.getSystemService(TELEPHONY_SERVICE);
+    }
+
+    @Provides
+    WifiManager provideWifiManager() {
+        return (WifiManager) application.getSystemService(Context.WIFI_SERVICE);
+    }
+
+    @Provides
+    NfcAdapter provideNfcAdapter() {
+        return NfcAdapter.getDefaultAdapter(application);
+    }
+
 }
 

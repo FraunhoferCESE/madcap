@@ -1,121 +1,162 @@
 package edu.umd.fcmd.sensorlisteners.listener.network;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.support.v4.content.ContextCompat;
 import android.telephony.CellLocation;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
-import android.util.Log;
 
+import javax.inject.Inject;
+
+import edu.umd.fcmd.sensorlisteners.listener.Listener;
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.network.CallStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.CellLocationProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.CellProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.TelecomServiceProbe;
-
-import static android.content.Context.TELEPHONY_SERVICE;
+import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
+import timber.log.Timber;
 
 /**
  * Created by MMueller on 12/22/2016.
- *
+ * <p>
  * Listening to changes in the telephone manager of any kind.
  */
-class TelephonyListener extends PhoneStateListener {
-    private final String TAG = getClass().getSimpleName();
+public class TelephonyListener extends PhoneStateListener implements Listener {
+
+    private boolean isRunning;
 
     private final Context context;
-    private final NetworkListener networkListener;
+    private final TelephonyManager telephonyManager;
+    private final ProbeManager<Probe> probeManager;
 
-    TelephonyListener(Context context, NetworkListener networkListener) {
+    private TelephonyListener telephonyListener;
+
+    @Inject
+    TelephonyListener(Context context, ProbeManager<Probe> probeManager, TelephonyManager telephonyManager) {
         this.context = context;
-        this.networkListener = networkListener;
+        this.probeManager = probeManager;
+        this.telephonyManager = telephonyManager;
+    }
+
+    @Override
+    public void onUpdate(Probe state) {
+        probeManager.save(state);
+    }
+
+    @Override
+    public void startListening() {
+        if (!isRunning && isPermittedByUser()) {
+            Timber.d("startListening");
+
+            telephonyManager.listen(this,
+                    PhoneStateListener.LISTEN_CALL_STATE
+                            | PhoneStateListener.LISTEN_CELL_INFO
+                            | PhoneStateListener.LISTEN_CELL_LOCATION
+                            | PhoneStateListener.LISTEN_DATA_ACTIVITY
+                            | PhoneStateListener.LISTEN_DATA_CONNECTION_STATE
+                            | PhoneStateListener.LISTEN_SERVICE_STATE
+                            | PhoneStateListener.LISTEN_SIGNAL_STRENGTHS
+                            | PhoneStateListener.LISTEN_CALL_FORWARDING_INDICATOR
+                            | PhoneStateListener.LISTEN_MESSAGE_WAITING_INDICATOR);
+
+            // Send initial probes
+            onUpdate(createNewCellularProbe());
+            onUpdate(createNewCallStateProbe(telephonyManager.getCallState(), ""));
+            onUpdate(createCellLocationProbe(telephonyManager.getCellLocation()));
+
+            // Indicate that this listener is listening.
+            isRunning = true;
+        }
+
+    }
+
+    @Override
+    public void stopListening() {
+        if (isRunning) {
+            Timber.d("stopListening");
+            telephonyManager.listen(this, PhoneStateListener.LISTEN_NONE);
+            isRunning = false;
+        }
+    }
+
+    @Override
+    public boolean isPermittedByUser() {
+        return ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED;
     }
 
     /**
      * same as above, but with the network type.  Both called.
      *
-     * @param state the new state.
+     * @param state       the new state.
      * @param networkType the network type.
      */
     @Override
     public void onDataConnectionStateChanged(int state, int networkType) {
         super.onDataConnectionStateChanged(state, networkType);
-
-        CellProbe cellProbe = createNewCellularProbe();
-        networkListener.onUpdate(cellProbe);
+        onUpdate(createNewCellularProbe());
     }
 
     /**
      * Callback for changing of servic states
+     *
      * @param serviceState in service, emergency only, off service...
      */
     @Override
     public void onServiceStateChanged(ServiceState serviceState) {
         super.onServiceStateChanged(serviceState);
-
-        TelecomServiceProbe telecomServiceProbe = createNewServiceProbe(serviceState);
-
-        networkListener.onUpdate(telecomServiceProbe);
+        onUpdate(createNewServiceProbe(serviceState));
     }
 
     /**
      * Callback invoked when device call state changes.
-     * @param state the call state.
+     *
+     * @param state          the call state.
      * @param incomingNumber the incoming number if available.
      */
     @Override
     public void onCallStateChanged(int state, String incomingNumber) {
         super.onCallStateChanged(state, incomingNumber);
-
-        CallStateProbe callStateProbe = createNewCallStateProbe(state, incomingNumber);
-
-        networkListener.onUpdate(callStateProbe);
+        onUpdate(createNewCallStateProbe(state, incomingNumber));
     }
 
     @Override
     public void onCellLocationChanged(CellLocation location) {
         super.onCellLocationChanged(location);
-
-        CellLocationProbe cellLocationProbe = createCellLocationProbe(location);
-
-        networkListener.onUpdate(cellLocationProbe);
+        onUpdate(createCellLocationProbe(location));
 
     }
 
-    CellLocationProbe createCellLocationProbe(CellLocation location){
+    private static CellLocationProbe createCellLocationProbe(CellLocation location) {
+        CellLocationProbe cellLocationProbe = new CellLocationProbe();
         if (location instanceof GsmCellLocation) {
             GsmCellLocation gcLoc = (GsmCellLocation) location;
-            CellLocationProbe cellLocationProbe = new CellLocationProbe();
             cellLocationProbe.setDate(System.currentTimeMillis());
             cellLocationProbe.setCellType("GSM");
-            cellLocationProbe.setAreaCode(gcLoc.getLac()+" ");
-
-            return cellLocationProbe;
+            cellLocationProbe.setAreaCode(gcLoc.getLac() + " ");
         } else if (location instanceof CdmaCellLocation) {
             CdmaCellLocation ccLoc = (CdmaCellLocation) location;
-
-            CellLocationProbe cellLocationProbe = new CellLocationProbe();
             cellLocationProbe.setDate(System.currentTimeMillis());
             cellLocationProbe.setCellType("CDMA");
-            cellLocationProbe.setAreaCode(ccLoc.getBaseStationId()+" ");
+            cellLocationProbe.setAreaCode(ccLoc.getBaseStationId() + " ");
             cellLocationProbe.setLat((double) ccLoc.getBaseStationLongitude());
             cellLocationProbe.setLat((double) ccLoc.getBaseStationLatitude());
-
-            return cellLocationProbe;
         } else {
-            //Log.i(TAG, "onCellLocationChanged: " + location.toString());
-            CellLocationProbe cellLocationProbe = new CellLocationProbe();
             cellLocationProbe.setDate(System.currentTimeMillis());
             cellLocationProbe.setCellType("UNKNOWN");
-
-            return cellLocationProbe;
         }
+        return cellLocationProbe;
     }
 
 
     /**
      * Method for creating a new TelecomServiceProbe.
+     *
      * @param serviceState the state.
      * @return a new probe.
      */
@@ -123,9 +164,9 @@ class TelephonyListener extends PhoneStateListener {
         TelecomServiceProbe telecomServiceProbe = new TelecomServiceProbe();
         telecomServiceProbe.setDate(System.currentTimeMillis());
 
-        if(serviceState.getRoaming()){
+        if (serviceState.getRoaming()) {
             telecomServiceProbe.setRoaming("ROAMING");
-        }else{
+        } else {
             telecomServiceProbe.setRoaming("NO_ROAMING");
         }
 
@@ -149,7 +190,7 @@ class TelephonyListener extends PhoneStateListener {
         return telecomServiceProbe;
     }
 
-    CallStateProbe createNewCallStateProbe(int state, String incomingNumber) {
+    private static CallStateProbe createNewCallStateProbe(int state, String incomingNumber) {
         CallStateProbe callStateProbe = new CallStateProbe();
         callStateProbe.setDate(System.currentTimeMillis());
 
@@ -173,14 +214,18 @@ class TelephonyListener extends PhoneStateListener {
 
     /**
      * Creates a Cellular Probe.
+     *
      * @return the created Probe.
      */
-    CellProbe createNewCellularProbe(){
+    private CellProbe createNewCellularProbe() {
+        return createNewCellularProbe(telephonyManager.getDataState());
+    }
+
+    private static CellProbe createNewCellularProbe(int state) {
         CellProbe cellProbe = new CellProbe();
         cellProbe.setDate(System.currentTimeMillis());
-        TelephonyManager telephonyManager = (TelephonyManager) context.getSystemService(TELEPHONY_SERVICE);
 
-        switch (telephonyManager.getDataState()) {
+        switch (state) {
             case TelephonyManager.DATA_CONNECTED:
                 cellProbe.setState("CONNECTED");
                 break;
@@ -199,6 +244,5 @@ class TelephonyListener extends PhoneStateListener {
         }
         return cellProbe;
     }
-
 }
 

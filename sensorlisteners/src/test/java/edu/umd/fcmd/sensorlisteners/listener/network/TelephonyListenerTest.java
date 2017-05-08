@@ -29,12 +29,12 @@ import static org.mockito.Mockito.when;
  */
 public class TelephonyListenerTest {
     Context mockContext;
-    NetworkListener mockNetworkListener;
+    WifiListener mockWifiListener;
 
     @Before
     public void setUp() throws Exception {
         mockContext = mock(Context.class);
-        mockNetworkListener = mock(NetworkListener.class);
+        mockWifiListener = mock(WifiListener.class);
     }
 
     @After
@@ -44,24 +44,24 @@ public class TelephonyListenerTest {
 
     @Test
     public void constructorTest() throws Exception {
-        TelephonyListener cut = new TelephonyListener(mockContext, mockNetworkListener);
+        TelephonyListener cut = new TelephonyListener(mockContext, mockWifiListener);
     }
 
     @Test
     public void onDataConnectionStateChanged() throws Exception {
-        TelephonyListener cut = new TelephonyListener(mockContext, mockNetworkListener);
+        TelephonyListener cut = new TelephonyListener(mockContext, mockWifiListener);
 
         TelephonyManager mockTelephonyManager = mock(TelephonyManager.class);
         when(mockContext.getSystemService(TELEPHONY_SERVICE)).thenReturn(mockTelephonyManager);
 
         cut.onDataConnectionStateChanged(1, 1);
-        verify(mockNetworkListener, atLeastOnce()).onUpdate(any(CellProbe.class));
+        verify(mockWifiListener, atLeastOnce()).onUpdate(any(CellProbe.class));
 
     }
 
     @Test
     public void onServiceStateChanged() throws Exception {
-        TelephonyListener cut = new TelephonyListener(mockContext, mockNetworkListener);
+        TelephonyListener cut = new TelephonyListener(mockContext, mockWifiListener);
 
         ServiceState mockServiceState = mock(ServiceState.class);
 
@@ -85,20 +85,20 @@ public class TelephonyListenerTest {
         when(mockServiceState.getState()).thenReturn(ServiceState.STATE_POWER_OFF);
         cut.onServiceStateChanged(mockServiceState);
 
-        verify(mockNetworkListener, atLeastOnce()).onUpdate(any(TelecomServiceProbe.class));
+        verify(mockWifiListener, atLeastOnce()).onUpdate(any(TelecomServiceProbe.class));
     }
 
     @Test
     public void onCallStateChanged() throws Exception {
-        TelephonyListener cut = new TelephonyListener(mockContext, mockNetworkListener);
+        TelephonyListener cut = new TelephonyListener(mockContext, mockWifiListener);
 
         cut.onCallStateChanged(1, "number");
-        verify(mockNetworkListener, atLeastOnce()).onUpdate(any(CallStateProbe.class));
+        verify(mockWifiListener, atLeastOnce()).onUpdate(any(CallStateProbe.class));
     }
 
     @Test
     public void onCellLocationChanged() throws Exception {
-        TelephonyListener cut = new TelephonyListener(mockContext, mockNetworkListener);
+        TelephonyListener cut = new TelephonyListener(mockContext, mockWifiListener);
 
         CellLocation mockCellLocation = mock(CellLocation.class);
 
@@ -108,7 +108,7 @@ public class TelephonyListenerTest {
 
     @Test
     public void createCellLocationProbe() throws Exception {
-        TelephonyListener cut = new TelephonyListener(mockContext, mockNetworkListener);
+        TelephonyListener cut = new TelephonyListener(mockContext, mockWifiListener);
 
         GsmCellLocation mockGSMCellLocation = mock(GsmCellLocation.class);
         when(mockGSMCellLocation.getLac()).thenReturn(1000);
@@ -126,7 +126,7 @@ public class TelephonyListenerTest {
 
     @Test
     public void createNewCallStateProbe() throws Exception {
-        TelephonyListener cut = new TelephonyListener(mockContext, mockNetworkListener);
+        TelephonyListener cut = new TelephonyListener(mockContext, mockWifiListener);
 
         Assert.assertEquals("IDLE", cut.createNewCallStateProbe(TelephonyManager.CALL_STATE_IDLE, "Number").getState());
         Assert.assertEquals("RINGING", cut.createNewCallStateProbe(TelephonyManager.CALL_STATE_RINGING, "Number").getState());
@@ -137,7 +137,7 @@ public class TelephonyListenerTest {
 
     @Test
     public void createNewCellularProbe() throws Exception {
-        TelephonyListener cut = new TelephonyListener(mockContext, mockNetworkListener);
+        TelephonyListener cut = new TelephonyListener(mockContext, mockWifiListener);
 
         TelephonyManager mockTelephonyManager = mock(TelephonyManager.class);
         when(mockContext.getSystemService(TELEPHONY_SERVICE)).thenReturn(mockTelephonyManager);

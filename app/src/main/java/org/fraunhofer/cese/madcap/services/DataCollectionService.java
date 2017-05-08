@@ -1,14 +1,15 @@
 package org.fraunhofer.cese.madcap.services;
 
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.BatteryManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -16,7 +17,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -46,19 +46,22 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityListener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
 import edu.umd.fcmd.sensorlisteners.listener.audio.AudioListener;
 import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
-import edu.umd.fcmd.sensorlisteners.listener.network.NetworkListener;
+import edu.umd.fcmd.sensorlisteners.listener.network.ConnectivityListener;
+import edu.umd.fcmd.sensorlisteners.listener.network.NFCListener;
+import edu.umd.fcmd.sensorlisteners.listener.network.WifiListener;
+import edu.umd.fcmd.sensorlisteners.listener.network.SMSListener;
+import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListener;
 import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
+import edu.umd.fcmd.sensorlisteners.model.power.ChargingProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.util.DataCollectionProbe;
-import edu.umd.fcmd.sensorlisteners.model.util.LogOutProbe;
 import timber.log.Timber;
 
 
@@ -71,7 +74,7 @@ public class DataCollectionService extends Service {
     private static final String TAG = "Madcap DataColl Service";
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
     private static final int RUN_CODE = 1;
-    private static final int NOTIFICATION_ID = 918273;
+    private static final int FOREGROUND_NOTIFICATION_ID = 918273;
     private static final int CAPACITY_NOTIFICATION_ID = 126731245;
     private static final long HEARTBEAT_DELAY = 100L;
 
@@ -79,6 +82,8 @@ public class DataCollectionService extends Service {
 
     private final IBinder mBinder = new DataCollectionServiceBinder();
     private final List<Listener> listeners = new CopyOnWriteArrayList<>();
+
+    @Inject NotificationManager mNotificationManager;
 
 
     @Inject
@@ -94,6 +99,7 @@ public class DataCollectionService extends Service {
 
 
     @Inject Cache cache;
+    @Inject CacheFactory cacheFactory;
 
     @Inject AuthenticationProvider authManager;
 
@@ -104,9 +110,13 @@ public class DataCollectionService extends Service {
     @Inject BluetoothListener bluetoothListener;
     @Inject ActivityListener activityListener;
     @Inject PowerListener powerListener;
-    @Inject NetworkListener networkListener;
+    @Inject WifiListener wifiListener;
     @Inject SystemListener systemListener;
     @Inject AudioListener auidioListener;
+    @Inject TelephonyListener telephonyListener;
+    @Inject SMSListener smsListener;
+    @Inject ConnectivityListener connectivityListener;
+    @Inject NFCListener nfcListener;
 
     @Inject FirebaseRemoteConfig firebaseRemoteConfig;
 
@@ -152,6 +162,7 @@ public class DataCollectionService extends Service {
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
         Timber.d("onCreate Data collection Service " + this);
+        EventBus.getDefault().register(this);
 
         listeners.clear();
 
@@ -159,8 +170,12 @@ public class DataCollectionService extends Service {
             //dangerous listeners
             listeners.add(locationListener);
             listeners.add(applicationsListener);
-            listeners.add(networkListener);
+            listeners.add(wifiListener);
+            listeners.add(telephonyListener);
+            listeners.add(smsListener);
             //non dangerous listeners
+            listeners.add(nfcListener);
+            listeners.add(connectivityListener);
             listeners.add(activityListener);
             listeners.add(systemListener);
             listeners.add(bluetoothListener);
@@ -173,7 +188,6 @@ public class DataCollectionService extends Service {
             private final Runnable runnable = this;
             private static final long FIREBASE_CACHE_EXPIRATION = 3600L;
             private static final long FIREBASE_CONFIG_UPDATE_INTERVAL = 3600000L;
-
 
             @Override
             public void run() {
@@ -196,17 +210,11 @@ public class DataCollectionService extends Service {
                 });
             }
         });
-        EventBus.getDefault().register(this);
+
     }
 
     private void sendDataCollectionProbe(String dataCollectionState) {
         DataCollectionProbe probe = new DataCollectionProbe(dataCollectionState);
-        probe.setDate(System.currentTimeMillis());
-        manualProbeUploadTaskFactory.create().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, probe);
-    }
-
-    public void sendLogOutProbe() {
-        LogOutProbe probe = new LogOutProbe();
         probe.setDate(System.currentTimeMillis());
         manualProbeUploadTaskFactory.create().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, probe);
     }
@@ -226,7 +234,6 @@ public class DataCollectionService extends Service {
         synchronized (listeners) {
             for (Listener listener : listeners) {
                 listener.stopListening();
-                Timber.d(listener.getClass().getSimpleName() + " stopped listening");
             }
             listeners.clear();
         }
@@ -254,35 +261,31 @@ public class DataCollectionService extends Service {
 
         if (!isRunning) {
             sendDataCollectionProbe(DataCollectionProbe.ON);
-
+            startForeground(FOREGROUND_NOTIFICATION_ID, getRunNotification());
             startBackgroundServicesAndProbes();
 
             if ((intent != null) && intent.hasExtra("boot")) {
-                cacheInitialBootEvent();
+                SystemUptimeProbe systemUptimeProbe = new SystemUptimeProbe();
+                systemUptimeProbe.setDate(System.currentTimeMillis());
+                systemUptimeProbe.setState(SystemUptimeProbe.BOOT);
+                cacheFactory.save(systemUptimeProbe);
             }
+
             // Start the heartbeat
             Timber.d("Starting heartbeatHandler");
             heartbeatHandler.postDelayed(heartBeatRunner, HEARTBEAT_DELAY);
             isRunning = true;
 
-            //register EventBus listener for permission changes
-            Log.v(TAG,"Listening for permission on EventBus");
-            EventBus.getDefault().register(this);
         }
         return START_STICKY;
     }
 
     private void startBackgroundServicesAndProbes() {
-        startForeground(NOTIFICATION_ID, getRunNotification());
         Timber.d("numListeners: " + listeners.size());
         synchronized (listeners) {
             for (Listener listener : listeners) {
-                try {
-                    Timber.d("Starting " + listener.getClass().getSimpleName());
-                    listener.startListening();
-                } catch (NoSensorFoundException nsf) {
-                    Timber.e(nsf);
-                }
+                Timber.d("Starting " + listener.getClass().getSimpleName());
+                listener.startListening();
 
             }
         }
@@ -293,21 +296,52 @@ public class DataCollectionService extends Service {
      */
     @Subscribe
     public void onPermissionGrantedEvent(MadcapPermissionsManager.PermissionGrantedEvent event) {
-        Log.v(TAG,"in Permission granted event");
-        startBackgroundServicesAndProbes();
+        Timber.d("PermissionGranted event received: " + event);
+
+        try {
+            switch (event) {
+                case LOCATION:
+                    locationListener.startListening();
+                    wifiListener.startListening();
+                    break;
+                case TELEPHONE:
+                    telephonyListener.startListening();
+                    break;
+                case SMS:
+                    smsListener.startListening();
+                    break;
+                case USAGE:
+                    applicationsListener.startListening();
+                    break;
+            }
+        } catch (NoSensorFoundException nsf) {
+            Timber.e(nsf);
+        }
+
     }
 
-    /**
-     * Caches a boot probe when the service has been started via the OnBootService.
-     */
-    private void cacheInitialBootEvent() {
-        SystemUptimeProbe systemUptimeProbe = new SystemUptimeProbe();
-        systemUptimeProbe.setDate(System.currentTimeMillis());
-        systemUptimeProbe.setState(SystemUptimeProbe.BOOT);
+    private String getPluggedState(Context context, Intent intent) {
+        Intent chargingIntent = context.registerReceiver(null, new IntentFilter(
+                Intent.ACTION_BATTERY_CHANGED));
+        int pluggedState = 0;
 
-        new CacheFactory(cache, authManager).save(systemUptimeProbe);
+        if (chargingIntent != null) {
+            pluggedState = chargingIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+        }
+
+        switch (pluggedState) {
+            case 0:
+                return ChargingProbe.NONE;
+            case BatteryManager.BATTERY_PLUGGED_AC:
+                return ChargingProbe.AC;
+            case BatteryManager.BATTERY_PLUGGED_USB:
+                return ChargingProbe.USB;
+            case BatteryManager.BATTERY_PLUGGED_WIRELESS:
+                return ChargingProbe.WIRELESS;
+            default:
+                return ChargingProbe.NONE;
+        }
     }
-
 
     /**
      * Requests an on-demand upload of cached data.
@@ -399,8 +433,6 @@ public class DataCollectionService extends Service {
                 //noinspection AccessOfSystemProperties,StringConcatenationMissingWhitespace
                 text += System.getProperty("line.separator") + result.getSaveResult().getAlreadyExists().size() + " duplicate entries ignored.";
             }
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.cancel(CAPACITY_NOTIFICATION_ID);
         }
 
@@ -473,9 +505,6 @@ public class DataCollectionService extends Service {
         //noinspection MagicNumber
         double percentage = ((double) update.getCount() * 100.0d) / (double) firebaseRemoteConfig.getLong(getString(R.string.DB_FORCED_CLEANUP_LIMIT_KEY));
         double limit = firebaseRemoteConfig.getDouble(getString(R.string.CLEANUP_WARNING_LIMIT_KEY));
-
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (percentage >= limit) {
             NotificationCompat.Builder mBuilder =

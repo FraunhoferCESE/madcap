@@ -1,32 +1,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+      xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
         android:id="@+id/action_signin"
         android:icon="@drawable/ic_account_circle_white_24dp"
-        android:title="@string/action_signin" />
+        android:title="@string/action_signin"/>
 
     <item
         android:id="@+id/action_permissions"
-        android:icon="@drawable/ic_settings_white_24dp"
-        android:title="@string/action_permissions" />
+        android:icon="@drawable/ic_security_white_24dp"
+        android:title="@string/action_permissions"/>
 
     <item
         android:id="@+id/action_settings"
         android:icon="@drawable/ic_settings_white_24dp"
-        android:title="@string/action_settings"
-        app:showAsAction="ifRoom" />
+        android:title="@string/action_settings"/>
 
 
     <item
         android:id="@+id/action_help"
         android:icon="@drawable/ic_help_white_24dp"
         android:title="@string/action_help"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/action_about"
         android:icon="@drawable/ic_info_white_24dp"
-        android:title="@string/action_about" />
+        android:title="@string/action_about"/>
 
 </menu>

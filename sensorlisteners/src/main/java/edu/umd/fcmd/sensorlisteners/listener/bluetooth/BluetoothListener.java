@@ -1,31 +1,26 @@
 package edu.umd.fcmd.sensorlisteners.listener.bluetooth;
 
-import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.util.Set;
 
 import javax.inject.Inject;
 
-import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
-import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
+import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothConnectionProbe;
 import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothStateProbe;
 import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothStaticAttributesProbe;
-import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
  * Created by MMueller on 12/2/2016.
- *
+ * <p>
  * BluetoothListener listening to certain bluetooth events.
  */
 
@@ -43,7 +38,6 @@ public class BluetoothListener implements Listener {
     private final ProbeManager<Probe> probeManager;
     private final PermissionsManager permissionsManager;
     private final BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory;
-    private final IntentFilterFactory intenFilterFactory;
     private BluetoothInformationReceiver receiver;
 
     private boolean runningState;
@@ -53,14 +47,12 @@ public class BluetoothListener implements Listener {
                              ProbeManager<Probe> probeManager,
                              BluetoothAdapter bluetoothAdapter,
                              PermissionsManager permissionsManager,
-                             BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory,
-                             IntentFilterFactory intenFilterFactory) {
+                             BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory) {
         this.context = context;
         this.bluetoothAdapter = bluetoothAdapter;
         this.probeManager = probeManager;
         this.permissionsManager = permissionsManager;
         this.bluetoothInformationReceiverFactory = bluetoothInformationReceiverFactory;
-        this.intenFilterFactory = intenFilterFactory;
     }
 
     @Override
@@ -69,11 +61,11 @@ public class BluetoothListener implements Listener {
     }
 
     @Override
-    public void startListening() throws NoSensorFoundException {
-        if(!runningState && (bluetoothAdapter != null)) {
-            if(isPermittedByUser()) {
+    public void startListening() {
+        if (!runningState && (bluetoothAdapter != null)) {
+            if (isPermittedByUser()) {
                 receiver = bluetoothInformationReceiverFactory.create(this);
-                IntentFilter intentFilter = intenFilterFactory.create();
+                IntentFilter intentFilter = new IntentFilter();
                 intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
                 intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
                 intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
@@ -86,10 +78,9 @@ public class BluetoothListener implements Listener {
 
                 createInitialProbes();
                 runningState = true;
-            }
-            else {
+            } else {
                 permissionsManager.requestPermissionFromNotification();
-                Log.i(TAG,"Bluetooth listener NOT listening");
+                Log.i(TAG, "Bluetooth listener NOT listening");
                 runningState = false;
             }
         }
@@ -97,8 +88,8 @@ public class BluetoothListener implements Listener {
 
     @Override
     public void stopListening() {
-        if(runningState){
-            if(receiver != null){
+        if (runningState) {
+            if (receiver != null) {
                 context.unregisterReceiver(receiver);
             }
             receiver = null;
@@ -107,18 +98,13 @@ public class BluetoothListener implements Listener {
     }
 
     @Override
-    public boolean isRunning() {
-        return runningState;
-    }
-
-    @Override
     public boolean isPermittedByUser() {
         //non dangerous permission
         if (permissionsManager.isBluetoothPermitted()) {
-            Log.i(TAG,"Bluetooth access permitted");
+            Log.i(TAG, "Bluetooth access permitted");
             return true;
-        }else {
-            Log.e(TAG,"Bluetooth access NOT permitted");
+        } else {
+            Log.e(TAG, "Bluetooth access NOT permitted");
             return false;
         }
     }
@@ -142,20 +128,20 @@ public class BluetoothListener implements Listener {
 
         //Possible connected Bluetooth Devices
         Set<BluetoothDevice> boundDevices = bluetoothAdapter.getBondedDevices();
-        for(BluetoothDevice bluetoothDevice : boundDevices){
+        for (BluetoothDevice bluetoothDevice : boundDevices) {
             BluetoothConnectionProbe bluetoothConnectionProbe = new BluetoothConnectionProbe();
             bluetoothConnectionProbe.setDate(System.currentTimeMillis());
             int bondState = bluetoothDevice.getBondState();
             String state;
-            if(bondState == BluetoothDevice.BOND_BONDING){
+            if (bondState == BluetoothDevice.BOND_BONDING) {
                 state = "BONDING";
-            }else if(bondState == BluetoothDevice.BOND_BONDED){
+            } else if (bondState == BluetoothDevice.BOND_BONDED) {
                 state = "BONDED";
-            }else{
+            } else {
                 state = "NONE";
             }
             bluetoothConnectionProbe.setState(state);
-            if(bluetoothDevice.getAddress() != null){
+            if (bluetoothDevice.getAddress() != null) {
                 bluetoothConnectionProbe.setForeignAddress(bluetoothDevice.getAddress());
             }
             bluetoothConnectionProbe.setForeignName(bluetoothDevice.getName());
@@ -170,6 +156,7 @@ public class BluetoothListener implements Listener {
 
     /**
      * Gets the state from the BluetoothAdapter.
+     *
      * @return the state of the BluetoothAdapter.
      */
     public int getState() {

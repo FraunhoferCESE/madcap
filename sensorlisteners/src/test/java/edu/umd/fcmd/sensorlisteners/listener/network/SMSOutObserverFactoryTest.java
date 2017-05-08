@@ -6,19 +6,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 /**
  * Created by MMueller on 1/23/2017.
  */
 public class SMSOutObserverFactoryTest {
-    NetworkListener mockNetworkListener;
+    WifiListener mockWifiListener;
     Context mockContext;
 
     @Before
     public void setUp() throws Exception {
-        mockNetworkListener = mock(NetworkListener.class);
+        mockWifiListener = mock(WifiListener.class);
         mockContext = mock(Context.class);
     }
 
@@ -31,7 +30,7 @@ public class SMSOutObserverFactoryTest {
     public void create() throws Exception {
         SMSOutObserverFactory cut = new SMSOutObserverFactory();
 
-        cut.create(mockNetworkListener, mockContext);
+        cut.create(mockWifiListener, mockContext);
     }
 
 }
