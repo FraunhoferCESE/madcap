@@ -226,6 +226,8 @@ public class DataCollectionService extends Service {
 
         EventBus.getDefault().unregister(this);
 
+        prefs.edit().putLong(getString(R.string.pref_dataCount), cache.getSize()).apply();
+
         sendDataCollectionProbe(DataCollectionProbe.OFF);
 
         heartbeatHandler.removeCallbacksAndMessages(null);
