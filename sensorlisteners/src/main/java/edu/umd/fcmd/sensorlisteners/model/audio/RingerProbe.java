@@ -11,6 +11,7 @@ public class RingerProbe extends Probe {
     public static final String NORMAL = "NORMAL";
     public static final String SILENT = "SILENT";
     public static final String VIBRATE = "VIBRATE";
+    public static final String UNKNOWN = "";
 
     private static final String RINGER_TYPE = "Ringer";
     private String mode;

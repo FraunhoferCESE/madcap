@@ -13,7 +13,7 @@ import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
-import edu.umd.fcmd.sensorlisteners.model.network.MSMSProbe;
+import edu.umd.fcmd.sensorlisteners.model.network.NetworkProbeFactory;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 import timber.log.Timber;
 
@@ -26,11 +26,13 @@ public class SMSListener extends BroadcastReceiver implements Listener {
 
     private final Context mContext;
     private final ProbeManager<Probe> probeManager;
+    private final NetworkProbeFactory factory;
 
     @Inject
-    SMSListener(Context context, ProbeManager<Probe> probeManager) {
+    SMSListener(Context context, ProbeManager<Probe> probeManager, NetworkProbeFactory factory) {
         mContext = context;
         this.probeManager = probeManager;
+        this.factory = factory;
     }
 
     @Override
@@ -70,36 +72,6 @@ public class SMSListener extends BroadcastReceiver implements Listener {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        MSMSProbe msmsProbe = new MSMSProbe();
-        msmsProbe.setDate(System.currentTimeMillis());
-
-        switch (intent.getAction()) {
-            case Telephony.Sms.Intents.SMS_RECEIVED_ACTION:
-                msmsProbe.setAction("SMS_RECEIVED_TEXT_BASED");
-                break;
-            case Telephony.Sms.Intents.DATA_SMS_RECEIVED_ACTION:
-                msmsProbe.setAction("SMS_RECEIVED_DATA_BASED");
-                break;
-            case Telephony.Sms.Intents.SMS_CB_RECEIVED_ACTION:
-                msmsProbe.setAction("CELL_BROADCAST_RECEIVED");
-                break;
-            case Telephony.Sms.Intents.SMS_REJECTED_ACTION:
-                msmsProbe.setAction("SMS_REJECTED");
-                break;
-            case Telephony.Sms.Intents.WAP_PUSH_RECEIVED_ACTION:
-                msmsProbe.setAction("MMS_RECEIVED");
-                break;
-            case "android.provider.Telephony.SMS_SENT":
-                msmsProbe.setAction("SMS_SENT");
-                break;
-            case Telephony.Mms.Intents.CONTENT_CHANGED_ACTION:
-                msmsProbe.setAction("MMS_CONTENT_CHANGED");
-                break;
-            default:
-                msmsProbe.setAction("UNKNOWN");
-                break;
-        }
-
-        onUpdate(msmsProbe);
+        onUpdate(factory.createSmsProbe(intent));
     }
 }

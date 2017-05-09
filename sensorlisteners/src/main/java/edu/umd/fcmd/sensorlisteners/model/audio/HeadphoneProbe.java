@@ -10,6 +10,7 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 public class HeadphoneProbe extends Probe {
     public static final String PLUGGED = "PLUGGED";
     public static final String UNPLUGGED = "UNPLUGGED";
+    public static final String UNKNOWN = "";
 
     private static final String HEADPHONE_TYPE = "Headphone";
     private String plugState;

@@ -1,48 +1,51 @@
 package edu.umd.fcmd.sensorlisteners.listener.activity;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import edu.umd.fcmd.sensorlisteners.model.activity.ActivityProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
+import timber.log.Timber;
 
 /**
  * Created by MMueller on 12/8/2016.
- *
+ * <p>
  * Listener for activity regonition.
  */
 public class ActivityListener implements Listener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-    private final String TAG = getClass().getSimpleName();
-    private boolean runningState;
+
+    private static final long ACTIVITY_STARTUP_DELAY = 10000L;
+
+    private boolean isRunning;
 
     private final ProbeManager<Probe> probeManager;
     private final GoogleApiClient googleApiClient;
-    private final SnapshotApi snapshotApi;
+    private final Handler activityUpdateHandler;
+    private final ActivityUpdater activityUpdater;
 
-    private final TimedActivityTaskFactory timedActivityTaskFactory;
-    private TimedActivityTask timedActivityTask;
 
     @Inject
     public ActivityListener(ProbeManager<Probe> probeManager,
                             @Named("AwarenessApi") GoogleApiClient googleApiClient,
-                            SnapshotApi snapshotApi,
-                            TimedActivityTaskFactory timedActivityTaskFactory){
+                            ActivityUpdater activityUpdater,
+                            @Named("ActivityUpdateHandler") Handler activityUpdateHandler) {
         this.probeManager = probeManager;
         this.googleApiClient = googleApiClient;
-        this.snapshotApi = snapshotApi;
-        this.timedActivityTaskFactory = timedActivityTaskFactory;
+        this.activityUpdater = activityUpdater;
+        this.activityUpdateHandler = activityUpdateHandler;
     }
 
     @Override
@@ -51,57 +54,58 @@ public class ActivityListener implements Listener, GoogleApiClient.ConnectionCal
     }
 
     @Override
-    public void startListening() throws NoSensorFoundException {
-        if(!runningState){
+    public void startListening() {
+        if (!isRunning) {
+            EventBus.getDefault().register(this);
+
             googleApiClient.registerConnectionCallbacks(this);
             googleApiClient.registerConnectionFailedListener(this);
-
             googleApiClient.connect();
-        }
 
-        runningState = true;
+            isRunning = true;
+        }
     }
 
     @Override
     public void stopListening() {
-        if(runningState){
-            timedActivityTask.cancel(true);
-
+        if (isRunning) {
+            activityUpdateHandler.removeCallbacksAndMessages(null);
+            googleApiClient.unregisterConnectionCallbacks(this);
+            googleApiClient.unregisterConnectionFailedListener(this);
             googleApiClient.disconnect();
-        }
-        runningState = false;
-    }
 
-    @Override
-    public boolean isRunning() {
-        return runningState;
+            EventBus.getDefault().unregister(this);
+            isRunning = false;
+        }
     }
 
     @Override
     public boolean isPermittedByUser() {
-        //TODO: system check for permission
         //non dangerous permission
         return true;
+    }
+
+    @Subscribe
+    public void handleActivityChange(ActivityProbe probe) {
+        onUpdate(probe);
     }
 
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        timedActivityTask = timedActivityTaskFactory.create(this, snapshotApi);
-        timedActivityTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        Timber.d("Successfully connected to AwarenessApi");
+        activityUpdateHandler.postDelayed(activityUpdater, ACTIVITY_STARTUP_DELAY);
     }
 
     @Override
     public void onConnectionSuspended(int i) {
-        Log.d(TAG, "GoogleApiClient connection suspended");
+        Timber.w("AwarenessApi connection suspended");
+        activityUpdateHandler.removeCallbacksAndMessages(null);
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(TAG, "GoogleApiClient connection failed");
-    }
-
-    GoogleApiClient getGoogleApiClient() {
-        return googleApiClient;
+        Timber.w("AwarenessApi connection failed");
+        activityUpdateHandler.removeCallbacksAndMessages(null);
     }
 }

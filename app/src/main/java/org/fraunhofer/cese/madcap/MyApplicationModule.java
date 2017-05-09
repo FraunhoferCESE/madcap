@@ -5,10 +5,10 @@ import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
-import android.nfc.NfcManager;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
@@ -89,6 +89,7 @@ class MyApplicationModule {
         return LocationServices.FusedLocationApi;
     }
 
+    @Singleton
     @Provides
     @Named("AwarenessApi")
     GoogleApiClient provideAwarenessApiClient() {
@@ -104,23 +105,22 @@ class MyApplicationModule {
 
 
     /**
-     * Needed by the DataCollectionService.
-     *
-     * @return a static FenceApi
-     */
-    @Provides
-    FenceApi provideFenceApi() {
-        return Awareness.FenceApi;
-    }
-
-    /**
-     * Needed by the DataCollectionService.
+     * Needed by the ActivityListener.
      *
      * @return a statuc SnapshotApi
      */
     @Provides
     SnapshotApi provideSnapshotApi() {
         return Awareness.SnapshotApi;
+    }
+
+
+
+    @Provides
+    @Singleton
+    @Named("ActivityUpdateHandler")
+    Handler proveActivityUpdateHandler() {
+        return new Handler();
     }
 
     @Provides
@@ -238,5 +238,9 @@ class MyApplicationModule {
         return NfcAdapter.getDefaultAdapter(application);
     }
 
+    @Provides
+    AudioManager provideAudioManager() {
+        return (AudioManager) application.getSystemService(Context.AUDIO_SERVICE);
+    }
 }
 

@@ -49,7 +49,7 @@ public class ApplicationsListener implements Listener {
     }
 
     @Override
-    public void startListening() throws NoSensorFoundException {
+    public void startListening() {
         if (!runningStatus) {
             if (isPermittedByUser()) {
                 timedApplicationTask = timedApplicationTaskFactory.create(this, context, permissionsManager);
@@ -72,11 +72,6 @@ public class ApplicationsListener implements Listener {
             timedApplicationTask.cancel(true);
         }
         runningStatus = false;
-    }
-
-    @Override
-    public boolean isRunning() {
-        return runningStatus;
     }
 
     @Override

@@ -6,10 +6,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.BatteryManager;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
@@ -45,7 +43,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.listener.activity.ActivityListener;
 import edu.umd.fcmd.sensorlisteners.listener.applications.ApplicationsListener;
@@ -54,12 +51,11 @@ import edu.umd.fcmd.sensorlisteners.listener.bluetooth.BluetoothListener;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationListener;
 import edu.umd.fcmd.sensorlisteners.listener.network.ConnectivityListener;
 import edu.umd.fcmd.sensorlisteners.listener.network.NFCListener;
-import edu.umd.fcmd.sensorlisteners.listener.network.WifiListener;
 import edu.umd.fcmd.sensorlisteners.listener.network.SMSListener;
 import edu.umd.fcmd.sensorlisteners.listener.network.TelephonyListener;
+import edu.umd.fcmd.sensorlisteners.listener.network.WifiListener;
 import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
-import edu.umd.fcmd.sensorlisteners.model.power.ChargingProbe;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.util.DataCollectionProbe;
 import timber.log.Timber;
@@ -300,49 +296,24 @@ public class DataCollectionService extends Service {
     public void onPermissionGrantedEvent(MadcapPermissionsManager.PermissionGrantedEvent event) {
         Timber.d("PermissionGranted event received: " + event);
 
-        try {
-            switch (event) {
-                case LOCATION:
-                    locationListener.startListening();
-                    wifiListener.startListening();
-                    break;
-                case TELEPHONE:
-                    telephonyListener.startListening();
-                    break;
-                case SMS:
-                    smsListener.startListening();
-                    break;
-                case USAGE:
-                    applicationsListener.startListening();
-                    break;
-            }
-        } catch (NoSensorFoundException nsf) {
-            Timber.e(nsf);
+        switch (event) {
+            case LOCATION:
+                locationListener.startListening();
+                wifiListener.startListening();
+                telephonyListener.startListening();
+                break;
+            case TELEPHONE:
+                telephonyListener.startListening();
+                break;
+            case SMS:
+                smsListener.startListening();
+                break;
+            case USAGE:
+                applicationsListener.startListening();
+                break;
         }
 
-    }
 
-    private String getPluggedState(Context context, Intent intent) {
-        Intent chargingIntent = context.registerReceiver(null, new IntentFilter(
-                Intent.ACTION_BATTERY_CHANGED));
-        int pluggedState = 0;
-
-        if (chargingIntent != null) {
-            pluggedState = chargingIntent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-        }
-
-        switch (pluggedState) {
-            case 0:
-                return ChargingProbe.NONE;
-            case BatteryManager.BATTERY_PLUGGED_AC:
-                return ChargingProbe.AC;
-            case BatteryManager.BATTERY_PLUGGED_USB:
-                return ChargingProbe.USB;
-            case BatteryManager.BATTERY_PLUGGED_WIRELESS:
-                return ChargingProbe.WIRELESS;
-            default:
-                return ChargingProbe.NONE;
-        }
     }
 
     /**

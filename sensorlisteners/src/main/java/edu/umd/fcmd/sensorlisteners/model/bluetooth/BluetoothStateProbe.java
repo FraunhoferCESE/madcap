@@ -16,7 +16,6 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
  */
 
 public class BluetoothStateProbe extends Probe {
-    private final String TAG = getClass().getSimpleName();
     public static final String OFF = "OFF";
     public static final String ON = "ON";
     public static final String TURNING_OFF = "TURNING_OFF";

@@ -9,6 +9,11 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
  * invoke methods with the Bluetooth.
  */
 public class BluetoothRequestProbe extends Probe {
+
+    public static final String DISCOVERABLE = "DISCOVERABLE";
+    public static final String ENABLE = "ENABLE";
+    public static final String UNKNOWN = "UNKNOWN";
+
     private String kind;
 
     /**

@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
-import edu.umd.fcmd.sensorlisteners.model.network.NetworkProbe;
+import edu.umd.fcmd.sensorlisteners.model.network.NetworkProbeFactory;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 import timber.log.Timber;
 
@@ -24,11 +24,15 @@ public class ConnectivityListener extends BroadcastReceiver implements Listener 
     private boolean isRunning;
     private final Context mContext;
     private final ProbeManager<Probe> probeManager;
+    private final NetworkProbeFactory factory;
+    private final ConnectivityManager connectivityManager;
 
     @Inject
-    ConnectivityListener(Context context, ProbeManager<Probe> probeManager) {
+    ConnectivityListener(Context context, ProbeManager<Probe> probeManager, NetworkProbeFactory factory, ConnectivityManager connectivityManager) {
         mContext = context;
         this.probeManager = probeManager;
+        this.factory = factory;
+        this.connectivityManager = connectivityManager;
     }
 
     @Override
@@ -40,7 +44,9 @@ public class ConnectivityListener extends BroadcastReceiver implements Listener 
     public void startListening() {
         if (!isRunning) {
             Timber.d("startListening");
+            onUpdate(factory.createNetworkProbe(connectivityManager.getActiveNetworkInfo()));
             mContext.registerReceiver(this, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
             isRunning = true;
         }
     }
@@ -61,16 +67,6 @@ public class ConnectivityListener extends BroadcastReceiver implements Listener 
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        NetworkProbe networkProbe = new NetworkProbe();
-        networkProbe.setDate(System.currentTimeMillis());
-        networkProbe.setInfo(intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO));
-        if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
-            networkProbe.setState(NetworkProbe.NOT_CONNECTED);
-        } else {
-            networkProbe.setState(NetworkProbe.CONNECTED);
-        }
-        onUpdate(networkProbe);
-
+        onUpdate(factory.createNetworkProbe(intent));
     }
 }

@@ -10,6 +10,7 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 public class DockStateProbe extends Probe {
     public static final String DOCKED = "DOCKED";
     public static final String UNDOCKED = "NOT_DOCKED";
+    public static final String UNKNOWN = "UNKNOWN";
 
     public static final String CAR = "CAR";
     public static final String DESK = "DESK";
