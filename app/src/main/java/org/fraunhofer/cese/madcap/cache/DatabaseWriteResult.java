@@ -12,7 +12,7 @@ import java.util.Collections;
  *
  * @author Lucas
  * @see Cache
- * @see DatabaseAsyncTaskFactory#createWriteTask(Context, Cache, UploadStrategy)
+ * @see DatabaseAsyncTaskFactory#createWriteTask(Context, UploadStrategy)
  */
 @SuppressWarnings("FinalClass")
 final class DatabaseWriteResult {
@@ -22,13 +22,16 @@ final class DatabaseWriteResult {
     @Nullable
     private Exception error;
 
+    private UploadStrategy uploadStrategy;
+
     /**
      * Direct constructor calls are not supported.
      */
-    private DatabaseWriteResult() {
+    private DatabaseWriteResult(UploadStrategy strategy) {
         savedEntries = new ArrayList<>(1000);
         databaseSize = -1L;
         error = null;
+        uploadStrategy = strategy;
     }
 
     /**
@@ -36,8 +39,8 @@ final class DatabaseWriteResult {
      *
      * @return a new DatabaseWriteResult instance
      */
-    static DatabaseWriteResult create() {
-        return new DatabaseWriteResult();
+    static DatabaseWriteResult create(UploadStrategy uploadStrategy) {
+        return new DatabaseWriteResult(uploadStrategy);
     }
 
     /**
@@ -89,12 +92,21 @@ final class DatabaseWriteResult {
         this.databaseSize = databaseSize;
     }
 
+    public UploadStrategy getUploadStrategy() {
+        return uploadStrategy;
+    }
+
+    public void setUploadStrategy(UploadStrategy uploadStrategy) {
+        this.uploadStrategy = uploadStrategy;
+    }
+
     @Override
     public String toString() {
         return "DatabaseWriteResult{" +
                 "savedEntries=" + savedEntries +
                 ", databaseSize=" + databaseSize +
                 ", error=" + error +
+                ", uploadStrategy=" + uploadStrategy +
                 '}';
     }
 }

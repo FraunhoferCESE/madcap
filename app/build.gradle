@@ -47,7 +47,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 22
         versionCode versionBuild
-        versionName "1.0.2"
+        versionName "1.0.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
     }
@@ -95,16 +95,16 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
 
-    compile 'com.google.firebase:firebase-config:10.2.1'
+    compile 'com.google.firebase:firebase-config:10.2.4'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.j256.ormlite:ormlite-android:5.0'
-    compile 'com.google.android.gms:play-services-auth:10.2.1'
-    compile 'com.google.android.gms:play-services-location:10.2.1'
-    compile 'com.google.android.gms:play-services-iid:10.2.1'
-    compile 'com.google.android.gms:play-services-awareness:10.2.1'
-    compile 'com.google.firebase:firebase-core:10.2.1'
-    compile 'com.google.firebase:firebase-messaging:10.2.1'
-    compile 'com.google.firebase:firebase-crash:10.2.1'
+    compile 'com.google.android.gms:play-services-auth:10.2.4'
+    compile 'com.google.android.gms:play-services-location:10.2.4'
+    compile 'com.google.android.gms:play-services-iid:10.2.4'
+    compile 'com.google.android.gms:play-services-awareness:10.2.4'
+    compile 'com.google.firebase:firebase-core:10.2.4'
+    compile 'com.google.firebase:firebase-messaging:10.2.4'
+    compile 'com.google.firebase:firebase-crash:10.2.4'
     compile 'com.google.http-client:google-http-client-android:1.22.0'
     compile 'com.google.api-client:google-api-client-android:1.22.0'
     compile 'com.android.support:multidex:1.0.1'
@@ -113,15 +113,16 @@ dependencies {
     compile 'com.android.support:design:25.3.1'
     compile 'javax.annotation:javax.annotation-api:1.2'
     compile 'javax.inject:javax.inject:1'
-    compile 'com.google.code.findbugs:jsr305:2.0.1'
+    compile 'com.google.code.findbugs:jsr305:3.0.2'
 
     //Dagger
-    compile 'com.google.dagger:dagger:2.5'
-    apt 'com.google.dagger:dagger-compiler:2.5'
+    compile 'com.google.dagger:dagger:2.10'
+    apt 'com.google.dagger:dagger-compiler:2.10'
 
     compile 'com.jakewharton.timber:timber:4.5.1'
     compile 'com.jakewharton:butterknife:8.5.1'
     apt 'com.jakewharton:butterknife-compiler:8.5.1'
+    compile 'org.greenrobot:eventbus:3.0.0'
 }
 
 def debugProps = new Properties()

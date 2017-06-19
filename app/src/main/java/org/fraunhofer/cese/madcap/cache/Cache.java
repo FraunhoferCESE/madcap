@@ -15,9 +15,8 @@ import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -47,9 +46,6 @@ import timber.log.Timber;
 public class Cache {
 
     private long currentDbSize;
-
-    @Nullable
-    private Collection<UploadStatusListener> uploadStatusListeners;
 
     /**
      * Background task holder for the remote upload task. Stored to query for uploads in progress.
@@ -131,8 +127,10 @@ public class Cache {
         mFirebaseRemoteConfig = firebaseRemoteConfig;
         prefs = sharedPreferences;
 
+        //noinspection NumericCastThatLosesPrecision
         memcache = Collections.synchronizedMap(new LinkedHashMap<String, CacheEntry>((int) mFirebaseRemoteConfig.getLong(context.getString(R.string.MAX_MEM_ENTRIES_KEY))));
 
+        EventBus.getDefault().register(this);
         currentDbSize = getHelper().getDao().countOf();
         if (checkUploadConditions(UploadStrategy.NORMAL) == UPLOAD_READY) {
             upload();
@@ -180,7 +178,7 @@ public class Cache {
         Timber.d("Cache now flushing.");
         lastDbWriteAttempt = System.currentTimeMillis();
 
-        AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> task = dbTaskFactory.createWriteTask(context, this, uploadStrategy);
+        AsyncTask<Map<String, CacheEntry>, Void, DatabaseWriteResult> task = dbTaskFactory.createWriteTask(context, uploadStrategy);
 
         //noinspection unchecked
         task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, ImmutableMap.copyOf(memcache));
@@ -192,10 +190,10 @@ public class Cache {
      * This method is called when the DatabaseWriteAsyncTask successfully saves to the SQLLite database.
      * This method removes saved entries from the memcache and triggers an upload if conditions are correct.
      *
-     * @param result         object containing information on successfully saved entries (if any) and errors that occured
-     * @param uploadStrategy the upload strategy to use
+     * @param result object containing information on successfully saved entries (if any) and errors that occured
      */
-    void doPostDatabaseWrite(DatabaseWriteResult result, UploadStrategy uploadStrategy) {
+    @Subscribe
+    public void doPostDatabaseWrite(DatabaseWriteResult result) {
 
         currentDbSize = getHelper().getDao().countOf();
 
@@ -225,7 +223,7 @@ public class Cache {
         }
 
         // 3. Do upload if conditions are met.
-        if (checkUploadConditions(uploadStrategy) == UPLOAD_READY) {
+        if (checkUploadConditions(result.getUploadStrategy()) == UPLOAD_READY) {
             upload();
         }
     }
@@ -241,35 +239,11 @@ public class Cache {
             return -1L;
         }
         try {
-            return getHelper().getDao().countOf() + (long) memcache.size();
+            return currentDbSize + (long) memcache.size();
         } catch (RuntimeException e) {
             Timber.e(e.getMessage());
             return -1L;
         }
-    }
-
-    /**
-     * Add a listener for upload events. The listener will be provided with an {@link RemoteUploadResult}. Listeners will also be notified
-     * when the cache is shutting down.
-     *
-     * @param listener the listener to add
-     */
-    @SuppressWarnings("NonBooleanMethodNameMayNotStartWithQuestion")
-    public void addUploadListener(UploadStatusListener listener) {
-        if (uploadStatusListeners == null) {
-            uploadStatusListeners = new ArrayList<>(2);
-        }
-        uploadStatusListeners.add(listener);
-    }
-
-    /**
-     * Removes the specified listener from upload events.
-     *
-     * @param listener the listener to remove
-     * @return {@code true} if this {@code listener} was removed from the list of listeners, {@code false} otherwise.
-     */
-    public boolean removeUploadListener(UploadStatusListener listener) {
-        return (uploadStatusListeners != null) && uploadStatusListeners.remove(listener);
     }
 
     /**
@@ -392,7 +366,7 @@ public class Cache {
         Timber.d("Upload now called");
         lastUploadAttempt = System.currentTimeMillis();
 
-        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, this, endpointApiBuilder, uploadStatusListeners).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        uploadTask = uploadTaskFactory.createRemoteUploadTask(context, endpointApiBuilder).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     /**
@@ -402,15 +376,13 @@ public class Cache {
      *
      * @param uploadResult the upload result passed from the remote upload task
      */
-    void doPostUpload(RemoteUploadResult uploadResult) {
+    @Subscribe
+    public void doPostUpload(RemoteUploadResult uploadResult) {
         currentDbSize = getHelper().getDao().countOf();
         uploadTask = null;
-        if ((uploadStatusListeners != null) && !uploadStatusListeners.isEmpty()) {
-            for (UploadStatusListener listener : uploadStatusListeners) {
-                listener.uploadFinished(uploadResult);
-            }
-        }
+
         if (uploadResult == null) {
+            Timber.w("uploadResult was null for some reason");
             return;
         }
 
@@ -421,7 +393,7 @@ public class Cache {
 
         if (uploadResult.getException() != null) {
             Timber.w("{doPostUpload} Uploading entries failed: " + uploadResult.getException().getMessage());
-            dbTaskFactory.createCleanupTask(context, this, mFirebaseRemoteConfig.getLong(context.getString(R.string.DB_FORCED_CLEANUP_LIMIT_KEY))).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            dbTaskFactory.createCleanupTask(context, mFirebaseRemoteConfig.getLong(context.getString(R.string.DB_FORCED_CLEANUP_LIMIT_KEY))).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -436,12 +408,6 @@ public class Cache {
         if (databaseHelper != null) {
             OpenHelperManager.releaseHelper();
             databaseHelper = null;
-        }
-
-        if (uploadStatusListeners != null) {
-            for (UploadStatusListener listener : uploadStatusListeners) {
-                listener.cacheClosing();
-            }
         }
     }
 

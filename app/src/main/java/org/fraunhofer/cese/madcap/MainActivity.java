@@ -10,13 +10,19 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
 import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -44,6 +50,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     private static final float ALPHA_DISABLED = 0.5f;
     private static final float ALPHA_ENABLED = 1.0f;
 
+    @Inject FirebaseRemoteConfig firebaseRemoteConfig;
     @Inject SharedPreferences prefs;
 
     //This is the data collection service we bind to.
@@ -64,6 +71,10 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     @BindView(R.id.lastUploadStatus) TextView uploadStatusView;
     @BindView(R.id.lastUploadMessage) TextView uploadMessageView;
     @BindView(R.id.uploadButton) Button uploadButton;
+    @BindView(R.id.capacity_warning_icon) ImageView capacityWarningIcon;
+    @BindView(R.id.capacity_warning_text) TextView capacityWarningText;
+
+    @BindView(R.id.warningBlock) ConstraintLayout warningBlock;
 
     /**
      * Defines callbacks for service binding, passed to bindService()
@@ -166,7 +177,15 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
         //Set the toggle button on the last set preference configuration
         collectDataSwitch.setChecked(isCollectingData());
-        dataCountView.setText(String.format(getString(R.string.dataCountText), prefs.getLong(getString(R.string.pref_dataCount), 0L)));
+
+
+        if (mBound && mDataCollectionService != null) {
+            mDataCount = mDataCollectionService.getCount();
+        } else {
+            mDataCount = prefs.getLong(getString(R.string.pref_dataCount), 0L);
+        }
+
+        dataCountView.setText(String.format(getString(R.string.dataCountText), mDataCount));
         uploadDateView.setText(String.format(getString(R.string.lastUploadDateText), formatDate()));
         uploadStatusView.setText(prefs.getString(getString(R.string.pref_lastUploadStatus), ""));
         uploadMessageView.setText(String.format(getString(R.string.lastUploadMessage), prefs.getString(getString(R.string.pref_lastUploadMessage), "")));
@@ -236,8 +255,26 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCacheCountUpdate(Cache.CacheCountUpdate event) {
+        if (event == null) {
+            return;
+        }
+
         dataCountView.setText(String.format(getString(R.string.dataCountText), event.getCount()));
         mDataCount = event.getCount();
+
+        //noinspection MagicNumber
+        double percentage = ((double) event.getCount() * 100.0d) / (double) firebaseRemoteConfig.getLong(getString(R.string.DB_FORCED_CLEANUP_LIMIT_KEY));
+        double limit = firebaseRemoteConfig.getDouble(getString(R.string.CLEANUP_WARNING_LIMIT_KEY));
+
+        if (percentage >= limit) {
+            if (warningBlock.getVisibility() == View.GONE) {
+                warningBlock.setVisibility(View.VISIBLE);
+            }
+            capacityWarningText.setText(String.format(getString(R.string.capacity_warning), percentage));
+
+        } else if (warningBlock.getVisibility() != View.GONE) {
+            warningBlock.setVisibility(View.GONE);
+        }
     }
 
     private String formatDate() {
@@ -269,5 +306,22 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     @Override
     protected void onSignOut() {
         finish();
+    }
+
+    @Subscribe
+    public void uploadFinished(RemoteUploadResult result) {
+
+        if (mBound && (mDataCollectionService != null)) {
+            mDataCount = mDataCollectionService.getCount();
+            dataCountView.setText(String.format(getString(R.string.dataCountText), mDataCount));
+        }
+
+        if (warningBlock.getVisibility() == View.GONE) {
+            return;
+        }
+
+        if ((result != null) && (result.getSaveResult() != null) && !result.getSaveResult().getSaved().isEmpty()) {
+            warningBlock.setVisibility(View.GONE);
+        }
     }
 }

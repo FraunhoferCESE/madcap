@@ -19,6 +19,7 @@ import timber.log.Timber;
  * <p>
  * See <a href="http://ormlite.com/javadoc/ormlite-core/doc-files/ormlite_4.html#Android-Basics">ORMLite Documentation: Using With Android</a>
  */
+@SuppressWarnings("WeakerAccess")
 public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
 
     private static final String TAG = "Fraunhofer." + DatabaseOpenHelper.class.getSimpleName();

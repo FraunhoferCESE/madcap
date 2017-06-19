@@ -28,4 +28,9 @@
         <key>upload_on_wifi_only</key>
         <value>true</value>
     </entry>
+    <entry>
+        <key>cleanup_warning_limit</key>
+        <value>90.0</value>
+    </entry>
+
 </defaultsMap>

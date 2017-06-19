@@ -21,7 +21,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import org.fraunhofer.cese.madcap.cache.CacheFactory;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
-import org.fraunhofer.cese.madcap.issuehandling.MadcapSensorNoAnswerReceivedHandler;
 import org.fraunhofer.cese.madcap.util.MadcapBuildVersionProvider;
 
 import java.util.Calendar;
@@ -149,11 +148,6 @@ class MyApplicationModule {
     @Provides
     TimedApplicationTaskFactory provideTimedApplicationTask() {
         return new TimedApplicationTaskFactory();
-    }
-
-    @Provides
-    MadcapSensorNoAnswerReceivedHandler provideSensorNoAnswerReceivedHandler() {
-        return new MadcapSensorNoAnswerReceivedHandler();
     }
 
     @SuppressWarnings("unchecked")

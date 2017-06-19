@@ -4,6 +4,9 @@
     <string name="buildVersion">MADCAP Version %s</string>
     <string name="buildNumber">Build %d</string>
 
+    <string name="capacity_warning_title">MADCAP needs to upload!</string>
+    <string name="capacity_warning">MADCAP is at %2.2f%% database capacity. Please upload soon or data will be lost.</string>
+    <string name="warning_icon_description">warning icon</string>
 
     <!-- ActionBar Menu -->
     <string name="action_settings">Settings</string>
@@ -42,7 +45,7 @@
     <string name="lastUploadMessage">%s</string>
 
 
-    <string name="pref_dataCount">dataCount</string>
+    <string name="pref_dataCount">dataCount_long</string>
 
 
     <!-- Logout broadcast -->
@@ -56,7 +59,7 @@
     <string name="signing_in">Signing in…</string>
     <string name="signed_out">Signed out. Please sign in below.</string>
     <string name="post_sign_out">You are now signed out of MADCAP.</string>
-    <string name="signing_out">Signing out...</string>
+    <string name="signing_out">Signing out…</string>
     <string name="signin_service_unavailable">Google SignIn services are unavailable. Please try again.</string>
     <string name="signin_service_connection_failed">Could not connect to Google SignIn service. Please try again.</string>
     <string name="logout_failed">Logout from MADCAP failed. Error code: %i. Please try again.</string>
@@ -68,10 +71,8 @@
     <string name="EULA_key">EULA_KEY</string>
 
     <string name="sign_out">Sign Out</string>
-    <string name="proceedToMain">MADCAP home</string>
 
     <!-- Google Play Services errors -->
-    <string name="play_services_error_fmt">Google Play Services Error: %i</string>
     <string name="play_services_missing">Play services not available, please install them and retry.</string>
     <string name="play_services_updating">Play services are currently updating, please wait and try again.</string>
     <string name="play_services_need_updated">Play services not up to date. Please update your system and try again.</string>
@@ -82,13 +83,9 @@
 
     <!-- Welcome activity -->
     <string name="help">Help</string>
-    <string name="welcome">Welcome to MADCAP! Attempting automatic signin...</string>
+    <string name="welcome">Welcome to MADCAP! Attempting automatic signin…</string>
     <string name="welcome_signin_success">Signed in as %s</string>
     <string name="weclome_signin_failed">User could not be authenticated to MADCAP. Starting Signin activity.</string>
-
-    <!-- Main activity -->
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
 
 
     <!-- Help activity -->
@@ -99,14 +96,6 @@
     <string name="contactEmail">madcap@pocket-security.org</string>
     <string name="contactSubject">MADCAP/Pocket Security contact</string>
     <string name="onlineHelpURL">https://www.pocket-security.org/app-help/</string>
-
-    <!-- Logout fragment -->
-    <string name="logout_text">You can sign out from MADCAP at any time. MADCAP does not collect data while you are signed out.</string>
-    <string name="logoutButtonText">Log out</string>
-    <string name="quitText">If you want to leave MADCAP you have to contact the organizers to get your personal data removed. \n
-    Notice: You are free to turn off the data collection at any change you want and start it again later. Therefore it is not neccessary to quit the program.
-    \n You will not receive the financial benefits anymore.</string>
-    <string name="quitButtonText">Quit pocket security.</string>
 
     <string name="last_hearthbeat">Hearthbeat</string>
 
@@ -132,7 +121,6 @@
     <!-- Contact -->
     <string name="contactHeader">Contact</string>
     <string name="contactLink">Please visit https://www.pocket-security.org.</string>
-    <string name="title_activity_sign_up_check">SignUpCheckActivity</string>
 
     <!-- SettingsActivity -->
     <string name="name_settings_activity">Settings</string>
@@ -148,7 +136,7 @@
     <string name="not_authorized_user_id">User id: %s</string>
     <string name="authorization_error">An error occurred while checking your authorization to use MADCAP. Please go back and try signing in again.</string>
     <string name="not_authorized_short">Not authorized to use MADCAP</string>
-    <string name="authorization_authorized">Authorization successful. Launching MADCAP...</string>
+    <string name="authorization_authorized">Authorization successful. Launching MADCAP…</string>
 
     <!-- EULA -->
     <string name="eula">
@@ -189,5 +177,6 @@
     <string name="DB_WRITE_INTERVAL_KEY">db_write_interval</string>
     <string name="UPLOAD_INTERVAL_KEY">upload_interval</string>
     <string name="UPLOAD_ON_WIFI_ONLY_KEY">upload_on_wifi_only</string>
+    <string name="CLEANUP_WARNING_LIMIT_KEY">cleanup_warning_limit</string>
 
 </resources>
