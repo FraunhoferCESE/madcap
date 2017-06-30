@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
@@ -81,16 +82,20 @@ public class MadcapPermissionsManager implements PermissionsManager {
 
     @Override
     public boolean isUsageStatsPermitted() {
-        
-        try {
-            ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), 0);
-            AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
-            int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, appInfo.uid, appInfo.packageName);
-            return (mode == AppOpsManager.MODE_ALLOWED);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            try {
+                ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), 0);
+                AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
+                int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, appInfo.uid, appInfo.packageName);
+                return (mode == AppOpsManager.MODE_ALLOWED);
 
-        } catch (PackageManager.NameNotFoundException e) {
-            //do not resolve this catch.
-            return false;
+            } catch (PackageManager.NameNotFoundException e) {
+                //do not resolve this catch.
+                return false;
+            }
+        }
+        else {
+            return (ContextCompat.checkSelfPermission(context,Manifest.permission.GET_TASKS) == PackageManager.PERMISSION_GRANTED);
         }
     }
 
