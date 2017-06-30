@@ -10,6 +10,7 @@ import android.telephony.TelephonyManager;
 
 import javax.inject.Inject;
 
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.network.NetworkProbeFactory;
@@ -29,13 +30,16 @@ public class TelephonyListener extends PhoneStateListener implements Listener {
     private final TelephonyManager telephonyManager;
     private final ProbeManager<Probe> probeManager;
     private final NetworkProbeFactory factory;
+    private final PermissionsManager permissionsManager;
+
 
     @Inject
-    TelephonyListener(Context context, ProbeManager<Probe> probeManager, TelephonyManager telephonyManager, NetworkProbeFactory factory) {
+    TelephonyListener(Context context, ProbeManager<Probe> probeManager, TelephonyManager telephonyManager, NetworkProbeFactory factory, PermissionsManager permissionsManager) {
         this.context = context;
         this.probeManager = probeManager;
         this.telephonyManager = telephonyManager;
         this.factory = factory;
+        this.permissionsManager = permissionsManager;
     }
 
     @Override
@@ -45,7 +49,9 @@ public class TelephonyListener extends PhoneStateListener implements Listener {
 
     @Override
     public void startListening() {
-        if (!isRunning && isPermittedByUser()) {
+        if (!isPermittedByUser()) {
+            permissionsManager.requestPermissionFromNotification();
+        } else if (!isRunning) {
             Timber.d("startListening");
 
             telephonyManager.listen(this,

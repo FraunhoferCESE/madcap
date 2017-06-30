@@ -85,6 +85,7 @@ public class PermissionsActivity extends ChildActivity {
                     EventBus.getDefault().post(MadcapPermissionsManager.PermissionGrantedEvent.USAGE);
                     break;
             }
+            permissionsManager.updatePermissionNotification();
         }
     }
 

@@ -24,6 +24,7 @@
             android:id="@+id/permissionWarningBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
             android:padding="8sp"
             android:visibility="gone"
             android:background="@color/light_red"

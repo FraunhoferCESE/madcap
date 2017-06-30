@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 
 import javax.inject.Inject;
 
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.network.NetworkProbeFactory;
@@ -28,11 +29,14 @@ public class SMSListener extends BroadcastReceiver implements Listener {
     private final ProbeManager<Probe> probeManager;
     private final NetworkProbeFactory factory;
 
+    private final PermissionsManager permissionsManager;
+
     @Inject
-    SMSListener(Context context, ProbeManager<Probe> probeManager, NetworkProbeFactory factory) {
+    SMSListener(Context context, ProbeManager<Probe> probeManager, NetworkProbeFactory factory, PermissionsManager permissionsManager) {
         mContext = context;
         this.probeManager = probeManager;
         this.factory = factory;
+        this.permissionsManager = permissionsManager;
     }
 
     @Override
@@ -42,7 +46,9 @@ public class SMSListener extends BroadcastReceiver implements Listener {
 
     @Override
     public void startListening() {
-        if (!isRunning && isPermittedByUser()) {
+        if (!isPermittedByUser()) {
+            permissionsManager.requestPermissionFromNotification();
+        } else if (!isRunning) {
             Timber.d("startListening");
             IntentFilter filter = new IntentFilter();
             filter.addAction(Telephony.Sms.Intents.SMS_RECEIVED_ACTION);
@@ -55,6 +61,7 @@ public class SMSListener extends BroadcastReceiver implements Listener {
 
             isRunning = true;
         }
+
     }
 
     @Override

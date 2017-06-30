@@ -32,7 +32,7 @@ import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 public class MadcapPermissionsManager implements PermissionsManager {
     private Context context;
 
-    private static final int NOTIFICATION_ID = 918273;
+    private static final int PERMISSION_NOTIFICATION_ID = 918274;
 
     private NotificationManager mNotificationManager;
 
@@ -57,7 +57,13 @@ public class MadcapPermissionsManager implements PermissionsManager {
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
 
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        mNotificationManager.notify(PERMISSION_NOTIFICATION_ID, mBuilder.build());
+    }
+
+    public void updatePermissionNotification() {
+        if(hasAllPermissions()) {
+            mNotificationManager.cancel(PERMISSION_NOTIFICATION_ID);
+        }
     }
 
     @Override
@@ -93,9 +99,8 @@ public class MadcapPermissionsManager implements PermissionsManager {
                 //do not resolve this catch.
                 return false;
             }
-        }
-        else {
-            return (ContextCompat.checkSelfPermission(context,Manifest.permission.GET_TASKS) == PackageManager.PERMISSION_GRANTED);
+        } else {
+            return (ContextCompat.checkSelfPermission(context, Manifest.permission.GET_TASKS) == PackageManager.PERMISSION_GRANTED);
         }
     }
 
