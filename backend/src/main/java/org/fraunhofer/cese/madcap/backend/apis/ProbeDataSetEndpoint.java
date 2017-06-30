@@ -396,6 +396,7 @@ public class ProbeDataSetEndpoint {
                     Collection<WiFiEntry> wflist = entryMap.get(entry.getProbeType());
                     WiFiEntry wiFiEntry = new WiFiEntry(entry);
                     wflist.add(wiFiEntry);
+
                     break;
                 case "MSMS":
                     if (!entryMap.containsKey(entry.getProbeType())) {

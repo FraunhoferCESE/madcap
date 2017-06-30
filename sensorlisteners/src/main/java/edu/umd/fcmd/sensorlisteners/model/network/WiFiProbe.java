@@ -15,7 +15,6 @@ public class WiFiProbe extends Probe {
     private String ssid;
     private String networkSecurity;
     private String ip;
-    private String networkState;
 
     /**
      * Gets the state (ON/OFF).
@@ -63,22 +62,6 @@ public class WiFiProbe extends Probe {
      */
     public void setNetworkSecurity(String networkSecurity) {
         this.networkSecurity = networkSecurity;
-    }
-
-    /**
-     * Getter for the Wifi network State.
-     * @return the wifi network state.
-     */
-    public String getNetworkState() {
-        return networkState;
-    }
-
-    /**
-     * Setter for the Wifi network state.
-     * @param networkState state to be set to.
-     */
-    public void setNetworkState(String networkState) {
-        this.networkState = networkState;
     }
 
     /**
@@ -134,7 +117,6 @@ public class WiFiProbe extends Probe {
                 ", \"ssid\": " + (ssid != null ? ssid : "-") +
                 ", \"networkSecurity\": " + (networkSecurity != null ? "\""+networkSecurity+"\"" : "-") +
                 ", \"ip\": " + (ip != null ? "\""+ip+"\"" : "-") +
-                ", \"networkState\": " + (networkState != null ? networkState : "-") +
                 '}';
     }
 }

@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.support.v4.content.ContextCompat;
 
@@ -29,7 +28,6 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 public class WifiListener extends BroadcastReceiver implements Listener {
     private boolean runningStatus;
 
-    private BroadcastReceiver networkReceiver;
     private final Context mContext;
     private final ProbeManager<Probe> probeProbeManager;
     private final WifiManager wifiManager;
@@ -92,13 +90,6 @@ public class WifiListener extends BroadcastReceiver implements Listener {
                 wifiManager.getConnectionInfo().getSSID(),
                 wifiManager.getScanResults(),
                 intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0));
-
-        if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(intent.getAction())) {
-            if (intent.hasExtra(WifiManager.EXTRA_NETWORK_INFO)) {
-                NetworkInfo networkInfo = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
-                probe.setNetworkState(networkInfo.toString());
-            }
-        }
 
         onUpdate(probe);
     }
