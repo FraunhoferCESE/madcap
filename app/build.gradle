@@ -45,9 +45,9 @@ android {
     defaultConfig {
         applicationId "org.fraunhofer.cese.madcap"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode versionBuild
-        versionName "1.0.5"
+        versionName "1.0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
     }
