@@ -75,22 +75,13 @@ public class MadcapPermissionsManager implements PermissionsManager {
     }
 
     @Override
-    public boolean isStoragePermitted() {
-        return (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);// ? true : false;
-    }
-
-    @Override
     public boolean isTelephonePermitted() {
         return (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);// ? true : false;
     }
 
     @Override
-    public boolean isBluetoothPermitted() {
-        return (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED);// ? true : false;
-    }
-
-    @Override
     public boolean isUsageStatsPermitted() {
+        
         try {
             ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), 0);
             AppOpsManager appOpsManager = (AppOpsManager) context.getSystemService(Context.APP_OPS_SERVICE);
@@ -104,8 +95,7 @@ public class MadcapPermissionsManager implements PermissionsManager {
     }
 
     public boolean hasAllPermissions() {
-        return (isStoragePermitted()
-                && isUsageStatsPermitted()
+        return (isUsageStatsPermitted()
                 && isLocationPermitted()
                 && isContactPermitted()
                 && isSmsPermitted()

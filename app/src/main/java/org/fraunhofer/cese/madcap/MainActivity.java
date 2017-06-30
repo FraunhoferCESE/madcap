@@ -34,8 +34,6 @@ import java.util.Date;
 
 import javax.inject.Inject;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
@@ -75,10 +73,18 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     @BindView(R.id.lastUploadStatus) TextView uploadStatusView;
     @BindView(R.id.lastUploadMessage) TextView uploadMessageView;
     @BindView(R.id.uploadButton) Button uploadButton;
+
+
+    @BindView(R.id.capacityWarningBlock) ConstraintLayout capacityWarningBlock;
     @BindView(R.id.capacity_warning_icon) ImageView capacityWarningIcon;
     @BindView(R.id.capacity_warning_text) TextView capacityWarningText;
 
-    @BindView(R.id.warningBlock) ConstraintLayout warningBlock;
+    @BindView(R.id.permissionWarningBlock) ConstraintLayout permissionWarningBlock;
+    @BindView(R.id.permission_warning_icon) ImageView permissionWarningIcon;
+    @BindView(R.id.permission_warning_text) TextView permissiongWarningText;
+    @BindView(R.id.permission_button) Button permissionButton;
+
+
 
 
     /**
@@ -203,19 +209,19 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             uploadResultView.setText(getString(R.string.uploadResultHeader));
         }
         uploadProgressBar.setProgress(prefs.getInt(getString(R.string.pref_uploadProgress), 0));
+        uploadProgressText.setText(String.format(getString(R.string.uploadPercentText), prefs.getInt(getString(R.string.pref_uploadProgress), 0)));
 
         if (permissionManager.hasAllPermissions()) {
-            findViewById(R.id.warningBlock).setVisibility(View.GONE);
+            permissionWarningBlock.setVisibility(View.GONE);
         } else {
-            findViewById(R.id.warningBlock).setVisibility(View.VISIBLE);
-            findViewById(R.id.warningBlock_button).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(MainActivity.this, PermissionsActivity.class));
-                }
-            });
+            permissionWarningBlock.setVisibility(View.VISIBLE);
         }
-        uploadProgressText.setText(String.format(getString(R.string.uploadPercentText), prefs.getInt(getString(R.string.pref_uploadProgress), 0)));
+
+    }
+
+    @OnClick(R.id.permission_button)
+    void onClickPermissionButton() {
+        startActivity(new Intent(MainActivity.this, PermissionsActivity.class));
     }
 
     @Override
@@ -289,13 +295,13 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         double limit = firebaseRemoteConfig.getDouble(getString(R.string.CLEANUP_WARNING_LIMIT_KEY));
 
         if (percentage >= limit) {
-            if (warningBlock.getVisibility() == View.GONE) {
-                warningBlock.setVisibility(View.VISIBLE);
+            if (capacityWarningBlock.getVisibility() == View.GONE) {
+                capacityWarningBlock.setVisibility(View.VISIBLE);
             }
             capacityWarningText.setText(String.format(getString(R.string.capacity_warning), percentage));
 
-        } else if (warningBlock.getVisibility() != View.GONE) {
-            warningBlock.setVisibility(View.GONE);
+        } else if (capacityWarningBlock.getVisibility() != View.GONE) {
+            capacityWarningBlock.setVisibility(View.GONE);
         }
     }
 
@@ -338,12 +344,12 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             dataCountView.setText(String.format(getString(R.string.dataCountText), mDataCount));
         }
 
-        if (warningBlock.getVisibility() == View.GONE) {
+        if (capacityWarningBlock.getVisibility() == View.GONE) {
             return;
         }
 
         if ((result != null) && (result.getSaveResult() != null) && !result.getSaveResult().getSaved().isEmpty()) {
-            warningBlock.setVisibility(View.GONE);
+            capacityWarningBlock.setVisibility(View.GONE);
         }
     }
 }

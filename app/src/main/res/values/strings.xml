@@ -19,8 +19,8 @@
     <string name="name_main_activity">MADCAP</string>
     <string name="introText">Welcome to MADCAP. Thank you for participating in the Pocket Security study!</string>
 
-    <string name="permissions_missing">Permissions missing</string>
-    <string name="permission_button_text">Grant now</string>
+    <string name="permissions_missing">MADCAP is missing permissions it needs to capture data.</string>
+    <string name="permission_button_text">Open Permissions Screen</string>
 
     <string name="collectDataSwitchText">Collect Data?</string>
     <string name="pref_dataCollection">datacollectionturnedonoff</string>
@@ -119,10 +119,10 @@
     <!-- Permission mini rationale -->
     <string name="contacts_short_rationale">Gets the username and accounts on device.</string>
     <string name="location_short_rationale">Gets location updates few times per hour.</string>
-    <string name="sms_short_rationale">Gets notified of incoming messages.</string>
+    <string name="sms_short_rationale">Gets notified of incoming SMS messages.</string>
     <string name="storage_short_rationale">Gets storage information.</string>
     <string name="telephone_short_rationale">Gets phone state information.</string>
-    <string name="access_usage_short_rationale">Gets phone usage statistics.</string>
+    <string name="access_usage_short_rationale">Gets application usage statistics.</string>
     <string name="bluetooth_short_rationale">Gets bluetooth state information.</string>
 
     <!-- About activity -->
