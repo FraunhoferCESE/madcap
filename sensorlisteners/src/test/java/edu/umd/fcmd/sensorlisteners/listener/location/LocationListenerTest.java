@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.mockito.MockitoAnnotations;
 
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.issuehandling.SensorNoAnswerReceivedHandler;
 import edu.umd.fcmd.sensorlisteners.model.location.LocationProbe;
 import edu.umd.fcmd.sensorlisteners.model.location.LocationServiceStatusProbe;
@@ -35,7 +35,7 @@ public class LocationListenerTest {
     LocationServiceStatusReceiverFactory mockLocationServiceStatusReceiverFactory;
     GoogleApiClient.ConnectionCallbacks mockConnectionCallbacks;
     GoogleApiClient.OnConnectionFailedListener mockOnConnectionFailedListener;
-    PermissionDeniedHandler mockPermissionDeniedHandler;
+    PermissionsManager mockPermissionsManager;
     LocationServiceStatusReceiver mockLocationServiceStatusReceiver;
     SensorNoAnswerReceivedHandler mockSensorNoAnswerReceivedHandler;
 
@@ -48,7 +48,7 @@ public class LocationListenerTest {
         mockLocationServiceStatusReceiverFactory = mock(LocationServiceStatusReceiverFactory.class);
         mockConnectionCallbacks = mock(GoogleApiClient.ConnectionCallbacks.class);
         mockOnConnectionFailedListener = mock(GoogleApiClient.OnConnectionFailedListener.class);
-        mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
+        mockPermissionsManager = mock(PermissionsManager.class);
         mockLocationServiceStatusReceiver = mock(LocationServiceStatusReceiver.class);
         mockSensorNoAnswerReceivedHandler = mock(SensorNoAnswerReceivedHandler.class);
 
@@ -71,7 +71,7 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockSensorNoAnswerReceivedHandler);
     }
 
@@ -84,7 +84,7 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockSensorNoAnswerReceivedHandler);
 
         //Testing onUpdate with a Location Probe
@@ -103,7 +103,7 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockSensorNoAnswerReceivedHandler);
 
         LocationServiceStatusProbe mockServiceState = mock(LocationServiceStatusProbe.class);
@@ -121,7 +121,7 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockSensorNoAnswerReceivedHandler);
         TimedLocationTask mockTimedLocationTask = mock(TimedLocationTask.class);
 
@@ -139,7 +139,7 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockSensorNoAnswerReceivedHandler);
         TimedLocationTask mockTimedLocationTask = mock(TimedLocationTask.class);
 
@@ -163,7 +163,7 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockSensorNoAnswerReceivedHandler);
 
         Assert.assertSame(mockContext, cut.getContext());
@@ -178,7 +178,7 @@ public class LocationListenerTest {
                 mockLocationServiceStatusReceiverFactory,
                 mockConnectionCallbacks,
                 mockOnConnectionFailedListener,
-                mockPermissionDeniedHandler,
+                mockPermissionsManager,
                 mockSensorNoAnswerReceivedHandler);
 
         Assert.assertSame(mockGoogleApiClient, cut.getApiClient());

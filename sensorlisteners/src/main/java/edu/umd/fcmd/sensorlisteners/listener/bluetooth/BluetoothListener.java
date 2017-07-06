@@ -1,49 +1,31 @@
 package edu.umd.fcmd.sensorlisteners.listener.bluetooth;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
-
-import java.util.Set;
 
 import javax.inject.Inject;
 
-import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
-import edu.umd.fcmd.sensorlisteners.listener.IntentFilterFactory;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
-import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothConnectionProbe;
-import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothStateProbe;
-import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothStaticAttributesProbe;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import edu.umd.fcmd.sensorlisteners.model.bluetooth.BluetoothProbeFactory;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
+import timber.log.Timber;
 
 /**
  * Created by MMueller on 12/2/2016.
- *
+ * <p>
  * BluetoothListener listening to certain bluetooth events.
  */
+public class BluetoothListener extends BroadcastReceiver implements Listener {
 
-public class BluetoothListener implements Listener {
-    private final String TAG = getClass().getSimpleName();
-
-    private static final String CONNECTED = "connected";
-    private static final String CONNECTING = "connecting";
-    private static final String DISCONNECTED = "disconnected";
-    private static final String CACHE_CLOSING = "cacheClosing";
-    private static final String NEW_CONNECTION_STATE = "new ConnectionState: ";
-
-    private final Context context;
+    private final Context mContext;
     private final BluetoothAdapter bluetoothAdapter;
     private final ProbeManager<Probe> probeManager;
-    private final PermissionDeniedHandler permissionDeniedHandler;
-    private final BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory;
-    private final IntentFilterFactory intenFilterFactory;
-    private BluetoothInformationReceiver receiver;
+    private final BluetoothProbeFactory factory;
 
     private boolean runningState;
 
@@ -51,15 +33,11 @@ public class BluetoothListener implements Listener {
     public BluetoothListener(Context context,
                              ProbeManager<Probe> probeManager,
                              BluetoothAdapter bluetoothAdapter,
-                             PermissionDeniedHandler permissionDeniedHandler,
-                             BluetoothInformationReceiverFactory bluetoothInformationReceiverFactory,
-                             IntentFilterFactory intenFilterFactory) {
-        this.context = context;
+                             BluetoothProbeFactory factory) {
+        mContext = context;
         this.bluetoothAdapter = bluetoothAdapter;
         this.probeManager = probeManager;
-        this.permissionDeniedHandler = permissionDeniedHandler;
-        this.bluetoothInformationReceiverFactory = bluetoothInformationReceiverFactory;
-        this.intenFilterFactory = intenFilterFactory;
+        this.factory = factory;
     }
 
     @Override
@@ -67,97 +45,67 @@ public class BluetoothListener implements Listener {
         probeManager.save(state);
     }
 
+    @SuppressLint("HardwareIds")
     @Override
-    public void startListening() throws NoSensorFoundException {
-        if(!runningState && (bluetoothAdapter != null)){
-            receiver = bluetoothInformationReceiverFactory.create(this);
-            IntentFilter intentFilter = intenFilterFactory.create();
+    public void startListening() {
+        if (!runningState && (bluetoothAdapter != null) && isPermittedByUser()) {
+            IntentFilter intentFilter = new IntentFilter();
             intentFilter.addAction(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED);
             intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_STARTED);
             intentFilter.addAction(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
-            intentFilter.addAction(BluetoothAdapter.ACTION_LOCAL_NAME_CHANGED);
             intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             intentFilter.addAction(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             intentFilter.addAction(BluetoothAdapter.ACTION_SCAN_MODE_CHANGED);
             intentFilter.addAction(BluetoothAdapter.ACTION_STATE_CHANGED);
-            context.registerReceiver(receiver, intentFilter);
+            mContext.registerReceiver(this, intentFilter);
 
-            createInitialProbes();
+
+            // Send initial probes
+            onUpdate(factory.createBluetoothStateProbe(bluetoothAdapter.getState()));
+
+            runningState = true;
         }
-        runningState = true;
     }
 
     @Override
     public void stopListening() {
-        if(runningState){
-            if(receiver != null){
-                context.unregisterReceiver(receiver);
-            }
-            receiver = null;
+        if (runningState) {
+            mContext.unregisterReceiver(this);
+            runningState = false;
         }
-        runningState = false;
     }
 
     @Override
-    public boolean isRunning() {
-        return runningState;
+    public boolean isPermittedByUser() {
+        //non dangerous permission
+        return true;
     }
 
-    /**
-     * Creates the initial probes.
-     */
-    private void createInitialProbes() {
-        //Bluetooth State Probe
-        BluetoothStateProbe bluetoothStateProbe = new BluetoothStateProbe();
-        bluetoothStateProbe.setDate(System.currentTimeMillis());
-        bluetoothStateProbe.setState(getState());
-        onUpdate(bluetoothStateProbe);
-
-        //Bluetooth Static Attributes Probe
-        BluetoothStaticAttributesProbe bluetoothStaticAttributesProbe = new BluetoothStaticAttributesProbe();
-        bluetoothStaticAttributesProbe.setDate(System.currentTimeMillis());
-        bluetoothStaticAttributesProbe.setAddress(bluetoothAdapter.getAddress());
-        bluetoothStaticAttributesProbe.setName(bluetoothAdapter.getName());
-        onUpdate(bluetoothStaticAttributesProbe);
-
-        //Possible connected Bluetooth Devices
-        Set<BluetoothDevice> boundDevices = bluetoothAdapter.getBondedDevices();
-        for(BluetoothDevice bluetoothDevice : boundDevices){
-            BluetoothConnectionProbe bluetoothConnectionProbe = new BluetoothConnectionProbe();
-            bluetoothConnectionProbe.setDate(System.currentTimeMillis());
-            int bondState = bluetoothDevice.getBondState();
-            String state;
-            if(bondState == BluetoothDevice.BOND_BONDING){
-                state = "BONDING";
-            }else if(bondState == BluetoothDevice.BOND_BONDED){
-                state = "BONDED";
-            }else{
-                state = "NONE";
-            }
-            bluetoothConnectionProbe.setState(state);
-            if(bluetoothDevice.getAddress() != null){
-                bluetoothConnectionProbe.setForeignAddress(bluetoothDevice.getAddress());
-            }
-            bluetoothConnectionProbe.setForeignName(bluetoothDevice.getName());
-            onUpdate(bluetoothConnectionProbe);
+    @SuppressLint("HardwareIds")
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        switch (intent.getAction()) {
+            case BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED:
+                onUpdate(factory.createBluetoothConnectionProbe(intent));
+                break;
+            case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
+            case BluetoothAdapter.ACTION_DISCOVERY_FINISHED:
+                onUpdate(factory.createBluetoothDiscoveryProbe(intent));
+                break;
+            case BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE:
+            case BluetoothAdapter.ACTION_REQUEST_ENABLE:
+                onUpdate(factory.createBluetoothRequestProbe(intent));
+                break;
+            case BluetoothAdapter.ACTION_SCAN_MODE_CHANGED:
+                onUpdate(factory.createBluetoothScanModeProbe(intent));
+                break;
+            case BluetoothAdapter.ACTION_STATE_CHANGED:
+                onUpdate(factory.createBluetoothStateProbe(intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, -1)));
+                break;
+            default:
+                Timber.d("Unknown Bluetooth intent caught.");
+                break;
         }
 
-    }
-
-    BluetoothAdapter getBluetoothAdapter() {
-        return bluetoothAdapter;
-    }
-
-    /**
-     * Gets the state from the BluetoothAdapter.
-     * @return the state of the BluetoothAdapter.
-     */
-    public int getState(){
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED){
-            return bluetoothAdapter.getState();
-        }else{
-            permissionDeniedHandler.onPermissionDenied(Manifest.permission.BLUETOOTH);
-            return 0;
-        }
     }
 }

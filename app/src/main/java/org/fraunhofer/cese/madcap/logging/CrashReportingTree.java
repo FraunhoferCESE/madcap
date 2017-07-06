@@ -17,8 +17,6 @@ public class CrashReportingTree extends Timber.Tree {
             return;
         }
         FirebaseCrash.logcat(priority, tag, message);
-        if (t != null) {
-            FirebaseCrash.report(t);
-        }
+        FirebaseCrash.report((t != null) ? t : new Exception(message));
     }
 }

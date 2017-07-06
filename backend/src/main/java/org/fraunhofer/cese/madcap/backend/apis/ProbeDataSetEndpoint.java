@@ -396,6 +396,7 @@ public class ProbeDataSetEndpoint {
                     Collection<WiFiEntry> wflist = entryMap.get(entry.getProbeType());
                     WiFiEntry wiFiEntry = new WiFiEntry(entry);
                     wflist.add(wiFiEntry);
+
                     break;
                 case "MSMS":
                     if (!entryMap.containsKey(entry.getProbeType())) {
@@ -523,8 +524,9 @@ public class ProbeDataSetEndpoint {
             name = "checkSignedUpUser"
     )
     public UserCheckResult checkSignedUpUser(HttpServletRequest req, User user) throws OAuthRequestException, ConflictException, BadRequestException {
-        if (user == null)
+        if (user == null) {
             return new UserCheckResult(false);
+        }
 
         MadcapUser result = ofy().load().type(MadcapUser.class).id(user.getEmail()).now();
         if (result == null) {
@@ -537,7 +539,7 @@ public class ProbeDataSetEndpoint {
             ofy().save().entity(result).now();
         }
 
-        if (result.isAlpha() == true) {
+        if (result.isAlpha()) {
             return new UserCheckResult(true);
         } else {
             return new UserCheckResult(false);

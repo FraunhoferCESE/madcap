@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 /**
@@ -14,12 +13,12 @@ import static org.mockito.Mockito.mock;
  */
 public class TelephonyListenerFactoryTest {
     Context mockContext;
-    NetworkListener mockNetworkListener;
+    WifiListener mockWifiListener;
 
     @Before
     public void setUp() throws Exception {
         mockContext = mock(Context.class);
-        mockNetworkListener = mock(NetworkListener.class);
+        mockWifiListener = mock(WifiListener.class);
     }
 
     @After
@@ -31,7 +30,7 @@ public class TelephonyListenerFactoryTest {
     public void create() throws Exception {
         TelephonyListenerFactory cut = new TelephonyListenerFactory();
 
-        cut.create(mockContext, mockNetworkListener);
+        cut.create(mockContext, mockWifiListener);
     }
 
 }

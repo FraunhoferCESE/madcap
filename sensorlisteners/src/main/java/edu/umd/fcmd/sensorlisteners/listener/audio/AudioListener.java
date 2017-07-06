@@ -1,18 +1,19 @@
 package edu.umd.fcmd.sensorlisteners.listener.audio;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
-import android.util.Log;
+import android.os.Build;
 
 import javax.inject.Inject;
 
-import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
-import edu.umd.fcmd.sensorlisteners.model.audio.HeadphoneProbe;
-import edu.umd.fcmd.sensorlisteners.model.audio.RingerProbe;
+import edu.umd.fcmd.sensorlisteners.model.audio.AudioProbeFactory;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
+import timber.log.Timber;
 
 /**
  * Created by MMueller on 1/23/2017.
@@ -22,14 +23,10 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
  * Configurable significance delta for volume
  * updates.
  */
-public class AudioListener implements Listener {
-    private final String TAG = getClass().getSimpleName();
-    private final Context context;
+public class AudioListener extends BroadcastReceiver implements Listener {
+    private final Context mContext;
     private final ProbeManager<Probe> probeProbeManager;
-    private final AudioReceiverFactory audioReceiverFactory;
-    private static final int SIGIFICANCE_DELTA = 0;
-
-    private AudioReceiver audioReceiver;
+    private final AudioProbeFactory factory;
     private final AudioManager audioManager;
 
     private boolean runningState;
@@ -37,19 +34,20 @@ public class AudioListener implements Listener {
     /**
      * Main constructor.
      *
-     * @param context                 the context.
-     * @param probeProbeManager       the update probe manager.
-     * @param audioReceiverFactory    the audio receiver factory.
+     * @param context           the mContext.
+     * @param probeProbeManager the update probe manager.
+     * @param factory           the factory for creating audio-related probes
+     * @param audioManager      the system audio manager
      */
     @Inject
     public AudioListener(Context context,
                          ProbeManager<Probe> probeProbeManager,
-                         AudioReceiverFactory audioReceiverFactory) {
-        this.context = context;
+                         AudioProbeFactory factory,
+                         AudioManager audioManager) {
+        mContext = context;
         this.probeProbeManager = probeProbeManager;
-        this.audioReceiverFactory = audioReceiverFactory;
-
-        audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        this.factory = factory;
+        this.audioManager = audioManager;
     }
 
     @Override
@@ -58,70 +56,43 @@ public class AudioListener implements Listener {
     }
 
     @Override
-    public void startListening() throws NoSensorFoundException {
-        if (!runningState) {
-            audioReceiver = audioReceiverFactory.create(this);
+    public void startListening() {
+        if (!runningState && isPermittedByUser()) {
+            Timber.d("startListening");
 
             IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(AudioManager.ACTION_HEADSET_PLUG);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                intentFilter.addAction(AudioManager.ACTION_HEADSET_PLUG);
+            }
             intentFilter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
 
-            context.registerReceiver(audioReceiver, intentFilter);
-        }
+            onUpdate(factory.createRingerProbe(audioManager.getRingerMode()));
 
-        runningState = true;
+            mContext.registerReceiver(this, intentFilter);
+            runningState = true;
+        }
     }
 
     @Override
     public void stopListening() {
         if (runningState) {
-            if (context != null && audioReceiver != null) {
-                context.unregisterReceiver(audioReceiver);
-            }
+            mContext.unregisterReceiver(this);
+            runningState = false;
         }
-        runningState = false;
     }
 
     @Override
-    public boolean isRunning() {
-        return runningState;
+    public boolean isPermittedByUser() {
+        //non dangerous permission
+        return true;
     }
 
-
-    /**
-     * Gets if the headphone is plugged in or not.
-     *
-     * @return PLUGGED or UNPLUGGED.
-     */
-    String getCurrentHeadphonePlugState() {
-        if (audioManager.isWiredHeadsetOn()) {
-            return HeadphoneProbe.PLUGGED;
-        } else {
-            return HeadphoneProbe.UNPLUGGED;
-        }
-    }
-
-    /**
-     * Gets the currently active ringer mode of
-     * the phone.
-     *
-     * @return NORMAL or
-     * SILENT or
-     * VIBRATE
-     */
-    String getCurrentRingerMode() {
-        int mode = audioManager.getRingerMode();
-
-        switch (mode) {
-            case AudioManager.RINGER_MODE_NORMAL:
-                return RingerProbe.NORMAL;
-            case AudioManager.RINGER_MODE_SILENT:
-                return RingerProbe.SILENT;
-            case AudioManager.RINGER_MODE_VIBRATE:
-                return RingerProbe.VIBRATE;
-            default:
-                Log.e(TAG, "unspecified current ringer mode detected");
-                return "";
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (AudioManager.ACTION_HEADSET_PLUG.equals(intent.getAction())) {
+            onUpdate(factory.createHeadphoneProbe(intent.getIntExtra("state", -1)));
+        } else if (AudioManager.RINGER_MODE_CHANGED_ACTION.equals(intent.getAction())) {
+            onUpdate(factory.createRingerProbe(intent.getIntExtra(AudioManager.EXTRA_RINGER_MODE, -1)));
         }
     }
 }

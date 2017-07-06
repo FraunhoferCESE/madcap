@@ -11,11 +11,10 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
 
 import static android.content.Context.ACTIVITY_SERVICE;
@@ -33,7 +32,7 @@ import static android.content.Context.ACTIVITY_SERVICE;
  * for api level 20 and lower.
  *
  * Also for API level 21+ permission on usageStats are required. If they have not been
- * granted the permissionDeniedHandler triggers a callback method.
+ * granted the permissionsManager triggers a callback method.
  */
 
 class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsProbe, Void> {
@@ -43,14 +42,14 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
     private ComponentName lastComponent;
 
     private final ApplicationsListener applicationsListener;
-    private final PermissionDeniedHandler permissionDeniedHandler;
+    private final PermissionsManager permissionsManager;
     private final ActivityManager activityManager;
     private final Context context;
     private int apiLevel;
 
-    TimedApplicationTask(ApplicationsListener applicationsListener, Context context, PermissionDeniedHandler permissionDeniedHandler) {
+    TimedApplicationTask(ApplicationsListener applicationsListener, Context context, PermissionsManager permissionsManager) {
         this.applicationsListener = applicationsListener;
-        this.permissionDeniedHandler = permissionDeniedHandler;
+        this.permissionsManager = permissionsManager;
         this.context = context;
         activityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
 
@@ -98,9 +97,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                     Thread.currentThread().interrupt();
                     Log.d(TAG, "Sleep has been tried to interrupt, but thread interrupted the interrupting Thread.");
                 }
-            }else{
-                permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-            }
+            }//else{ permissionsManager.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS); }
         }
         return null;
     }
@@ -248,7 +245,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                     }
                 this.lastTime = currentTime;
                 //getUsageEvents();
-            } else {
+            } else {// version earlier than lollipop
                 ActivityManager mActivityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
                 ComponentName componentName = mActivityManager.getRunningTasks(1).get(0).topActivity;
 
@@ -264,8 +261,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
 
                 this.lastComponent = componentName;
             }
-        }else{
-            permissionDeniedHandler.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+//        }else permissionsManager.onPermissionDenied(Settings.ACTION_USAGE_ACCESS_SETTINGS);
         }
     }
 

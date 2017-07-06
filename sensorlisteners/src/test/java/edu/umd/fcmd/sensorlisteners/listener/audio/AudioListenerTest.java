@@ -5,17 +5,15 @@ import android.media.AudioManager;
 
 import junit.framework.Assert;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.audio.HeadphoneProbe;
 import edu.umd.fcmd.sensorlisteners.model.audio.RingerProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,7 +26,7 @@ public class AudioListenerTest {
     ProbeManager<Probe> mockProbeManager;
     AudioReceiverFactory mockAudioReceiverFactory;
     int mockDelta = 0;
-    PermissionDeniedHandler mockPermissionDeniedHandler;
+    PermissionsManager mockPermissionsManager;
     AudioManager mockAudioManager;
 
     @Before
@@ -36,7 +34,7 @@ public class AudioListenerTest {
         mockContext = mock(Context.class);
         mockProbeManager = mock(ProbeManager.class);
         mockAudioReceiverFactory = mock(AudioReceiverFactory.class);
-        mockPermissionDeniedHandler = mock(PermissionDeniedHandler.class);
+        mockPermissionsManager = mock(PermissionsManager.class);
         mockAudioManager = mock(AudioManager.class);
 
         when(mockContext.getSystemService(Context.AUDIO_SERVICE)).thenReturn(mockAudioManager);
@@ -49,7 +47,7 @@ public class AudioListenerTest {
                 mockProbeManager,
                 mockAudioReceiverFactory,
                 mockDelta,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
     }
 
     @Test
@@ -58,7 +56,7 @@ public class AudioListenerTest {
                 mockProbeManager,
                 mockAudioReceiverFactory,
                 mockDelta,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         Probe mockProbe = mock(Probe.class);
 
@@ -72,7 +70,7 @@ public class AudioListenerTest {
                 mockProbeManager,
                 mockAudioReceiverFactory,
                 mockDelta,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         cut.startListening();
 
@@ -86,7 +84,7 @@ public class AudioListenerTest {
                 mockProbeManager,
                 mockAudioReceiverFactory,
                 mockDelta,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         cut.startListening();
         cut.stopListening();
@@ -101,7 +99,7 @@ public class AudioListenerTest {
                 mockProbeManager,
                 mockAudioReceiverFactory,
                 mockDelta,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         cut.startListening();
 
@@ -119,7 +117,7 @@ public class AudioListenerTest {
                 mockProbeManager,
                 mockAudioReceiverFactory,
                 mockDelta,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         cut.evaluateVolumeChanges();
 
@@ -131,7 +129,7 @@ public class AudioListenerTest {
                 mockProbeManager,
                 mockAudioReceiverFactory,
                 mockDelta,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         when(mockAudioManager.isWiredHeadsetOn()).thenReturn(true);
         Assert.assertEquals(cut.getCurrentHeadphonePlugState(), HeadphoneProbe.PLUGGED);
@@ -147,7 +145,7 @@ public class AudioListenerTest {
                 mockProbeManager,
                 mockAudioReceiverFactory,
                 mockDelta,
-                mockPermissionDeniedHandler);
+                mockPermissionsManager);
 
         when(mockAudioManager.getRingerMode()).thenReturn(AudioManager.RINGER_MODE_NORMAL);
         Assert.assertEquals(cut.getCurrentRingerMode(), RingerProbe.NORMAL);

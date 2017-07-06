@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.greenrobot.eventbus.EventBus;
@@ -38,6 +39,7 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import timber.log.Timber;
+
 
 /**
  * Creates the main activity for MADCAP.
@@ -71,15 +73,27 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
     @BindView(R.id.lastUploadStatus) TextView uploadStatusView;
     @BindView(R.id.lastUploadMessage) TextView uploadMessageView;
     @BindView(R.id.uploadButton) Button uploadButton;
+
+
+    @BindView(R.id.capacityWarningBlock) ConstraintLayout capacityWarningBlock;
     @BindView(R.id.capacity_warning_icon) ImageView capacityWarningIcon;
     @BindView(R.id.capacity_warning_text) TextView capacityWarningText;
 
-    @BindView(R.id.warningBlock) ConstraintLayout warningBlock;
+    @BindView(R.id.permissionWarningBlock) ConstraintLayout permissionWarningBlock;
+    @BindView(R.id.permission_warning_icon) ImageView permissionWarningIcon;
+    @BindView(R.id.permission_warning_text) TextView permissiongWarningText;
+    @BindView(R.id.permission_button) Button permissionButton;
+
+
+
 
     /**
      * Defines callbacks for service binding, passed to bindService()
      */
     private ServiceConnection mConnection;
+
+    @Inject
+    MadcapPermissionsManager permissionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,6 +175,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         }
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -171,6 +186,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             Intent intent = new Intent(getApplicationContext(), DataCollectionService.class);
             if (!mBound) {
                 bindConnection(intent);
+
             }
         }
         updateUiElements(isCollectingData());
@@ -194,6 +210,18 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         }
         uploadProgressBar.setProgress(prefs.getInt(getString(R.string.pref_uploadProgress), 0));
         uploadProgressText.setText(String.format(getString(R.string.uploadPercentText), prefs.getInt(getString(R.string.pref_uploadProgress), 0)));
+
+        if (permissionManager.hasAllPermissions()) {
+            permissionWarningBlock.setVisibility(View.GONE);
+        } else {
+            permissionWarningBlock.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    @OnClick(R.id.permission_button)
+    void onClickPermissionButton() {
+        startActivity(new Intent(MainActivity.this, PermissionsActivity.class));
     }
 
     @Override
@@ -267,13 +295,13 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         double limit = firebaseRemoteConfig.getDouble(getString(R.string.CLEANUP_WARNING_LIMIT_KEY));
 
         if (percentage >= limit) {
-            if (warningBlock.getVisibility() == View.GONE) {
-                warningBlock.setVisibility(View.VISIBLE);
+            if (capacityWarningBlock.getVisibility() == View.GONE) {
+                capacityWarningBlock.setVisibility(View.VISIBLE);
             }
             capacityWarningText.setText(String.format(getString(R.string.capacity_warning), percentage));
 
-        } else if (warningBlock.getVisibility() != View.GONE) {
-            warningBlock.setVisibility(View.GONE);
+        } else if (capacityWarningBlock.getVisibility() != View.GONE) {
+            capacityWarningBlock.setVisibility(View.GONE);
         }
     }
 
@@ -316,12 +344,12 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             dataCountView.setText(String.format(getString(R.string.dataCountText), mDataCount));
         }
 
-        if (warningBlock.getVisibility() == View.GONE) {
+        if (capacityWarningBlock.getVisibility() == View.GONE) {
             return;
         }
 
         if ((result != null) && (result.getSaveResult() != null) && !result.getSaveResult().getSaved().isEmpty()) {
-            warningBlock.setVisibility(View.GONE);
+            capacityWarningBlock.setVisibility(View.GONE);
         }
     }
 }

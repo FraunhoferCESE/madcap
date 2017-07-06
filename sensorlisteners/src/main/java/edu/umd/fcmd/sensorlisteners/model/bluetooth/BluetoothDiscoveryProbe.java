@@ -8,6 +8,11 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
  * Model class for the discovery function of a bluetooth device.
  */
 public class BluetoothDiscoveryProbe extends Probe {
+
+    public static final String STARTED = "STARTED";
+    public static final String FINISHED = "FINISHED";
+    public static final String UNKNOWN = "UNKNOWN";
+
     private String state;
 
     /**

@@ -4,18 +4,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 
 /**
  * Created by MMueller on 12/27/2016.
  */
-public class ConnectionInfoReceiverFactoryTest {
-    NetworkListener mockNetworkListener;
+public class ConnectivityListenerFactoryTest {
+    WifiListener mockWifiListener;
 
     @Before
     public void setUp() throws Exception {
-        mockNetworkListener = mock(NetworkListener.class);
+        mockWifiListener = mock(WifiListener.class);
     }
 
     @After
@@ -26,7 +25,7 @@ public class ConnectionInfoReceiverFactoryTest {
     @Test
     public void create() throws Exception {
         ConnectionInfoReceiverFactory cut = new ConnectionInfoReceiverFactory();
-        cut.create(mockNetworkListener);
+        cut.create(mockWifiListener);
     }
 
 }

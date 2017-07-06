@@ -1,12 +1,17 @@
 package org.fraunhofer.cese.madcap;
 
 import android.app.Application;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.media.AudioManager;
 import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
+import android.nfc.NfcAdapter;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.telephony.TelephonyManager;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -20,7 +25,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import org.fraunhofer.cese.madcap.cache.CacheFactory;
-import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionDeniedHandler;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.util.MadcapBuildVersionProvider;
 
 import java.util.Calendar;
@@ -30,12 +35,14 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionDeniedHandler;
+import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.applications.TimedApplicationTaskFactory;
 import edu.umd.fcmd.sensorlisteners.listener.location.LocationConnectionCallbacks;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.system.BuildVersionProvider;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
+
+import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
  * This class defines the providers to use for dependency injection
@@ -82,6 +89,7 @@ class MyApplicationModule {
         return LocationServices.FusedLocationApi;
     }
 
+    @Singleton
     @Provides
     @Named("AwarenessApi")
     GoogleApiClient provideAwarenessApiClient() {
@@ -97,23 +105,22 @@ class MyApplicationModule {
 
 
     /**
-     * Needed by the DataCollectionService.
-     *
-     * @return a static FenceApi
-     */
-    @Provides
-    FenceApi provideFenceApi() {
-        return Awareness.FenceApi;
-    }
-
-    /**
-     * Needed by the DataCollectionService.
+     * Needed by the ActivityListener.
      *
      * @return a statuc SnapshotApi
      */
     @Provides
     SnapshotApi provideSnapshotApi() {
         return Awareness.SnapshotApi;
+    }
+
+
+
+    @Provides
+    @Singleton
+    @Named("ActivityUpdateHandler")
+    Handler proveActivityUpdateHandler() {
+        return new Handler();
     }
 
     @Provides
@@ -157,7 +164,7 @@ class MyApplicationModule {
     }
 
     @Provides
-    PermissionDeniedHandler providePermissionDeniedHandler(MadcapPermissionDeniedHandler madcapPermissionDeniedHandler) {
+    PermissionsManager providePermissionDeniedHandler(MadcapPermissionsManager madcapPermissionDeniedHandler) {
         return madcapPermissionDeniedHandler;
     }
 
@@ -209,6 +216,31 @@ class MyApplicationModule {
     @Provides
     GoogleApiAvailability providesGoogleApiAvailability() {
         return GoogleApiAvailability.getInstance();
+    }
+
+    @Provides
+    NotificationManager provideNotificationManager() {
+        return (NotificationManager) application.getSystemService(Context.NOTIFICATION_SERVICE);
+    }
+
+    @Provides
+    TelephonyManager provideTelephonyManager() {
+        return (TelephonyManager) application.getSystemService(TELEPHONY_SERVICE);
+    }
+
+    @Provides
+    WifiManager provideWifiManager() {
+        return (WifiManager) application.getSystemService(Context.WIFI_SERVICE);
+    }
+
+    @Provides
+    NfcAdapter provideNfcAdapter() {
+        return NfcAdapter.getDefaultAdapter(application);
+    }
+
+    @Provides
+    AudioManager provideAudioManager() {
+        return (AudioManager) application.getSystemService(Context.AUDIO_SERVICE);
     }
 }
 

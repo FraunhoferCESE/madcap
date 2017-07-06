@@ -22,8 +22,6 @@ import timber.log.Timber;
 @SuppressWarnings("WeakerAccess")
 public class DatabaseOpenHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String TAG = "Fraunhofer." + DatabaseOpenHelper.class.getSimpleName();
-
     // name of the database file for your application -- change to something appropriate for your app
     private static final String DATABASE_NAME = "probe_data.db";
     // any time you make changes to your database objects, you may have to increase the database version

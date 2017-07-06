@@ -103,7 +103,6 @@ public class AuthenticationProvider {
             callback.onServicesUnavailable(connectionResult);
             return;
         }
-
         if (mGoogleApiClient.isConnected()) {
             doSignin(callback);
         } else {
@@ -117,7 +116,7 @@ public class AuthenticationProvider {
 
                 @Override
                 public void onConnectionSuspended(int i) {
-                    Timber.w("onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
+                    Timber.w(TAG, "onConnectionSuspended: Unexpected suspension of connection. Error code: " + i);
                 }
             });
             mGoogleApiClient.connect();
@@ -256,4 +255,5 @@ public class AuthenticationProvider {
             callback.onSignOut(r);
         }
     }
+
 }

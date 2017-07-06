@@ -8,7 +8,9 @@
 
     <include
         android:id="@+id/my_toolbar"
-        layout="@layout/action_bar" />
+        layout="@layout/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -19,11 +21,56 @@
         app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
 
         <android.support.constraint.ConstraintLayout
-            android:id="@+id/warningBlock"
+            android:id="@+id/permissionWarningBlock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:padding="8sp"
+            android:visibility="gone"
+            android:background="@color/light_red"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <ImageView
+                android:id="@+id/permission_warning_icon"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:contentDescription="@string/warning_icon_description"
+                android:src="@drawable/ic_warning_black_24dp"
+                app:layout_constraintEnd_toStartOf="@+id/permission_warning_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/permission_warning_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8sp"
+                android:paddingEnd="8sp"
+                android:paddingStart="8sp"
+                android:text="@string/permissions_missing"
+                android:textIsSelectable="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@id/permission_warning_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/permission_button"
+                android:layout_width="363dp"
+                android:layout_height="wrap_content"
+                android:text="@string/permission_button_text"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/permission_warning_icon" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/capacityWarningBlock"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="8sp"
             android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/permissionWarningBlock"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
@@ -60,7 +107,8 @@
             android:layout_height="wrap_content"
             android:text="@string/introText"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/warningBlock" />
+            app:layout_constraintTop_toBottomOf="@id/capacityWarningBlock" />
+
 
         <LinearLayout
             android:id="@+id/dataCollectionGroup"
@@ -97,7 +145,7 @@
 
         <Button
             android:id="@+id/uploadButton"
-            android:layout_width="match_parent"
+            android:layout_width="379dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/sendButtonText"
@@ -108,6 +156,7 @@
         <TextView
             android:id="@+id/progressText"
             android:layout_width="40sp"
+
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="8dp"
@@ -150,7 +199,7 @@
             android:id="@+id/lastUploadStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8sp"
+            android:layout_marginStart="8dp"
             android:text="@string/lastUploadStatus"
             app:layout_constraintLeft_toLeftOf="@+id/uploadResultHeader"
             app:layout_constraintTop_toBottomOf="@+id/uploadResultHeader" />
@@ -159,7 +208,7 @@
             android:id="@+id/lastUploadMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8sp"
+            android:layout_marginStart="8dp"
             android:text="@string/lastUploadMessage"
             app:layout_constraintLeft_toLeftOf="@+id/uploadResultHeader"
             app:layout_constraintTop_toBottomOf="@+id/lastUploadStatus" />

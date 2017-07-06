@@ -15,7 +15,6 @@ import org.junit.Test;
 import edu.umd.fcmd.sensorlisteners.model.network.NetworkProbe;
 import edu.umd.fcmd.sensorlisteners.model.network.WiFiProbe;
 
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
@@ -25,12 +24,12 @@ import static org.mockito.Mockito.when;
 /**
  * Created by MMueller on 12/27/2016.
  */
-public class ConnectionInfoReceiverTest {
-    NetworkListener mockNetworkListener;
+public class ConnectivityListenerTest {
+    WifiListener mockWifiListener;
 
     @Before
     public void setUp() throws Exception {
-        mockNetworkListener = mock(NetworkListener.class);
+        mockWifiListener = mock(WifiListener.class);
     }
 
     @After
@@ -40,24 +39,24 @@ public class ConnectionInfoReceiverTest {
 
     @Test
     public void constructorTest() throws Exception {
-        ConnectionInfoReceiver cut = new ConnectionInfoReceiver(mockNetworkListener);
+        ConnectivityListener cut = new ConnectivityListener(mockWifiListener);
 
     }
 
     @Test
     public void onReceive() throws Exception {
-        ConnectionInfoReceiver cut = new ConnectionInfoReceiver(mockNetworkListener);
+        ConnectivityListener cut = new ConnectivityListener(mockWifiListener);
 
         Context mockContext = mock(Context.class);
         Intent mockIntent = mock(Intent.class);
 
         when(mockIntent.getAction()).thenReturn(ConnectivityManager.CONNECTIVITY_ACTION);
         cut.onReceive(mockContext, mockIntent);
-        verify(mockNetworkListener).onUpdate(any(NetworkProbe.class));
+        verify(mockWifiListener).onUpdate(any(NetworkProbe.class));
 
         when(mockIntent.getAction()).thenReturn(WifiManager.WIFI_STATE_CHANGED_ACTION);
         cut.onReceive(mockContext, mockIntent);
-        verify(mockNetworkListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
+        verify(mockWifiListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
 
         when(mockIntent.getAction()).thenReturn(WifiManager.NETWORK_STATE_CHANGED_ACTION);
         when(mockIntent.hasExtra(WifiManager.EXTRA_NETWORK_INFO)).thenReturn(true);
@@ -66,8 +65,8 @@ public class ConnectionInfoReceiverTest {
         when(mockNetworkInfo.toString()).thenReturn("Bratwurst");
         when(mockIntent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)).thenReturn(true);
         cut.onReceive(mockContext, mockIntent);
-        verify(mockNetworkListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
-        verify(mockNetworkListener, atLeastOnce()).onUpdate(any(NetworkProbe.class));
+        verify(mockWifiListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
+        verify(mockWifiListener, atLeastOnce()).onUpdate(any(NetworkProbe.class));
 
         when(mockIntent.getAction()).thenReturn(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
         when(mockIntent.hasExtra(WifiManager.EXTRA_NETWORK_INFO)).thenReturn(true);
@@ -75,7 +74,7 @@ public class ConnectionInfoReceiverTest {
         when(mockIntent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO)).thenReturn(mockNetworkInfo2);
         when(mockNetworkInfo.toString()).thenReturn("Bratwurst");
         cut.onReceive(mockContext, mockIntent);
-        verify(mockNetworkListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
+        verify(mockWifiListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
 
         when(mockIntent.getAction()).thenReturn(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
         NfcManager mockNfcManager = mock(NfcManager.class);
@@ -83,11 +82,11 @@ public class ConnectionInfoReceiverTest {
         NfcAdapter mockNfcAdapter = mock(NfcAdapter.class);
         when(mockNfcManager.getDefaultAdapter()).thenReturn(mockNfcAdapter);
         cut.onReceive(mockContext, mockIntent);
-        verify(mockNetworkListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
+        verify(mockWifiListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
 
         when(mockIntent.getAction()).thenReturn("Frikadelle");
         cut.onReceive(mockContext, mockIntent);
-        verify(mockNetworkListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
+        verify(mockWifiListener, atLeastOnce()).onUpdate(any(WiFiProbe.class));
 
 
     }

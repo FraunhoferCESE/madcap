@@ -47,6 +47,7 @@ public class OnBootService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
+
         Timber.d("onHandleIntent");
 
         if (authManager.getUser() != null) {

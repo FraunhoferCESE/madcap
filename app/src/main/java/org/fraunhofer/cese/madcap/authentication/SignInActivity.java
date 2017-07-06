@@ -1,5 +1,6 @@
 package org.fraunhofer.cese.madcap.authentication;
 
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -222,7 +223,6 @@ public class SignInActivity extends ChildActivity {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             if (result.isSuccess() && (result.getSignInAccount() != null)) {
                 GoogleSignInAccount acct = result.getSignInAccount();
-
                 authenticationProvider.setUser(acct);
                 updateUiState(true);
                 mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
@@ -245,6 +245,7 @@ public class SignInActivity extends ChildActivity {
 
     @Override
     protected void onSignOut() {
+
     }
 
 }

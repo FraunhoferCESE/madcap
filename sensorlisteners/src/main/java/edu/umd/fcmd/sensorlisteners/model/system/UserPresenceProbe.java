@@ -8,6 +8,9 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
  * Model class for user presence.
  */
 public class UserPresenceProbe extends Probe {
+
+    public static final String PRESENT = "PRESENT";
+
     private String presence;
 
     /**

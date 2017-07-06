@@ -23,10 +23,10 @@ public class BluetoothRequestEntry implements Comparable<BluetoothRequestEntry>,
     @Index
     private String userID;
 
-    public BluetoothRequestEntry(){
+    public BluetoothRequestEntry() {
     }
 
-    public BluetoothRequestEntry(ProbeEntry probeEntry){
+    public BluetoothRequestEntry(ProbeEntry probeEntry) {
         id = probeEntry.getId();
         timestamp = probeEntry.getTimestamp();
         userID = probeEntry.getUserID();
@@ -168,7 +168,7 @@ public class BluetoothRequestEntry implements Comparable<BluetoothRequestEntry>,
         if (o == null || getClass() != o.getClass()) return false;
 
         BluetoothRequestEntry that = (BluetoothRequestEntry) o;
-        if(kind.equals(that.getKind())) return true;
+        if (kind.equals(that.getKind())) return true;
         else return false;
 
     }

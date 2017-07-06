@@ -11,7 +11,8 @@ public class ChargingProbe extends Probe {
     public static final String USB = "USB";
     public static final String AC = "AC";
     public static final String WIRELESS = "WIRELESS";
-    public static final String NONE = "-";
+    public static final String NONE = "UNPLUGGED";
+    public static final String UNKNOWN = "UNKNOWN";
 
     private String charging;
 

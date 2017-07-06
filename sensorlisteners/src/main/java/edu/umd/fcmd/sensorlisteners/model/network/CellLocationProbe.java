@@ -7,6 +7,12 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
  */
 
 public class CellLocationProbe extends Probe {
+    public static final String GSM = "GSM";
+    public static final String CDMA = "CDMA";
+    public static final String SIP = "SIP";
+    public static final String NONE = "NONE";
+    public static final String UNKNOWN = "UNKNWON";
+
     private String cellType;
     private String areaCode;
     private double lat;

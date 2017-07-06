@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context="org.fraunhofer.cese.madcap.PermissionsActivity">
+
+    <include
+        android:id="@+id/my_toolbar"
+        layout="@layout/action_bar"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24sp"
+        android:padding="8sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
+
+        <TextView
+            android:id="@+id/headerText"
+            style="@style/headerText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/permissions_header"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/contactsText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            android:text="@string/contacts_short_rationale"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/headerText"
+            app:layout_constraintEnd_toStartOf="@+id/contactsCheckBox"/>
+
+        <CheckBox
+            android:id="@+id/contactsCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/contactsText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/contactsText"
+            app:layout_constraintTop_toTopOf="@id/contactsText"
+            />
+
+        <TextView
+            android:id="@+id/smsText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            android:text="@string/sms_short_rationale"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/smsCheckBox"
+            app:layout_constraintTop_toBottomOf="@id/contactsText"/>
+
+        <CheckBox
+            android:id="@+id/smsCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/smsText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/smsText"
+            app:layout_constraintTop_toTopOf="@id/smsText"/>
+
+        <TextView
+            android:id="@+id/locationText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            android:text="@string/location_short_rationale"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/locationCheckBox"
+            app:layout_constraintTop_toBottomOf="@id/smsText"/>
+
+        <CheckBox
+            android:id="@+id/locationCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/locationText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/locationText"
+            app:layout_constraintTop_toTopOf="@id/locationText"
+            />
+
+        <TextView
+            android:id="@+id/telephoneText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            android:text="@string/telephone_short_rationale"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/telephoneCheckBox"
+            app:layout_constraintTop_toBottomOf="@id/locationText"
+            />
+
+        <CheckBox
+            android:id="@+id/telephoneCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/telephoneText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/telephoneText"
+            app:layout_constraintTop_toTopOf="@id/telephoneText"
+
+            />
+
+
+        <TextView
+            android:id="@+id/usageText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24sp"
+            android:text="@string/access_usage_short_rationale"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/usageStatsCheckBox"
+            app:layout_constraintTop_toBottomOf="@id/telephoneText"
+            />
+
+        <CheckBox
+            android:id="@+id/usageStatsCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@id/usageText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/usageText"
+            app:layout_constraintTop_toTopOf="@id/usageText"
+            />
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:autoLink="web"
+            android:gravity="center"
+            android:text="@string/permissions_more_inf"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/usageText"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <include layout="@layout/footer"/>
+</android.support.constraint.ConstraintLayout>

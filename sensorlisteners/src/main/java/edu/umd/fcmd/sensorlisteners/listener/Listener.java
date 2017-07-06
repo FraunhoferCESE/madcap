@@ -11,8 +11,8 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 public interface Listener<T extends Probe> {
     void onUpdate(T state);
-    void startListening() throws NoSensorFoundException;
+    void startListening();
     void stopListening();
-    boolean isRunning();
+    boolean isPermittedByUser();
 }
 

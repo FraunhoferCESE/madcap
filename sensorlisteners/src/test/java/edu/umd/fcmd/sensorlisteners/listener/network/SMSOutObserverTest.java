@@ -8,12 +8,10 @@ import android.os.Handler;
 
 import junit.framework.Assert;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import static android.provider.Telephony.TextBasedSmsColumns.MESSAGE_TYPE_SENT;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -22,24 +20,24 @@ import static org.mockito.Mockito.when;
  */
 public class SMSOutObserverTest {
     Handler mockHandler;
-    NetworkListener mockNetworkListener;
+    WifiListener mockWifiListener;
     Context mockContext;
 
     @Before
     public void setUp() throws Exception {
         mockHandler = mock(Handler.class);
-        mockNetworkListener = mock(NetworkListener.class);
+        mockWifiListener = mock(WifiListener.class);
         mockContext = mock(Context.class);
     }
 
     @Test
     public void constructorTest() throws Exception {
-        SMSOutObserver cut = new SMSOutObserver(mockHandler, mockNetworkListener, mockContext);
+        SMSOutObserver cut = new SMSOutObserver(mockHandler, mockWifiListener, mockContext);
     }
 
     @Test
     public void onChange() throws Exception {
-        SMSOutObserver cut = new SMSOutObserver(mockHandler, mockNetworkListener, mockContext);
+        SMSOutObserver cut = new SMSOutObserver(mockHandler, mockWifiListener, mockContext);
 
         Uri mockUri = mock(Uri.class);
         ContentResolver mockContentResolver = mock(ContentResolver.class);
@@ -66,7 +64,7 @@ public class SMSOutObserverTest {
 
     @Test
     public void deliverSelfNotifications() throws Exception {
-        SMSOutObserver cut = new SMSOutObserver(mockHandler, mockNetworkListener, mockContext);
+        SMSOutObserver cut = new SMSOutObserver(mockHandler, mockWifiListener, mockContext);
 
         Assert.assertFalse(cut.deliverSelfNotifications());
     }
