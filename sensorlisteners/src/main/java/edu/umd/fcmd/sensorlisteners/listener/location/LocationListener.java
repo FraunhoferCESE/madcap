@@ -153,6 +153,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     @SuppressWarnings("UnusedParameters")
     @Subscribe
     public void handleFusedLocationConnectedEvent(LocationConnectionCallbacks.FusedLocationConnectedEvent event) {
+        Timber.w("In handleFusedLocationConnectedEvent");
         onLocationChanged(fusedLocationProviderApi.getLastLocation(apiClient));
 
         LocationRequest locationRequest = LocationRequest.create();
@@ -189,7 +190,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
 
     @Subscribe
     public void handleFusedLocation(Location location) {
-        Timber.d("Fused location received: " + location);
+//        Timber.d("Fused location received: " + location);
         onUpdate(createLocationProbe(location));
     }
 
@@ -230,6 +231,8 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
      */
 
     private static LocationProbe createLocationProbe(Location location) {
+//        Timber.i("LocationProbe Location Received: " + location);
+
         LocationProbe probe = new LocationProbe();
         probe.setDate(System.currentTimeMillis());
         probe.setAccuracy((double) location.getAccuracy());
@@ -240,6 +243,8 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         probe.setOrigin(location.getProvider());
         probe.setSpeed((double) location.getSpeed());
         probe.setExtras(location.getExtras());
+
+//        Timber.i("Probe: " + probe);
 
         return probe;
     }
