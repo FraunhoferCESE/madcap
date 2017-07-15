@@ -153,7 +153,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
     @SuppressWarnings("UnusedParameters")
     @Subscribe
     public void handleFusedLocationConnectedEvent(LocationConnectionCallbacks.FusedLocationConnectedEvent event) {
-        Timber.w("In handleFusedLocationConnectedEvent");
+        Timber.i("In handleFusedLocationConnectedEvent");
         onLocationChanged(fusedLocationProviderApi.getLastLocation(apiClient));
 
         LocationRequest locationRequest = LocationRequest.create();

@@ -21,7 +21,7 @@ public class FusedLocationService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Timber.w("On Location Intent");
+        //Timber.i("On Location Intent");
         //Location location = intent.getParcelableExtra(LocationManager.KEY_LOCATION_CHANGED);
         if (LocationResult.hasResult(intent)) {
 //            Timber.d("Fused Location received: " + LocationResult.extractResult(intent));
