@@ -132,9 +132,9 @@
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"/>
 
+        <!--android:noHistory="true"-->
         <activity
             android:name=".WelcomeActivity"
-            android:noHistory="true"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
