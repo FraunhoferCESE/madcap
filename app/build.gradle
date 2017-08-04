@@ -3,7 +3,15 @@ apply plugin: 'com.android.application'
 //Dagger
 apply plugin: 'com.neenbedankt.android-apt'
 
-
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        // V2: Add the new Endpoints Framework plugin dependencies
+        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
+    }
+}
 android {
     signingConfigs {
         debug
@@ -45,7 +53,7 @@ android {
     defaultConfig {
         applicationId "org.fraunhofer.cese.madcap"
         minSdkVersion 19
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode versionBuild
         versionName "1.0.8"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -105,8 +113,8 @@ dependencies {
     compile 'com.google.firebase:firebase-core:10.2.4'
     compile 'com.google.firebase:firebase-messaging:10.2.4'
     compile 'com.google.firebase:firebase-crash:10.2.4'
-    compile 'com.google.http-client:google-http-client-android:1.22.0'
-    compile 'com.google.api-client:google-api-client-android:1.22.0'
+    compile 'com.google.http-client:google-http-client-android:1.22.0' //endpoints v2
+    compile 'com.google.api-client:google-api-client-android:1.22.0' //endpoints v2
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'

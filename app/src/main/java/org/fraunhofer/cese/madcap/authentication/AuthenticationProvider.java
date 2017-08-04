@@ -16,8 +16,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.OptionalPendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 
 import org.fraunhofer.cese.madcap.R;
+import org.fraunhofer.cese.madcap.backend.Constants;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -69,8 +71,11 @@ public class AuthenticationProvider {
         }
 
         if (mGoogleApiClient.isConnected()) {
-            activity.startActivityForResult(Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient), resultCode);
+//            activity.startActivityForResult(Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient), resultCode);
+            //per Endpoints v2
+            GoogleAccountCredential credential = GoogleAccountCredential.usingAudience(activity, "server:client_id:"+ Constants.ANDROID_AUDIENCE);
         } else {
+
             mGoogleApiClient.registerConnectionFailedListener(callback);
             mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                 @Override
@@ -149,7 +154,6 @@ public class AuthenticationProvider {
             });
         }
     }
-
 
     /**
      * Attempts to log the user out using the Google SignIn API

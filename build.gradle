@@ -6,25 +6,28 @@ buildscript {
 
     }
     dependencies {
+
+        // V2: Include this dependency when using Endpoints Framework v2
+        classpath 'com.google.guava:guava:19.0'
+
         classpath 'com.android.tools.build:gradle:2.3.3'
+
+//        classpath 'com.android.tools.build:gradle:2.3.3'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
 //        apply plugin: 'java'
 //        sourceCompatibility = 1.7
 //        targetCompatibility = 1.7
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8' //Dagger
         classpath 'com.google.gms:google-services:3.0.0'
 
     }
-
-
 }
 
 allprojects {
     repositories {
         jcenter()
     }
-
     tasks.withType(JavaCompile) {
         sourceCompatibility = 1.7
         targetCompatibility = 1.7

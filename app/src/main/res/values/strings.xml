@@ -61,7 +61,7 @@
     <string name="signin_subtitle">Part of the <a href="https://www.pocket-security.org">NSF Pocket Security</a> research project.</string>
     <string name="signed_in_fmt">Signed in as: %s</string>
     <string name="signing_in">Signing in…</string>
-    <string name="signed_out">Signed out. Please sign in below.</string>
+    <string name="signed_out">Signed out. Please signin below.</string>
     <string name="post_sign_out">You are now signed out of MADCAP.</string>
     <string name="signing_out">Signing out…</string>
     <string name="signin_service_unavailable">Google SignIn services are unavailable. Please try again.</string>
@@ -69,12 +69,12 @@
     <string name="logout_failed">Logout from MADCAP failed. Error code: %i. Please try again.</string>
     <string name="login_failed">Login failed. Please check your internet connection and try again.</string>
     <string name="silent_signin_failed">MADCAP failed to login automatically. Please open the MADCAP application to sign in.</string>
-    <string name="silent_signin_failed_notification_title">MADCAP Automatic SignIn Failed</string>
+    <string name="silent_signin_failed_notification_title">MADCAP automatic signin failed</string>
     <string name="checking_EULA">Checking EULA.</string>
     <string name="must_accept_EULA">You must agree to the EULA to use MADCAP.</string>
     <string name="EULA_key">EULA_KEY</string>
 
-    <string name="sign_out">Sign Out</string>
+    <string name="sign_out">Sign out</string>
 
     <!-- Google Play Services errors -->
     <string name="play_services_missing">Play services not available, please install them and retry.</string>
@@ -94,9 +94,9 @@
 
     <!-- Help activity -->
     <string name="name_help_activity">MADCAP Help</string>
-    <string name="help_text">If you have questions, do not hestitate to contact us. You may contact us directly through email or view online help using one of the buttons below.</string>
-    <string name="go_to_online_help">View Online Help</string>
-    <string name="contact">Send an Email</string>
+    <string name="help_text">If you have questions, do not hesitate to contact us. You may contact us directly through email or view online help using one of the buttons below.</string>
+    <string name="go_to_online_help">View online help</string>
+    <string name="contact">Send an email</string>
     <string name="contactEmail">madcap@pocket-security.org</string>
     <string name="contactSubject">MADCAP/Pocket Security contact</string>
     <string name="onlineHelpURL">https://www.pocket-security.org/app-help/</string>
@@ -115,11 +115,11 @@
     <string name="telephone_rationale">MADCAP needs this permission to know when you are making or receiving phone calls.</string>
     <string name="access_usage_rationale">MADCAP needs this permission to know when you are using an application.</string>
     <string name="contacts_rationale_wa">MADCAP needs permission to access your contacts to get your Google username and email. It does not read your other contacts.</string>
-    <string name="bluetooth_rationale">MADAP need permission to access your bluetooth state to know when you are connected via Bluetooth.</string>
+    <string name="bluetooth_rationale">MADCAP need permission to access your bluetooth state to know when you are connected via Bluetooth.</string>
     <!-- Permission mini rationale -->
     <string name="contacts_short_rationale">Gets the username and accounts on device.</string>
     <string name="location_short_rationale">Gets location updates few times per hour.</string>
-    <string name="sms_short_rationale">Gets notified of incoming SMS messages.</string>
+    <string name="sms_short_rationale">Gets notified of SMS activity.</string>
     <string name="storage_short_rationale">Gets storage information.</string>
     <string name="telephone_short_rationale">Gets phone state information.</string>
     <string name="access_usage_short_rationale">Gets application usage statistics.</string>
@@ -156,13 +156,13 @@
 
     <!-- Authorization activity -->
     <string name="name_authorization_activity">MADCAP Authorization</string>
-    <string name="auth_check_text">Please wait. MADCAP is checking if you are authorized to participate.</string>
+    <string name="auth_check_text">Checking participation authorisation. Please wait...</string>
     <string name="not_authorized_text">The signed-in user is not authorized to use MADCAP.\n\nOnly participants in the NSF Pocket Security study are authorized to use MADCAP. If you are interested in participating in this study, visit https://www.pocket-security.org/participants-information/</string>
     <string name="not_authorized_user_email">User email: %s</string>
     <string name="not_authorized_user_id">User id: %s</string>
     <string name="authorization_error">An error occurred while checking your authorization to use MADCAP. Please go back and try signing in again.</string>
-    <string name="not_authorized_short">Not authorized to use MADCAP</string>
-    <string name="authorization_authorized">Authorization successful. Launching MADCAP…</string>
+    <string name="not_authorized_short">Not authorized to use MADCAP.</string>
+    <string name="authorization_authorized">Authorization successful. Launching MADCAP...</string>
 
     <!-- EULA -->
     <string name="eula">
