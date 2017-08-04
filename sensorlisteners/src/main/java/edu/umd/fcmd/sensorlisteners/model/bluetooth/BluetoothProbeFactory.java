@@ -6,6 +6,8 @@ import android.content.Intent;
 
 import javax.inject.Inject;
 
+import timber.log.Timber;
+
 import static android.bluetooth.BluetoothAdapter.EXTRA_CONNECTION_STATE;
 
 /**
@@ -18,7 +20,8 @@ public class BluetoothProbeFactory {
      * Default constructor needed for dependency injection with Dagger2
      */
     @Inject
-    public BluetoothProbeFactory() { }
+    public BluetoothProbeFactory() {
+    }
 
     /**
      * Probe capturing the state of the Bluetooth adapter
@@ -43,7 +46,29 @@ public class BluetoothProbeFactory {
         BluetoothConnectionProbe probe = new BluetoothConnectionProbe();
 
         probe.setDate(System.currentTimeMillis());
-        probe.setState(intent.getStringExtra(EXTRA_CONNECTION_STATE));
+//        probe.setState(intent.getStringExtra(BluetoothAdapter.EXTRA_CONNECTION_STATE));
+//        probe.setState(intent.getStringExtra(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED));
+
+        int stateInt = intent.getExtras().getInt(BluetoothAdapter.EXTRA_CONNECTION_STATE);
+        Timber.d("BT Connection probe State: "+stateInt);
+        switch (stateInt) {
+            case 0:
+                probe.setState(BluetoothConnectionProbe.DISCONNECTED);
+                break;
+            case 1:
+                probe.setState(BluetoothConnectionProbe.CONNECTING);
+                break;
+            case 2:
+                probe.setState(BluetoothConnectionProbe.CONNECTED);
+                break;
+            case 3:
+                probe.setState(BluetoothConnectionProbe.DISCONNECTING);
+                break;
+            default:
+                probe.setState(BluetoothConnectionProbe.UNKNOWN);
+                break;
+        }
+
         BluetoothDevice device = intent.getExtras().getParcelable(BluetoothDevice.EXTRA_DEVICE);
         if (device != null) {
             probe.setForeignAddress(device.getAddress());

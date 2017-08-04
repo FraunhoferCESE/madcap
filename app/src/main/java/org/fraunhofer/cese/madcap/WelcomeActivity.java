@@ -92,11 +92,11 @@ public class WelcomeActivity extends AppCompatActivity {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 permissionRationaleTV.setVisibility(View.GONE);
                 grantButton.setVisibility(View.GONE);
+                welcomeMessageView.setVisibility(View.VISIBLE);
                 login();
             } else {
-
+                welcomeMessageView.setVisibility(View.INVISIBLE);
                 permissionRationaleTV.setVisibility(View.VISIBLE);
-
                 grantButton.setVisibility(View.VISIBLE);
                 grantButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -105,7 +105,6 @@ public class WelcomeActivity extends AppCompatActivity {
                                 PERMISSION_RQST_CODE);
                     }
                 });
-
             }
         }
     }
@@ -130,7 +129,10 @@ public class WelcomeActivity extends AppCompatActivity {
                     .setCancelable(false);
             AlertDialog dialog = dialogBuilder.create();
             dialog.show();
-        } else login();
+        } else{
+            Timber.d("Contacts permissions required.");
+            login();
+        }
     }
 
     protected void login() {

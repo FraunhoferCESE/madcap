@@ -1,20 +1,29 @@
 package edu.umd.fcmd.sensorlisteners.model.bluetooth;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import timber.log.Timber;
 
 /**
  * Created by MMueller on 12/6/2016.
- *
+ * <p>
  * Probe modelling a bluetooth connection.
  */
 
 public class BluetoothConnectionProbe extends Probe {
+
+    public static final String DISCONNECTED = "DISCONNECTED";
+    public static final String CONNECTING = "CONNECTING";
+    public static final String CONNECTED = "CONNECTED";
+    public static final String DISCONNECTING = "DISCONNECTING";
+    public static final String UNKNOWN = "UNKNOWN";
+
     private String state;
     private String foreignAddress;
     private String foreignName;
 
     /**
      * Getter for the state.
+     *
      * @return the state.
      */
     public String getState() {
@@ -23,14 +32,21 @@ public class BluetoothConnectionProbe extends Probe {
 
     /**
      * Setter for the state.
+     *
      * @param state the state to set to.
      */
     public void setState(String state) {
+//        if(state==null){
+//            Timber.i("BTState is "+state );
+//            this.state = "INVALID";
+//
+//        }else
         this.state = state;
     }
 
     /**
      * Getter for the connected devices address.
+     *
      * @return the connected devices address.
      */
     public String getForeignAddress() {
@@ -39,6 +55,7 @@ public class BluetoothConnectionProbe extends Probe {
 
     /**
      * Setter for the connected devices address.
+     *
      * @param foreignAddress the address to set to.
      */
     public void setForeignAddress(String foreignAddress) {
@@ -47,6 +64,7 @@ public class BluetoothConnectionProbe extends Probe {
 
     /**
      * Getter for the connected devices name.
+     *
      * @return the connected devices name.
      */
     public String getForeignName() {
@@ -55,6 +73,7 @@ public class BluetoothConnectionProbe extends Probe {
 
     /**
      * Setter for the connected devices name.
+     *
      * @param foreignName the name to set to.
      */
     public void setForeignName(String foreignName) {
@@ -96,7 +115,7 @@ public class BluetoothConnectionProbe extends Probe {
     public String toString() {
         return "{\"state\": " + state +
                 ", \"foreignName\": " + foreignName +
-                ", \"foreignAddress\": " + "\""+(foreignAddress != null ? foreignAddress : "-") +"\"" +
+                ", \"foreignAddress\": " + "\"" + (foreignAddress != null ? foreignAddress : "-") + "\"" +
                 '}';
     }
 }

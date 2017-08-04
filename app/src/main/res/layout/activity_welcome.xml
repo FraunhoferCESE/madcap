@@ -8,11 +8,14 @@
     tools:context=".WelcomeActivity">
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="393dp"
+        android:layout_height="660dp"
         android:padding="8sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="parent">
+        app:layout_constraintTop_toBottomOf="parent"
+        android:layout_margin="8dp"
+        android:layout_marginLeft="-36dp"
+        android:layout_marginTop="-493dp">
 
         <ImageView
             android:id="@+id/madcap_logo"
@@ -24,13 +27,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:layout_editor_absoluteX="-21dp" />
 
         <TextView
             android:id="@+id/title_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16sp"
+            android:layout_marginTop="16dp"
             android:gravity="center"
             android:text="@string/app_name"
             android:textColor="@color/madcap_main_light"
@@ -38,7 +42,8 @@
             app:layout_constraintBottom_toTopOf="@+id/subtitle_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/madcap_logo" />
+            app:layout_constraintTop_toBottomOf="@+id/madcap_logo"
+            tools:layout_editor_absoluteX="123dp" />
 
         <TextView
             android:id="@+id/subtitle_text"
@@ -49,48 +54,69 @@
             app:layout_constraintBottom_toTopOf="@+id/welcomeMessage"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title_text" />
+            app:layout_constraintTop_toBottomOf="@+id/title_text"
+            tools:layout_editor_absoluteX="43dp" />
 
         <TextView
             android:id="@+id/welcomeMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="258dp"
+            android:layout_height="80dp"
             android:layout_margin="16sp"
             android:gravity="center"
             android:text="@string/welcome"
             app:layout_constraintBottom_toTopOf="@+id/helpButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/subtitle_text" />
+            app:layout_constraintTop_toBottomOf="@+id/subtitle_text"
+            tools:layout_editor_absoluteX="50dp"
+            android:visibility="visible"
+            />
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="364dp"
+            android:layout_height="53dp"
             android:textAlignment="center"
             android:text="@string/contacts_rationale_wa"
             android:id="@+id/wa_permissionRationale"
             android:layout_margin="5dp"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/wa_grantButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subtitle_text"
+            tools:layout_editor_absoluteX="14dp"
+            app:layout_constraintVertical_bias="1.0" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Grant"
             android:id="@+id/wa_grantButton"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/helpButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/subtitle_text"
+            tools:layout_editor_absoluteX="152dp"
+            app:layout_constraintVertical_bias="1.0" />
 
         <Button
             android:id="@+id/helpButton"
-            android:layout_width="match_parent"
+            android:layout_width="379dp"
             android:layout_height="wrap_content"
             android:text="@string/help"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/welcomeMessage" />
+            app:layout_constraintTop_toBottomOf="@+id/welcomeMessage"
+            tools:layout_editor_absoluteX="8dp" />
 
     </android.support.constraint.ConstraintLayout>
 
-    <include layout="@layout/footer" />
+    <include layout="@layout/footer"
+        android:layout_height="0dp"
+        android:layout_width="0dp"
+        tools:layout_editor_absoluteY="617dp"
+        tools:layout_editor_absoluteX="0dp" />
 </android.support.constraint.ConstraintLayout>
 

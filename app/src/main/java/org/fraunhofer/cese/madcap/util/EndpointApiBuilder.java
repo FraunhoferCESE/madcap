@@ -1,6 +1,7 @@
 package org.fraunhofer.cese.madcap.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -10,6 +11,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 
 import org.fraunhofer.cese.madcap.BuildConfig;
 import org.fraunhofer.cese.madcap.R;
+import org.fraunhofer.cese.madcap.WelcomeActivity;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 
@@ -49,6 +51,8 @@ public class EndpointApiBuilder {
             credential = GoogleAccountCredential.usingAudience(context, "server:client_id:" + context.getResources().getString(clientIdResource));
             credential.setSelectedAccountName(user.getEmail());
             Log.d("AuthenticationProvider",credential.getSelectedAccountName());
+        }else{
+            Log.e("EndpointApiBuilder","User is null");
         }
 
 
