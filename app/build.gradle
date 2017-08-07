@@ -3,6 +3,9 @@ apply plugin: 'com.android.application'
 //Dagger
 apply plugin: 'com.neenbedankt.android-apt'
 
+// V2: Apply the new Endpoints Framework client plugin
+apply plugin: 'com.google.cloud.tools.endpoints-framework-client'
+
 buildscript {
     repositories {
         jcenter()
@@ -10,6 +13,7 @@ buildscript {
     dependencies {
         // V2: Add the new Endpoints Framework plugin dependencies
         classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
+        classpath 'com.google.gms:google-services:3.0.0'
     }
 }
 android {
@@ -98,10 +102,14 @@ configurations {
 }
 
 dependencies {
-    compile project(path: ':backend', configuration: 'android-endpoints')
+//    compile project(path: ':backend', configuration: 'android-backend')
     compile project(':sensorlisteners')
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
+    // V2: Endpoints Framework v2 migration
+    endpointsServer project(path: ':backend', configuration: 'endpoints')
+    compile 'com.google.api-client:google-api-client-android:1.22.0'
+    compile 'com.google.http-client:google-http-client-android:1.22.0'
 
     compile 'com.google.firebase:firebase-config:10.2.4'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
@@ -113,8 +121,6 @@ dependencies {
     compile 'com.google.firebase:firebase-core:10.2.4'
     compile 'com.google.firebase:firebase-messaging:10.2.4'
     compile 'com.google.firebase:firebase-crash:10.2.4'
-    compile 'com.google.http-client:google-http-client-android:1.22.0' //endpoints v2
-    compile 'com.google.api-client:google-api-client-android:1.22.0' //endpoints v2
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
