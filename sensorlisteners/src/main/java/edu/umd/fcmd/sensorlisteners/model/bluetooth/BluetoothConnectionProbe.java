@@ -36,11 +36,6 @@ public class BluetoothConnectionProbe extends Probe {
      * @param state the state to set to.
      */
     public void setState(String state) {
-//        if(state==null){
-//            Timber.i("BTState is "+state );
-//            this.state = "INVALID";
-//
-//        }else
         this.state = state;
     }
 
@@ -114,7 +109,7 @@ public class BluetoothConnectionProbe extends Probe {
     @Override
     public String toString() {
         return "{\"state\": " + state +
-                ", \"foreignName\": " + foreignName +
+                ", \"foreignName\": " + "\"" + foreignName + "\"" +
                 ", \"foreignAddress\": " + "\"" + (foreignAddress != null ? foreignAddress : "-") + "\"" +
                 '}';
     }

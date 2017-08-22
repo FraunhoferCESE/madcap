@@ -34,10 +34,11 @@ public class ActivityProbeFactory {
 
         ActivityProbe activityProbe = new ActivityProbe();
         activityProbe.setDate(System.currentTimeMillis());
+        Timber.d("Fraunhofer/madcap/PhysicalActivity/probefactory/time: "+activityProbe.getDate());
 
         for (DetectedActivity detectedActivity : activityList) {
             int type = detectedActivity.getType();
-
+            Timber.d("Fraunhofer/madcap/PhysicalActivity/detectedType: "+type);
             switch (type) {
                 case DetectedActivity.IN_VEHICLE:
                     activityProbe.setInVehicle((double) detectedActivity.getConfidence() / PERCENT);
@@ -66,10 +67,11 @@ public class ActivityProbeFactory {
                 case -1000:
                     break;
                 default:
-                    Timber.w("Incorrect Activity detected");
+                    Timber.w("Nonspecific activity detected");
                     break;
             }
         }
+        Timber.d("Fraunhofer/madcap/PhysicalActivity/probe: "+activityProbe);
         return activityProbe;
     }
 }

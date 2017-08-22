@@ -7,6 +7,7 @@ import com.googlecode.objectify.annotation.Index;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.logging.Logger;
 
 /**
  * Created by MMueller on 12/6/2016.
