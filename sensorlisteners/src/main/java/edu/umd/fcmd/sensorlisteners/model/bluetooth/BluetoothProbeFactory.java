@@ -50,7 +50,7 @@ public class BluetoothProbeFactory {
 //        probe.setState(intent.getStringExtra(BluetoothAdapter.ACTION_CONNECTION_STATE_CHANGED));
 
         int stateInt = intent.getExtras().getInt(BluetoothAdapter.EXTRA_CONNECTION_STATE);
-        Timber.d("BT Connection probe State: "+stateInt);
+//        Timber.d("BT Connection probe State: "+stateInt);
         switch (stateInt) {
             case 0:
                 probe.setState(BluetoothConnectionProbe.DISCONNECTED);
@@ -74,6 +74,8 @@ public class BluetoothProbeFactory {
             probe.setForeignAddress(device.getAddress());
             probe.setForeignName(device.getName());
         }
+        Timber.d("BT probe/Connection: "+probe.toString());
+        Timber.d("BT probe/Connection/probe: "+probe);
         return probe;
     }
 
@@ -97,7 +99,7 @@ public class BluetoothProbeFactory {
             default:
                 probe.setState(BluetoothDiscoveryProbe.UNKNOWN);
         }
-
+        Timber.d("BT probe/Discovery: "+probe.toString());
         return probe;
     }
 
@@ -120,7 +122,7 @@ public class BluetoothProbeFactory {
             default:
                 probe.setKind(BluetoothRequestProbe.UNKNOWN);
         }
-
+        Timber.d("BT probe/Request: "+probe.toString());
         return probe;
     }
 
@@ -146,6 +148,7 @@ public class BluetoothProbeFactory {
             default:
                 probe.setState(BluetoothScanModeProbe.UNKNOWN);
         }
+        Timber.d("BT probe/Scan mode : "+probe.toString());
         return probe;
     }
 }

@@ -1,13 +1,13 @@
 package org.fraunhofer.cese.madcap.util;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+
 
 import org.fraunhofer.cese.madcap.BuildConfig;
 import org.fraunhofer.cese.madcap.R;

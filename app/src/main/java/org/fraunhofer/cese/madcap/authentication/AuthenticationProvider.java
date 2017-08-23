@@ -70,7 +70,10 @@ public class AuthenticationProvider {
 
         if (mGoogleApiClient.isConnected()) {
             activity.startActivityForResult(Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient), resultCode);
+            //per Endpoints v2
+//            GoogleAccountCredential credential = GoogleAccountCredential.usingAudience(activity, "server:client_id:"+ Constants.ANDROID_AUDIENCE);
         } else {
+
             mGoogleApiClient.registerConnectionFailedListener(callback);
             mGoogleApiClient.registerConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
                 @Override
@@ -149,7 +152,6 @@ public class AuthenticationProvider {
             });
         }
     }
-
 
     /**
      * Attempts to log the user out using the Google SignIn API
