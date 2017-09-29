@@ -51,8 +51,8 @@ class ActivityUpdater implements Runnable {
                         Timber.d("Fraunhofer/madcap/PhysicalActivity/DetectedActivityResult: "+r);
                         if (r.getStatus().isSuccess()) {
                             ActivityProbe probe = factory.createActivityProbe(r.getActivityRecognitionResult().getProbableActivities());
-                            Timber.d("Fraunhofer/madcap/PhysicalActivity/DetectedActivityResult/mostProbable: "+r.getActivityRecognitionResult().getMostProbableActivity());
-                            Timber.d("Fraunhofer/madcap/PhysicalActivity/DetectedActivityResult/probe/Timestamp: "+r.getActivityRecognitionResult().getTime());
+//                            Timber.d("Fraunhofer/madcap/PhysicalActivity/DetectedActivityResult/mostProbable: "+r.getActivityRecognitionResult().getMostProbableActivity());
+//                            Timber.d("Fraunhofer/madcap/PhysicalActivity/DetectedActivityResult/probe/Timestamp: "+r.getActivityRecognitionResult().getTime());
                             if (!probe.equals(lastActivityProbe)) {
                                 lastActivityProbe = probe;
                                 EventBus.getDefault().post(probe);

@@ -6,16 +6,23 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.View;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
+
+import org.fraunhofer.cese.madcap.cache.Cache;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import timber.log.Timber;
 
 public class SettingsActivity extends ChildActivity {
 
@@ -38,6 +45,12 @@ public class SettingsActivity extends ChildActivity {
     @BindView(R.id.uploadOnWifiOption)
     CheckBox uploadOnWifiCheckBox;
 
+//    @BindView(R.id.cacheSizeText)
+//    TextView cacheSizeTextView;
+//
+//    @BindView(R.id.clearCacheImg)
+//    ImageView deleteCacheIV;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +61,6 @@ public class SettingsActivity extends ChildActivity {
         setContentView(R.layout.activity_settings);
 
         ButterKnife.bind(this);
-
-
     }
 
     @Override
@@ -73,7 +84,20 @@ public class SettingsActivity extends ChildActivity {
             uploadOnWifiTextView.setText(R.string.upload_on_wifi_text);
             uploadOnWifiTextView.setAlpha(ALPHA_ENABLED);
         }
+
+//        cacheSizeTextView.setText(R.string.cache_info);
     }
+
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onCacheCountUpdate(Cache.CacheCountUpdate event) {
+//        if (event == null) {
+//            return;
+//        }
+//
+//        //noinspection MagicNumber
+//        double percentage = ((double) event.getCount() * 100.0d) / (double) mFirebaseRemoteConfig.getLong(getString(R.string.DB_FORCED_CLEANUP_LIMIT_KEY));
+//        cacheSizeTextView.setText(R.string.cache_info + Double.toString(percentage));
+//    }
 
     @OnClick(R.id.uploadOnWifiOption)
     public void uploadOnWifiSelected(@SuppressWarnings("TypeMayBeWeakened") final CheckBox checkBox) {
@@ -101,6 +125,12 @@ public class SettingsActivity extends ChildActivity {
             prefs.edit().putBoolean(getString(R.string.pref_upload_on_wifi), checkBox.isChecked()).apply();
         }
     }
+
+//    @OnClick(R.id.clearCacheImg)
+//    public void clearCache(ImageView imageView){
+//        //TODO: Clear out cache
+//        Timber.d("Clear cache");
+//    }
 
     @Override
     protected void onSignOut() {

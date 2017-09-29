@@ -151,6 +151,7 @@
     <!-- SettingsActivity -->
     <string name="name_settings_activity">Settings</string>
     <string name="upload_on_wifi_text">Allow MADCAP to upload data using cellular data?</string>
+    <string name="cache_info">Cache size: </string>
     <string name="upload_on_wifi_text_disabled">Allow MADCAP to upload data using cellular data?<![CDATA[<br><font color="#8B0000">The administrator has disabled this option.</font>]]></string>
     <string name="pref_upload_on_wifi">uploadOnWifi</string>
 

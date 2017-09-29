@@ -8,39 +8,76 @@
 
     <include
         android:id="@+id/my_toolbar"
-        layout="@layout/action_bar" />
+        layout="@layout/action_bar"
+        android:layout_height="wrap_content"
+        android:layout_width="411dp"
+        tools:layout_editor_absoluteY="0dp"
+        tools:layout_editor_absoluteX="0dp" />
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16sp"
+        android:layout_width="407dp"
+        android:layout_height="153dp"
+        android:layout_marginTop="25dp"
         android:padding="8sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/my_toolbar">
+        app:layout_constraintTop_toBottomOf="@+id/my_toolbar"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintHorizontal_bias="0.506">
 
 
         <TextView
             android:id="@+id/uploadOnWifiText"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="358dp"
+            android:layout_height="26dp"
             app:layout_constraintEnd_toStartOf="@+id/uploadOnWifiOption"
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:textIsSelectable="true" />
+            android:textIsSelectable="true"
+            tools:layout_editor_absoluteX="0dp"
+            />
 
         <CheckBox
             android:id="@+id/uploadOnWifiOption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8sp"
-            app:layout_constraintBottom_toBottomOf="@id/uploadOnWifiText"
+            app:layout_constraintBottom_toBottomOf="@+id/uploadOnWifiText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/uploadOnWifiText"
-            app:layout_constraintTop_toTopOf="@id/uploadOnWifiText" />
+            app:layout_constraintTop_toTopOf="@+id/uploadOnWifiText"
+            tools:layout_editor_absoluteX="302dp" />
+
+        <!--<TextView-->
+            <!--android:id="@+id/cacheSizeText"-->
+            <!--android:layout_width="358dp"-->
+            <!--android:layout_height="26dp"-->
+            <!--android:layout_marginLeft="0dp"-->
+            <!--android:layout_marginTop="20dp"-->
+
+            <!--app:layout_constraintEnd_toStartOf="@+id/clearCacheImg"-->
+
+            <!--app:layout_constraintHorizontal_weight="1"-->
+            <!--app:layout_constraintLeft_toLeftOf="parent"-->
+            <!--app:layout_constraintTop_toBottomOf="@+id/uploadOnWifiText" />-->
+
+        <!--<ImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:id="@+id/clearCacheImg"-->
+            <!--app:layout_constraintBottom_toBottomOf="@+id/cacheSizeText"-->
+            <!--app:layout_constraintEnd_toEndOf="parent"-->
+            <!--app:layout_constraintStart_toEndOf="@id/cacheSizeText"-->
+            <!--app:layout_constraintTop_toTopOf="@+id/cacheSizeText"-->
+            <!--android:src="@android:drawable/ic_menu_delete"-->
+            <!--app:layout_constraintRight_toRightOf="parent"-->
+            <!--android:layout_marginRight="0dp" />-->
 
     </android.support.constraint.ConstraintLayout>
 
 
-    <include layout="@layout/footer" />
+    <include layout="@layout/footer"
+        android:layout_height="wrap_content"
+        android:layout_width="411dp"
+        tools:layout_editor_absoluteY="466dp"
+        tools:layout_editor_absoluteX="0dp" />
 </android.support.constraint.ConstraintLayout>

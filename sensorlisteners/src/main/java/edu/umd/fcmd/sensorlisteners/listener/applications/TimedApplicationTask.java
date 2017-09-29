@@ -14,6 +14,8 @@ import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.sql.Timestamp;
+
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
 

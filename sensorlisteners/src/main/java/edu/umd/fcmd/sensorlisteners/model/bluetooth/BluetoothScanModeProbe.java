@@ -15,7 +15,7 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 
 public class BluetoothScanModeProbe extends Probe {
     public static final String INVISIBLE = "INVISIBLE";
-    public static final String CONNECTABLE = "INVISABLE BUT CONNECTABLE";
+    public static final String CONNECTABLE = "INVISIBLE BUT CONNECTABLE";
     public static final String VISIBLE = "VISIBLE";
     public static final String UNKNOWN = "UNKNOWN";
 
