@@ -298,11 +298,8 @@ public class NetworkProbeFactory {
             //check if current connected SSID.
             if (currentSsid.equals('\"' + network.SSID + '\"')) {
                 //get capabilities of current connection
-                System.out.print("Hello " + currentSsid);
-                System.out.print("Hello " + network.SSID);
-
                 String capabilities = network.capabilities;
-                System.out.print("Hello " + capabilities);
+
                 //noinspection IfStatementWithTooManyBranches
                 if (capabilities.contains("WPA2")) {
                     security = "WPA2";
@@ -313,9 +310,6 @@ public class NetworkProbeFactory {
                 } else if (capabilities.contains("Open")) {
                     security = "OPEN";
                 }
-               // else {
-               //     security = capabilities;
-              //  }
             }
         }
         wiFiProbe.setNetworkSecurity(security);

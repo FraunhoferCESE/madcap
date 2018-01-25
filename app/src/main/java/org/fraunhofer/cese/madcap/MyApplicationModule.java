@@ -237,12 +237,8 @@ class MyApplicationModule {
     @Provides
     @Nullable
     NfcAdapter provideNfcAdapter() {
-        if(NfcAdapter.getDefaultAdapter(application) == null){
-            return null;
-        }
-        else {
-            return NfcAdapter.getDefaultAdapter(application);
-        }
+        return NfcAdapter.getDefaultAdapter(application);
+
     }
 
     @Provides
