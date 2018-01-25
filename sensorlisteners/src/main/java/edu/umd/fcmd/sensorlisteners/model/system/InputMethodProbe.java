@@ -5,7 +5,7 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 /**
  * Created by MMueller on 1/4/2017.
  *
- * Model class for input methods (keyboard english, keboard german,
+ * Model class for input methods (keyboard english, keyboard german,
  * voice to text etc.)
  */
 public class InputMethodProbe extends Probe {

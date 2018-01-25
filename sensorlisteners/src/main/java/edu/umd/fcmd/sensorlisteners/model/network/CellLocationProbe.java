@@ -111,7 +111,7 @@ public class CellLocationProbe extends Probe {
      * getClass().getName() + '@' + Integer.toHexString(hashCode())
      * </pre></blockquote>
      *
-     * @return a string representation of the object.
+     * @return a string representation of the object(celltype, areacode, latitude and longitude).
      */
     @Override
     public String toString() {

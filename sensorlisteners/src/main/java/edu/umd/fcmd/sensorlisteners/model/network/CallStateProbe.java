@@ -9,7 +9,7 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
  * Possible states:
  *
  * IDLE
- * INGING
+ * RINGING
  * OFFHOOK
  * UNKNOWN
  */

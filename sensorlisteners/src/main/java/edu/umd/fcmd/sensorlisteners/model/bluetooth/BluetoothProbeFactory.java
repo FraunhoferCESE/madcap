@@ -25,6 +25,7 @@ public class BluetoothProbeFactory {
 
     /**
      * Probe capturing the state of the Bluetooth adapter
+     * Possible adapter states are: off, on, turning on and turning off.
      *
      * @param state {@link BluetoothAdapter#getState()}
      * @return a new Bluetooth state probe
@@ -38,6 +39,7 @@ public class BluetoothProbeFactory {
 
     /**
      * Creates a probe containing information on which bluetooth device the phone was connected to
+     * Possible connections: connected, connecting, disconnected, disconnecting and unknown.
      *
      * @param intent see {@link BluetoothAdapter#ACTION_CONNECTION_STATE_CHANGED}
      * @return a probe containing the bluetooth device connected
@@ -82,6 +84,7 @@ public class BluetoothProbeFactory {
 
     /**
      * Creates a probe that records changes in the Bluetooth discovery process
+     * Possible discovery probes: started, finished and unknown.
      *
      * @param intent see {@link BluetoothAdapter#ACTION_DISCOVERY_STARTED} and {@link BluetoothAdapter#ACTION_DISCOVERY_FINISHED}
      * @return a new bluetooth discovery probe
@@ -105,6 +108,7 @@ public class BluetoothProbeFactory {
 
     /**
      * Creates a probe to record actions that request changes to the Bluetooth discoverability state
+     * Possible discoverability states: discoverable, enable and unknown.
      *
      * @param intent the intent that launched the action. See {@link BluetoothAdapter#ACTION_REQUEST_DISCOVERABLE} and {@link BluetoothAdapter#ACTION_REQUEST_ENABLE}
      * @return a new Bluetooth discovery probe
@@ -128,6 +132,7 @@ public class BluetoothProbeFactory {
 
     /**
      * Creates a probe that captures changed in the Bluetooth adapter's scanning mode
+     * Possible scanning modes: invisible, connectable, visible and unknown.
      *
      * @param intent see {@link BluetoothAdapter#ACTION_SCAN_MODE_CHANGED}
      * @return a new probe

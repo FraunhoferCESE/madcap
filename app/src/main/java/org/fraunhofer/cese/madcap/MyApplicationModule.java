@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.nfc.NfcAdapter;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.telephony.TelephonyManager;
 
 import com.google.android.gms.auth.api.Auth;
@@ -234,8 +235,14 @@ class MyApplicationModule {
     }
 
     @Provides
+    @Nullable
     NfcAdapter provideNfcAdapter() {
-        return NfcAdapter.getDefaultAdapter(application);
+        if(NfcAdapter.getDefaultAdapter(application) == null){
+            return null;
+        }
+        else {
+            return NfcAdapter.getDefaultAdapter(application);
+        }
     }
 
     @Provides

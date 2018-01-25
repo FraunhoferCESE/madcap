@@ -25,7 +25,7 @@ public class BluetoothScanModeProbe extends Probe {
      * Getter for the state.
      *
      * @return a State string.
-     * It is eigther
+     * It is either
      * INVISABLE
      * INVISABLE BUT CONNECTABLE or
      * VISABLE
@@ -38,7 +38,7 @@ public class BluetoothScanModeProbe extends Probe {
      * Sets the state.
      *
      * @param state the state to set.
-     * Should be eigther
+     * Should be either
      * INVISABLE
      * INVISiBLE BUT CONNECTABLE or
      * VISABLE.

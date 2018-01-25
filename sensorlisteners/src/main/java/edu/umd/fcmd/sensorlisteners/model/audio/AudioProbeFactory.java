@@ -18,6 +18,8 @@ public class AudioProbeFactory {
 
     /**
      * Creates a ringer probe to indicate the current ringer state.
+     * Possible probes are normal, silent, vibrate.
+     * If no ringer probe is detected, then it is unspecified by default.
      *
      * @param mode  see {@link AudioManager#EXTRA_RINGER_MODE}
      * @return a new ringer probe
@@ -44,6 +46,8 @@ public class AudioProbeFactory {
 
     /**
      * creates a headphone probe in response to a changing headphone state
+     * Possible probes are plugged and unplugged.
+     * If no headphone probe is detected, then it is unknown by default.
      *
      * @param state see {@link AudioManager#ACTION_HEADSET_PLUG}
      * @return a new headphone probe

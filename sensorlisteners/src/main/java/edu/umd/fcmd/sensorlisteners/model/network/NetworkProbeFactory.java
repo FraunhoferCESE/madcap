@@ -20,6 +20,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.security.Security;
 
 import javax.inject.Inject;
 
@@ -80,7 +81,7 @@ public class NetworkProbeFactory {
     }
 
     /**
-     * Creates an {@link NFCProbe} based on the current NFC adapter status
+     * Creates an {@link NFCProbe} based on the current NFC adapter status.
      *
      * @param nfcAdapter From {@link NfcAdapter}
      * @return a new {@link NFCProbe}. {@link NFCProbe#getState()} will return {@link NFCProbe#ON} if the adapter exists and is turned on, and {@link NFCProbe#OFF} otherwise
@@ -95,7 +96,7 @@ public class NetworkProbeFactory {
 
     /**
      * Creates an {@link NFCProbe} based on the {@link NfcAdapter#ACTION_ADAPTER_STATE_CHANGED} broadcast
-     *
+     * Possible NFC adapter statuses: Enabled, disabled, turning on, turning off, unknown.
      * @param intent From {@link NfcAdapter#ACTION_ADAPTER_STATE_CHANGED} broadcast
      * @return a new {@link NFCProbe}. {@link NFCProbe#getState()} will return {@link NFCProbe#ON} if the adapter exists and is turned on, and {@link NFCProbe#OFF} otherwise
      */
@@ -291,12 +292,17 @@ public class NetworkProbeFactory {
 
         //get current connected SSID for comparison to ScanResult
         String security = "-";
+
         for (ScanResult network : networkList) {
+
             //check if current connected SSID.
             if (currentSsid.equals('\"' + network.SSID + '\"')) {
                 //get capabilities of current connection
-                String capabilities = network.capabilities;
+                System.out.print("Hello " + currentSsid);
+                System.out.print("Hello " + network.SSID);
 
+                String capabilities = network.capabilities;
+                System.out.print("Hello " + capabilities);
                 //noinspection IfStatementWithTooManyBranches
                 if (capabilities.contains("WPA2")) {
                     security = "WPA2";
@@ -307,6 +313,9 @@ public class NetworkProbeFactory {
                 } else if (capabilities.contains("Open")) {
                     security = "OPEN";
                 }
+               // else {
+               //     security = capabilities;
+              //  }
             }
         }
         wiFiProbe.setNetworkSecurity(security);

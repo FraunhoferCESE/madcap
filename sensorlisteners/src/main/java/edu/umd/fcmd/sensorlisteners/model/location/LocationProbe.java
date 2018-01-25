@@ -200,6 +200,13 @@ public class LocationProbe extends Probe {
                 '}';
     }
 
+    /**
+     * Extras is a bundle and differs from manufacturer to manufacturer.
+     *
+     * Note that this comment was not written by the author of this function
+     * @param locationProbe
+     * @return a String with extra information that differs from manufacturer to manufacturer
+     */
     private String processExtras(LocationProbe locationProbe) {
         Bundle extras = locationProbe.getExtras();
         if(extras != null){
