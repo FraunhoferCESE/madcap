@@ -310,14 +310,18 @@ public class NetworkProbeFactory {
                 String capabilities = network.capabilities;
 
                 //noinspection IfStatementWithTooManyBranches
-                if (capabilities.contains("WPA2")) {
+                if (capabilities.toUpperCase().contains("WPA2")) {
                     security = "WPA2";
-                } else if (capabilities.contains("WPA")) {
+                } else if (capabilities.toUpperCase().contains("WPA")) {
                     security = "WPA";
-                } else if (capabilities.contains("WEP")) {
+                } else if (capabilities.toUpperCase().contains("WEP")) {
                     security = "WEP";
-                } else if (capabilities.contains("Open")) {
+                } else if (capabilities.toUpperCase().contains("OPEN")) {
                     security = "OPEN";
+                } else if (capabilities.toUpperCase().contains("WPS")){
+                    security = "WPS";
+                } else {
+                    security = capabilities;
                 }
             }
         }
