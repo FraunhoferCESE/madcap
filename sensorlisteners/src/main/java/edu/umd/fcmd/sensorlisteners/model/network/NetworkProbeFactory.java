@@ -90,7 +90,17 @@ public class NetworkProbeFactory {
     public NFCProbe createNfcProbe(@Nullable NfcAdapter nfcAdapter) {
         NFCProbe nfcProbe = new NFCProbe();
         nfcProbe.setDate(System.currentTimeMillis());
-        nfcProbe.setState(((nfcAdapter != null) && nfcAdapter.isEnabled()) ? NFCProbe.ON : NFCProbe.OFF);
+       // nfcProbe.setState(((nfcAdapter != null) && nfcAdapter.isEnabled()) ? NFCProbe.ON : NFCProbe.OFF);
+        if ((nfcAdapter != null) && nfcAdapter.isEnabled()) {
+            nfcProbe.setState(NFCProbe.ON);
+        }
+        else if(nfcAdapter == null){
+            nfcProbe.setState(NFCProbe.UNAVAILABLE);
+        }
+        else {
+            nfcProbe.setState(NFCProbe.OFF);
+        }
+
         return nfcProbe;
     }
 
@@ -104,7 +114,6 @@ public class NetworkProbeFactory {
     public NFCProbe createNfcProbe(@NonNull Intent intent) {
         NFCProbe nfcProbe = new NFCProbe();
         nfcProbe.setDate(System.currentTimeMillis());
-
         switch (intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, -1)) {
             case NfcAdapter.STATE_OFF:
                 nfcProbe.setState(NFCProbe.OFF);

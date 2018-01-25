@@ -36,7 +36,10 @@ public class NFCListener extends BroadcastReceiver implements Listener {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
         int state = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, -1);
+        System.out.print(context);
+        System.out.print(intent);
         if (state == NfcAdapter.STATE_OFF || state == NfcAdapter.STATE_ON) {
             onUpdate(factory.createNfcProbe(intent));
         }
