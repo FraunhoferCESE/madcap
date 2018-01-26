@@ -49,7 +49,7 @@ backend/src/main/java/org/fraunhofer/cese/madcap/backend/Constants.java
 app/src/main/java/org/fraunhofer/cese/madcap/Constants.java
 
 app/google-services.json
- 
+
 app/src/main/res/values/privatevalues.xml
 sensorlisteners/src/main/res/values/privatesensorvalues.xml
 /madcap_keystore.jks
@@ -58,3 +58,4 @@ app/src/test/java/org/fraunhofer/cese/madcap/cache/
 app/src/test/java/org/fraunhofer/cese/madcap/factories/
 madcap_keystore.jks
 sensorlisteners/src/test/java/edu/umd/fcmd/sensorlisteners/model/activity/
+madcap-debug.jks

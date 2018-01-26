@@ -325,6 +325,7 @@ public class NetworkProbeFactory {
                 }
             }
         }
+
         wiFiProbe.setNetworkSecurity(security);
 
         // Convert wifi state integer to string
