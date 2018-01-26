@@ -20,6 +20,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.security.Security;
 
 import javax.inject.Inject;
 
@@ -80,7 +81,7 @@ public class NetworkProbeFactory {
     }
 
     /**
-     * Creates an {@link NFCProbe} based on the current NFC adapter status
+     * Creates an {@link NFCProbe} based on the current NFC adapter status.
      *
      * @param nfcAdapter From {@link NfcAdapter}
      * @return a new {@link NFCProbe}. {@link NFCProbe#getState()} will return {@link NFCProbe#ON} if the adapter exists and is turned on, and {@link NFCProbe#OFF} otherwise
@@ -89,13 +90,23 @@ public class NetworkProbeFactory {
     public NFCProbe createNfcProbe(@Nullable NfcAdapter nfcAdapter) {
         NFCProbe nfcProbe = new NFCProbe();
         nfcProbe.setDate(System.currentTimeMillis());
-        nfcProbe.setState(((nfcAdapter != null) && nfcAdapter.isEnabled()) ? NFCProbe.ON : NFCProbe.OFF);
+       // nfcProbe.setState(((nfcAdapter != null) && nfcAdapter.isEnabled()) ? NFCProbe.ON : NFCProbe.OFF);
+        if ((nfcAdapter != null) && nfcAdapter.isEnabled()) {
+            nfcProbe.setState(NFCProbe.ON);
+        }
+        else if(nfcAdapter == null){
+            nfcProbe.setState(NFCProbe.UNAVAILABLE);
+        }
+        else {
+            nfcProbe.setState(NFCProbe.OFF);
+        }
+
         return nfcProbe;
     }
 
     /**
      * Creates an {@link NFCProbe} based on the {@link NfcAdapter#ACTION_ADAPTER_STATE_CHANGED} broadcast
-     *
+     * Possible NFC adapter statuses: Enabled, disabled, turning on, turning off, unknown.
      * @param intent From {@link NfcAdapter#ACTION_ADAPTER_STATE_CHANGED} broadcast
      * @return a new {@link NFCProbe}. {@link NFCProbe#getState()} will return {@link NFCProbe#ON} if the adapter exists and is turned on, and {@link NFCProbe#OFF} otherwise
      */
@@ -103,7 +114,6 @@ public class NetworkProbeFactory {
     public NFCProbe createNfcProbe(@NonNull Intent intent) {
         NFCProbe nfcProbe = new NFCProbe();
         nfcProbe.setDate(System.currentTimeMillis());
-
         switch (intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, -1)) {
             case NfcAdapter.STATE_OFF:
                 nfcProbe.setState(NFCProbe.OFF);
@@ -291,21 +301,27 @@ public class NetworkProbeFactory {
 
         //get current connected SSID for comparison to ScanResult
         String security = "-";
+
         for (ScanResult network : networkList) {
+
             //check if current connected SSID.
             if (currentSsid.equals('\"' + network.SSID + '\"')) {
                 //get capabilities of current connection
                 String capabilities = network.capabilities;
 
                 //noinspection IfStatementWithTooManyBranches
-                if (capabilities.contains("WPA2")) {
+                if (capabilities.toUpperCase().contains("WPA2")) {
                     security = "WPA2";
-                } else if (capabilities.contains("WPA")) {
+                } else if (capabilities.toUpperCase().contains("WPA")) {
                     security = "WPA";
-                } else if (capabilities.contains("WEP")) {
+                } else if (capabilities.toUpperCase().contains("WEP")) {
                     security = "WEP";
-                } else if (capabilities.contains("Open")) {
+                } else if (capabilities.toUpperCase().contains("OPEN")) {
                     security = "OPEN";
+                } else if (capabilities.toUpperCase().contains("WPS")){
+                    security = "WPS";
+                } else {
+                    security = capabilities;
                 }
             }
         }

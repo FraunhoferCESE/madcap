@@ -61,7 +61,8 @@ public class BluetoothDiscoveryProbe extends Probe {
      * <pre>
      * getClass().getName() + '@' + Integer.toHexString(hashCode())
      * </pre></blockquote>
-     *
+     * The probe returns the bluetooth discovery state, possible states are
+     * started, finished and unknown.
      * @return a string representation of the object.
      */
     @Override

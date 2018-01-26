@@ -13,9 +13,9 @@ public class BluetoothStaticAttributesProbe extends Probe {
     private String address;
 
     /**
-     * Getter for the name th user can configure.
+     * Getter for the name the user can configure.
      * Something like "Bob's phone"
-     * @return the bleutooth device name.
+     * @return the bluetooth device name.
      */
     public String getName() {
         return name;

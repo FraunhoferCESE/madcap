@@ -75,6 +75,8 @@ public class NetworkProbe extends Probe {
      * getClass().getName() + '@' + Integer.toHexString(hashCode())
      * </pre></blockquote>
      *
+     * possible states: connected or not connected.
+     * info: security level
      * @return a string representation of the object.
      */
     @Override

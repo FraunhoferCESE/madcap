@@ -26,7 +26,7 @@ public class ActivityProbeFactory {
 
     /**
      * Creates an activity probe based on a list of detected activities. }
-     *
+     * Possible activity probes: vehicle, bicycle, on foot, running, still, walking and unknown.
      * @param activityList the list of detected activities. see See {@link ActivityRecognitionResult#getProbableActivities()
      * @return the new activity probe
      */

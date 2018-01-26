@@ -120,8 +120,8 @@ public class SystemProbeFactory {
     }
 
     /**
-     * Creates a probe that returns the current default input method
-     *
+     * Creates a probe that returns the current default input method.
+     * input methods can be e.g keyboard english, keyboard german, voice to text etc.
      * @param context the calling context
      * @return the new input method probe
      */
@@ -134,7 +134,9 @@ public class SystemProbeFactory {
 
     /**
      * Creates a probe that gets the current docking state of the device
-     *
+     * The device can be docked to a car or something else
+     * Possible docking states are: Docked, undocked and unknown.
+     * Possible docking kinds are: Car and desk.
      * @param context the calling context
      * @return the new dock state probe
      */
@@ -176,7 +178,7 @@ public class SystemProbeFactory {
 
     /**
      * Creates a probe that contains the current settings for screen timeout
-     *
+     * possible probes are either on or off
      * @param context the calling context
      * @return a new screen timeout probe
      */
@@ -189,6 +191,7 @@ public class SystemProbeFactory {
 
     /**
      * Creates a probe that determines whether the device in a DREAMING state depending on the intent
+     * Possible probes are either on or off.
      *
      * @param intent the intent to inspect. See {@link Intent#ACTION_DREAMING_STARTED} and {@link Intent#ACTION_DREAMING_STOPPED}
      * @return
@@ -203,6 +206,7 @@ public class SystemProbeFactory {
 
     /**
      * Creates a probe based capturing the time of a boot completed even or a shutdown even
+     * Possible system uptime probe states are either shutdown or boot complete
      *
      * @param intent the captured intent. See {@link Intent#ACTION_SHUTDOWN}, {@link Intent#ACTION_BOOT_COMPLETED}
      * @return
@@ -228,6 +232,7 @@ public class SystemProbeFactory {
 
     /**
      * Creates a new time changed probe for when the system broadcasts that the time set has changed
+     * When the user changes the time on his device
      *
      * @return a new time changed probe
      */

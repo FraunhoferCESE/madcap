@@ -9,6 +9,7 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 public class NFCProbe extends Probe {
     public static final String ON = "ENABLED";
     public static final String OFF = "DISABLED";
+    public static final String UNAVAILABLE = "UNAVAILABLE";
     public static final String TURNING_ON = "TURNING_ON";
     public static final String TURNING_OFF = "TURNING_OFF";
     public static final String UNKNOWN = "UNKNOWN";

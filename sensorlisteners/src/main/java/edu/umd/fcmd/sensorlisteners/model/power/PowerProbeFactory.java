@@ -19,6 +19,12 @@ public class PowerProbeFactory {
     public PowerProbeFactory() {
     }
 
+    /**
+     * possible charging probes: usb, ac, wireless, unknown or unplugged
+     * @param intent
+     * @return charging probe object
+     */
+
     @SuppressWarnings("MethodMayBeStatic")
     @NonNull
     public ChargingProbe createChargingProbe(@NonNull Intent intent) {
