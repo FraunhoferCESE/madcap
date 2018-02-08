@@ -58,6 +58,9 @@ import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.util.DataCollectionProbe;
+import edu.umd.fcmd.sensorlisteners.model.notification.NotificationProbe;
+import edu.umd.fcmd.sensorlisteners.listener.notification.notificationListener;
+
 import timber.log.Timber;
 
 
@@ -113,6 +116,9 @@ public class DataCollectionService extends Service {
     @Inject SMSListener smsListener;
     @Inject ConnectivityListener connectivityListener;
     @Inject NFCListener nfcListener;
+
+    @Inject notificationListener notificationlistener;
+
 
     @Inject FirebaseRemoteConfig firebaseRemoteConfig;
 
@@ -177,6 +183,9 @@ public class DataCollectionService extends Service {
             listeners.add(bluetoothListener);
             listeners.add(powerListener);
             listeners.add(auidioListener);
+
+
+            listeners.add(notificationlistener);
         }
 
         Timber.d("Starting remoteConfigUpdateHandler");
@@ -301,6 +310,7 @@ public class DataCollectionService extends Service {
                 locationListener.startListening();
                 wifiListener.startListening();
                 telephonyListener.startListening();
+                notificationlistener.startListening();
                 break;
             case TELEPHONE:
                 telephonyListener.startListening();

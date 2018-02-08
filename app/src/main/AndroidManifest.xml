@@ -94,6 +94,8 @@
             </intent-filter>
         </service>
 
+
+
         <activity
             android:name=".MainActivity"
             android:label="@string/name_main_activity"
