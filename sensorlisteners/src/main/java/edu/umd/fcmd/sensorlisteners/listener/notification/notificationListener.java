@@ -18,6 +18,7 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.ImageView;
 
 import javax.inject.Inject;
@@ -27,9 +28,12 @@ import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.model.notification.NotificationkProbeFactory;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
+
+import edu.umd.fcmd.sensorlisteners.listener.notification.notificationListener;
 import edu.umd.fcmd.sensorlisteners.model.notification.NotificationProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 import android.service.notification.NotificationListenerService;
+import edu.umd.fcmd.sensorlisteners.model.notification.NotificationProbe;
 import android.service.notification.StatusBarNotification;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -77,12 +81,14 @@ public class notificationListener extends BroadcastReceiver implements Listener 
     public void startListening() {
         if (!runningStatus) {
             //StatusBarNotification sbn = sbn.clone();
+
            //Bundle extras = sbn.getNotification().extras;
             IntentFilter intentFilter = new IntentFilter("Msg");
+           // IntentFilter intentFilter = new IntentFilter(this,"notificationListener.");
           //  intentFilter.addAction(NotificationManager.);
-
+            Log.i("Thorfinnur", "startlistening");
             mContext.registerReceiver(this, intentFilter);
-          //  onUpdate(factory.createNotificationProbe(
+        //   onUpdate(factory.createNotificationProbe(
          //           sbn.getPackageName(),
         //            sbn.getNotification().tickerText.toString(),
         //            sbn.getNotification().extras,
@@ -125,8 +131,27 @@ public class notificationListener extends BroadcastReceiver implements Listener 
                 msgrcv.putExtra("title", incomingNumber);
                 msgrcv.putExtra("text", "");
                 LocalBroadcastManager.getInstance(context).sendBroadcast(msgrcv);
+
+
+                Log.i("Thorfinnur", incomingNumber);
             }
         }, PhoneStateListener.LISTEN_CALL_STATE);
+    }
+
+
+    public void onNotificationPosted(StatusBarNotification sbn) {
+
+
+        String pack = sbn.getPackageName();
+        String ticker = sbn.getNotification().tickerText.toString();
+        Bundle extras = sbn.getNotification().extras;
+        String title = extras.getString("android.title");
+        String text = extras.getCharSequence("android.text").toString();
+
+        Log.i("Package",pack);
+        Log.i("Ticker",ticker);
+        Log.i("Title",title);
+        Log.i("Text",text);
     }
 }
 

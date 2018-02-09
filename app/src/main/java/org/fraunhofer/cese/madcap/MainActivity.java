@@ -41,6 +41,23 @@ import butterknife.OnClick;
 import timber.log.Timber;
 
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.ListView;
+import android.util.Log;
+import java.util.ArrayList;
+
+
+
 /**
  * Creates the main activity for MADCAP.
  */
@@ -352,4 +369,21 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             capacityWarningBlock.setVisibility(View.GONE);
         }
     }
+
+    private BroadcastReceiver onNotice= new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String pack = intent.getStringExtra("package");
+            String title = intent.getStringExtra("title");
+            String text = intent.getStringExtra("text");
+            //int id = intent.getIntExtra("icon",0);
+
+            Log.i("Package",pack);
+            //Log.i("Ticker",ticker);
+            Log.i("Title",title);
+            Log.i("Text",text);
+
+        }
+    };
 }
