@@ -25,7 +25,6 @@ public class NotificationService extends NotificationListenerService
     Context context;
 
     @Override
-
     public void onCreate() {
 
         super.onCreate();
@@ -33,7 +32,6 @@ public class NotificationService extends NotificationListenerService
 
     }
     @Override
-
     public void onNotificationPosted(StatusBarNotification sbn) {
         String pack = sbn.getPackageName();
         String ticker ="";
@@ -43,8 +41,6 @@ public class NotificationService extends NotificationListenerService
         Bundle extras = sbn.getNotification().extras;
         String title = extras.getString("android.title");
         String text = extras.getCharSequence("android.text").toString();
-      // int id1 = extras.getInt(Notification.EXTRA_SMALL_ICON);
-        Bitmap id = sbn.getNotification().largeIcon;
 
         Log.i("Package",pack);
         Log.i("Ticker",ticker);
@@ -55,9 +51,23 @@ public class NotificationService extends NotificationListenerService
     }
 
     @Override
-
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.i("Msg","Notification Removed");
+        Log.i("Thorfinnur","Notification Removed");
+        String pack = sbn.getPackageName();
+        String ticker ="";
+        if(sbn.getNotification().tickerText !=null) {
+            ticker = sbn.getNotification().tickerText.toString();
+        }
+
+        Bundle extras = sbn.getNotification().extras;
+        String title = extras.getString("android.title");
+        String text = extras.getCharSequence("android.text").toString();
+
+        Log.i("Package Removed",pack);
+        Log.i("Ticker Removed",ticker);
+        Log.i("Title Removed",title);
+        Log.i("Text Removed",text);
+
 
     }
 

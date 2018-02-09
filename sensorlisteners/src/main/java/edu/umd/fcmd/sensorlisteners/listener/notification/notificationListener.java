@@ -138,7 +138,7 @@ public class notificationListener extends BroadcastReceiver implements Listener 
         }, PhoneStateListener.LISTEN_CALL_STATE);
     }
 
-
+/*
     public void onNotificationPosted(StatusBarNotification sbn) {
 
 
@@ -147,11 +147,12 @@ public class notificationListener extends BroadcastReceiver implements Listener 
         Bundle extras = sbn.getNotification().extras;
         String title = extras.getString("android.title");
         String text = extras.getCharSequence("android.text").toString();
-
+        Log.i("Thorfinnur, Listener","Test12345")
         Log.i("Package",pack);
         Log.i("Ticker",ticker);
         Log.i("Title",title);
         Log.i("Text",text);
     }
+*/
 }
 
