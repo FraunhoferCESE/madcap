@@ -1,6 +1,5 @@
 package org.fraunhofer.cese.madcap.services;
 
-
 import android.service.notification.NotificationListenerService;
 import android.app.Notification;
 import android.content.Context;
@@ -11,13 +10,11 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 import android.support.v4.content.LocalBroadcastManager;
-
 import org.fraunhofer.cese.madcap.services.NotificationService;
 
-
-
 /**
- * Created by TPetursson on 2/8/2018.
+ * Created by Thorfinnur Petursson on 2/8/2018.
+ * This is a service that reads notifications from the user
  */
 
 public class NotificationService extends NotificationListenerService
@@ -26,11 +23,16 @@ public class NotificationService extends NotificationListenerService
 
     @Override
     public void onCreate() {
-
         super.onCreate();
         context = getApplicationContext();
-
     }
+
+    /**
+     * onNotificationPosted captures and reads notifications posted by other apps
+      * @param sbn
+     */
+
+
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         String pack = sbn.getPackageName();
@@ -50,6 +52,13 @@ public class NotificationService extends NotificationListenerService
 
     }
 
+    /**
+     * onNotificationRemoved
+     * this function captures the notifications that are removed
+     * from the notification status bar.
+     * @param sbn
+     */
+
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
         Log.i("Thorfinnur","Notification Removed");
@@ -68,7 +77,7 @@ public class NotificationService extends NotificationListenerService
         Log.i("Title Removed",title);
         Log.i("Text Removed",text);
 
-
     }
+
 
 }

@@ -55,7 +55,6 @@ import org.fraunhofer.cese.madcap.backend.models.UserPresenceEntry;
 import org.fraunhofer.cese.madcap.backend.models.VoicemailEntry;
 import org.fraunhofer.cese.madcap.backend.models.VolumeEntry;
 import org.fraunhofer.cese.madcap.backend.models.WiFiEntry;
-import org.fraunhofer.cese.madcap.backend.models.NotificationEntry;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -398,14 +397,14 @@ public class ProbeDataSetEndpoint {
                     WiFiEntry wiFiEntry = new WiFiEntry(entry);
                     wflist.add(wiFiEntry);
 
-                    break;
-                case "Notification":
-                    if (!entryMap.containsKey(entry.getProbeType())) {
-                        entryMap.put(entry.getProbeType(), new ArrayList<NotificationEntry>());
-                    }
-                    Collection<NotificationEntry> notificationList = entryMap.get(entry.getProbeType());
-                    NotificationEntry notificationEntry = new NotificationEntry(entry);
-                    notificationList.add(notificationEntry);
+                 //   break;
+               // case "Notification":
+              //      if (!entryMap.containsKey(entry.getProbeType())) {
+               //         entryMap.put(entry.getProbeType(), new ArrayList<NotificationEntry>());
+              //      }
+               //     Collection<NotificationEntry> notificationList = entryMap.get(entry.getProbeType());
+              //      NotificationEntry notificationEntry = new NotificationEntry(entry);
+               //     notificationList.add(notificationEntry);
 
                     break;
                 case "MSMS":
