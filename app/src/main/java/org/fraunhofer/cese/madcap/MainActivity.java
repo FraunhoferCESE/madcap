@@ -370,20 +370,4 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         }
     }
 
-    private BroadcastReceiver onNotice= new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String pack = intent.getStringExtra("package");
-            String title = intent.getStringExtra("title");
-            String text = intent.getStringExtra("text");
-            //int id = intent.getIntExtra("icon",0);
-
-            Log.i("Package",pack);
-            //Log.i("Ticker",ticker);
-            Log.i("Title",title);
-            Log.i("Text",text);
-
-        }
-    };
 }

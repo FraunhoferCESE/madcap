@@ -35,14 +35,29 @@ public class NotificationService extends NotificationListenerService
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        String pack = sbn.getPackageName();
-        String ticker ="";
+
+        String ticker ="-";
+        String pack = "-";
+        String title = "-";
+        String text = "-";
+        Bundle extras = sbn.getNotification().extras;
+
+        if(sbn.getPackageName() != null)
+        {
+            pack = sbn.getPackageName();
+        }
         if(sbn.getNotification().tickerText !=null) {
             ticker = sbn.getNotification().tickerText.toString();
         }
-        Bundle extras = sbn.getNotification().extras;
-        String title = extras.getString("android.title");
-        String text = extras.getCharSequence("android.text").toString();
+
+        if(extras.getString("android.title") != null)
+        {
+            title = sbn.getPackageName();
+        }
+        if(extras.getCharSequence("android.text") != null)
+        {
+            text = extras.getCharSequence("android.text").toString();
+        }
 
         Log.i("Package",pack);
         Log.i("Ticker",ticker);
@@ -61,16 +76,29 @@ public class NotificationService extends NotificationListenerService
 
     @Override
     public void onNotificationRemoved(StatusBarNotification sbn) {
-        Log.i("Thorfinnur","Notification Removed");
-        String pack = sbn.getPackageName();
-        String ticker ="";
+        Log.i("NotificationRemoved","Notification Removed");
+
+        String ticker ="-";
+        String pack = "-";
+        String title = "-";
+        String text = "-";
+        Bundle extras = sbn.getNotification().extras;
         if(sbn.getNotification().tickerText !=null) {
             ticker = sbn.getNotification().tickerText.toString();
         }
 
-        Bundle extras = sbn.getNotification().extras;
-        String title = extras.getString("android.title");
-        String text = extras.getCharSequence("android.text").toString();
+        if(sbn.getPackageName() != null) {
+            pack = sbn.getPackageName();
+        }
+        if(sbn.getNotification().tickerText !=null) {
+            ticker = sbn.getNotification().tickerText.toString();
+        }
+        if(extras.getString("android.title") != null) {
+            title = extras.getString("android.title");
+        }
+        if(extras.getCharSequence("android.text") != null) {
+            text = extras.getCharSequence("android.text").toString();
+        }
 
         Log.i("Package Removed",pack);
         Log.i("Ticker Removed",ticker);
@@ -78,6 +106,4 @@ public class NotificationService extends NotificationListenerService
         Log.i("Text Removed",text);
 
     }
-
-
 }
