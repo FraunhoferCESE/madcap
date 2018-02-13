@@ -1,5 +1,8 @@
 package edu.umd.fcmd.sensorlisteners.model.network;
 
+import android.app.Notification;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -10,17 +13,22 @@ import android.nfc.NfcAdapter;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.TaskStackBuilder;
+import android.support.v7.app.NotificationCompat;
 import android.telephony.CellLocation;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
+import android.widget.Toast;
+
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.security.Security;
+
 
 import javax.inject.Inject;
 
@@ -317,7 +325,11 @@ public class NetworkProbeFactory {
                 } else if (capabilities.toUpperCase().contains("WEP")) {
                     security = "WEP";
                 } else if (capabilities.toUpperCase().contains("OPEN")) {
+
+
                     security = "OPEN";
+
+
                 } else if (capabilities.toUpperCase().contains("WPS")){
                     security = "WPS";
                 } else {

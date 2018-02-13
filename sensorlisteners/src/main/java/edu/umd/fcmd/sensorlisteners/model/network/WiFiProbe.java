@@ -111,6 +111,8 @@ public class WiFiProbe extends Probe {
      *
      * @return a string representation of the object.
      */
+
+
     @Override
     public String toString() {
         return "{\"state\": " + (state != null ? state : "-") +
