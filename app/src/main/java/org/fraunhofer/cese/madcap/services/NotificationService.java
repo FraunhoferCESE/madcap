@@ -63,7 +63,7 @@ public class NotificationService extends NotificationListenerService
         Log.i("Ticker",ticker);
         Log.i("Title",title);
         Log.i("Text",text);
-        Log.i("Thorfinnur","NotificationService!!");
+       
 
     }
 
