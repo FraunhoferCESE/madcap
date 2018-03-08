@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -18,11 +17,12 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
- * Created by MMueller on 12/2/2016.
+ * Created by Thorfinnur on 3/8/2018.
  * <p>
- * Listener Class for everything network related like:
+ * Listener Class for the wifi connection and is only used to check if the phone is
+ * connected to an open wifi.
  * <p>
- * Internet, Calls, SMS
+ *
  */
 public class WifiServiceListener extends BroadcastReceiver implements Listener {
     private boolean runningStatus;
@@ -43,7 +43,6 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
 
         this.probeProbeManager = probeProbeManager;
         this.wifiManager = wifiManager;
-
         this.wifiService = wifiService;
         this.wifiService.context = context;
     }
@@ -58,7 +57,6 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
     public void startListening() {
 
         if (!runningStatus) {
-            Log.i("Tobias123", "StartListening");
 
             IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
             intentFilter.addAction(WifiManager.RSSI_CHANGED_ACTION);
@@ -69,12 +67,9 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
                                              wifiManager.getScanResults());
 
             runningStatus = true;
-
-
         }
     }
-
-
+    
     @Override
     public void stopListening() {
         if (runningStatus) {
@@ -82,7 +77,6 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
             runningStatus = false;
         }
     }
-
 
     @Override
     public boolean isPermittedByUser() {
@@ -93,8 +87,6 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
     public void onReceive(Context context, Intent intent) {
          wifiService.createWiFiProbe(wifiManager.getConnectionInfo().getSSID(),
                 wifiManager.getScanResults());
-
-
     }
 
 

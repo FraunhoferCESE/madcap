@@ -27,8 +27,6 @@ public class WifiService extends Service {
     @Inject
     public WifiService(Context context) {
         this.context = context;
-
-
     }
     public class LocalBinder extends Binder {
         WifiService getService() {
@@ -58,7 +56,12 @@ public class WifiService extends Service {
     }
 
     private final IBinder mBinder = new LocalBinder();
-
+    /*
+        This function checks if the phone is connected to an open wifi and if it is then
+        it sends a notification to the user
+         * @param currentSsid a string representing the current SSID. See {@link WifiInfo#getSSID()}
+         * @param networkList a list of networks in range. Needed to get the security level. See {@link WifiManager#getScanResults()}
+     */
     @NonNull
     public void createWiFiProbe( String currentSsid, Iterable<ScanResult> networkList) {
 
@@ -78,7 +81,6 @@ public class WifiService extends Service {
         if (security == "OPEN") {
             context.startService(new Intent(context, NotificationService.class));
         }
-
     }
 }
 

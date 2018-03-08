@@ -286,13 +286,9 @@ public class NetworkProbeFactory {
     @NonNull
     public WiFiProbe createWiFiProbe(int ipAddress, String currentSsid, Iterable<ScanResult> networkList, int wifiState) {
 
-
-
         WiFiProbe wiFiProbe = new WiFiProbe();
         wiFiProbe.setDate(System.currentTimeMillis());
         wiFiProbe.setSsid(currentSsid);
-
-
 
         // Convert IP address from int to string
         ByteBuffer byteBuffer = ByteBuffer.allocate(4);
