@@ -43,6 +43,7 @@ public class ConnectivityListener extends BroadcastReceiver implements Listener 
     @Override
     public void startListening() {
         if (!isRunning) {
+
             Timber.d("startListening");
             onUpdate(factory.createNetworkProbe(connectivityManager.getActiveNetworkInfo()));
             mContext.registerReceiver(this, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));

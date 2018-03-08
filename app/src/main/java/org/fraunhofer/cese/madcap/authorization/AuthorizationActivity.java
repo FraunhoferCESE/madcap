@@ -104,6 +104,7 @@ public class AuthorizationActivity extends ChildActivity {
                 Toast.makeText(context, getString(R.string.authorization_authorized), Toast.LENGTH_SHORT).show();
 
                 if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
+                   // startService(new Intent(context, WifiService.class));
                     startService(new Intent(context, DataCollectionService.class).putExtra("callee", TAG));
                 }
                 Intent intent = new Intent(context, MainActivity.class);

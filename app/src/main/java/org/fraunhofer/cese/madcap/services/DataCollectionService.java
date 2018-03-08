@@ -23,7 +23,6 @@ import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import org.fraunhofer.cese.madcap.MainActivity;
 import org.fraunhofer.cese.madcap.MyApplication;
 import org.fraunhofer.cese.madcap.R;
-import org.fraunhofer.cese.madcap.WelcomeActivity;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.cache.Cache;
 import org.fraunhofer.cese.madcap.cache.CacheFactory;
@@ -58,8 +57,6 @@ import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.util.DataCollectionProbe;
-
-
 import timber.log.Timber;
 
 
@@ -116,6 +113,13 @@ public class DataCollectionService extends Service {
     @Inject ConnectivityListener connectivityListener;
     @Inject NFCListener nfcListener;
 
+    @Inject WifiServiceListener wifiServiceListener;
+
+
+
+
+
+
    // @Inject notificationListener notificationlistener;
 
 
@@ -165,10 +169,14 @@ public class DataCollectionService extends Service {
         Timber.d("onCreate Data collection Service " + this);
         EventBus.getDefault().register(this);
 
+        //this.startService(new Intent(this, WifiService.class));
+
+
         listeners.clear();
 
         synchronized (listeners) {
             //dangerous listeners
+
             listeners.add(locationListener);
             listeners.add(applicationsListener);
             listeners.add(wifiListener);
@@ -182,6 +190,9 @@ public class DataCollectionService extends Service {
             listeners.add(bluetoothListener);
             listeners.add(powerListener);
             listeners.add(auidioListener);
+            listeners.add(wifiServiceListener);
+
+
 
 
           //  listeners.add(notificationlistener);
@@ -267,7 +278,8 @@ public class DataCollectionService extends Service {
 
         if (!isRunning) {
             sendDataCollectionProbe(DataCollectionProbe.ON);
-            startForeground(FOREGROUND_NOTIFICATION_ID, getRunNotification());
+          //  startService(new Intent(this, WifiService.class));
+           // startForeground(FOREGROUND_NOTIFICATION_ID, getRunNotification());
             startBackgroundServicesAndProbes();
 
             if ((intent != null) && intent.hasExtra("boot")) {
@@ -307,9 +319,11 @@ public class DataCollectionService extends Service {
         switch (event) {
             case LOCATION:
                 locationListener.startListening();
+                startService(new Intent(this, WifiService.class));
                 wifiListener.startListening();
+                wifiServiceListener.startListening();
+
                 telephonyListener.startListening();
-             //   notificationlistener.startListening();
                 break;
             case TELEPHONE:
                 telephonyListener.startListening();
@@ -443,40 +457,7 @@ public class DataCollectionService extends Service {
         editor.apply();
     }
 
-    private Notification getRunNotification() {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-        // TODO: Refactor
-        mBuilder.setContentTitle("MADCAP is collecting research data");
-        mBuilder.setDefaults(Notification.DEFAULT_ALL);
-        mBuilder.setPriority(Notification.PRIORITY_LOW);
 
-        // Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, WelcomeActivity.class);
-
-        // The stack builder object will contain an artificial back stack for the
-        // started Activity.
-        // This ensures that navigating backward from the Activity leads out of
-        // your application to the Home screen.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-
-        // Adds the back stack for the Intent (but not the Intent itself)
-        stackBuilder.addParentStack(WelcomeActivity.class);
-        // Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(
-                        0,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-        mBuilder.setContentIntent(resultPendingIntent);
-
-        // mId allows you to update the notification later on.
-        Notification note = mBuilder.build();
-        note.flags |= Notification.FLAG_NO_CLEAR;
-
-        return note;
-    }
 
     @Subscribe
     public void onCacheCountUpdate(Cache.CacheCountUpdate update) {

@@ -189,6 +189,7 @@ public class WelcomeActivity extends AppCompatActivity {
                         welcomeMessageView.setText(String.format(getString(R.string.welcome_signin_success), acct.getEmail()));
                         if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean(getString(R.string.pref_dataCollection), true)) {
                             Timber.d("Data Collection is on");
+                            //startService(new Intent(context, WifiService.class));
                             Intent intent = new Intent(context, DataCollectionService.class);
                             startService(intent);
                         }

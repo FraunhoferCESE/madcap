@@ -55,6 +55,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+
         <meta-data
             android:name="com.google.android.awareness.API_KEY"
             android:value="@string/googleAwarenessApiKey" />
@@ -72,8 +73,12 @@
             android:name=".boot.OnBootService"
             android:enabled="true" />
         <service
-            android:name=".services.DataCollectionService"
-            android:enabled="true" />
+        android:name=".services.DataCollectionService"
+        android:enabled="true" />
+
+
+        <service android:name="org.fraunhofer.cese.madcap.services.WifiService"/>
+
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -98,6 +103,14 @@
             android:name="org.fraunhofer.cese.madcap.services.NotificationService"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
+        <service
+            android:name="org.fraunhofer.cese.madcap.services.openWifiNotification"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>

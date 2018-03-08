@@ -4,6 +4,7 @@ import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.authorization.AuthorizationActivity;
 import org.fraunhofer.cese.madcap.boot.OnBootService;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.services.WifiService;
 import org.fraunhofer.cese.madcap.util.ManualProbeUploadTaskFactory;
 
 import javax.inject.Singleton;
@@ -24,6 +25,8 @@ public interface MyComponent {
 
     void inject(SettingsActivity settingsActivity);
 
+    void inject(WifiService wifiService);
+
     void inject(DataCollectionService dataCollectionService);
 
     void inject(SignInActivity signInActivity);
@@ -37,4 +40,6 @@ public interface MyComponent {
     void inject(AuthorizationActivity authorizationActivity);
 
     void inject(PermissionsActivity permissionsActivity);
+
+   // void inject(WifiService wifiService);
 }

@@ -26,6 +26,11 @@ public class MyApplication extends Application {
     public final void onCreate() {
         super.onCreate();
 
+
+        /***** For start Service  ****/
+        //Intent myIntent = new Intent(this, WifiService.class);
+       // startService(myIntent);
+
         Timber.d(TAG, "on create of My application has been called");
 
         if (BuildConfig.DEBUG) {

@@ -51,6 +51,7 @@ public class OnBootService extends IntentService {
         Timber.d("onHandleIntent");
 
         if (authManager.getUser() != null) {
+            //startService(new Intent(this, WifiService.class));
             Intent sintent = new Intent(this, DataCollectionService.class);
             sintent.putExtra("boot", true);
             startService(sintent);

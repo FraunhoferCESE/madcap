@@ -22,8 +22,8 @@ import android.widget.TextView;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import org.fraunhofer.cese.madcap.cache.Cache;
-import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
+import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -39,22 +39,6 @@ import butterknife.ButterKnife;
 import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 import timber.log.Timber;
-
-
-import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.ListView;
-import android.util.Log;
-import java.util.ArrayList;
 
 
 
@@ -109,6 +93,7 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
      */
     private ServiceConnection mConnection;
 
+
     @Inject
     MadcapPermissionsManager permissionManager;
 
@@ -117,6 +102,14 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+     //   startService(new Intent(this, WifiService.class));
+
+      //  mServiceIntent = new Intent(getApplicationContext(), NotificationService.class);
+    //    startService(new Intent(this, openWifiNotification.class));
+  //      openWifiNotification openWifiNotification = new openWifiNotification();
+//        openWifiNotification.getRunNotification();
+
+      //  startService(new Intent(this, WifiService.class));
         //noinspection CastToConcreteClass
         ((MyApplication) getApplication()).getComponent().inject(this);
         ButterKnife.bind(this);
@@ -369,5 +362,8 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
             capacityWarningBlock.setVisibility(View.GONE);
         }
     }
+
+    private Intent mServiceIntent;
+
 
 }
