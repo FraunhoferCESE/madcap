@@ -20,7 +20,8 @@ import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
  * Created by Thorfinnur on 3/8/2018.
  * <p>
  * Listener Class for the wifi connection and is only used to check if the phone is
- * connected to an open wifi.
+ * connected to an open wifi. This class and the WifiService class are used to trigger
+ * the open wifi notification in the NotificationService class.
  * <p>
  *
  */
@@ -69,7 +70,7 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
             runningStatus = true;
         }
     }
-    
+
     @Override
     public void stopListening() {
         if (runningStatus) {

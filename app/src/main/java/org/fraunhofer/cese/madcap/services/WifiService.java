@@ -11,12 +11,14 @@ import android.widget.Toast;
 
 import javax.inject.Inject;
 
-
-
-//package edu.umd.fcmd.sensorlisteners.model.network;
-
 /**
- * Factory class for creating networking-related probes
+ * Created by Thorfinnur on 3/8/2018.
+ * <p>
+ * Service Class for the wifi connection and is only used to check if the phone is
+ * connected to an open wifi. This class and the WifiServiceListener class are used to trigger
+ * the open wifi notification in the NotificationService class.
+ * <p>
+ *
  */
 @SuppressWarnings("MethodMayBeStatic")
 public class WifiService extends Service {
