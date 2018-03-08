@@ -327,8 +327,6 @@ public class NetworkProbeFactory {
                     security = "WEP";
                 } else if (capabilities.toUpperCase().contains("OPEN")) {
                     security = "OPEN";
-
-                  //  openWifiNotification openWifiNotification;
                 } else if (capabilities.toUpperCase().contains("WPS")){
                     security = "WPS";
                 } else {

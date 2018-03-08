@@ -43,7 +43,7 @@ public class WifiListener extends BroadcastReceiver implements Listener {
          this.probeProbeManager = probeProbeManager;
         this.wifiManager = wifiManager;
         this.factory = factory;
-        int number = 10;
+
     }
 
 

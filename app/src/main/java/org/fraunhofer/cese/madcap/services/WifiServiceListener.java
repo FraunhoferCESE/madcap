@@ -15,7 +15,6 @@ import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
-import edu.umd.fcmd.sensorlisteners.model.network.WiFiProbe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
 /**
@@ -40,32 +39,13 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
                                WifiManager wifiManager,
                                WifiService wifiService) {
 
-
-
-
         mContext = context;
-       // wifiService.onCreate();
-
 
         this.probeProbeManager = probeProbeManager;
         this.wifiManager = wifiManager;
-       // context.startService(new Intent(context, NotificationService.class));
-        //wifiService.startService(new Intent(context, WifiService.class));
-       // Looper looper = null;
-
-        //context.startService(
-    //   Intent intent = new Intent(context, WifiService.class);
-
-
-       // Intent myIntent = new Intent(context, WifiService.class);
-       // context.startService(myIntent);
 
         this.wifiService = wifiService;
         this.wifiService.context = context;
-        //this.wifiService.startService(new Intent(context, WifiService.class));
-
-        int number = 10;
-
     }
 
 
@@ -77,9 +57,6 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
     @Override
     public void startListening() {
 
-       // mContext.startService(new Intent(this, WifiService.class));
-
-       // mContext.startService(new Intent(mContext, WifiService.class));
         if (!runningStatus) {
             Log.i("Tobias123", "StartListening");
 
@@ -88,10 +65,8 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
             intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 
             mContext.registerReceiver(this, intentFilter);
-            onUpdate(wifiService.createWiFiProbe(wifiManager.getConnectionInfo().getIpAddress(),
-                                             wifiManager.getConnectionInfo().getSSID(),
-                                             wifiManager.getScanResults(),
-                                             wifiManager.getWifiState()));
+            wifiService.createWiFiProbe(wifiManager.getConnectionInfo().getSSID(),
+                                             wifiManager.getScanResults());
 
             runningStatus = true;
 
@@ -116,16 +91,10 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i("Tobias123", "OnReceive");
-        //Intent startServiceIntent = new Intent(context, WifiService.class);
+         wifiService.createWiFiProbe(wifiManager.getConnectionInfo().getSSID(),
+                wifiManager.getScanResults());
 
 
-        WiFiProbe probe = wifiService.createWiFiProbe(wifiManager.getConnectionInfo().getIpAddress(),
-                wifiManager.getConnectionInfo().getSSID(),
-                wifiManager.getScanResults(),
-                intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0));
-
-        onUpdate(probe);
     }
 
 
