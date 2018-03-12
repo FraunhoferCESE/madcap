@@ -77,11 +77,11 @@ public class WifiService extends Service {
                 //get capabilities of current connection
                 String capabilities = network.capabilities;
 
-                if (capabilities.toUpperCase().contains("WPA2")) {
-                    security = "WPA2";
-                    SSID = network.SSID;
-                }
-                else if (capabilities.toUpperCase().contains("OPEN")) {
+               // if (capabilities.toUpperCase().contains("WPA2")) {
+               //     security = "WPA2";
+               //     SSID = network.SSID;
+              //  }
+                if (capabilities.toUpperCase().contains("OPEN")) {
                     security = "OPEN";
                     SSID = network.SSID;
                 }
@@ -93,7 +93,7 @@ public class WifiService extends Service {
         }
         if (!(OldSSID.equals(SSID))) {
 
-            if (security == "WPA2") {
+            if (security == "OPEN") {
 
                 context.startService(new Intent(context, NotificationPostingService.class));
             }
