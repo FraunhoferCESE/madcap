@@ -79,26 +79,26 @@ public class NotificationPostingService extends Service {
     }
 
     private void showNotification() {
-        NotificationService notificationService = new NotificationService();
 
-            // In this sample, we'll use the same text for the ticker and the expanded notification
-            // The PendingIntent to launch our activity if the user selects this notification
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                    new Intent(this, WifiService.class), 0);
-            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            // Set the info for the views that show in the notification panel.
-            Notification notification = new Notification.Builder(this)
-                    .setSmallIcon(R.drawable.madcaplogo2)  // the status icon
-                    .setTicker("Open Wifi")  // the status text
-                    .setWhen(System.currentTimeMillis())  // the time stamp
-                    .setContentTitle("Open Wifi")  // the label of the entry
-                    .setContentText("You are connected to an open wifi")  // the contents of the entry
-                    .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
-                    .setSound(alarmSound)
-                    .build();
 
-            // Send the notification.
-            mNM.notify(NOTIFICATION, notification);
+        // In this sample, we'll use the same text for the ticker and the expanded notification
+        // The PendingIntent to launch our activity if the user selects this notification
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
+                new Intent(this, WifiService.class), 0);
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        // Set the info for the views that show in the notification panel.
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.madcaplogo2)  // the status icon
+                .setTicker("Open Wifi")  // the status text
+                .setWhen(System.currentTimeMillis())  // the time stamp
+                .setContentTitle("Open Wifi")  // the label of the entry
+                .setContentText("You are connected to an open wifi")  // the contents of the entry
+                .setContentIntent(contentIntent)  // The intent to send when the entry is clicked
+                .setSound(alarmSound)
+                .build();
+
+        // Send the notification.
+        mNM.notify(NOTIFICATION, notification);
     }
 
 }
