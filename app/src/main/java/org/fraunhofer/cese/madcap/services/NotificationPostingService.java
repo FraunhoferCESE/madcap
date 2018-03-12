@@ -40,30 +40,22 @@ public class NotificationPostingService extends Service {
     @Override
     public void onCreate() {
         mNM = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
-     //   NotificationPostingService.NotificationID notificationID = new NotificationPostingService.NotificationID();
-      //  NOTIFICATION = notificationID.getID();
-       //  Display a notification about us starting.  We put an icon in the status bar.
-     //   showNotification();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.i("LocalService", "Received start id " + startId + ": " + intent);
+        //The NotificationID class is used to make sure that each notification gets a unique ID
         NotificationPostingService.NotificationID notificationID = new NotificationPostingService.NotificationID();
         NOTIFICATION = notificationID.getID();
         showNotification();
         return START_NOT_STICKY;
-       // return START_REDELIVER_INTENT;
     }
 
     @Override
     public void onDestroy() {
         // Cancel the persistent notification.
         mNM.cancel(NOTIFICATION);
-        // stopSelf(NOTIFICATION);
-
-        // Tell the user we stopped.
-
     }
 
     @Override

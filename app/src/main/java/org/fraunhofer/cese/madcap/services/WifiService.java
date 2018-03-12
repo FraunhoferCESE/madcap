@@ -43,7 +43,6 @@ public class WifiService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //return START_REDELIVER_INTENT;
         return START_NOT_STICKY;
     }
 
@@ -59,6 +58,7 @@ public class WifiService extends Service {
     }
 
     private final IBinder mBinder = new LocalBinder();
+
     /*
         This function checks if the phone is connected to an open wifi and if it is then
         it sends a notification to the user
@@ -77,10 +77,6 @@ public class WifiService extends Service {
                 //get capabilities of current connection
                 String capabilities = network.capabilities;
 
-               // if (capabilities.toUpperCase().contains("WPA2")) {
-               //     security = "WPA2";
-               //     SSID = network.SSID;
-              //  }
                 if (capabilities.toUpperCase().contains("OPEN")) {
                     security = "OPEN";
                     SSID = network.SSID;
@@ -91,6 +87,8 @@ public class WifiService extends Service {
                 }
             }
         }
+        //This if statement is used to make sure that the same notification is
+        // not posted more than once.
         if (!(OldSSID.equals(SSID))) {
 
             if (security == "OPEN") {

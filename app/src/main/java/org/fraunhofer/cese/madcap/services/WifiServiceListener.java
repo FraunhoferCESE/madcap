@@ -68,7 +68,6 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
                                              wifiManager.getScanResults());
 
             runningStatus = true;
-           // stopListening();
         }
     }
 

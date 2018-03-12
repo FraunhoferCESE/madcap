@@ -71,10 +71,6 @@ public class NotificationService extends NotificationListenerService
 
 
     }
-    public boolean madcapNotification(){
-
-        return notification;
-    }
 
     /**
      * onNotificationRemoved
