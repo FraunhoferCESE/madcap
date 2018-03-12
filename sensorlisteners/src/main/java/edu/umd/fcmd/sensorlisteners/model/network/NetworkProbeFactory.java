@@ -29,19 +29,15 @@ import timber.log.Timber;
 @SuppressWarnings("MethodMayBeStatic")
 public class NetworkProbeFactory {
 
-
-
-
     /**
      * Default constructor is necessary for dependency injection with Dagger2
      */
+
     @SuppressWarnings("RedundantNoArgConstructor")
     @Inject
     public NetworkProbeFactory() {
 
     }
-
-
 
     /**
      * Creates a NetworkProbe that captures general network connection/disconnection activity.
@@ -285,6 +281,7 @@ public class NetworkProbeFactory {
 
     @NonNull
     public WiFiProbe createWiFiProbe(int ipAddress, String currentSsid, Iterable<ScanResult> networkList, int wifiState) {
+
 
         WiFiProbe wiFiProbe = new WiFiProbe();
         wiFiProbe.setDate(System.currentTimeMillis());

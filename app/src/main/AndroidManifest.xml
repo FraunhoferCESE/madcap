@@ -108,13 +108,14 @@
             </intent-filter>
         </service>
         <service
-            android:name="org.fraunhofer.cese.madcap.services.openWifiNotification"
+            android:name="org.fraunhofer.cese.madcap.services.NotificationPostingService"
             android:label="@string/app_name"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >
             <intent-filter>
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
 
         <activity
             android:name=".MainActivity"

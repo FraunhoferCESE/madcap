@@ -7,7 +7,6 @@ import android.net.wifi.ScanResult;
 import android.os.Binder;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -24,10 +23,12 @@ import javax.inject.Inject;
 public class WifiService extends Service {
 
     Context context;
+    String OldSSID;
 
     @SuppressWarnings("RedundantNoArgConstructor")
     @Inject
     public WifiService(Context context) {
+        OldSSID = "-";
         this.context = context;
     }
     public class LocalBinder extends Binder {
@@ -42,18 +43,18 @@ public class WifiService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        return START_REDELIVER_INTENT;
+        //return START_REDELIVER_INTENT;
+        return START_NOT_STICKY;
     }
 
     @Override
     public void onDestroy() {
-        // Cancel the persistent notification.
-        // Tell the user we stopped.
-        Toast.makeText(this, "Stop!!!!", Toast.LENGTH_SHORT).show();
+
     }
 
     @Override
     public IBinder onBind(Intent intent) {
+
         return mBinder;
     }
 
@@ -65,9 +66,10 @@ public class WifiService extends Service {
          * @param networkList a list of networks in range. Needed to get the security level. See {@link WifiManager#getScanResults()}
      */
     @NonNull
-    public void createWiFiProbe( String currentSsid, Iterable<ScanResult> networkList) {
+    public void createWiFiProbe(String currentSsid, Iterable<ScanResult> networkList) {
 
         String security = "-";
+        String SSID = "-";
         for (ScanResult network : networkList) {
 
             //check if current connected SSID.
@@ -75,14 +77,28 @@ public class WifiService extends Service {
                 //get capabilities of current connection
                 String capabilities = network.capabilities;
 
-                if (capabilities.toUpperCase().contains("OPEN")) {
+                if (capabilities.toUpperCase().contains("WPA2")) {
+                    security = "WPA2";
+                    SSID = network.SSID;
+                }
+                else if (capabilities.toUpperCase().contains("OPEN")) {
                     security = "OPEN";
+                    SSID = network.SSID;
+                }
+                else{
+                    security = capabilities;
+                    SSID = network.SSID;
                 }
             }
         }
-        if (security == "OPEN") {
-            context.startService(new Intent(context, NotificationService.class));
+        if (!(OldSSID.equals(SSID))) {
+
+            if (security == "WPA2") {
+
+                context.startService(new Intent(context, NotificationPostingService.class));
+            }
         }
+        OldSSID = SSID;
     }
 }
 

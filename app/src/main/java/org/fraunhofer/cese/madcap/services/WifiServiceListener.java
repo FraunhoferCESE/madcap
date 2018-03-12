@@ -68,6 +68,7 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
                                              wifiManager.getScanResults());
 
             runningStatus = true;
+           // stopListening();
         }
     }
 
@@ -86,6 +87,7 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
          wifiService.createWiFiProbe(wifiManager.getConnectionInfo().getSSID(),
                 wifiManager.getScanResults());
     }
