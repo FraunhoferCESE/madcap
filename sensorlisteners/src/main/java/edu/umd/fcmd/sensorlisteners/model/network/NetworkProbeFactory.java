@@ -10,17 +10,13 @@ import android.nfc.NfcAdapter;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.telephony.CellLocation;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
-import android.telephony.cdma.CdmaCellLocation;
-import android.telephony.gsm.GsmCellLocation;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.security.Security;
 
 import javax.inject.Inject;
 
@@ -321,7 +317,7 @@ public class NetworkProbeFactory {
                 } else if (capabilities.toUpperCase().contains("WPS")){
                     security = "WPS";
                 } else {
-                    security = capabilities;
+                    security = capabilities.replaceAll("[^a-zA-Z0-9]", "");
                 }
             }
         }
