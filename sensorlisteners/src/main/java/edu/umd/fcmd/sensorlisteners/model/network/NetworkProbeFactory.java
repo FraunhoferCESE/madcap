@@ -279,7 +279,8 @@ public class NetworkProbeFactory {
     public WiFiProbe createWiFiProbe(int ipAddress, String currentSsid, Iterable<ScanResult> networkList, int wifiState) {
         WiFiProbe wiFiProbe = new WiFiProbe();
         wiFiProbe.setDate(System.currentTimeMillis());
-        wiFiProbe.setSsid(currentSsid);
+        //sanitizing the String and only allowing numbers and letters
+        wiFiProbe.setSsid(currentSsid.replaceAll("[^a-zA-Z0-9]", ""));
 
         // Convert IP address from int to string
         ByteBuffer byteBuffer = ByteBuffer.allocate(4);
@@ -317,6 +318,7 @@ public class NetworkProbeFactory {
                 } else if (capabilities.toUpperCase().contains("WPS")){
                     security = "WPS";
                 } else {
+                    //sanitizing the String and only allowing numbers and letters
                     security = capabilities.replaceAll("[^a-zA-Z0-9]", "");
                 }
             }
