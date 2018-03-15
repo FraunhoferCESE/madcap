@@ -87,8 +87,9 @@ public class NotificationPostingService extends Service {
                 new Intent(this, WifiServiceNotification.class), 0);
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         // Set the info for the views that show in the notification panel.
+
         Notification notification = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.common_google_signin_btn_icon_dark_normal_background)  // the status icon
+                .setSmallIcon(R.drawable.madcaplogo2)  // the status icon
                 .setTicker("Open Wifi")  // the status text
                 .setWhen(System.currentTimeMillis())  // the time stamp
                 .setContentTitle("Open Wifi FROM BACKEND!")  // the label of the entry
