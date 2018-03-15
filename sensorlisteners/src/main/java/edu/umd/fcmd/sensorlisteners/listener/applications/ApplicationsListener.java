@@ -4,14 +4,11 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-
 import javax.inject.Inject;
 
-import edu.umd.fcmd.sensorlisteners.NoSensorFoundException;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.listener.Listener;
+import edu.umd.fcmd.sensorlisteners.listener.network.WifiListener;
 import edu.umd.fcmd.sensorlisteners.model.Probe;
 import edu.umd.fcmd.sensorlisteners.service.ProbeManager;
 
@@ -31,16 +28,19 @@ public class ApplicationsListener implements Listener {
     private TimedApplicationTask timedApplicationTask;
     private final PermissionsManager permissionsManager;
     private boolean runningStatus;
+    private final WifiListener wifiListener;
 
     @Inject
     public ApplicationsListener(Context context,
                                 ProbeManager<Probe> probeProbeManager,
                                 TimedApplicationTaskFactory timedApplicationTaskFactory,
-                                PermissionsManager permissionsManager){
+                                PermissionsManager permissionsManager,
+                                WifiListener wifiListener){
         this.context = context;
         this.probeProbeManager = probeProbeManager;
         this.timedApplicationTaskFactory = timedApplicationTaskFactory;
         this.permissionsManager = permissionsManager;
+        this.wifiListener = wifiListener;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ApplicationsListener implements Listener {
     public void startListening() {
         if (!runningStatus) {
             if (isPermittedByUser()) {
-                timedApplicationTask = timedApplicationTaskFactory.create(this, context, permissionsManager);
+                timedApplicationTask = timedApplicationTaskFactory.create(this, context, permissionsManager,wifiListener);
                 timedApplicationTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 timedApplicationTask.sendInitialProbes();
                 runningStatus = true;

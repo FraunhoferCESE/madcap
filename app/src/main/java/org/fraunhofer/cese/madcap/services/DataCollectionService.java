@@ -57,6 +57,7 @@ import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.util.DataCollectionProbe;
+import edu.umd.fcmd.sensorlisteners.service.WifiServiceNotification;
 import timber.log.Timber;
 
 
@@ -320,6 +321,7 @@ public class DataCollectionService extends Service {
             case LOCATION:
                 locationListener.startListening();
                 startService(new Intent(this, WifiService.class));
+                startService(new Intent(this, WifiServiceNotification.class));
                 wifiListener.startListening();
                 wifiServiceListener.startListening();
 

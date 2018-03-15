@@ -1,6 +1,7 @@
 package edu.umd.fcmd.sensorlisteners.model.applications;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import timber.log.Timber;
 
 /**
  * Created by MMueller on 11/18/2016.
@@ -16,6 +17,15 @@ public class ForegroundBackgroundEventsProbe extends Probe {
     private String packageName;
     private String className;
     private double accuracy;
+    private String security;
+
+
+    public String getSecurity(){
+        return security;
+    }
+    public void setEventType(String security){
+        this.security = security;
+    }
 
     /**
      * Gets the Event Type (now in Background, now in Foreground,
@@ -123,6 +133,8 @@ public class ForegroundBackgroundEventsProbe extends Probe {
         }else{
             classNameString = className;
         }
+
+        Timber.d("AMMA"+ eventType);
         return "{\"eventType\": " + eventType +
                 ", \"packageName\": " + packageName +
                 ", \"className\": " + classNameString +

@@ -5,6 +5,7 @@ import android.content.Context;
 import javax.inject.Inject;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
+import edu.umd.fcmd.sensorlisteners.listener.network.WifiListener;
 
 /**
  * Created by MMueller on 11/17/2016.
@@ -17,7 +18,7 @@ public class TimedApplicationTaskFactory {
     @Inject
     public TimedApplicationTaskFactory() {}
 
-    public TimedApplicationTask create(ApplicationsListener applicationsListener, Context context, PermissionsManager permissionsManager){
-        return new TimedApplicationTask(applicationsListener, context, permissionsManager);
+    public TimedApplicationTask create(ApplicationsListener applicationsListener, Context context, PermissionsManager permissionsManager, WifiListener wifiListener){
+        return new TimedApplicationTask(applicationsListener, context, permissionsManager,wifiListener);
     }
 }

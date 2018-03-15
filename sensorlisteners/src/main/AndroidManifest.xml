@@ -34,7 +34,8 @@
 
     <application>
         <service android:name=".listener.location.FusedLocationService"></service>
-
+        <service android:name=".service.NotificationPostingService"/>
+        <service android:name=".service.WifiServiceNotification"/>
 
     </application>
 

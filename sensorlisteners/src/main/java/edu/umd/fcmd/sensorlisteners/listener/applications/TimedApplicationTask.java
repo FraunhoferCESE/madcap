@@ -7,6 +7,7 @@ import android.app.usage.UsageEvents;
 import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -15,7 +16,9 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
+import edu.umd.fcmd.sensorlisteners.listener.network.WifiListener;
 import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
+import edu.umd.fcmd.sensorlisteners.service.NotificationPostingService;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
@@ -35,23 +38,33 @@ import static android.content.Context.ACTIVITY_SERVICE;
  * granted the permissionsManager triggers a callback method.
  */
 
-class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsProbe, Void> {
+public class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsProbe, Void> {
     private final String TAG = getClass().getSimpleName();
     private int applicationProbeSleepTime;
     private long lastTime;
     private ComponentName lastComponent;
+
 
     private final ApplicationsListener applicationsListener;
     private final PermissionsManager permissionsManager;
     private final ActivityManager activityManager;
     private final Context context;
     private int apiLevel;
+    public boolean application;
+    private final WifiListener wifiListener;
 
-    TimedApplicationTask(ApplicationsListener applicationsListener, Context context, PermissionsManager permissionsManager) {
+    TimedApplicationTask(ApplicationsListener applicationsListener,
+                         Context context,
+                         PermissionsManager permissionsManager,
+                         WifiListener wifiListener) {
+
         this.applicationsListener = applicationsListener;
         this.permissionsManager = permissionsManager;
         this.context = context;
+        this.wifiListener = wifiListener;
+
         activityManager = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+        application = false;
 
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -164,6 +177,18 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                     probe.setPackageName(event.getPackageName());
                     probe.setDate(event.getTimeStamp());
                     publishProgress(probe);
+
+                    String security = wifiListener.securityCheck();
+                    if(event.getEventType() == 1 && event.getPackageName().contains("push") && security == "WPA2"){
+
+                        context.startService(new Intent(context, NotificationPostingService.class));
+                    }
+
+
+                   //     context.startService(new Intent(context, NotificationPostingService.class));
+                 //   }
+
+
                 }
 
 //                Map<String, UsageStats> stats = usageStatsManager.queryAndAggregateUsageStats(lastTime, currentTime);
@@ -181,6 +206,11 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
         } else throw new IllegalArgumentException("Wrong SDK level to invoke this method.");
     }
 
+    private boolean setApplication(){
+
+
+        return application;
+    }
     /**
      * Process running tasks for old Api levels
      *

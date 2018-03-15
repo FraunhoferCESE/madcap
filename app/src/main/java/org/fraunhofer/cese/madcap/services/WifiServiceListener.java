@@ -57,6 +57,8 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
     @Override
     public void startListening() {
 
+        //mContext.startService(new Intent(mContext, WifiServiceNotification.class));
+
         if (!runningStatus) {
 
             IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
@@ -64,8 +66,8 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
             intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 
             mContext.registerReceiver(this, intentFilter);
-            wifiService.createWiFiProbe(wifiManager.getConnectionInfo().getSSID(),
-                                             wifiManager.getScanResults());
+        //    wifiService.createWiFiProbe(wifiManager.getConnectionInfo().getSSID(),
+             //                                wifiManager.getScanResults());
 
             runningStatus = true;
         }
@@ -87,8 +89,8 @@ public class WifiServiceListener extends BroadcastReceiver implements Listener {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-         wifiService.createWiFiProbe(wifiManager.getConnectionInfo().getSSID(),
-                wifiManager.getScanResults());
+      //   wifiService.createWiFiProbe(wifiManager.getConnectionInfo().getSSID(),
+            //    wifiManager.getScanResults());
     }
 
 
