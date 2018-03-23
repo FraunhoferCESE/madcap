@@ -279,8 +279,14 @@ public class NetworkProbeFactory {
     public WiFiProbe createWiFiProbe(int ipAddress, String currentSsid, Iterable<ScanResult> networkList, int wifiState) {
         WiFiProbe wiFiProbe = new WiFiProbe();
         wiFiProbe.setDate(System.currentTimeMillis());
+
         //sanitizing the String and only allowing numbers and letters
-        wiFiProbe.setSsid(currentSsid.replaceAll("[^a-zA-Z0-9]", ""));
+        String wifiSsid = currentSsid.replaceAll("[^a-zA-Z0-9]", "");
+
+        if(wifiSsid == null || wifiSsid.isEmpty()){
+            wifiSsid = "-";
+        }
+        wiFiProbe.setSsid(wifiSsid);
 
         // Convert IP address from int to string
         ByteBuffer byteBuffer = ByteBuffer.allocate(4);
