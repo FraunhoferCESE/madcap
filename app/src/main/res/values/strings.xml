@@ -164,6 +164,12 @@
     <string name="not_authorized_short">Not authorized to use MADCAP.</string>
     <string name="authorization_authorized">Authorization successful. Launching MADCAP...</string>
 
+    <!-- EndpointApiBuilder -->
+    <string name="webClientIdDebug">FraunhoferMadcapWebClientIDDbg</string>
+    <string name="webClientIdRelease">FraunhoferMadcapWebClientIDRel</string>
+    <string name="endpointApiDebug">FraunhoferMadcapEndpointApiDbg</string>
+    <string name="endpointApiProduction">FraunhoferMadcapEndpointApiRel</string>
+
     <!-- EULA -->
     <string name="eula">
         This End User License Agreement (\"EULA\") applies to the MADCAP Smartphone Software Application (the \"App\") developed by Fraunhofer USA, Inc. (\"Licensor\") that you have downloaded from the Google Play Store.
