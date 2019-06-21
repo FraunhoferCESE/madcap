@@ -9,7 +9,7 @@ import com.google.api.server.spi.response.ConflictException;
 import com.google.appengine.api.oauth.OAuthRequestException;
 import com.googlecode.objectify.cmd.LoadType;
 
-//import org.fraunhofer.cese.madcap.backend.Constants;
+import org.fraunhofer.cese.madcap.backend.Constants;
 import org.fraunhofer.cese.madcap.backend.models.AccelerometerEntry;
 import org.fraunhofer.cese.madcap.backend.models.ActivityEntry;
 import org.fraunhofer.cese.madcap.backend.models.AirplaneModeEntry;
@@ -79,9 +79,9 @@ import static org.fraunhofer.cese.madcap.backend.OfyService.ofy;
                 ownerDomain = "madcap.cese.fraunhofer.org",
                 ownerName = "madcap.cese.fraunhofer.org",
                 packagePath = "backend"
-        )
-        //clientIds = {Constants.WEB_CLIENT_ID, Constants.ANDROID_CLIENT_ID},
-        //audiences = {Constants.ANDROID_AUDIENCE}
+        ),
+        clientIds = {Constants.WEB_CLIENT_ID, Constants.ANDROID_CLIENT_ID},
+        audiences = {Constants.ANDROID_AUDIENCE}
 )
 public class ProbeDataSetEndpoint {
 
