@@ -1,14 +1,18 @@
 package org.fraunhofer.cese.madcap.services;
 
 import android.app.Notification;
+import android.app.Notification.Builder;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -71,6 +75,8 @@ public class DataCollectionService extends Service {
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
     private static final int RUN_CODE = 1;
     private static final int FOREGROUND_NOTIFICATION_ID = 918273;
+    private static String NOTIFICATION_CHANNEL_ID = "org.fraunhofer.cese.madcap.notificationChannelID";
+    private static String NOTIFICATION_CHANNEL_NAME = "org.fraunhofer.cese.madcap.notificationChannelName";
     private static final int CAPACITY_NOTIFICATION_ID = 126731245;
     private static final long HEARTBEAT_DELAY = 100L;
 
@@ -435,13 +441,6 @@ public class DataCollectionService extends Service {
     }
 
     private Notification getRunNotification() {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-        // TODO: Refactor
-        mBuilder.setContentTitle("MADCAP is collecting research data");
-        mBuilder.setDefaults(Notification.DEFAULT_ALL);
-        mBuilder.setPriority(Notification.PRIORITY_LOW);
-
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, WelcomeActivity.class);
 
@@ -460,13 +459,42 @@ public class DataCollectionService extends Service {
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-        mBuilder.setContentIntent(resultPendingIntent);
 
-        // mId allows you to update the notification later on.
-        Notification note = mBuilder.build();
-        note.flags |= Notification.FLAG_NO_CLEAR;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_MIN);
+            //chan.setLightColor(Color.BLUE);
+            chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+            NotificationManager noteMan = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            assert noteMan != null;
+            noteMan.createNotificationChannel(chan);
 
-        return note;
+            Notification.Builder noteBuilder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
+                    .setOngoing(true)
+                    .setContentTitle("MADCAP is collecting research data")
+                    .setSmallIcon(R.drawable.ic_stat_madcaplogo)
+                    .setCategory(Notification.CATEGORY_SERVICE)
+                    .setContentIntent(resultPendingIntent);
+
+            Notification note = noteBuilder.build();
+            note.flags |= Notification.FLAG_NO_CLEAR;
+            return note;
+
+        }
+        else {
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+            mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+            // TODO: Refactor
+            mBuilder.setContentTitle("MADCAP is collecting research data");
+            mBuilder.setDefaults(Notification.DEFAULT_ALL);
+            mBuilder.setPriority(Notification.PRIORITY_LOW);
+            mBuilder.setContentIntent(resultPendingIntent);
+
+
+            // mId allows you to update the notification later on.
+            Notification note = mBuilder.build();
+            note.flags |= Notification.FLAG_NO_CLEAR;
+            return note;
+        }
     }
 
     @Subscribe
