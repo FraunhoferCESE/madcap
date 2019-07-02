@@ -460,6 +460,8 @@ public class DataCollectionService extends Service {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
 
+        // NotificationCompat builder is deprecated on SDK 27 and above (Oreo)
+        // Use Notification.Builder for SDK 27 and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_MIN);
             //chan.setLightColor(Color.BLUE);
