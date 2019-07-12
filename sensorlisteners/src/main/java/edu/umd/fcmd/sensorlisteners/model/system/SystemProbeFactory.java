@@ -144,7 +144,15 @@ public class SystemProbeFactory {
         DockStateProbe dockStateProbe = new DockStateProbe();
         dockStateProbe.setDate(System.currentTimeMillis());
 
+        // ACTION_DOCK_EVENT intents are sticky, meaning once broadcasted, these events stay visible system wide
+        // as long as the device is alive (rebooting the device will start a new life) OR till the time the dock state changes and a new ACTION_DOCK_EVENT is
+        // broadcasted which overwrites the older one.
+
+        // This behaviour of ACTION_DOCK_EVENT allows us to register a receiver for the event anytime and we should get the intent
+        // if it was broadcasted before in the lifetime of the device.
         Intent dockStatus = context.registerReceiver(null, new IntentFilter(Intent.ACTION_DOCK_EVENT));
+        // However, if the device was never docked, then ACTION_DOCK_EVENT intent will never be broadcasted and so the above call to registerReceiver with
+        // ACTION_DOCK_EVENT intent filter will return a null value. This might cause a spew of 'UNKNOWN' dockState entries to be generated
 
         int dockState = (dockStatus == null) ? -1 : dockStatus.getIntExtra(EXTRA_DOCK_STATE, -1);
 

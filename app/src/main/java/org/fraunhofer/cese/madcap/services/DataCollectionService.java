@@ -1,7 +1,6 @@
 package org.fraunhofer.cese.madcap.services;
 
 import android.app.Notification;
-import android.app.Notification.Builder;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,7 +8,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Binder;
 import android.os.Build;
@@ -464,7 +462,6 @@ public class DataCollectionService extends Service {
         // Use Notification.Builder for SDK 27 and above
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_MIN);
-            //chan.setLightColor(Color.BLUE);
             chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
             NotificationManager noteMan = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             assert noteMan != null;

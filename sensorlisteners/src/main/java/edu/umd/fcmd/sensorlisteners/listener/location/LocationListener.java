@@ -96,6 +96,7 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         this.context.registerReceiver(locationServiceStatusReceiver, intentFilter);
 
         mPendingIntent = PendingIntent.getService(context, 1, new Intent(context, FusedLocationService.class), 0);
+        this.runningStatus = false;
 
         //register for EventBus listener
 
@@ -157,9 +158,9 @@ public class LocationListener implements Listener<LocationProbe>, android.locati
         onLocationChanged(fusedLocationProviderApi.getLastLocation(apiClient));
 
         LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setInterval(MAX_TIME);
+        locationRequest.setInterval(MAX_TIME);  // This is not working as expected, location updates are not received every 10 min
         locationRequest.setFastestInterval(MIN_TIME);
-        locationRequest.setSmallestDisplacement(MIN_DISTANCE);
+        locationRequest.setSmallestDisplacement(MIN_DISTANCE);  // This works as expected, location updates are received if device moves 20 meters away from old location
         locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         fusedLocationProviderApi.requestLocationUpdates(apiClient, locationRequest, mPendingIntent);
     }
