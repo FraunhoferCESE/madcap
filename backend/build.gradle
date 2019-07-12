@@ -9,7 +9,7 @@ buildscript {
 //        classpath 'com.google.appengine:gradle-appengine-plugin:1.9.51' //deprecated
 
         // V2: new App Engine and Endpoints Frameworks plugin dependencies
-        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
+        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:2.0.1'
         classpath 'com.google.cloud.tools:appengine-gradle-plugin:1.3.2'
     }
 }
