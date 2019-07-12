@@ -42,6 +42,7 @@ public class WifiListener extends BroadcastReceiver implements Listener {
         this.probeProbeManager = probeProbeManager;
         this.wifiManager = wifiManager;
         this.factory = factory;
+        this.runningStatus = false;
     }
 
 
@@ -54,15 +55,22 @@ public class WifiListener extends BroadcastReceiver implements Listener {
     public void startListening() {
         if (!runningStatus) {
 
-            IntentFilter intentFilter = new IntentFilter(WifiManager.WIFI_STATE_CHANGED_ACTION);
+            IntentFilter intentFilter = new IntentFilter();
+            // WiFi adapter state changed
+            intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+            // Received Signal Strength Indicator change
             intentFilter.addAction(WifiManager.RSSI_CHANGED_ACTION);
+            // WiFi connectivity of device with the router changed
             intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
 
             mContext.registerReceiver(this, intentFilter);
             onUpdate(factory.createWiFiProbe(wifiManager.getConnectionInfo().getIpAddress(),
                     wifiManager.getConnectionInfo().getSSID(),
                     wifiManager.getScanResults(),
-                    wifiManager.getWifiState()));
+                    null,
+                    wifiManager));
+            // since this first call to WiFi Probe creation is not triggered by any intent and is being done
+            // just to log the WiFi state on starting dataCollection, it makes sense to have the intent as null
 
             runningStatus = true;
         }
@@ -89,7 +97,8 @@ public class WifiListener extends BroadcastReceiver implements Listener {
         WiFiProbe probe = factory.createWiFiProbe(wifiManager.getConnectionInfo().getIpAddress(),
                 wifiManager.getConnectionInfo().getSSID(),
                 wifiManager.getScanResults(),
-                intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, 0));
+                intent,
+                wifiManager);
 
         onUpdate(probe);
     }

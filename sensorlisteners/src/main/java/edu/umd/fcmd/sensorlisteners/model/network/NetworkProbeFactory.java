@@ -272,11 +272,13 @@ public class NetworkProbeFactory {
      * @param ipAddress   an integer up address. See {@link WifiInfo#getIpAddress()}
      * @param currentSsid a string representing the current SSID. See {@link WifiInfo#getSSID()}
      * @param networkList a list of networks in range. Needed to get the security level. See {@link WifiManager#getScanResults()}
-     * @param wifiState   the current wifi adapter state. See {@link WifiManager#getWifiState()}
+     * @param intent      the intent which triggered WiFiProbe creation
+     * @param wifiManager wifiManager instance used by the WiFiListener service
+     * //@param wifiState   the current wifi adapter state. See {@link WifiManager#getWifiState()}
      * @return a new wifi probe
      */
     @NonNull
-    public WiFiProbe createWiFiProbe(int ipAddress, String currentSsid, Iterable<ScanResult> networkList, int wifiState) {
+    public WiFiProbe createWiFiProbe(int ipAddress, String currentSsid, Iterable<ScanResult> networkList, Intent intent, WifiManager wifiManager) {
         WiFiProbe wiFiProbe = new WiFiProbe();
         wiFiProbe.setDate(System.currentTimeMillis());
 
@@ -332,9 +334,14 @@ public class NetworkProbeFactory {
 
         wiFiProbe.setNetworkSecurity(security);
 
-        // Convert wifi state integer to string
+        // set WiFi network state as the intent action which triggered the WiFi Probe creation
+        // set network state as "-" if probe creation was triggered not by an intent but by serviceStart()
+        wiFiProbe.setNetworkState(intent != null ? intent.getAction() : "-");
+
         String state;
-        switch (wifiState) {
+        // Get WiFi state from the intent and convert wifi state integer to string
+        int finalWifiState = intent != null ? intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,  WifiManager.WIFI_STATE_UNKNOWN) : wifiManager.getWifiState();
+        switch (finalWifiState) {
             case WifiManager.WIFI_STATE_ENABLED:
                 state = "ENABLED";
                 break;
@@ -359,36 +366,4 @@ public class NetworkProbeFactory {
         return wiFiProbe;
     }
 
-
-    /**
-     * Returns the current wifi state as a String form an int.
-     *
-     * @param i Current wifi state.
-     * @return a String representation of hte current Wifi state
-     */
-    private static String getWifiState(int i) {
-        String result;
-
-        switch (i) {
-            case WifiManager.WIFI_STATE_ENABLED:
-                result = "ENABLED";
-                break;
-            case WifiManager.WIFI_STATE_DISABLED:
-                result = "DISABLED";
-                break;
-            case WifiManager.WIFI_STATE_ENABLING:
-                result = "ENABLING";
-                break;
-            case WifiManager.WIFI_STATE_DISABLING:
-                result = "DISABLING";
-                break;
-            case WifiManager.WIFI_STATE_UNKNOWN:
-                result = "UNKNOWN";
-                break;
-            default:
-                result = "-";
-                break;
-        }
-        return result;
-    }
 }
