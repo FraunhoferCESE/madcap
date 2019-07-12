@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
+import android.nfc.NfcManager;
 import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
@@ -30,8 +31,10 @@ public class NFCListener extends BroadcastReceiver implements Listener {
     NFCListener (Context context, ProbeManager<Probe> probeManager, @Nullable NfcAdapter nfcAdapter, NetworkProbeFactory factory) {
         mContext = context;
         this.probeManager = probeManager;
-        this.nfcAdapter = nfcAdapter;
+        NfcManager nfcMan = (NfcManager) mContext.getSystemService(Context.NFC_SERVICE);
+        this.nfcAdapter = nfcMan.getDefaultAdapter();
         this.factory = factory;
+        this.isRunning = false;
     }
 
     @Override
