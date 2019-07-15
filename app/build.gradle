@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 //Dagger
-//apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'com.neenbedankt.android-apt'
 
 // V2: Apply the new Endpoints Framework client plugin
 apply plugin: 'com.google.cloud.tools.endpoints-framework-client'
@@ -12,7 +12,7 @@ buildscript {
     }
     dependencies {
         // V2: Add the new Endpoints Framework plugin dependencies
-        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:2.0.1'
+        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
         classpath 'com.google.gms:google-services:3.0.0'
     }
 }
@@ -103,8 +103,7 @@ configurations {
 
 dependencies {
 //    compile project(path: ':backend', configuration: 'android-backend')
-    //compile project(':sensorlisteners')
-    compile project(path:':sensorlisteners', configuration:'default')
+    compile project(':sensorlisteners')
     compile fileTree(include: ['*.jar'], dir: 'libs')
 
     // V2: Endpoints Framework v2 migration
@@ -132,12 +131,12 @@ dependencies {
 
     //Dagger
     compile 'com.google.dagger:dagger:2.10'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
+    apt 'com.google.dagger:dagger-compiler:2.10'
 
     compile 'com.jakewharton.timber:timber:4.5.1'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.jakewharton:butterknife:8.5.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    apt 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'org.greenrobot:eventbus:3.0.0'
 }
 
