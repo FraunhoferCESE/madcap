@@ -82,16 +82,16 @@ public class WiFiProbe extends Probe {
     }
 
     /**
-     * Gets the state (ON/OFF).
+     * Gets the network state event.
      *
-     * @return the state.
+     * @return the network state.
      */
     public String getNetworkState() {
         return networkState;
     }
 
     /**
-     * Sets the state (ON/OFF).
+     * Sets the network state event.
      */
     public void setNetworkState(String state) {
         this.networkState = state;

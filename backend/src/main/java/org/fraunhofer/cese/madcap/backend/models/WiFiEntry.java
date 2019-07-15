@@ -25,6 +25,7 @@ public class WiFiEntry implements Comparable<WiFiEntry>, DatastoreEntry {
     private String ssid;
     private String networkSecurity;
     private String ip;
+    private String networkState;
 
     @Index
     private String userID;
@@ -42,6 +43,7 @@ public class WiFiEntry implements Comparable<WiFiEntry>, DatastoreEntry {
         ssid = dataJsonObject.getString("ssid");
         networkSecurity = dataJsonObject.getString("networkSecurity");
         ip = dataJsonObject.getString("ip");
+        networkState = dataJsonObject.getString("networkState");
     }
 
     /**
@@ -108,6 +110,21 @@ public class WiFiEntry implements Comparable<WiFiEntry>, DatastoreEntry {
         this.ip = ip;
     }
 
+    /**
+     * Gets the network state event.
+     *
+     * @return the network state.
+     */
+    public String getNetworkState() {
+        return networkState;
+    }
+
+    /**
+     * Sets the network state event.
+     */
+    public void setNetworkState(String state) {
+        this.networkState = state;
+    }
 
     /**
      * Compares this object with the specified object for order.  Returns a
@@ -277,7 +294,8 @@ public class WiFiEntry implements Comparable<WiFiEntry>, DatastoreEntry {
         return (state.equals(that.getState()) &&
                 ssid.equals(that.getSsid()) &&
                 networkSecurity.equals(that.getNetworkSecurity()) &&
-                ip.equals(that.getIp()));
+                ip.equals(that.getIp()) &&
+                networkState.equals(that.getNetworkState()));
     }
 
     @Override
@@ -288,6 +306,7 @@ public class WiFiEntry implements Comparable<WiFiEntry>, DatastoreEntry {
                 ", \"ssid\": " + (ssid != null ? ssid : "-") +
                 ", \"networkSecurity\": " + (networkSecurity != null ? networkSecurity : "-") +
                 ", \"ip\": " + (ip != null ? ip : "-") +
+                ", \"networkState\": " + (networkState != null ? "\""+networkState+"\"" : "-") +
                 '}';
     }
 }
