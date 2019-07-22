@@ -21,17 +21,17 @@ public class PowerProbeFactory {
 
     /**
      * possible charging probes: usb, ac, wireless, unknown or unplugged
-     * @param intent
+     * @param extraPluggedState
      * @return charging probe object
      */
 
     @SuppressWarnings("MethodMayBeStatic")
     @NonNull
-    public ChargingProbe createChargingProbe(@NonNull Intent intent) {
+    public ChargingProbe createChargingProbe(int extraPluggedState) {
         ChargingProbe chargingProbe = new ChargingProbe();
         chargingProbe.setDate(System.currentTimeMillis());
 
-        switch (intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, 0)) {
+        switch (extraPluggedState) {
             case 0:
                 chargingProbe.setCharging(ChargingProbe.NONE);
                 break;
