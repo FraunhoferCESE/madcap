@@ -12,7 +12,7 @@ import edu.umd.fcmd.sensorlisteners.model.Probe;
 public class WiFiProbe extends Probe {
     private static final String NETWORK_TYPE = "WiFi";
     private String state;
-    private String ssid;
+    private String ssid ="init";
     private String networkSecurity;
     private String ip;
 
@@ -45,7 +45,13 @@ public class WiFiProbe extends Probe {
      * Sets the SSID.
      */
     public void setSsid(String ssid) {
-        this.ssid = ssid;
+        String newSsid;
+        //Replace all special characters
+        newSsid = ssid.replaceAll("[^a-zA-Z0-9]", "");
+        if(newSsid == null || newSsid.isEmpty()){
+            newSsid = "-";
+        }
+        this.ssid = newSsid;
     }
 
     /**

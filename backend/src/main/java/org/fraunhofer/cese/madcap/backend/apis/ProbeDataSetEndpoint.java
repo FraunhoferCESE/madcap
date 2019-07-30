@@ -524,12 +524,15 @@ public class ProbeDataSetEndpoint {
             name = "checkSignedUpUser"
     )
     public UserCheckResult checkSignedUpUser(HttpServletRequest req, User user) throws OAuthRequestException, ConflictException, BadRequestException {
+
         if (user == null) {
+            logger.info("User is null");
             return new UserCheckResult(false);
         }
 
         MadcapUser result = ofy().load().type(MadcapUser.class).id(user.getEmail()).now();
         if (result == null) {
+            logger.info("Email is null");
             return new UserCheckResult(false);
         }
 

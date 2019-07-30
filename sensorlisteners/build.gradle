@@ -11,7 +11,7 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled  true
+        multiDexEnabled true
     }
 
     testOptions {
@@ -23,23 +23,26 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    //implementation 'com.google.firebase:firebase-crash:11.8.0'
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.google.android.gms:play-services-awareness:10.2.4'
+    implementation 'com.android.support:appcompat-v7:25.3.1'
+    //compile 'com.google.android.gms:play-services-awareness:10.2.4'
+    implementation 'com.google.android.gms:play-services-awareness:11.8.0'
 
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.jaredrummler:android-device-names:1.1.2'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.jaredrummler:android-device-names:1.1.2'
 
-    compile 'javax.annotation:javax.annotation-api:1.2'
-    compile 'javax.inject:javax.inject:1'
+    implementation 'javax.annotation:javax.annotation-api:1.2'
+    implementation 'javax.inject:javax.inject:1'
 
-    compile 'com.jakewharton.timber:timber:4.5.1'
+    implementation 'com.jakewharton.timber:timber:4.5.1'
 
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:2.7.22'
-    testCompile 'org.jmockit:jmockit:1.31'
-
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:2.7.22'
+    testImplementation 'org.jmockit:jmockit:1.31'
 
 
 }
+
+//apply plugin: 'com.google.gms.google-services'

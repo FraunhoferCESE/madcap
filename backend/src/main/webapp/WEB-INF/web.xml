@@ -10,11 +10,11 @@
     </filter-mapping>
 
     <servlet>
-        <servlet-name>SystemServiceServlet</servlet-name>
+        <servlet-name>EndpointsServlet</servlet-name>
         <!-- That was called servlet-probeType.
              I changed it so it would match the example
              -Frederik-         -->
-        <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
+        <servlet-class>com.google.api.server.spi.EndpointsServlet</servlet-class>
         <init-param>
             <param-name>services</param-name>
             <!-- That was called param-probeType.
@@ -26,10 +26,10 @@
         </init-param>
     </servlet>
     <servlet-mapping>
-        <servlet-name>SystemServiceServlet</servlet-name>
+        <servlet-name>EndpointsServlet</servlet-name>
 
 
-        <url-pattern>/_ah/spi/*</url-pattern>
+        <url-pattern>/_ah/api/*</url-pattern>
     </servlet-mapping>
 
 

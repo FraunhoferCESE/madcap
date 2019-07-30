@@ -43,7 +43,13 @@ public class NetworkProbe extends Probe {
      * Sets the SecurityLevel.
      */
     public void setInfo(String info) {
-        this.info = info;
+        String newInfo;
+        //Replace all special characters
+        newInfo = info.replaceAll("[^a-zA-Z0-9]", "");
+        if(newInfo == null || newInfo.isEmpty()){
+            newInfo = "-";
+        }
+        this.info = newInfo;
     }
 
     /**

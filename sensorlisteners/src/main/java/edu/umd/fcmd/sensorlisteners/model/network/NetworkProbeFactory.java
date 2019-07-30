@@ -47,7 +47,14 @@ public class NetworkProbeFactory {
     public NetworkProbe createNetworkProbe(@NonNull Intent intent) {
         NetworkProbe networkProbe = new NetworkProbe();
         networkProbe.setDate(System.currentTimeMillis());
-        networkProbe.setInfo(intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO));
+        String info = intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO);
+        if (info == null){
+            networkProbe.setInfo("");
+        } else {
+            networkProbe.setInfo(info);
+        }
+        //networkProbe.setInfo(intent.getStringExtra(ConnectivityManager.EXTRA_EXTRA_INFO));
+
         if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
             networkProbe.setState(NetworkProbe.NOT_CONNECTED);
         } else {
@@ -68,10 +75,18 @@ public class NetworkProbeFactory {
         networkProbe.setDate(System.currentTimeMillis());
         if (networkInfo == null) {
             networkProbe.setState(NetworkProbe.NOT_CONNECTED);
-            networkProbe.setInfo(null);
+            //networkProbe.setInfo(null);
+            networkProbe.setInfo("");
         } else {
             networkProbe.setState(NetworkProbe.CONNECTED);
-            networkProbe.setInfo(networkInfo.getExtraInfo());
+            //networkProbe.setInfo(networkInfo.getExtraInfo());
+            String info = networkInfo.getExtraInfo();
+            info = null;
+            if (info == null){
+                networkProbe.setInfo("");
+            } else {
+                networkProbe.setInfo(info);
+            }
         }
         return networkProbe;
     }
