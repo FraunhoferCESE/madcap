@@ -37,6 +37,7 @@ public class SMSListener extends BroadcastReceiver implements Listener {
         this.probeManager = probeManager;
         this.factory = factory;
         this.permissionsManager = permissionsManager;
+        this.isRunning = false;
     }
 
     @Override
@@ -47,7 +48,12 @@ public class SMSListener extends BroadcastReceiver implements Listener {
     @Override
     public void startListening() {
         if (!isPermittedByUser()) {
-            permissionsManager.requestPermissionFromNotification();
+            // As per GooglePlay policy, we are not supposed to ask for SMS permission from users
+            // unless we get their approval with appropriate reason. Till then, do nothing
+            // for SMSListener
+            // Dt: 07/30/2019
+            //permissionsManager.requestPermissionFromNotification();
+            return;
         } else if (!isRunning) {
             Timber.d("startListening");
             IntentFilter filter = new IntentFilter();

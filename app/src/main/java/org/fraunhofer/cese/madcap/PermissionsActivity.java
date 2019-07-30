@@ -44,7 +44,10 @@ public class PermissionsActivity extends ChildActivity {
     @BindView(R.id.locationCheckBox) CheckBox locationCB;
     private static final int LOCATION_PERMISSION_REQUEST = 901;
 
-    @BindView(R.id.smsCheckBox) CheckBox smsCB;
+    // Temporarily commenting out the following permissions required for SMS and Call log
+    // as per the restrictions imposed by GooglePlayStore
+    // Dt: 07/30/2019
+    //@BindView(R.id.smsCheckBox) CheckBox smsCB;
     private static final int SMS_PERMISSION_REQUEST = 903;
 
     @BindView(R.id.telephoneCheckBox) CheckBox telephoneCB;
@@ -90,7 +93,8 @@ public class PermissionsActivity extends ChildActivity {
     }
 
 
-    @OnClick({R.id.contactsCheckBox, R.id.locationCheckBox, R.id.smsCheckBox, R.id.telephoneCheckBox})
+    //@OnClick({R.id.contactsCheckBox, R.id.locationCheckBox, R.id.smsCheckBox, R.id.telephoneCheckBox})
+    @OnClick({R.id.contactsCheckBox, R.id.locationCheckBox, R.id.telephoneCheckBox})
     public void onCheckboxClicked(CompoundButton checkbox) {
         switch (checkbox.getId()) {
             case R.id.contactsCheckBox:
@@ -99,9 +103,12 @@ public class PermissionsActivity extends ChildActivity {
             case R.id.locationCheckBox:
                 getPermissionWithRationale(locationCB, Manifest.permission.ACCESS_FINE_LOCATION, getString(R.string.location_rationale), LOCATION_PERMISSION_REQUEST);
                 return;
-            case R.id.smsCheckBox:
+                // Temporarily commenting out the following permissions required for SMS and Call log
+                // as per the restrictions imposed by GooglePlayStore
+                // Dt: 07/30/2019
+                /*case R.id.smsCheckBox:
                 getPermissionWithRationale(smsCB, Manifest.permission.READ_SMS, getString(R.string.sms_rationale), SMS_PERMISSION_REQUEST);
-                return;
+                return;*/
             case R.id.telephoneCheckBox:
                 getPermissionWithRationale(telephoneCB, Manifest.permission.READ_PHONE_STATE, getString(R.string.telephone_rationale), TELEPHONE_PERMISSION_REQUEST);
                 return;
@@ -181,9 +188,12 @@ public class PermissionsActivity extends ChildActivity {
             disableCheckbox(locationCB);
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
-            disableCheckbox(smsCB);
-        }
+        // Temporarily commenting out the following permissions required for SMS and Call log
+        // as per the restrictions imposed by GooglePlayStore
+        // Dt: 07/30/2019
+        //if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) == PackageManager.PERMISSION_GRANTED) {
+        //    disableCheckbox(smsCB);
+        //}
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED) {
             disableCheckbox(telephoneCB);

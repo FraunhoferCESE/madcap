@@ -48,7 +48,10 @@
             app:layout_constraintTop_toTopOf="@id/contactsText"
             />
 
-        <TextView
+        <!-- Temporarily commenting out the following permissions required for SMS and Call log
+        as per the restrictions imposed by GooglePlayStore
+        Dt: 07/30/2019-->
+        <!--TextView
             android:id="@+id/smsText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -66,7 +69,7 @@
             app:layout_constraintBottom_toBottomOf="@id/smsText"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/smsText"
-            app:layout_constraintTop_toTopOf="@id/smsText"/>
+            app:layout_constraintTop_toTopOf="@id/smsText"/-->
 
         <TextView
             android:id="@+id/locationText"
@@ -77,7 +80,7 @@
             app:layout_constraintHorizontal_weight="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/locationCheckBox"
-            app:layout_constraintTop_toBottomOf="@id/smsText"/>
+            app:layout_constraintTop_toBottomOf="@id/contactsText"/>
 
         <CheckBox
             android:id="@+id/locationCheckBox"

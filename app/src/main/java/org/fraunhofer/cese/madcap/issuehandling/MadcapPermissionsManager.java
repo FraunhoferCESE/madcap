@@ -108,7 +108,10 @@ public class MadcapPermissionsManager implements PermissionsManager {
         return (isUsageStatsPermitted()
                 && isLocationPermitted()
                 && isContactPermitted()
-                && isSmsPermitted()
+                // Temporarily commenting out the following permissions required for SMS and Call log
+                // as per the restrictions imposed by GooglePlayStore
+                // Dt: 07/30/2019
+                //&& isSmsPermitted()
                 && isTelephonePermitted()
         );
     }
