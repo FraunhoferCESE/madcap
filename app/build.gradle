@@ -59,7 +59,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 29
         versionCode versionBuild
-        versionName "1.0.8"
+        versionName "1.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled = true
     }
