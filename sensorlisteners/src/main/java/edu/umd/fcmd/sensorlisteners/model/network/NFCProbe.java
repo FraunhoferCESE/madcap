@@ -105,7 +105,7 @@ public class NFCProbe extends Probe {
     @Override
     public String toString() {
         return "{\"state\": " + (state != null ? state : "-") +
-                ", \"deviceFoundState\": " + (tagDiscoveryState != null ? tagDiscoveryState : "-") +
+                ", \"tagDiscoveryState\": " + (tagDiscoveryState != null ? tagDiscoveryState : "-") +
                 ", \"transactionConductedState\": " + (transactionConductedState != null ? transactionConductedState : "-") +
                 '}';
     }

@@ -22,7 +22,6 @@ import java.util.List;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.model.applications.AppPermissionsProbe;
 import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
-import timber.log.Timber;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
@@ -93,7 +92,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
         Log.d(TAG, "started doInBackground");
 
         // send app permissions probe once per MADCAP data collection session start
-        sendAppPermissionsProbes();
+        //sendAppPermissionsProbes();
 
         while (!isCancelled()) {
             if(checkPermissions()){
@@ -300,7 +299,6 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
     private void sendAppPermissionsProbes() {
         PackageManager pm = context.getPackageManager();
         List<PackageInfo> packages = pm.getInstalledPackages(PackageManager.GET_PERMISSIONS | PackageManager.GET_META_DATA);
-        //int appPermProbeCtr = 0;
         DeviceName.DeviceInfo info = DeviceName.getDeviceInfo(context);
         String deviceManufacturerName = info.manufacturer.toLowerCase();
 
@@ -333,10 +331,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                 appPermProbe.setPermissionsRejected(rejectedPermissions);
                 appPermProbe.setPermissionsGranted(grantedPermissions);
                 applicationsListener.onUpdate(appPermProbe);
-                //appPermProbeCtr++;
-                Timber.i("rohila: " + appPermProbe.toString());
             }
         }
-        //Timber.i("rohila: " + appPermProbeCtr + " probes created");
     }
 }
