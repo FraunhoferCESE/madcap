@@ -33,14 +33,13 @@ dependencies {
 //    compile 'com.google.appengine:appengine-endpoints-deps:1.9.51' //deprecated
 
     // V2: Endpoints Framework v2 migration
-    compile 'com.google.endpoints:endpoints-framework:2.0.7'
-    compile 'javax.inject:javax.inject:1'
-    compile 'javax.servlet:servlet-api:2.5'
+    implementation 'com.google.endpoints:endpoints-framework:2.0.7'
+    implementation 'javax.inject:javax.inject:1'
+    implementation 'javax.servlet:servlet-api:2.5'
 
-    compile 'com.googlecode.objectify:objectify:5.1.13'
+    implementation 'com.googlecode.objectify:objectify:5.1.13'
 
-    compile 'org.json:json:20160810'
-
+    implementation 'org.json:json:20160810'
 }
 
 // Endpoints V2
@@ -60,8 +59,7 @@ appengine {  // App Engine tasks configuration
 
 endpointsServer {
     // Endpoints Framework Plugin server-side configuration
-    //hostname = "madcap-142815.appspot.com"
-    hostname = "madcap-dev.appspot.com"
+    hostname = "madcap-142815.appspot.com"
 }
 
 //deprecated

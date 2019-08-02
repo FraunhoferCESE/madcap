@@ -4,13 +4,17 @@ buildscript {
     repositories {
         jcenter()
 
+        google()
+        // Crashlytics dependencies
+        maven {
+            url 'https://maven.fabric.io/public'
+        }
     }
     dependencies {
-
         // V2: Include this dependency when using Endpoints Framework v2
         classpath 'com.google.guava:guava:19.0'
 
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.1.2'
 
 //        classpath 'com.android.tools.build:gradle:2.3.3'
         // NOTE: Do not place your application dependencies here; they belong
@@ -19,14 +23,22 @@ buildscript {
 //        sourceCompatibility = 1.7
 //        targetCompatibility = 1.7
         classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8' //Dagger
-        classpath 'com.google.gms:google-services:3.0.0'
+        //classpath 'com.google.gms:google-services:3.1.1'
 
+        // Add  Crashlytics  dependency
+        classpath 'com.google.gms:google-services:4.1.0'
+        classpath 'io.fabric.tools:gradle:1.25.4'
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+        google()
+        // Add repository for crashlytics
+        maven {
+            url 'https://maven.google.com/'
+        }
     }
     tasks.withType(JavaCompile) {
         sourceCompatibility = JavaVersion.VERSION_1_8

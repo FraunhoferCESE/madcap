@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 //Dagger
-apply plugin: 'com.neenbedankt.android-apt'
+//apply plugin: 'com.neenbedankt.android-apt'
 
 // V2: Apply the new Endpoints Framework client plugin
 apply plugin: 'com.google.cloud.tools.endpoints-framework-client'
@@ -13,7 +13,10 @@ buildscript {
     dependencies {
         // V2: Add the new Endpoints Framework plugin dependencies
         classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.0'
-        classpath 'com.google.gms:google-services:3.0.0'
+        //classpath 'com.google.gms:google-services:3.0.0'
+        //classpath 'com.google.gms:google-services:3.1.1'
+        classpath 'com.google.gms:google-services:4.1.0'
+
     }
 }
 android {
@@ -98,46 +101,49 @@ repositories {
 }
 
 configurations {
-    compile.exclude group: "org.apache.httpcomponents", module: "httpclient"
+    implementation.exclude group: "org.apache.httpcomponents", module: "httpclient"
 }
 
 dependencies {
 //    compile project(path: ':backend', configuration: 'android-backend')
-    compile project(':sensorlisteners')
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    implementation project(':sensorlisteners')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
 
     // V2: Endpoints Framework v2 migration
     endpointsServer project(path: ':backend', configuration: 'endpoints')
-    compile 'com.google.api-client:google-api-client-android:1.23.0'
-    compile 'com.google.http-client:google-http-client-android:1.22.0'
+    implementation 'com.google.api-client:google-api-client-android:1.23.0'
+    implementation 'com.google.http-client:google-http-client-android:1.22.0'
 
-    compile 'com.google.firebase:firebase-config:10.2.4'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.j256.ormlite:ormlite-android:5.0'
-    compile 'com.google.android.gms:play-services-auth:10.2.4'
-    compile 'com.google.android.gms:play-services-location:10.2.4'
-    compile 'com.google.android.gms:play-services-iid:10.2.4'
-    compile 'com.google.android.gms:play-services-awareness:10.2.4'
-    compile 'com.google.firebase:firebase-core:10.2.4'
-    compile 'com.google.firebase:firebase-messaging:10.2.4'
-    compile 'com.google.firebase:firebase-crash:10.2.4'
-    compile 'com.android.support:multidex:1.0.1'
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
-    compile 'com.android.support:design:25.3.1'
-    compile 'javax.annotation:javax.annotation-api:1.2'
-    compile 'javax.inject:javax.inject:1'
-    compile 'com.google.code.findbugs:jsr305:3.0.2'
+    implementation 'com.google.firebase:firebase-config:11.8.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    implementation 'com.j256.ormlite:ormlite-android:5.0'
+    implementation 'com.google.android.gms:play-services-auth:11.8.0'
+    implementation 'com.google.android.gms:play-services-location:11.8.0'
+    implementation 'com.google.android.gms:play-services-iid:11.8.0'
+    implementation 'com.google.android.gms:play-services-awareness:11.8.0'
+    implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.google.firebase:firebase-messaging:11.8.0'
+    //compile 'com.google.firebase:firebase-crash:10.2.4'
+    implementation 'com.google.firebase:firebase-crash:11.8.0'
+    // Add dependency for crashlytics
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.5'
+    implementation 'com.android.support:multidex:1.0.1'
+    implementation 'com.android.support:appcompat-v7:25.3.1'
+    implementation 'com.android.support:support-v4:25.3.1'
+    implementation 'com.android.support:design:25.3.1'
+    implementation 'javax.annotation:javax.annotation-api:1.2'
+    implementation 'javax.inject:javax.inject:1'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     //Dagger
     compile 'com.google.dagger:dagger:2.10'
-    apt 'com.google.dagger:dagger-compiler:2.10'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.10'
 
-    compile 'com.jakewharton.timber:timber:4.5.1'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.jakewharton:butterknife:8.5.1'
-    apt 'com.jakewharton:butterknife-compiler:8.5.1'
-    compile 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.jakewharton.timber:timber:4.5.1'
+    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+    implementation 'org.greenrobot:eventbus:3.0.0'
 }
 
 def debugProps = new Properties()
@@ -155,7 +161,4 @@ android.signingConfigs.release.keyAlias releaseProps.keyAlias
 android.signingConfigs.release.keyPassword releaseProps.keyAliasPassword
 
 apply plugin: 'com.google.gms.google-services'
-
-
-
-
+apply plugin: 'io.fabric'
