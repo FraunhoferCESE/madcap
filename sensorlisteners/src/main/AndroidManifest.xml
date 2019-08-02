@@ -25,6 +25,14 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <uses-permission
+        android:name="android.permission.NFC"
+        android:minSdkVersion="19"/>
+
+    <uses-permission
+        android:name="android.permission.NFC_TRANSACTION_EVENT"
+        android:minSdkVersion="28"  />
+
+    <uses-permission
         android:name="android.permission.GET_TASKS"
         android:maxSdkVersion="20" />
 

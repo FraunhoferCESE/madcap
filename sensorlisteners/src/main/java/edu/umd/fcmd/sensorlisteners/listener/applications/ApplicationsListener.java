@@ -41,6 +41,7 @@ public class ApplicationsListener implements Listener {
         this.probeProbeManager = probeProbeManager;
         this.timedApplicationTaskFactory = timedApplicationTaskFactory;
         this.permissionsManager = permissionsManager;
+        this.runningStatus = false;
     }
 
     @Override

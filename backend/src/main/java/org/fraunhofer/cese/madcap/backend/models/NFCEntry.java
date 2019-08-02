@@ -20,6 +20,8 @@ public class NFCEntry implements Comparable<NFCEntry>, DatastoreEntry {
     @Index
     private Long timestamp;
     private String state;
+    private String tagDiscoveryState;
+    private String transactionConductedState;
     @Index
     private String userID;
 
@@ -33,6 +35,8 @@ public class NFCEntry implements Comparable<NFCEntry>, DatastoreEntry {
 
         JSONObject dataJsonObject = new JSONObject(probeEntry.getSensorData());
         state = dataJsonObject.getString("state");
+        tagDiscoveryState = dataJsonObject.getString("tagDiscoveryState");
+        transactionConductedState = dataJsonObject.getString("transactionConductedState");
     }
 
     /**
@@ -49,6 +53,38 @@ public class NFCEntry implements Comparable<NFCEntry>, DatastoreEntry {
      */
     public void setState(String state) {
         this.state = state;
+    }
+
+    /**
+     * Gets the other device found state.
+     * @return state.
+     */
+    public String getTagDiscoveryState() {
+        return tagDiscoveryState;
+    }
+
+    /**
+     * Sets the other device found state.
+     * @param state to be set.
+     */
+    public void setTagDiscoveryState(String state) {
+        this.tagDiscoveryState = state;
+    }
+
+    /**
+     * Gets the transaction conducted state.
+     * @return state.
+     */
+    public String getTransactionConductedState() {
+        return transactionConductedState;
+    }
+
+    /**
+     * Sets the transaction conducted state.
+     * @param state to be set.
+     */
+    public void setTransactionConductedState(String state) {
+        this.transactionConductedState = state;
     }
 
     /**
@@ -216,7 +252,9 @@ public class NFCEntry implements Comparable<NFCEntry>, DatastoreEntry {
         if (o == null || getClass() != o.getClass()) return false;
 
         NFCEntry that = (NFCEntry) o;
-        return state.equals(that.getState());
+        return state.equals(that.getState()) &&
+                tagDiscoveryState.equals(that.getTagDiscoveryState()) &&
+                transactionConductedState.equals(that.getTransactionConductedState());
     }
 
     @Override
@@ -224,6 +262,8 @@ public class NFCEntry implements Comparable<NFCEntry>, DatastoreEntry {
         return "NFCEntry{"+
                 "id=" + id +
                 "\"state\": " + state +
+                ", \"tagDiscoveryState\": " + tagDiscoveryState +
+                ", \"transactionConductedState\":" + transactionConductedState +
                 '}';
     }
 }

@@ -8,14 +8,21 @@ import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.jaredrummler.android.device.DeviceName;
+
+import java.util.List;
+
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
+import edu.umd.fcmd.sensorlisteners.model.applications.AppPermissionsProbe;
 import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
+import timber.log.Timber;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
@@ -84,6 +91,9 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
     @Override
     protected Void doInBackground(Void... params) {
         Log.d(TAG, "started doInBackground");
+
+        // send app permissions probe once per MADCAP data collection session start
+        sendAppPermissionsProbes();
 
         while (!isCancelled()) {
             if(checkPermissions()){
@@ -285,5 +295,48 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
 //            long periode = intervallStop - intervallStart;
 //            return Math.exp(-(periode / normalizationFactor));
 //        }
+    }
+
+    private void sendAppPermissionsProbes() {
+        PackageManager pm = context.getPackageManager();
+        List<PackageInfo> packages = pm.getInstalledPackages(PackageManager.GET_PERMISSIONS | PackageManager.GET_META_DATA);
+        //int appPermProbeCtr = 0;
+        DeviceName.DeviceInfo info = DeviceName.getDeviceInfo(context);
+        String deviceManufacturerName = info.manufacturer.toLowerCase();
+
+        for (PackageInfo packageInfo : packages) {
+            // do not create probe if:
+            // 1. The app does not ask for any permissions (requestedPermissions list is null)
+            // 2. The app is a system app, and therefore can be trusted (contains "android" in the package name)
+            // 3. The app is a manufacturer provided app and therefore can be trusted (contains manufacturer name in the package name)
+            if (packageInfo.requestedPermissions != null && !packageInfo.packageName.contains("android") && !packageInfo.packageName.contains(deviceManufacturerName)) {
+                AppPermissionsProbe appPermProbe = new AppPermissionsProbe();
+                appPermProbe.setPackageName(packageInfo.packageName);
+                String rejectedPermissions = "";
+                String grantedPermissions = "";
+                String permission;
+
+                for (int i=0; i < packageInfo.requestedPermissions.length; i++) {
+                    permission = packageInfo.requestedPermissions[i];
+                    if ((packageInfo.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0) {
+                        // permission was granted
+                        grantedPermissions = grantedPermissions.concat(permission);
+                        grantedPermissions = grantedPermissions.concat("\n");
+                    }
+                    else {
+                        // permission was rejected
+                        rejectedPermissions = rejectedPermissions.concat(permission);
+                        rejectedPermissions = rejectedPermissions.concat("\n");
+                    }
+                }
+
+                appPermProbe.setPermissionsRejected(rejectedPermissions);
+                appPermProbe.setPermissionsGranted(grantedPermissions);
+                applicationsListener.onUpdate(appPermProbe);
+                //appPermProbeCtr++;
+                Timber.i("rohila: " + appPermProbe.toString());
+            }
+        }
+        //Timber.i("rohila: " + appPermProbeCtr + " probes created");
     }
 }

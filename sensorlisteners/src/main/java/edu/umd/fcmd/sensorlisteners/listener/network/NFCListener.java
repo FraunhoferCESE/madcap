@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
+import android.nfc.tech.NfcA;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
@@ -39,13 +42,7 @@ public class NFCListener extends BroadcastReceiver implements Listener {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
-        int state = intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, -1);
-        System.out.print(context);
-        System.out.print(intent);
-        if (state == NfcAdapter.STATE_OFF || state == NfcAdapter.STATE_ON) {
-            onUpdate(factory.createNfcProbe(intent));
-        }
+        onUpdate(factory.createNfcProbe(intent));
     }
 
     @Override
@@ -56,7 +53,19 @@ public class NFCListener extends BroadcastReceiver implements Listener {
     @Override
     public void startListening() {
         if (!isRunning) {
-            mContext.registerReceiver(this, new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED));
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
+            intentFilter.addAction(NfcAdapter.ACTION_NDEF_DISCOVERED);
+            intentFilter.addAction(NfcAdapter.ACTION_TECH_DISCOVERED);
+            intentFilter.addAction(NfcAdapter.ACTION_TAG_DISCOVERED);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                // needs android API level 28 at least
+                intentFilter.addAction(NfcAdapter.ACTION_TRANSACTION_DETECTED);
+            }
+
+            //mContext.registerReceiver(this, new IntentFilter(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED));
+            mContext.registerReceiver(this, intentFilter);
+
             onUpdate(factory.createNfcProbe(nfcAdapter));
             isRunning = true;
         }

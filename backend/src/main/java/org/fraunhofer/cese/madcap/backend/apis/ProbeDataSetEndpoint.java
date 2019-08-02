@@ -28,6 +28,7 @@ import org.fraunhofer.cese.madcap.backend.models.DatastoreEntry;
 import org.fraunhofer.cese.madcap.backend.models.DockStateEntry;
 import org.fraunhofer.cese.madcap.backend.models.DreamingModeEntry;
 import org.fraunhofer.cese.madcap.backend.models.ForegroundBackgroundEventEntry;
+import org.fraunhofer.cese.madcap.backend.models.AppPermissionsEntry;
 import org.fraunhofer.cese.madcap.backend.models.HeadphoneEntry;
 import org.fraunhofer.cese.madcap.backend.models.InputMethodEntry;
 import org.fraunhofer.cese.madcap.backend.models.LocationEntry;
@@ -188,6 +189,14 @@ public class ProbeDataSetEndpoint {
                     Collection<ForegroundBackgroundEventEntry> clist = entryMap.get(entry.getProbeType());
                     ForegroundBackgroundEventEntry foregroundBackgroundEventEntry = new ForegroundBackgroundEventEntry(entry);
                     clist.add(foregroundBackgroundEventEntry);
+                    break;
+                case "AppPermissions":
+                    if (!entryMap.containsKey(entry.getProbeType())) {
+                        entryMap.put(entry.getProbeType(), new ArrayList<AppPermissionsEntry>());
+                    }
+                    Collection<AppPermissionsEntry> aplist = entryMap.get(entry.getProbeType());
+                    AppPermissionsEntry appPermissionsEntry = new AppPermissionsEntry(entry);
+                    aplist.add(appPermissionsEntry);
                     break;
                 case "BluetoothState":
                     if (!entryMap.containsKey(entry.getProbeType())) {

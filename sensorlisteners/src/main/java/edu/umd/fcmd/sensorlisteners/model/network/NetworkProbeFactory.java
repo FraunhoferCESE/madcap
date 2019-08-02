@@ -97,6 +97,8 @@ public class NetworkProbeFactory {
             nfcProbe.setState(NFCProbe.OFF);
         }
 
+        nfcProbe.setTagDiscoveryState(NFCProbe.UNKNOWN);
+        nfcProbe.setTransactionConductedState(NFCProbe.UNKNOWN);
         return nfcProbe;
     }
 
@@ -110,22 +112,59 @@ public class NetworkProbeFactory {
     public NFCProbe createNfcProbe(@NonNull Intent intent) {
         NFCProbe nfcProbe = new NFCProbe();
         nfcProbe.setDate(System.currentTimeMillis());
-        switch (intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, -1)) {
-            case NfcAdapter.STATE_OFF:
-                nfcProbe.setState(NFCProbe.OFF);
+
+        String intentAction = intent.getAction() != null ? intent.getAction() : "-";
+
+        switch (intentAction) {
+            case NfcAdapter.ACTION_ADAPTER_STATE_CHANGED:
+                switch (intent.getIntExtra(NfcAdapter.EXTRA_ADAPTER_STATE, -1)) {
+                    case NfcAdapter.STATE_OFF:
+                        nfcProbe.setState(NFCProbe.OFF);
+                        break;
+                    case NfcAdapter.STATE_ON:
+                        nfcProbe.setState(NFCProbe.ON);
+                        break;
+                    case NfcAdapter.STATE_TURNING_OFF:
+                        nfcProbe.setState(NFCProbe.TURNING_OFF);
+                        break;
+                    case NfcAdapter.STATE_TURNING_ON:
+                        nfcProbe.setState(NFCProbe.TURNING_ON);
+                        break;
+                    default:
+                        nfcProbe.setState(NFCProbe.UNKNOWN);
+                }
+                nfcProbe.setTagDiscoveryState(NFCProbe.UNKNOWN);
+                nfcProbe.setTransactionConductedState(NFCProbe.UNKNOWN);
                 break;
-            case NfcAdapter.STATE_ON:
+
+            case NfcAdapter.ACTION_NDEF_DISCOVERED:
                 nfcProbe.setState(NFCProbe.ON);
+                nfcProbe.setTagDiscoveryState(NFCProbe.NDEF_DISCOVERY);
                 break;
-            case NfcAdapter.STATE_TURNING_OFF:
-                nfcProbe.setState(NFCProbe.TURNING_OFF);
+
+            case NfcAdapter.ACTION_TECH_DISCOVERED:
+                nfcProbe.setState(NFCProbe.ON);
+                nfcProbe.setTagDiscoveryState(NFCProbe.TECH_DISCOVERY);
                 break;
-            case NfcAdapter.STATE_TURNING_ON:
-                nfcProbe.setState(NFCProbe.TURNING_ON);
+
+            case NfcAdapter.ACTION_TAG_DISCOVERED:
+                nfcProbe.setState(NFCProbe.ON);
+                nfcProbe.setTagDiscoveryState(NFCProbe.TAG_DISCOVERY);
                 break;
+
+            case NfcAdapter.ACTION_TRANSACTION_DETECTED:
+                nfcProbe.setState(NFCProbe.ON);
+                nfcProbe.setTagDiscoveryState(NFCProbe.UNKNOWN);
+                nfcProbe.setTransactionConductedState(NFCProbe.TRANSACTION_CONDUCTED);
+                break;
+
             default:
                 nfcProbe.setState(NFCProbe.UNKNOWN);
+                nfcProbe.setTagDiscoveryState(NFCProbe.UNKNOWN);
+                nfcProbe.setTransactionConductedState(NFCProbe.UNKNOWN);
+                break;
         }
+
         return nfcProbe;
     }
 

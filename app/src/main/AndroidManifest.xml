@@ -48,6 +48,12 @@
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.NFC"
+        android:minSdkVersion="19"/>
+    <uses-permission
+        android:name="android.permission.NFC_TRANSACTION_EVENT"
+        android:minSdkVersion="28"  />
 
     <!-- The used actions are defined here. -->
     <application
@@ -77,7 +83,22 @@
             android:enabled="true" />
         <service
             android:name=".services.DataCollectionService"
-            android:enabled="true" />
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.nfc.action.TECH_DISCOVERED"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+            </intent-filter>
+        </service>
 
         <meta-data
             android:name="com.google.android.gms.version"
