@@ -93,7 +93,10 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
         Log.d(TAG, "started doInBackground");
 
         // send app permissions probe once per MADCAP data collection session start
-        sendAppPermissionsProbes();
+        //sendAppPermissionsProbes();
+        // Disabling for now, need to evaluate payload size considerations for this probe
+        // before enabling it. Also need to create corresponding entity in the cloud datastore
+        // before AppPermissionsProbe can be enabled
 
         while (!isCancelled()) {
             if(checkPermissions()){
@@ -331,8 +334,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
 
                 appPermProbe.setPermissionsRejected(rejectedPermissions);
                 appPermProbe.setPermissionsGranted(grantedPermissions);
-                //applicationsListener.onUpdate(appPermProbe);
-                //Timber.i("rohila: " + appPermProbe.toString());
+                applicationsListener.onUpdate(appPermProbe);
             }
         }
     }
