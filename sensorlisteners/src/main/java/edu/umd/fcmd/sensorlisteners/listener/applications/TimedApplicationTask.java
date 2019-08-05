@@ -22,6 +22,7 @@ import java.util.List;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.model.applications.AppPermissionsProbe;
 import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
+import timber.log.Timber;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
@@ -92,7 +93,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
         Log.d(TAG, "started doInBackground");
 
         // send app permissions probe once per MADCAP data collection session start
-        //sendAppPermissionsProbes();
+        sendAppPermissionsProbes();
 
         while (!isCancelled()) {
             if(checkPermissions()){
@@ -330,7 +331,8 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
 
                 appPermProbe.setPermissionsRejected(rejectedPermissions);
                 appPermProbe.setPermissionsGranted(grantedPermissions);
-                applicationsListener.onUpdate(appPermProbe);
+                //applicationsListener.onUpdate(appPermProbe);
+                //Timber.i("rohila: " + appPermProbe.toString());
             }
         }
     }

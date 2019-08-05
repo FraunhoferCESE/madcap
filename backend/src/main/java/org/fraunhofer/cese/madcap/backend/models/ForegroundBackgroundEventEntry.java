@@ -39,6 +39,7 @@ public class ForegroundBackgroundEventEntry implements Comparable<ForegroundBack
         eventType = dataJsonObject.getInt("eventType");
         packageName = dataJsonObject.getString("packageName");
         accuracy = dataJsonObject.getDouble("accuracy");
+        className = dataJsonObject.getString("className");
     }
 
     /**
