@@ -16,6 +16,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import org.fraunhofer.cese.madcap.R;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
+import org.fraunhofer.cese.madcap.util.NotificationChannelDescriptor;
 
 import java.util.Map;
 
@@ -85,7 +86,7 @@ public class MadcapFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void showUiNotification(CharSequence title, CharSequence text, CharSequence info) {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, NotificationChannelDescriptor.NOTIFICATION_CHANNEL_ID);
         mBuilder.setSmallIcon(android.R.drawable.ic_dialog_alert);
         mBuilder.setContentTitle(title);
         mBuilder.setContentText(text);

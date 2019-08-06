@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 
 import org.fraunhofer.cese.madcap.PermissionsActivity;
 import org.fraunhofer.cese.madcap.R;
+import org.fraunhofer.cese.madcap.util.NotificationChannelDescriptor;
 
 import javax.inject.Inject;
 
@@ -43,7 +44,7 @@ public class MadcapPermissionsManager implements PermissionsManager {
     }
 
     public void requestPermissionFromNotification() {
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NotificationChannelDescriptor.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_stat_madcaplogo)
                 .setOnlyAlertOnce(true)
                 .setPriority(Notification.PRIORITY_HIGH)

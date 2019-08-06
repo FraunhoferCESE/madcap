@@ -60,6 +60,8 @@ import edu.umd.fcmd.sensorlisteners.listener.power.PowerListener;
 import edu.umd.fcmd.sensorlisteners.listener.system.SystemListener;
 import edu.umd.fcmd.sensorlisteners.model.system.SystemUptimeProbe;
 import edu.umd.fcmd.sensorlisteners.model.util.DataCollectionProbe;
+import org.fraunhofer.cese.madcap.util.NotificationChannelDescriptor;
+
 import timber.log.Timber;
 
 
@@ -73,8 +75,6 @@ public class DataCollectionService extends Service {
     private static final int MAX_EXCEPTION_MESSAGE_LENGTH = 20;
     private static final int RUN_CODE = 1;
     private static final int FOREGROUND_NOTIFICATION_ID = 918273;
-    private static String NOTIFICATION_CHANNEL_ID = "org.fraunhofer.cese.madcap.notificationChannelID";
-    private static String NOTIFICATION_CHANNEL_NAME = "org.fraunhofer.cese.madcap.notificationChannelName";
     private static final int CAPACITY_NOTIFICATION_ID = 126731245;
     private static final long HEARTBEAT_DELAY = 100L;
 
@@ -458,42 +458,31 @@ public class DataCollectionService extends Service {
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
 
-        // NotificationCompat builder is deprecated on SDK 27 and above (Oreo)
-        // Use Notification.Builder for SDK 27 and above
+        // NotificationCompat builder needs NotificationChannel on SDK 26 and above (Oreo)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_MIN);
+            NotificationChannel chan = new NotificationChannel(NotificationChannelDescriptor.NOTIFICATION_CHANNEL_ID, NotificationChannelDescriptor.NOTIFICATION_CHANNEL_NAME, NotificationManager.IMPORTANCE_MIN);
             chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
             NotificationManager noteMan = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            assert noteMan != null;
-            noteMan.createNotificationChannel(chan);
-
-            Notification.Builder noteBuilder = new Notification.Builder(this, NOTIFICATION_CHANNEL_ID)
-                    .setOngoing(true)
-                    .setContentTitle("MADCAP is collecting research data")
-                    .setSmallIcon(R.drawable.ic_stat_madcaplogo)
-                    .setCategory(Notification.CATEGORY_SERVICE)
-                    .setContentIntent(resultPendingIntent);
-
-            Notification note = noteBuilder.build();
-            note.flags |= Notification.FLAG_NO_CLEAR;
-            return note;
-
+            if (noteMan != null) {
+                noteMan.createNotificationChannel(chan);
+            }
+            else {
+                Timber.e("Failed to create NotificationChannel");
+            }
         }
-        else {
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-            mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
-            // TODO: Refactor
-            mBuilder.setContentTitle("MADCAP is collecting research data");
-            mBuilder.setDefaults(Notification.DEFAULT_ALL);
-            mBuilder.setPriority(Notification.PRIORITY_LOW);
-            mBuilder.setContentIntent(resultPendingIntent);
 
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, NotificationChannelDescriptor.NOTIFICATION_CHANNEL_ID);
+        mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
+        // TODO: Refactor
+        mBuilder.setContentTitle("MADCAP is collecting research data");
+        mBuilder.setDefaults(Notification.DEFAULT_ALL);
+        mBuilder.setPriority(Notification.PRIORITY_LOW);
+        mBuilder.setContentIntent(resultPendingIntent);
 
-            // mId allows you to update the notification later on.
-            Notification note = mBuilder.build();
-            note.flags |= Notification.FLAG_NO_CLEAR;
-            return note;
-        }
+        // mId allows you to update the notification later on.
+        Notification note = mBuilder.build();
+        note.flags |= Notification.FLAG_NO_CLEAR;
+        return note;
     }
 
     @Subscribe
@@ -507,8 +496,7 @@ public class DataCollectionService extends Service {
         double limit = firebaseRemoteConfig.getDouble(getString(R.string.CLEANUP_WARNING_LIMIT_KEY));
 
         if (percentage >= limit) {
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this, NotificationChannelDescriptor.NOTIFICATION_CHANNEL_ID)
                             .setAutoCancel(true)
                             .setSmallIcon(R.drawable.ic_stat_madcaplogo)
                             .setContentTitle(getString(R.string.capacity_warning_title))

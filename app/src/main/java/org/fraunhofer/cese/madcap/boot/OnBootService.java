@@ -9,7 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
@@ -21,6 +21,7 @@ import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.authentication.SignInActivity;
 import org.fraunhofer.cese.madcap.authentication.SilentLoginResultCallback;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
+import org.fraunhofer.cese.madcap.util.NotificationChannelDescriptor;
 
 import javax.inject.Inject;
 
@@ -86,7 +87,7 @@ public class OnBootService extends IntentService {
                 private void loginFailed() {
                     Toast.makeText(context, R.string.silent_signin_failed, Toast.LENGTH_SHORT).show();
 
-                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+                    NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context, NotificationChannelDescriptor.NOTIFICATION_CHANNEL_ID);
                     mBuilder.setSmallIcon(R.drawable.ic_stat_madcaplogo);
                     mBuilder.setContentTitle(getString(R.string.silent_signin_failed_notification_title));
                     mBuilder.setContentText(getString(R.string.silent_signin_failed));
