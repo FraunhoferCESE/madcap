@@ -52,7 +52,7 @@ public class EndpointApiBuilder {
             }
             credential = GoogleAccountCredential.usingAudience(context, "server:client_id:" + context.getResources().getString(clientIdResource));
             credential.setSelectedAccountName(user.getEmail());
-            Log.d("AuthenticationProvider",credential.getSelectedAccountName());
+            Log.d("AuthenticationProvider", credential.getSelectedAccountName() == null ? "-" : credential.getSelectedAccountName());
         }else{
             Log.e("EndpointApiBuilder","User is null");
         }
