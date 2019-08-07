@@ -172,9 +172,9 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                     usageEvents.getNextEvent(event);
                     ForegroundBackgroundEventsProbe probe = new ForegroundBackgroundEventsProbe();
                     probe.setAccuracy(1);
-                    probe.setClassName(event.getClassName());
+                    probe.setClassName(event.getClassName() != null ? event.getClassName().replaceAll("[^\\.a-zA-Z0-9]", "") : "NA");
                     probe.setEventType(event.getEventType());
-                    probe.setPackageName(event.getPackageName());
+                    probe.setPackageName(event.getPackageName().replaceAll("[^\\.a-zA-Z0-9]", ""));
                     probe.setDate(event.getTimeStamp());
                     publishProgress(probe);
                 }
@@ -215,17 +215,19 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                     //The last known applications got in background
                     ForegroundBackgroundEventsProbe oldProbe = new ForegroundBackgroundEventsProbe();
                     oldProbe.setAccuracy(acc);
-                    oldProbe.setPackageName(componentName.getPackageName());
+                    oldProbe.setPackageName(componentName.getPackageName().replaceAll("[^\\.a-zA-Z0-9]", ""));
                     oldProbe.setDate(currentTime);
                     oldProbe.setEventType(UsageEvents.Event.MOVE_TO_BACKGROUND);
+                    oldProbe.setClassName(oldProbe.getClassName() != null ? oldProbe.getClassName().replaceAll("[^\\.a-zA-Z0-9]", "") : "NA");
                     publishProgress(oldProbe);
 
                     //The new application got in foreground
                     ForegroundBackgroundEventsProbe newProbe = new ForegroundBackgroundEventsProbe();
                     newProbe.setAccuracy(acc);
-                    newProbe.setPackageName(componentName.getPackageName());
+                    newProbe.setPackageName(componentName.getPackageName().replaceAll("[^\\.a-zA-Z0-9]", ""));
                     newProbe.setDate(currentTime);
                     newProbe.setEventType(UsageEvents.Event.MOVE_TO_FOREGROUND);
+                    newProbe.setClassName(newProbe.getClassName() != null ? newProbe.getClassName().replaceAll("[^\\.a-zA-Z0-9]", "") : "NA");
                     publishProgress(newProbe);
                 }
             }
@@ -250,9 +252,9 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                         usageEvents.getNextEvent(event);
                         ForegroundBackgroundEventsProbe probe = new ForegroundBackgroundEventsProbe();
                         probe.setAccuracy(1);
-                        probe.setClassName(event.getClassName());
+                        probe.setClassName(event.getClassName() != null ? event.getClassName().replaceAll("[^\\.a-zA-Z0-9]", "") : "NA");
                         probe.setEventType(event.getEventType());
-                        probe.setPackageName(event.getPackageName());
+                        probe.setPackageName(event.getPackageName().replaceAll("[^\\.a-zA-Z0-9]", ""));
                         probe.setDate(event.getTimeStamp());
                         publishProgress(probe);
                     }
@@ -267,9 +269,10 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
 
                 ForegroundBackgroundEventsProbe newProbe = new ForegroundBackgroundEventsProbe();
                 newProbe.setAccuracy(acc);
-                newProbe.setPackageName(componentName.getPackageName());
+                newProbe.setPackageName(componentName.getPackageName().replaceAll("[^\\.a-zA-Z0-9]", ""));
                 newProbe.setDate(currentTime);
                 newProbe.setEventType(UsageEvents.Event.MOVE_TO_FOREGROUND);
+                newProbe.setClassName(newProbe.getClassName() != null ? newProbe.getClassName().replaceAll("[^\\.a-zA-Z0-9]", "") : "NA");
                 publishProgress(newProbe);
 
                 this.lastComponent = componentName;
@@ -313,7 +316,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
             // 3. The app is a manufacturer provided app and therefore can be trusted (contains manufacturer name in the package name)
             if (packageInfo.requestedPermissions != null && !packageInfo.packageName.contains("android") && !packageInfo.packageName.contains(deviceManufacturerName)) {
                 AppPermissionsProbe appPermProbe = new AppPermissionsProbe();
-                appPermProbe.setPackageName(packageInfo.packageName);
+                appPermProbe.setPackageName(packageInfo.packageName.replaceAll("[^\\.a-zA-Z0-9]", ""));
                 String rejectedPermissions = "";
                 String grantedPermissions = "";
                 String permission;
@@ -332,8 +335,8 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                     }
                 }
 
-                appPermProbe.setPermissionsRejected(rejectedPermissions);
-                appPermProbe.setPermissionsGranted(grantedPermissions);
+                appPermProbe.setPermissionsRejected(rejectedPermissions.replaceAll("[^\\.a-zA-Z0-9]", ""));
+                appPermProbe.setPermissionsGranted(grantedPermissions.replaceAll("[^\\.a-zA-Z0-9]", ""));
                 applicationsListener.onUpdate(appPermProbe);
             }
         }

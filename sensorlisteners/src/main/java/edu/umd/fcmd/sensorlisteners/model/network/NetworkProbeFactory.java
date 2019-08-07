@@ -372,10 +372,14 @@ public class NetworkProbeFactory {
         }
 
         wiFiProbe.setNetworkSecurity(security);
-
+        String networkState = intent != null ? intent.getAction() : "NA";
+        // Trim the string to remove "android.net.wifi" and have only the actual event name
+        networkState = networkState.substring(networkState.lastIndexOf('.')+1);
+        // Sanitize the networkState string to include only letters and numbers
+        networkState = networkState.replaceAll("[^_a-zA-Z0-9]", "");
         // set WiFi network state as the intent action which triggered the WiFi Probe creation
         // set network state as "-" if probe creation was triggered not by an intent but by serviceStart()
-        wiFiProbe.setNetworkState(intent != null ? intent.getAction() : "-");
+        wiFiProbe.setNetworkState(networkState);
 
         String state;
         // Get WiFi state from the intent and convert wifi state integer to string
