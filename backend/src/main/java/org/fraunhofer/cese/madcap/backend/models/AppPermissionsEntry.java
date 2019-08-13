@@ -169,4 +169,15 @@ public class AppPermissionsEntry implements Comparable<AppPermissionsEntry>, Dat
         result = 31 * result + userID.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "ProbeEntry{" +
+                "id=" + id +
+                ", timestamp=" + timestamp +
+                ", packageName='" + packageName + '\'' +
+                ", permissionsGranted='" + permissionsGranted + '\'' +
+                ", permissionsRejected='" + permissionsRejected + '\'' +
+                '}';
+    }
 }

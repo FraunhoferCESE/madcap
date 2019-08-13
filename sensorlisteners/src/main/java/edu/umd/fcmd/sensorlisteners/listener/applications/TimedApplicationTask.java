@@ -22,7 +22,6 @@ import java.util.List;
 import edu.umd.fcmd.sensorlisteners.issuehandling.PermissionsManager;
 import edu.umd.fcmd.sensorlisteners.model.applications.AppPermissionsProbe;
 import edu.umd.fcmd.sensorlisteners.model.applications.ForegroundBackgroundEventsProbe;
-import timber.log.Timber;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
@@ -93,7 +92,7 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
         Log.d(TAG, "started doInBackground");
 
         // send app permissions probe once per MADCAP data collection session start
-        //sendAppPermissionsProbes();
+        sendAppPermissionsProbes();
         // Disabling for now, need to evaluate payload size considerations for this probe
         // before enabling it. Also need to create corresponding entity in the cloud datastore
         // before AppPermissionsProbe can be enabled
@@ -326,17 +325,30 @@ class TimedApplicationTask extends AsyncTask<Void, ForegroundBackgroundEventsPro
                     if ((packageInfo.requestedPermissionsFlags[i] & PackageInfo.REQUESTED_PERMISSION_GRANTED) != 0) {
                         // permission was granted
                         grantedPermissions = grantedPermissions.concat(permission);
-                        grantedPermissions = grantedPermissions.concat("\n");
+                        grantedPermissions = grantedPermissions.concat(";");
                     }
                     else {
                         // permission was rejected
                         rejectedPermissions = rejectedPermissions.concat(permission);
-                        rejectedPermissions = rejectedPermissions.concat("\n");
+                        rejectedPermissions = rejectedPermissions.concat(";");
                     }
                 }
 
-                appPermProbe.setPermissionsRejected(rejectedPermissions.replaceAll("[^\\.a-zA-Z0-9]", ""));
-                appPermProbe.setPermissionsGranted(grantedPermissions.replaceAll("[^\\.a-zA-Z0-9]", ""));
+                // sanitize the strings
+                rejectedPermissions = rejectedPermissions.replaceAll("[^\\.a-zA-Z0-9_]", "");
+                grantedPermissions = grantedPermissions.replaceAll("[^\\.a-zA-Z0-9_]", "");
+
+                // write None in the strings if the strings are empty
+                if (rejectedPermissions.contentEquals("")) {
+                    rejectedPermissions = "None";
+                }
+                if (grantedPermissions.contentEquals("")) {
+                    grantedPermissions = "None";
+                }
+
+                appPermProbe.setPermissionsRejected(rejectedPermissions);
+                appPermProbe.setPermissionsGranted(grantedPermissions);
+
                 applicationsListener.onUpdate(appPermProbe);
             }
         }
