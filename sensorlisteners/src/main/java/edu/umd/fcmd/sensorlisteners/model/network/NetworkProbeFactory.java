@@ -383,7 +383,17 @@ public class NetworkProbeFactory {
 
         String state;
         // Get WiFi state from the intent and convert wifi state integer to string
-        int finalWifiState = intent != null ? intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,  WifiManager.WIFI_STATE_UNKNOWN) : wifiManager.getWifiState();
+        //int finalWifiState = intent != null ? intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,  WifiManager.WIFI_STATE_UNKNOWN) : wifiManager.getWifiState();
+        //int finalWifiState = wifiManager.getWifiState();
+        int finalWifiState = -1;
+        if (intent != null) {
+            finalWifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE,  WifiManager.WIFI_STATE_UNKNOWN);
+        }
+
+        if (intent == null || finalWifiState == WifiManager.WIFI_STATE_UNKNOWN) {
+            finalWifiState = wifiManager.getWifiState();
+        }
+
         switch (finalWifiState) {
             case WifiManager.WIFI_STATE_ENABLED:
                 state = "ENABLED";

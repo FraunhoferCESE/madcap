@@ -59,3 +59,6 @@ app/src/test/java/org/fraunhofer/cese/madcap/factories/
 madcap_keystore.jks
 sensorlisteners/src/test/java/edu/umd/fcmd/sensorlisteners/model/activity/
 madcap-debug.jks
+.project
+.settings/
+app/debug/
