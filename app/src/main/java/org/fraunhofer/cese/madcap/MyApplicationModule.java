@@ -17,7 +17,6 @@ import android.telephony.TelephonyManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.awareness.Awareness;
-import com.google.android.gms.awareness.FenceApi;
 import com.google.android.gms.awareness.SnapshotApi;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -68,7 +67,7 @@ class MyApplicationModule {
     }
 
     /**
-     * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
+     * Needed by the {@link org.fraunhofer.cese.madcap.hebrew.cache.Cache}
      *
      * @return a Context object (probably the Application) to be used
      */
@@ -185,7 +184,7 @@ class MyApplicationModule {
     }
 
     /**
-     * Needed by the {@link org.fraunhofer.cese.madcap.cache.Cache}
+     * Needed by the {@link org.fraunhofer.cese.madcap.hebrew.cache.Cache}
      *
      * @return the ConnectivityManager to use
      */

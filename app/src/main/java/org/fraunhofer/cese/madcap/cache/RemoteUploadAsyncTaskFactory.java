@@ -13,7 +13,7 @@ import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeDataSet;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeEntry;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.model.ProbeSaveResult;
-import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
+import org.fraunhofer.cese.madcap.hebrew.util.EndpointApiBuilder;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;

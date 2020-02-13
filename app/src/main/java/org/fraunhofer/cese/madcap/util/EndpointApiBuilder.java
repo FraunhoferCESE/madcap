@@ -11,7 +11,6 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 
 import org.fraunhofer.cese.madcap.BuildConfig;
 import org.fraunhofer.cese.madcap.R;
-import org.fraunhofer.cese.madcap.WelcomeActivity;
 import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 import org.fraunhofer.cese.madcap.backend.probeEndpoint.ProbeEndpoint;
 

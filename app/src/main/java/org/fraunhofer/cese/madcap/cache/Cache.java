@@ -13,7 +13,7 @@ import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 
 import org.fraunhofer.cese.madcap.R;
-import org.fraunhofer.cese.madcap.util.EndpointApiBuilder;
+import org.fraunhofer.cese.madcap.hebrew.util.EndpointApiBuilder;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
