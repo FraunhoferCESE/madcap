@@ -193,7 +193,7 @@ final class DatabaseAsyncTaskFactory {
             this.context = context;
         }
 
-        @android.support.annotation.Nullable
+        @androidx.annotation.Nullable
         @Override
         protected Void doInBackground(Void... params) {
             Timber.d("Running task to determine if database is still within size limits");

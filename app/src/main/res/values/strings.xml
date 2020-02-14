@@ -206,6 +206,7 @@
     <string name="UPLOAD_INTERVAL_KEY">upload_interval</string>
     <string name="UPLOAD_ON_WIFI_ONLY_KEY">upload_on_wifi_only</string>
     <string name="CLEANUP_WARNING_LIMIT_KEY">cleanup_warning_limit</string>
-    <string name="googleAwarenessApiKey_hebrew">AIzaSyA6mpuco_IdQi1PJzAGA5CI_JVcmqyE7nQ</string>
+
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
 
 </resources>

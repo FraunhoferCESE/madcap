@@ -1,8 +1,8 @@
 package org.fraunhofer.cese.madcap;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 
 /**
  * Base class for child activities. Provides the "Up" button to the ActionBar.

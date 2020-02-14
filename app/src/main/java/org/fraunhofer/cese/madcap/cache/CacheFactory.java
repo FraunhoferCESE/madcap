@@ -4,7 +4,7 @@ import android.util.Log;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
-import org.fraunhofer.cese.madcap.hebrew.authentication.AuthenticationProvider;
+import org.fraunhofer.cese.madcap.authentication.AuthenticationProvider;
 
 import java.util.UUID;
 
