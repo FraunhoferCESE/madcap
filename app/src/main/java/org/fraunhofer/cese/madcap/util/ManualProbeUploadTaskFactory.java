@@ -2,7 +2,7 @@ package org.fraunhofer.cese.madcap.util;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 

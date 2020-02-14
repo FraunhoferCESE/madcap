@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;

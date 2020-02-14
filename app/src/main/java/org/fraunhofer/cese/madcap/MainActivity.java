@@ -9,19 +9,29 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.support.v4.content.ContextCompat;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 
 import org.fraunhofer.cese.madcap.cache.Cache;
+import org.fraunhofer.cese.madcap.firebase.MadcapFirebaseMessagingService;
 import org.fraunhofer.cese.madcap.issuehandling.MadcapPermissionsManager;
 import org.fraunhofer.cese.madcap.cache.RemoteUploadResult;
 import org.fraunhofer.cese.madcap.services.DataCollectionService;
@@ -131,6 +141,9 @@ public class MainActivity extends ActionBarActivity implements SharedPreferences
                 Timber.d("onServiceDisconnected");
             }
         };
+
+        MadcapFirebaseMessagingService fbMessagingService = new MadcapFirebaseMessagingService(this);
+
     }
 
     @OnClick(R.id.uploadButton)

@@ -207,4 +207,6 @@
     <string name="UPLOAD_ON_WIFI_ONLY_KEY">upload_on_wifi_only</string>
     <string name="CLEANUP_WARNING_LIMIT_KEY">cleanup_warning_limit</string>
 
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+
 </resources>
