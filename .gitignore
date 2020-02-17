@@ -49,6 +49,8 @@ backend/src/main/java/org/fraunhofer/cese/madcap/backend/Constants.java
 app/src/main/java/org/fraunhofer/cese/madcap/Constants.java
 
 app/google-services.json
+app/src/release/google-services.json
+app/src/debug/google-services.json
 
 app/src/main/res/values/privatevalues.xml
 sensorlisteners/src/main/res/values/privatesensorvalues.xml

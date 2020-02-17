@@ -60,6 +60,7 @@ appengine {  // App Engine tasks configuration
 endpointsServer {
     // Endpoints Framework Plugin server-side configuration
     hostname = "madcap-142815.appspot.com"
+    hostname= "madcap-hebrew-dev.appspot.com"
 }
 
 //deprecated
