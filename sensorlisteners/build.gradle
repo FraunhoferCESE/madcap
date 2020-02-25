@@ -29,6 +29,8 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:25.3.1'
     //compile 'com.google.android.gms:play-services-awareness:10.2.4'
     implementation 'com.google.android.gms:play-services-awareness:11.8.0'
+    implementation 'com.google.firebase:firebase-core:11.8.0'
+    implementation 'com.google.firebase:firebase-messaging:11.8.0'
 
     implementation 'org.greenrobot:eventbus:3.0.0'
     implementation 'com.jaredrummler:android-device-names:1.1.2'

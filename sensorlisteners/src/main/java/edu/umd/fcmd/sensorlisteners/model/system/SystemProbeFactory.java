@@ -10,6 +10,7 @@ import android.provider.Settings;
 import android.view.Display;
 
 import com.jaredrummler.android.device.DeviceName;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.TimeZone;
 
@@ -115,6 +116,8 @@ public class SystemProbeFactory {
         systemInfoProbe.setModel(info.marketName);            // "Galaxy S7 Edge"
         systemInfoProbe.setMadcapVersion(appVersion);
         systemInfoProbe.setApiLevel((double) Build.VERSION.SDK_INT);
+        systemInfoProbe.setMessageToken(FirebaseInstanceId.getInstance().getToken());
+        Timber.d("Message token: " + systemInfoProbe.getMessageToken());
 
         return systemInfoProbe;
     }

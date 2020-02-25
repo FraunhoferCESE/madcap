@@ -1,6 +1,7 @@
 package edu.umd.fcmd.sensorlisteners.model.system;
 
 import edu.umd.fcmd.sensorlisteners.model.Probe;
+import timber.log.Timber;
 
 /**
  * Created by MMueller on 12/30/2016.
@@ -13,6 +14,7 @@ public class SystemInfoProbe extends Probe {
     private String model;
     private double apiLevel;
     private String madcapVersion;
+    private String messageToken;
 
     /**
      * Gets the device manufacturer.
@@ -83,6 +85,22 @@ public class SystemInfoProbe extends Probe {
     }
 
     /**
+     * Gets the current message token.
+     * @return the message token.
+     */
+    public String getMessageToken() {
+        return messageToken;
+    }
+
+    /**
+     * Sets the current message token.
+     * @param messageToken to be set.
+     */
+    public void setMessageToken(String messageToken) {
+        this.messageToken = messageToken;
+    }
+
+    /**
      * Gets the type of an state e.g. Accelerometer
      *
      * @return the type of state.
@@ -115,10 +133,17 @@ public class SystemInfoProbe extends Probe {
      */
     @Override
     public String toString() {
+        Timber.d("System Entry To String: " + "{\"manufacturer\": " + (manufacturer!=null? manufacturer : "-") +
+                ", \"model\": " + (model!=null? model : "-") +
+                ", \"apiLevel\": " + apiLevel +
+                ", \"madcapVersion\": " + (madcapVersion!=null? madcapVersion : "-") +
+                ", \"messageToken\": \"" + messageToken + "\"" +
+                '}');
         return "{\"manufacturer\": " + (manufacturer!=null? manufacturer : "-") +
                 ", \"model\": " + (model!=null? model : "-") +
                 ", \"apiLevel\": " + apiLevel +
                 ", \"madcapVersion\": " + (madcapVersion!=null? madcapVersion : "-") +
+                ", \"messageToken\": \"" + messageToken + "\"" +
                 '}';
     }
 }

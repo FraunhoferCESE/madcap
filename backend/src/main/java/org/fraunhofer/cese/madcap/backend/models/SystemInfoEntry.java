@@ -23,6 +23,7 @@ public class SystemInfoEntry implements Comparable<SystemInfoEntry>, DatastoreEn
     private String model;
     private double apiLevel;
     private String madcapVersion;
+    private String messageToken;
     @Index
     private String userID;
 
@@ -39,6 +40,7 @@ public class SystemInfoEntry implements Comparable<SystemInfoEntry>, DatastoreEn
         model = dataJsonObject.getString("model");
         apiLevel = dataJsonObject.getDouble("apiLevel");
         madcapVersion = dataJsonObject.getString("madcapVersion");
+        messageToken = dataJsonObject.getString("messageToken");
     }
 
     /**
@@ -107,6 +109,22 @@ public class SystemInfoEntry implements Comparable<SystemInfoEntry>, DatastoreEn
      */
     public void setMadcapVersion(String madcapVersion) {
         this.madcapVersion = madcapVersion;
+    }
+
+    /**
+     * Sets the current message Token.
+     * @param messageToken to be set.
+     */
+    public void setMessageToken(String messageToken) {
+        this.messageToken = messageToken;
+    }
+
+    /**
+     * Gets the current Message Token.
+     * @return the current token.
+     */
+    public String getMessageToken() {
+        return messageToken;
     }
 
     /**
@@ -277,7 +295,8 @@ public class SystemInfoEntry implements Comparable<SystemInfoEntry>, DatastoreEn
         return (manufacturer.equals(that.getManufacturer())
                 && model.equals(that.getModel())
                 && apiLevel == that.getApiLevel()
-                && madcapVersion.equals(that.getMadcapVersion()));
+                && madcapVersion.equals(that.getMadcapVersion())
+                && messageToken.equals(that.getMessageToken()));
     }
 
     @Override
@@ -288,6 +307,7 @@ public class SystemInfoEntry implements Comparable<SystemInfoEntry>, DatastoreEn
                 ", \"model\": " + model +
                 ", \"apiLevel\": " + apiLevel +
                 ", \"madcapVersion\": " + madcapVersion +
+                ", \"messageToken\": " + messageToken +
                 '}';
     }
 }

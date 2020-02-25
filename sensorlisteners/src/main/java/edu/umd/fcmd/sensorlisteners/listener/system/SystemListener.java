@@ -29,7 +29,7 @@ public class SystemListener extends BroadcastReceiver implements Listener {
 
     private final Context mContext;
     private final ProbeManager<Probe> probeManager;
-    private final String madcapVerison;
+    private final String madcapVersion;
     private final SystemProbeFactory factory;
 
 
@@ -44,7 +44,7 @@ public class SystemListener extends BroadcastReceiver implements Listener {
         mContext = context;
         this.probeManager = probeManager;
         this.factory = factory;
-        madcapVerison = buildVersionProvider.getBuildVersion();
+        madcapVersion = buildVersionProvider.getBuildVersion();
     }
 
     @Override
@@ -84,7 +84,7 @@ public class SystemListener extends BroadcastReceiver implements Listener {
             onUpdate(factory.createScreenProbe(mContext));
             onUpdate(factory.createAirplaneModeProbe(mContext));
             onUpdate(factory.createTimezoneProbe());
-            onUpdate(factory.createSystemInfoProbe(mContext, madcapVerison));
+            onUpdate(factory.createSystemInfoProbe(mContext, madcapVersion));
             onUpdate(factory.createInputMethodProbe(mContext));
             onUpdate(factory.createDockStateProbe(mContext));
             onUpdate(factory.createScreenOffTimeoutProbe(mContext));
